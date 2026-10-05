@@ -16,5 +16,5 @@ Closes #
 ## Definition of Done
 - [ ] CI xanh
 - [ ] Có test, hoặc ghi lý do chưa có:
-- [ ] Đã cập nhật tài liệu liên quan (README, docs/api-contract.md, ADR, .env.example…)
+- [ ] Đã cập nhật tài liệu liên quan (README, docs/specs/api-contract.md, ADR, .env.example…)
 - [ ] Không commit secret / file `.env`
