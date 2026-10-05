@@ -23,4 +23,4 @@ Chọn lựa chọn nào và vì sao. Ghi rõ điều kiện nào thì phải xe
 - Việc cần làm tiếp:
 
 ---
-Cách dùng: copy file này thành `NNNN-<slug>.md` (ví dụ `0001-crawl-tool.md`), đánh số tuần tự, rồi thêm 1 dòng vào `docs/decision-log.md`.
+Cách dùng: copy file này thành `NNNN-<slug>.md` (ví dụ `0001-crawl-tool.md`), đánh số tuần tự, rồi thêm 1 dòng vào `docs/logs/decision-log.md`.

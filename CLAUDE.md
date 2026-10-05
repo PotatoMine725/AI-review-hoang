@@ -2,8 +2,8 @@
 
 Backend của **AI Review Content Factory**, là một nửa của split repo. Frontend nằm ở `PotatoMine725/AI-review-FE` (trên máy: `../AI-review-FE`).
 
-Đọc trước khi làm: `docs/adr/0005-repo-structure-and-extensibility.md` (cấu trúc và cách mở rộng), `docs/PRD.md` (§5–6, §50–52, §60–62),
-`docs/week-1-plan.md` (mục "Quy ước làm việc mặc định"), `docs/module-1-product-intelligence.md`.
+Đọc trước khi làm: `docs/adr/0005-repo-structure-and-extensibility.md` (cấu trúc và cách mở rộng), `docs/specs/PRD.md` (§5–6, §50–52, §60–62),
+`docs/plan/week-1.md` (mục "Quy ước làm việc mặc định"), `docs/specs/m1-product-intelligence.md`.
 Quy ước Git/PR/DoD nằm trong `CONTRIBUTING.md` và phải tuân theo.
 
 ## Stack
@@ -25,7 +25,8 @@ uv run ruff check . && uv run ruff format --check . && uv run pyright   # giốn
 - Branch `feat/<module>-<mô-tả>` | `fix/…` | `docs/…` | `chore/…`, tạo từ `dev` và mở PR vào `dev` (không vào `main`). Conventional Commits.
   Squash merge, cần ≥ 1 review. `dev → staging → main` chỉ promote bằng merge commit (xem CONTRIBUTING §2, §4).
 - Mỗi `services/<tên>/` tự chứa mọi thứ của nó. Không import chéo code giữa các service; chúng chỉ giao tiếp qua HTTP, DB hoặc queue.
-- Đổi API worker thì cập nhật `docs/api-contract.md` trong cùng PR. Đổi schema DB thì thêm migration trong `supabase/migrations/`.
+- Đổi API worker thì cập nhật `docs/specs/api-contract.md` trong cùng PR. Đổi schema DB thì thêm migration trong `supabase/migrations/`.
 - Thay đổi ảnh hưởng web thì tạo issue bên `AI-review-FE`.
 - Secret chỉ để trong `.env`. Có biến mới thì cập nhật `.env.example` của service đó.
-- Quyết định kỹ thuật lớn thì viết ADR trong `docs/adr/` và thêm 1 dòng vào `docs/decision-log.md`.
+- Tài liệu theo Spec-driven development, xem `docs/README.md` (specs, plan, report, review, snapshot, prompts). Mẫu ở `docs/templates/`.
+- Quyết định kỹ thuật lớn thì viết ADR trong `docs/adr/` và thêm 1 dòng vào `docs/logs/decision-log.md`.

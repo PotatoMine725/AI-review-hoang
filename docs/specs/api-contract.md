@@ -22,4 +22,4 @@ Response `200`:
 ```
 
 Các endpoint dự kiến của Module 1 (`/products`, `/jobs/{id}`, `/knowledge/search`, …) được mô tả trong
-`docs/module-1-product-intelligence.md`. Endpoint nào được implement thì chuyển mô tả về file này.
+`docs/specs/m1-product-intelligence.md`. Endpoint nào được implement thì chuyển mô tả về file này.

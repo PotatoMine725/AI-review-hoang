@@ -29,7 +29,7 @@ Chọn **B**, kèm 4 nguyên tắc:
 1. **Service tự chứa.** Mỗi `services/<tên>/` có trình quản lý dependency riêng (uv, pnpm, …), `.env.example`, README và
    workflow CI riêng `.github/workflows/<tên>.yml` lọc theo `services/<tên>/**`. Các service không import code của nhau.
 2. **Giao tiếp qua hợp đồng có tài liệu.** Chỉ có 3 kênh:
-   - HTTP: OpenAPI, tài liệu ở `docs/api-contract.md`;
+   - HTTP: OpenAPI, tài liệu ở `docs/specs/api-contract.md`;
    - DB: schema trong `supabase/migrations/`;
    - Queue: Supabase Queues/pgmq theo đặc tả Module 1, payload được mô tả trong `docs/`.
 
@@ -42,8 +42,8 @@ Chọn **B**, kèm 4 nguyên tắc:
 ### Cách thêm một service (ví dụ `render` bằng Node)
 1. Tạo `services/render/` với `package.json` (pnpm), `.env.example`, README.
 2. Copy `.github/workflows/worker.yml` thành `render.yml`, đổi path và các bước cài đặt/lint.
-3. Thêm owner vào `.github/CODEOWNERS`. Thêm endpoint (nếu có) vào `docs/api-contract.md`.
-4. Ghi vào `docs/decision-log.md`.
+3. Thêm owner vào `.github/CODEOWNERS`. Thêm endpoint (nếu có) vào `docs/specs/api-contract.md`.
+4. Ghi vào `docs/logs/decision-log.md`.
 
 ### Nếu sau này gộp thành monorepo
 Cây thư mục BE đã khớp với brief (`services/`, `supabase/`, `docs/`). Repo FE được đưa vào bằng:

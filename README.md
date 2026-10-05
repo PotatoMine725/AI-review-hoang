@@ -16,12 +16,17 @@ AI-review-BE/
 │       └── .env.example
 ├── supabase/            # Supabase CLI: config.toml, migrations/
 ├── docs/
-│   ├── PRD.md                              # tổng quan sản phẩm
-│   ├── week-1-plan.md                      # kế hoạch + quy ước tuần 1
-│   ├── module-1-product-intelligence.md    # đặc tả Module 1
-│   ├── api-contract.md                     # API của worker (nguồn sự thật)
-│   ├── adr/                                # Architecture Decision Records (đọc ADR-0005 trước)
-│   ├── qa-log.md · decision-log.md
+│   ├── README.md        # chỉ mục + quy ước (Spec-driven development)
+│   ├── specs/           # LÀM GÌ: PRD, đặc tả module, API contract
+│   ├── plan/            # LÀM THẾ NÀO: kế hoạch tuần/sprint
+│   ├── adr/             # quyết định kỹ thuật (đọc ADR-0005 trước)
+│   ├── report/          # ĐÃ LÀM GÌ
+│   ├── review/          # NGHIỆM THU
+│   ├── snapshot/        # bản ghi cuối ngày
+│   ├── prompts/         # prompt giao việc cho coding agent
+│   ├── logs/            # decision-log, qa-log
+│   ├── references/      # tài liệu tham khảo (không phải nguồn sự thật)
+│   └── templates/       # mẫu tài liệu
 └── .github/             # CI (1 workflow / service), PR/issue template, CODEOWNERS
 ```
 
@@ -56,4 +61,4 @@ Tạo migration mới bằng `pnpm dlx supabase migration new <ten>`.
 
 ## Tài liệu
 - [CONTRIBUTING.md](CONTRIBUTING.md): Git flow, commit, PR, Definition of Done
-- [docs/](docs/): PRD, kế hoạch, đặc tả, ADR, log
+- [docs/](docs/README.md): specs, plan, ADR, report, review, snapshot, prompts, logs

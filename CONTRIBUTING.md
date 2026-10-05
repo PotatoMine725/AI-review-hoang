@@ -1,17 +1,17 @@
 # Quy ước đóng góp — AI Review Content Factory
 
 > File này **giống hệt nhau** ở `AI-review-BE` và `AI-review-FE`. Sửa ở repo nào thì sửa luôn repo kia trong cùng ngày.
-> Team có thể đổi quy ước ở buổi retro thứ Sáu; quyết định ghi vào `docs/decision-log.md` (repo BE).
+> Team có thể đổi quy ước ở buổi retro thứ Sáu; quyết định ghi vào `docs/logs/decision-log.md` (repo BE).
 
 ## 1. Repo nào chứa gì
 
 | Repo | Nội dung |
 |---|---|
 | [`AI-review-FE`](https://github.com/PotatoMine725/AI-review-FE) | Web: Next.js (App Router) + TypeScript + Tailwind + shadcn/ui, pnpm |
-| [`AI-review-BE`](https://github.com/PotatoMine725/AI-review-BE) | `services/` (mỗi service một thư mục; hiện có `services/worker`: Python 3.12 + FastAPI, uv), `supabase/` (migrations), `docs/` (PRD, ADR, logs) |
+| [`AI-review-BE`](https://github.com/PotatoMine725/AI-review-BE) | `services/` (mỗi service một thư mục; hiện có `services/worker`: Python 3.12 + FastAPI, uv), `supabase/` (migrations), `docs/` (specs, plan, ADR, report, review, logs; xem `docs/README.md`) |
 
 - Thay đổi schema DB thì làm ở BE (`supabase/migrations/`). Web dùng type sinh ra từ schema đó.
-- Thay đổi API của worker thì cập nhật `docs/api-contract.md` (BE) trong cùng PR.
+- Thay đổi API của worker thì cập nhật `docs/specs/api-contract.md` (BE) trong cùng PR.
 - Một tính năng chạm cả 2 repo cần **2 PR**, link chéo nhau (`PotatoMine725/AI-review-BE#12`). PR BE (schema/API) merge trước.
 
 ## 2. Git: `dev` → `staging` → `main`
@@ -58,7 +58,7 @@ Một task chỉ được chuyển sang **Done** khi:
 - [ ] Đã được review và approve
 - [ ] CI xanh
 - [ ] Có test, hoặc ghi rõ trong PR vì sao chưa có
-- [ ] Tài liệu liên quan đã cập nhật (README, `docs/api-contract.md`, ADR, `.env.example`…)
+- [ ] Tài liệu liên quan đã cập nhật (README, `docs/specs/api-contract.md`, ADR, `.env.example`…)
 
 _QA bổ sung chi tiết DoD và template test case trong tuần 1._
 
@@ -70,5 +70,5 @@ _QA bổ sung chi tiết DoD và template test case trong tuần 1._
 
 ## 7. Giao tiếp
 
-- Câu hỏi nghiệp vụ ghi vào `docs/qa-log.md` (BE), quyết định ghi vào `docs/decision-log.md`.
+- Câu hỏi nghiệp vụ ghi vào `docs/logs/qa-log.md` (BE), quyết định ghi vào `docs/logs/decision-log.md`.
 - Bị chặn thì báo ở standup hoặc kênh chung trong vòng 2 giờ, và đổi card sang "Bị chặn".
