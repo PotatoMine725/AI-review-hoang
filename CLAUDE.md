@@ -27,7 +27,8 @@ Lý do và cách mở rộng của cấu trúc này nằm trong `../AI-review-BE
 - Code theo tính năng đặt trong `src/features/<module>/` (ví dụ `src/features/m1-onboarding/`). `src/components/ui/` chỉ chứa component shadcn.
 
 ## Quy tắc
-- Branch `feat/<module>-<mô-tả>` | `fix/…` | `docs/…` | `chore/…`. Conventional Commits. Squash merge, cần ≥ 1 review.
+- Branch `feat/<module>-<mô-tả>` | `fix/…` | `docs/…` | `chore/…`, tạo từ `dev` và mở PR vào `dev` (không vào `main`). Conventional Commits.
+  Squash merge, cần ≥ 1 review. `dev → staging → main` chỉ promote bằng merge commit (xem CONTRIBUTING §2, §4).
 - API của worker theo `../AI-review-BE/docs/api-contract.md`. Schema DB theo `../AI-review-BE/supabase/migrations/`. Không tự đặt ra API.
 - `SUPABASE_SERVICE_ROLE_KEY` chỉ được dùng ở code server. Biến dùng ở client phải có tiền tố `NEXT_PUBLIC_`.
 - Có biến môi trường mới thì cập nhật `.env.example`.

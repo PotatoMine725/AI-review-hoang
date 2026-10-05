@@ -1,4 +1,5 @@
 <!-- Tiêu đề PR theo Conventional Commits, ví dụ: feat(m1): lưu content_hash cho crawled_pages -->
+<!-- Base branch: `dev` cho branch làm việc; `main` chỉ dành cho hotfix và PR promote `staging → main`. -->
 
 Closes #
 

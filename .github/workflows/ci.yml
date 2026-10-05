@@ -7,7 +7,7 @@ on:
       - ".github/ISSUE_TEMPLATE/**"
       - ".github/CODEOWNERS"
   push:
-    branches: [main]
+    branches: [main, staging, dev]
     paths-ignore:
       - "**.md"
       - ".github/ISSUE_TEMPLATE/**"
