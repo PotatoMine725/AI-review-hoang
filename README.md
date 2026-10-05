@@ -14,7 +14,11 @@ AI-review-FE/
 ├── src/
 │   ├── app/             # App Router: layout.tsx, page.tsx, globals.css
 │   ├── components/ui/   # component shadcn/ui (thêm bằng: pnpm dlx shadcn@latest add <tên>)
-│   └── lib/utils.ts
+│   ├── features/        # (khi có) code theo tính năng: features/<module>/
+│   └── lib/
+│       ├── utils.ts
+│       ├── api/         # (khi có) MỌI lời gọi HTTP tới worker/service đi qua đây
+│       └── supabase/    # (khi có) client Supabase server + browser
 ├── components.json      # cấu hình shadcn/ui
 ├── .env.example
 └── .github/             # CI (ci.yml), PR/issue template, CODEOWNERS

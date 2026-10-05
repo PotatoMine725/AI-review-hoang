@@ -8,7 +8,7 @@
 | Repo | Nội dung |
 |---|---|
 | [`AI-review-FE`](https://github.com/PotatoMine725/AI-review-FE) | Web: Next.js (App Router) + TypeScript + Tailwind + shadcn/ui, pnpm |
-| [`AI-review-BE`](https://github.com/PotatoMine725/AI-review-BE) | `worker/` (Python 3.12 + FastAPI, uv), `supabase/` (migrations), `docs/` (PRD, ADR, logs) |
+| [`AI-review-BE`](https://github.com/PotatoMine725/AI-review-BE) | `services/` (mỗi service một thư mục; hiện có `services/worker`: Python 3.12 + FastAPI, uv), `supabase/` (migrations), `docs/` (PRD, ADR, logs) |
 
 - Thay đổi schema DB thì làm ở BE (`supabase/migrations/`). Web dùng type sinh ra từ schema đó.
 - Thay đổi API của worker thì cập nhật `docs/api-contract.md` (BE) trong cùng PR.
