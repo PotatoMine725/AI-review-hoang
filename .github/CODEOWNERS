@@ -1,0 +1,29 @@
+# CODEOWNERS — tự động request review từ owner của file bị thay đổi.
+#
+# Đang là PLACEHOLDER: mọi dòng đều comment vì GitHub báo lỗi nếu username không tồn tại.
+# Cách dùng: thay @TODO-... bằng GitHub username thật rồi bỏ dấu "#" ở đầu dòng.
+# Handle dạng @org/team (ví dụ @ai-review/ai) chỉ dùng được khi repo nằm trong một GitHub Organization.
+# Dòng ở dưới ghi đè dòng ở trên khi cùng khớp một file.
+#
+# Nhóm: ai = AI-1, AI-2 | video = Video-1, Video-2 | web = FE-1, FE-2 | qa = QA-1, QA-2 | lead = BE (tech lead) | ba = BA
+
+# Mặc định: tech lead
+# *                         @TODO-lead
+
+# Worker (Module 1, 2, 4: nhóm ai)
+# /worker/                  @TODO-ai-1 @TODO-ai-2
+
+# Code video trong worker (nhóm video), khi thư mục được tạo
+# /worker/src/worker/video/ @TODO-video-1 @TODO-video-2
+
+# Test và golden set (nhóm qa)
+# /worker/tests/            @TODO-qa-1 @TODO-qa-2
+
+# Schema DB
+# /supabase/                @TODO-lead
+
+# Tài liệu, log, ADR
+# /docs/                    @TODO-ba @TODO-lead
+
+# CI và cấu hình repo
+# /.github/                 @TODO-lead
