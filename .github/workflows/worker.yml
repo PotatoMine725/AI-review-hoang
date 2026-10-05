@@ -24,7 +24,7 @@ jobs:
         working-directory: worker
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0 # setup-uv không có tag major (v10), phải ghim bản đầy đủ
         with:
           working-directory: worker
           enable-cache: true
