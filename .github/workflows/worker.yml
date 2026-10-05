@@ -8,7 +8,7 @@ on:
       - "services/worker/**"
       - ".github/workflows/worker.yml"
   push:
-    branches: [main]
+    branches: [main, staging, dev]
     paths:
       - "services/worker/**"
       - ".github/workflows/worker.yml"

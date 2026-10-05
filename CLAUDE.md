@@ -22,7 +22,8 @@ uv run ruff check . && uv run ruff format --check . && uv run pyright   # giốn
 ```
 
 ## Quy tắc
-- Branch `feat/<module>-<mô-tả>` | `fix/…` | `docs/…` | `chore/…`. Conventional Commits. Squash merge, cần ≥ 1 review.
+- Branch `feat/<module>-<mô-tả>` | `fix/…` | `docs/…` | `chore/…`, tạo từ `dev` và mở PR vào `dev` (không vào `main`). Conventional Commits.
+  Squash merge, cần ≥ 1 review. `dev → staging → main` chỉ promote bằng merge commit (xem CONTRIBUTING §2, §4).
 - Mỗi `services/<tên>/` tự chứa mọi thứ của nó. Không import chéo code giữa các service; chúng chỉ giao tiếp qua HTTP, DB hoặc queue.
 - Đổi API worker thì cập nhật `docs/api-contract.md` trong cùng PR. Đổi schema DB thì thêm migration trong `supabase/migrations/`.
 - Thay đổi ảnh hưởng web thì tạo issue bên `AI-review-FE`.
