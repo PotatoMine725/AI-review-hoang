@@ -1,14 +1,16 @@
+# CI cho services/worker. Thêm service mới thì copy file này thành <tên>.yml
+# và đổi SERVICE_DIR, paths, các bước cài đặt/lint theo ngôn ngữ của service đó.
 name: CI worker
 
 on:
   pull_request:
     paths:
-      - "worker/**"
+      - "services/worker/**"
       - ".github/workflows/worker.yml"
   push:
     branches: [main]
     paths:
-      - "worker/**"
+      - "services/worker/**"
       - ".github/workflows/worker.yml"
 
 concurrency:
@@ -21,14 +23,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: worker
+        working-directory: services/worker
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.2.0 # setup-uv không có tag major (v10), phải ghim bản đầy đủ
         with:
-          working-directory: worker
+          working-directory: services/worker
           enable-cache: true
-          cache-dependency-glob: worker/uv.lock
+          cache-dependency-glob: services/worker/uv.lock
       - run: uv sync --locked
       - run: uv run ruff check .
       - run: uv run ruff format --check .

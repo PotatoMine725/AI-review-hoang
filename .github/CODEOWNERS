@@ -11,13 +11,13 @@
 # *                         @TODO-lead
 
 # Worker (Module 1, 2, 4: nhóm ai)
-# /worker/                  @TODO-ai-1 @TODO-ai-2
+# /services/worker/         @TODO-ai-1 @TODO-ai-2
 
-# Code video trong worker (nhóm video), khi thư mục được tạo
-# /worker/src/worker/video/ @TODO-video-1 @TODO-video-2
+# Service video/render (nhóm video), khi thư mục được tạo sau ADR-003
+# /services/render/         @TODO-video-1 @TODO-video-2
 
 # Test và golden set (nhóm qa)
-# /worker/tests/            @TODO-qa-1 @TODO-qa-2
+# /services/*/tests/        @TODO-qa-1 @TODO-qa-2
 
 # Schema DB
 # /supabase/                @TODO-lead

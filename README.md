@@ -9,20 +9,24 @@ Frontend: [AI-review-FE](https://github.com/PotatoMine725/AI-review-FE).
 
 ```
 AI-review-BE/
-├── worker/              # Python 3.12 + FastAPI (internal API), quản lý bằng uv
-│   ├── src/worker/main.py
-│   ├── pyproject.toml · uv.lock · .python-version
-│   └── .env.example
+├── services/            # mỗi service 1 thư mục tự chứa (deps, .env.example, README, CI riêng)
+│   └── worker/          # Python 3.12 + FastAPI (internal API), quản lý bằng uv
+│       ├── src/worker/main.py
+│       ├── pyproject.toml · uv.lock · .python-version
+│       └── .env.example
 ├── supabase/            # Supabase CLI: config.toml, migrations/
 ├── docs/
 │   ├── PRD.md                              # tổng quan sản phẩm
 │   ├── week-1-plan.md                      # kế hoạch + quy ước tuần 1
 │   ├── module-1-product-intelligence.md    # đặc tả Module 1
 │   ├── api-contract.md                     # API của worker (nguồn sự thật)
-│   ├── adr/                                # Architecture Decision Records
+│   ├── adr/                                # Architecture Decision Records (đọc ADR-0005 trước)
 │   ├── qa-log.md · decision-log.md
-└── .github/             # CI (worker.yml), PR/issue template, CODEOWNERS
+└── .github/             # CI (1 workflow / service), PR/issue template, CODEOWNERS
 ```
+
+Thêm service mới (ví dụ service render bằng Node nếu ADR-003 chọn Revideo/HyperFrames): xem
+[ADR-0005](docs/adr/0005-repo-structure-and-extensibility.md).
 
 ## Chạy local
 
@@ -30,7 +34,7 @@ Yêu cầu: [uv](https://docs.astral.sh/uv/), Node.js + pnpm (để chạy Supab
 
 ### Worker
 ```bash
-cd worker
+cd services/worker
 cp .env.example .env        # điền key
 uv sync                     # tự tải Python 3.12 nếu máy chưa có
 uv run uvicorn worker.main:app --reload --port 8000
