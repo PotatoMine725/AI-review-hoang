@@ -1,19 +1,24 @@
+@AGENTS.md
+
 # AI-review-FE
 
-Frontend của dự án **AI-Content-Factory**. Đây là một nửa của split repo, backend nằm ở repo `PotatoMine725/AI-review-BE`
-(trên máy: `../AI-review-BE`).
+Web app của **AI Review Content Factory**, là một nửa của split repo. Backend, schema DB và docs nằm ở `PotatoMine725/AI-review-BE`
+(trên máy: `../AI-review-BE`). Đọc `../AI-review-BE/docs/PRD.md` (§30–32, §62 cho màn hình) trước khi làm UI.
+Quy ước Git/PR/DoD nằm trong `CONTRIBUTING.md`.
 
 ## Stack
-Chưa chọn. Khi chọn xong, ghi vào đây: framework, package manager, lệnh dev/build/test/lint.
+Next.js (App Router, `src/`) + TypeScript + Tailwind CSS v4 + shadcn/ui, pnpm. Không thêm thư viện ngoài stack khi chưa hỏi.
+Component UI thêm bằng `pnpm dlx shadcn@latest add <tên>`, không tự viết lại component shadcn đã có.
 
-## API contract nằm ở BE
-- Nguồn sự thật: `../AI-review-BE/docs/api-contract.md` (repo BE). Không tự định nghĩa API ở repo này.
-- Cần endpoint mới hoặc muốn đổi response thì tạo issue bên BE trước. Trong lúc chờ, FE có thể mock theo contract đã thống nhất.
-- URL của backend lấy từ biến môi trường, không hard-code.
+## Lệnh
+```bash
+pnpm install
+pnpm dev
+pnpm lint && pnpm exec next typegen && pnpm exec tsc --noEmit   # giống CI
+```
 
-## Quy trình làm việc
-1. Mỗi việc gắn với 1 GitHub Issue của repo này.
-2. Branch: `<type>/<issue#>-<slug>`, ví dụ `feat/8-login-page`. Không commit thẳng vào `main`.
-3. Commit theo Conventional Commits.
-4. Mở PR vào `main` với `Closes #N`, điền checklist trong PR template.
-5. Không commit secret. Tạo `.env.example` khi có biến đầu tiên.
+## Quy tắc
+- Branch `feat/<module>-<mô-tả>` | `fix/…` | `docs/…` | `chore/…`. Conventional Commits. Squash merge, cần ≥ 1 review.
+- API của worker theo `../AI-review-BE/docs/api-contract.md`. Schema DB theo `../AI-review-BE/supabase/migrations/`. Không tự đặt ra API.
+- `SUPABASE_SERVICE_ROLE_KEY` chỉ được dùng ở code server. Biến dùng ở client phải có tiền tố `NEXT_PUBLIC_`.
+- Có biến môi trường mới thì cập nhật `.env.example`.

@@ -21,4 +21,20 @@ desktop.ini
 # Logs
 *.log
 
-# Stack-specific entries (node_modules/, __pycache__/, dist/, ...) are added once the stack is chosen
+# Dependencies
+/node_modules
+.pnpm-debug.log*
+
+# Next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+
+# Testing
+/coverage
+
+# Misc
+*.pem
