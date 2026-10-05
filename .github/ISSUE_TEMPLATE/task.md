@@ -1,18 +1,19 @@
 ---
 name: Task
-about: Một đơn vị công việc cho người hoặc coding agent
+about: Một đơn vị công việc (card trên board)
 title: ""
 labels: ""
+assignees: ""
 ---
 
 ## Mục tiêu
-<!-- Làm gì, vì sao -->
+<!-- Làm gì, vì sao. Link PRD § hoặc đặc tả module -->
 
-## Phạm vi
+## Acceptance criteria
 - [ ] ...
 
-## Tiêu chí hoàn thành (Acceptance criteria)
-- [ ] ...
+## Ghi chú kỹ thuật
+<!-- Không bắt buộc -->
 
 ## Liên quan
-<!-- Issue/PR bên repo kia, ví dụ PotatoMine725/AI-review-BE#3. Có đổi API contract không? -->
+<!-- Issue/PR bên repo kia, ví dụ PotatoMine725/AI-review-FE#3; ADR liên quan -->

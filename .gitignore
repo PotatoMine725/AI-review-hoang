@@ -21,4 +21,15 @@ desktop.ini
 # Logs
 *.log
 
-# Stack-specific entries (node_modules/, __pycache__/, dist/, ...) are added once the stack is chosen
+# Python (worker)
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+
+# Node (pnpm dlx supabase)
+node_modules/

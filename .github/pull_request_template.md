@@ -1,12 +1,19 @@
+<!-- Tiêu đề PR theo Conventional Commits, ví dụ: feat(m1): lưu content_hash cho crawled_pages -->
+
 Closes #
 
 ## Thay đổi
 -
 
 ## Cách kiểm tra
+<!-- Lệnh đã chạy, ảnh chụp màn hình nếu có thay đổi UI -->
 -
 
-## Checklist
-- [ ] Đã chạy test/lint (khi đã có)
-- [ ] Không commit secret / file .env
-- [ ] Có đổi API contract? Nếu có: đã cập nhật `docs/api-contract.md` (BE) / đã tạo issue bên repo kia
+## Liên quan repo kia
+<!-- Ví dụ PotatoMine725/AI-review-FE#5. Ghi "Không" nếu không có -->
+
+## Definition of Done
+- [ ] CI xanh
+- [ ] Có test, hoặc ghi lý do chưa có:
+- [ ] Đã cập nhật tài liệu liên quan (README, docs/api-contract.md, ADR, .env.example…)
+- [ ] Không commit secret / file `.env`

@@ -1,36 +1,22 @@
-# API Contract — AI-Content-Factory
+# API contract — Worker
 
-Đây là nguồn sự thật duy nhất cho API giữa `AI-review-BE` và `AI-review-FE`.
-Khi đã chọn stack, file này có thể được thay hoặc bổ sung bằng OpenAPI (`openapi.yaml`).
+Đây là nguồn sự thật duy nhất cho API nội bộ của `worker/` (FastAPI), nơi web gọi các job như crawl hoặc trích xuất.
+Dữ liệu CRUD thông thường thì web đọc/ghi thẳng Supabase (RLS); schema DB nằm trong `supabase/migrations/`.
 
-## Quy ước chung
-- Base URL: `/api/v1`
-- Định dạng: JSON, UTF-8
-- Thời gian: ISO 8601 UTC (`2026-10-05T04:35:00Z`)
-- Lỗi trả về dạng:
-  ```json
-  { "error": { "code": "VALIDATION_ERROR", "message": "Mô tả lỗi" } }
-  ```
+Swagger tự sinh khi chạy local: http://127.0.0.1:8000/docs
+
+## Quy ước
+- JSON, UTF-8; thời gian dùng ISO 8601 UTC.
+- Lỗi trả về dạng `{ "detail": "..." }` (mặc định của FastAPI) cho tới khi có ADR khác.
+- Đổi endpoint, request hay response thì cập nhật file này **trong cùng PR**, và tạo issue bên `AI-review-FE` nếu web bị ảnh hưởng.
 
 ## Endpoints
 
-### `GET /api/v1/health`
-Kiểm tra server còn sống.
-
+### `GET /health`
 Response `200`:
 ```json
 { "status": "ok" }
 ```
 
-<!-- Mẫu khi thêm endpoint mới:
-### `METHOD /api/v1/<path>`
-Mô tả ngắn.
-Request: ...
-Response `200`: ...
-Lỗi: ...
--->
-
-## Lịch sử thay đổi
-| Ngày | Thay đổi | PR |
-|---|---|---|
-| 2026-10-05 | Khởi tạo contract, thêm `/health` | — |
+Các endpoint dự kiến của Module 1 (`/products`, `/jobs/{id}`, `/knowledge/search`, …) được mô tả trong
+`docs/module-1-product-intelligence.md`. Endpoint nào được implement thì chuyển mô tả về file này.
