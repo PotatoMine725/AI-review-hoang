@@ -10,10 +10,12 @@ Bạn là coding agent của repo `AI-review-BE`. Làm việc bằng tiếng Vi�
 
 ## Đọc trước
 - `CLAUDE.md`, `CONTRIBUTING.md`, `docs/README.md`
-- `docs/specs/m1-product-intelligence.md`, `docs/logs/qa-log.md` (#4–#7), `docs/logs/decision-log.md` (#8, #9)
+- `docs/specs/m1-product-intelligence.md`, `docs/logs/qa-log.md` (#4–#8), `docs/logs/decision-log.md` (#8, #9)
+- Issue #5 **kèm comment**: `gh issue view 5 -R PotatoMine725/AI-review-BE --comments` (4 đề xuất bổ sung)
+- `docs/references/ref-videos-2026-10-06.md`
 
 ## Nhiệm vụ
-Sửa đặc tả M1 lên v0.2 theo AC của issue #5. Chỉ sửa tài liệu.
+Sửa đặc tả M1 lên v0.2 theo AC của issue #5 và các mục trong comment của issue. Chỉ sửa tài liệu.
 
 ## Phạm vi
 - Làm: sửa đúng các mục trong AC; thêm mục "Lịch sử phiên bản" ở cuối file.

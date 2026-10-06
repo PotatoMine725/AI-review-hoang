@@ -12,6 +12,7 @@ Bạn là coding agent của repo `AI-review-BE`. Làm việc bằng tiếng Vi�
 - `CLAUDE.md`, `CONTRIBUTING.md`, `docs/README.md`
 - `docs/specs/m1-spike-crawl-extract.md` (yêu cầu + acceptance criteria), `docs/plan/m1-spike-crawl-extract.md` (cấu trúc, thư viện)
 - `docs/specs/m1-product-intelligence.md` mục 1.2, 1.4, Output (schema PKB đầy đủ)
+- `docs/references/ref-videos-2026-10-06.md` mục "Ảnh hưởng tới Module 1" (vì sao cần `identity.version`)
 - `docs/adr/0005-repo-structure-and-extensibility.md` (adapter, không import chéo)
 - Docs chính thức của Crawl4AI và `google-genai` bản mới nhất. Không dựa vào API nhớ sẵn.
 
@@ -22,8 +23,8 @@ Làm theo 2 bước, dừng lại báo cáo sau mỗi bước:
 2. `schema.py`, `extract.py`, `run.py` (SP-03…SP-06). Chạy 2 model, ghi output.
 
 ## Phạm vi
-- Làm: đúng cấu trúc trong plan; `products.json` lấy 2 product người dùng cung cấp (hỏi nếu chưa có).
-- Không làm: DB, queue, API, UI, screenshot, enrichment, RAG, Langfuse, test framework. Không sửa `services/worker`.
+- Làm: đúng cấu trúc trong plan; `products.json` gồm 2 product trong spec v1.1: Claude (`https://claude.com`) và Dreamina (`https://dreamina.capcut.com`). Nếu site chặn bot, bắt đăng nhập hoặc chặn theo vùng: dừng, ghi vào README, hỏi người dùng đổi product. Không vượt chặn (không giả trình duyệt, không proxy).
+- Không làm: DB, queue, API, UI, screenshot, `media_sample`, enrichment, RAG, Langfuse, test framework. Không sửa `services/worker`.
 
 ## Acceptance criteria
 AC-01…AC-08 trong spec. Cột `price_plan_correct` để trống cho người dùng đối chiếu tay.

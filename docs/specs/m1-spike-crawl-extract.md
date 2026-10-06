@@ -1,7 +1,7 @@
 # Spike M1 — Crawl → Markdown → JSON: Đặc tả
 
 - **Trạng thái:** Đã duyệt
-- **Phiên bản:** v1.0 · **Ngày:** 2026-10-05 · **Người viết:** @PotatoMine725
+- **Phiên bản:** v1.1 · **Ngày:** 2026-10-06 · **Người viết:** @PotatoMine725
 - **Liên quan:** issue #6 · đặc tả `specs/m1-product-intelligence.md` (1.2, 1.4) · `plan/week-1.md` (AI-1) · ADR-001 (#7), ADR-002 (#8)
 
 ## Mục tiêu
@@ -20,7 +20,7 @@ Câu hỏi spike phải trả lời:
 ## Input
 | Trường | Giá trị |
 |---|---|
-| Product | 2 product từ golden set của QA-2 (qa-log #7). Ưu tiên 1 site tĩnh + 1 site SPA |
+| Product | Tạm dùng (qa-log #7): **Claude** `https://claude.com` (pricing nhiều plan) và **Dreamina** `https://dreamina.capcut.com` (SPA). Đổi khi có golden set. Nếu site chặn bot hoặc bắt đăng nhập: ghi lại, không vượt chặn |
 | Giới hạn | ≤ 30 trang/product, ≤ 1 request/giây/domain, User-Agent định danh dự án, chỉ crawl trong domain gốc |
 | Model | `gemini-3.1-flash-lite` và `gemini-3.5-flash-lite` (giá tra cứu 05/10/2026: $0.25/$1.50 và $0.30/$2.50 mỗi 1M token vào/ra) |
 | Key | `GEMINI_API_KEY` trong `.env`, ưu tiên gói miễn phí |
@@ -34,7 +34,7 @@ Câu hỏi spike phải trả lời:
 | `output/metrics.csv` | Có | 1 dòng / product × model × cách gọi |
 | `README.md` | Có | Cách chạy + bảng kết quả + nhận xét chất lượng |
 
-**Schema PKB rút gọn** (tập con của đặc tả M1): `identity`, `pricing` (plans, free_plan, trial_days, currency), `features`, `use_cases`, `limitations`, `sources`.
+**Schema PKB rút gọn** (tập con của đặc tả M1): `identity` (kèm `version` / `models[]` nếu có, xem `references/ref-videos-2026-10-06.md`), `pricing` (plans, free_plan, trial_days, currency), `features`, `use_cases`, `limitations`, `sources`.
 Mọi fact có `origin: "crawled"`, `source_id`, `evidence` (≤ 200 ký tự).
 
 **Cột `metrics.csv`:** product, model, mode, pages_found, pages_used, crawl_seconds, llm_calls, input_tokens, output_tokens, cost_usd, extract_seconds, schema_valid, price_plan_correct.
@@ -61,4 +61,8 @@ Mọi fact có `origin: "crawled"`, `source_id`, `evidence` (≤ 200 ký tự).
 - [ ] AC-08: README trả lời 3 câu hỏi ở mục "Mục tiêu"
 
 ## Câu hỏi mở
-qa-log #6 (NFR-02), #7 (chọn product).
+qa-log #6 (NFR-02), #7 (chọn product, tạm đã trả lời), #8 (ngôn ngữ: spike giữ nguyên ngôn ngữ của trang nguồn).
+
+## Lịch sử phiên bản
+- v1.1 (2026-10-06): chốt tạm 2 product; thêm `identity.version` / `models[]`.
+- v1.0 (2026-10-05): bản đầu.
