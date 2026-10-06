@@ -43,3 +43,4 @@ AC-01…AC-08 trong spec. Cột `price_plan_correct` để trống cho người 
 - Commit theo Conventional Commits, mở PR vào `dev`, tiêu đề `feat(m1): spike crawl → markdown → JSON`, body theo PR template, có `Closes #6`.
 - README spike có bảng kết quả và trả lời 3 câu hỏi của spec.
 - Trả về: link PR, danh sách file, tổng chi phí, lệnh để tự chạy lại.
+

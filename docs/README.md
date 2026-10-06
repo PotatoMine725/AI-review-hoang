@@ -25,7 +25,7 @@ Template ADR nằm ở `adr/0000-template.md`.
 - Cùng một việc dùng **chung slug** ở mọi thư mục: `specs/m1-product-intelligence.md` → `plan/m1-product-intelligence.md` → `report/m1-…` → `review/m1-…`.
 - Slug: chữ thường không dấu, nối bằng `-`, bắt đầu bằng module nếu có (`m1`…`m8`, `web`, `worker`, `db`, `ci`).
 - Việc theo thời gian: `plan/week-1.md`, `plan/sprint-1.md`, `snapshot/YYYY-MM-DD.md`.
-- Prompt: `prompts/<be|fe>-<số issue>-<slug>.md`, ví dụ `prompts/be-12-m1-crawl-robots.md`.
+- Prompt: `prompts/<be|fe>-<số issue>-<slug>.md`, ví dụ `prompts/be-12-m1-crawl-robots.md`. Prompt không gắn với 1 issue (ví dụ việc tạo issue): `prompts/<be|fe>-<slug>.md`.
 - Mỗi file ghi rõ issue/PR liên quan ở đầu file.
 
 ## Vòng đời
