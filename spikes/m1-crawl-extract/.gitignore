@@ -1,0 +1,6 @@
+.env
+.venv/
+__pycache__/
+# Markdown từng trang: không commit (spec, mục Output)
+output/*/pages/
+output/*/llm_cache/

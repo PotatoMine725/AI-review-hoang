@@ -1,0 +1,408 @@
+{
+  "identity": {
+    "name": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+      "value": "Claude"
+    },
+    "tagline": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Think fast,build faster",
+      "value": "Think fast, build faster"
+    },
+    "description": {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Claude is more than an AI assistant: it’s a helpful, intuitive, and powerful collaborator you can put to work on real tasks, not just questions.",
+      "value": "Claude is more than an AI assistant: it’s a helpful, intuitive, and powerful collaborator you can put to work on real tasks, not just questions."
+    },
+    "category": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+      "value": "AI assistant"
+    },
+    "company": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI",
+      "value": "Anthropic"
+    },
+    "version": null,
+    "models": [
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Mythos"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Fable"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Opus"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Sonnet"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Haiku"
+      }
+    ]
+  },
+  "pricing": {
+    "currency": {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "17 $",
+      "value": "USD"
+    },
+    "plans": [
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "### Free\nTry Claude\n0 $",
+        "name": "Free",
+        "price": 0.0,
+        "price_text": "0 $",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "17 $ \nPer month with annual subscription discount (200 $ billed up front). 20 $ if billed monthly.",
+        "name": "Pro (Annual)",
+        "price": 16.67,
+        "price_text": "17 $ / month billed annually",
+        "billing_period": "year",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "20 $ if billed monthly.",
+        "name": "Pro (Monthly)",
+        "price": 20.0,
+        "price_text": "20 $ / month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "### Max\nClaude Code included\nFor people who work with Claude all day\nFrom 100 $",
+        "name": "Max",
+        "price": 100.0,
+        "price_text": "From 100 $ / month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "20 $ \nPer seat / month if billed annually. 25 $ if billed monthly.",
+        "name": "Team Standard (Annual)",
+        "price": 20.0,
+        "price_text": "20 $ / seat / month billed annually",
+        "billing_period": "year",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "25 $ if billed monthly.",
+        "name": "Team Standard (Monthly)",
+        "price": 25.0,
+        "price_text": "25 $ / seat / month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "100 $ \nPer seat / month if billed annually. 125 $ if billed monthly.",
+        "name": "Team Premium (Annual)",
+        "price": 100.0,
+        "price_text": "100 $ / seat / month billed annually",
+        "billing_period": "year",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "125 $ if billed monthly.",
+        "name": "Team Premium (Monthly)",
+        "price": 125.0,
+        "price_text": "125 $ / seat / month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "US$20/seat/month, billed annually.",
+        "name": "Enterprise",
+        "price": 20.0,
+        "price_text": "US$20/seat/month, billed annually",
+        "billing_period": "year",
+        "currency": null,
+        "audience": null
+      }
+    ],
+    "free_plan": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "The Free plan offers limited use with no payment required.",
+      "value": true
+    },
+    "trial_days": null
+  },
+  "features": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Generate code and visualize data",
+      "name": "Code generation and data visualization",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Ability to search the web",
+      "name": "Web search",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Claude Cowork completes tasks you can steer from anywhere.",
+      "name": "Claude Cowork",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Describe a visual and Claude builds a first version, on brand.",
+      "name": "Claude Design",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "@Claude reads threads, understands full context, and reacts in real time",
+      "name": "@Claude (Slack/Teams integration)",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Memory across conversations",
+      "name": "Memory",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Connect Slack and Google Workspace services",
+      "name": "Connectors",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Extended thinking for complex work",
+      "name": "Extended thinking",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Claude for Microsoft 365",
+      "name": "Claude for Microsoft 365",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Claude Code",
+      "name": "Claude Code",
+      "description": null
+    }
+  ],
+  "use_cases": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude can process large amounts of information, brainstorm ideas, generate text and code, help you understand subjects, coach you through difficult situations",
+      "value": "Information processing and brainstorming"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Claude for sales",
+      "value": "Sales and revenue operations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Legal research drafting",
+      "value": "Legal research and drafting"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Reconcile data in spreadsheets",
+      "value": "Data reconciliation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Analyze every objection you’ve heard this quarter, in one place",
+      "value": "Customer feedback analysis"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Roll the H2 budget with the new headcount plan.",
+      "value": "Financial planning and budgeting"
+    }
+  ],
+  "limitations": [
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Usage limits apply.",
+      "value": "Usage limits apply to all plans."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Every plan has usage limits that reset on a rolling five-hour session window, and paid plans add weekly limits on top.",
+      "value": "Usage limits reset on a rolling five-hour window."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Prices shown don’t include applicable tax.",
+      "value": "Prices do not include applicable tax."
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "src_01",
+      "url": "https://claude.com/",
+      "page_type": "other",
+      "fetched_at": "2026-10-06T02:44:07.823+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:a33815648f82aea5d3fbf947c88f474826720ff3bdfa5108abe9dc7aa0b64ffb"
+    },
+    {
+      "source_id": "src_02",
+      "url": "https://claude.com/pricing",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:44:13.646+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:1978f7becac3f4eb19dad3e7ba421539183c494faf4b5500911b89a8f80e90bd"
+    },
+    {
+      "source_id": "src_03",
+      "url": "https://claude.com/code-with-claude",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:20.153+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:862354b8b3836bbbad5f69671947f54243087a0bcf917830021007da42998ee9"
+    },
+    {
+      "source_id": "src_04",
+      "url": "https://support.claude.com/en",
+      "page_type": "faq",
+      "fetched_at": "2026-10-06T02:44:26.721+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:82bcb3d4e02f775875d662db2766bb1310cb171321fb07a2a1f92d2f237c182b"
+    },
+    {
+      "source_id": "src_05",
+      "url": "https://claude.com/product/tag",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:32.438+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:b4ec1ee4728a0e372887cb8c9af2f81e77dc7d34979a61fd0258b187b80bf5fa"
+    },
+    {
+      "source_id": "src_06",
+      "url": "https://claude.com/product/cowork",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:39.118+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:69fd3d823cb7ea74b44356efd41e9f19b97cdd59bf88b1598c4e5f701c9fd82c"
+    },
+    {
+      "source_id": "src_07",
+      "url": "https://claude.com/product/design",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:46.397+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:dd12b7abd9cbf9c989aaa66ed470d97d0c74ef5cdafb6342c10a3714c31ff55b"
+    },
+    {
+      "source_id": "src_08",
+      "url": "https://claude.com/solutions/sales",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:52.996+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:ea644a8afb8a2f92bc9cc31bdf8dcf99d847e62635a96986d3d57b7620bd3d39"
+    },
+    {
+      "source_id": "src_09",
+      "url": "https://claude.com/product/overview",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:59.919+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:47e22ad196e0f2042a649980bc7df0555379769f0c854f09565395eab391d4e0"
+    },
+    {
+      "source_id": "src_10",
+      "url": "https://claude.com/solutions/agents",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:45:06.907+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:157ebf1369426e6de6d37a9d4bd1f3fcefa2d4edab0a431c12963f4e3e04343e"
+    }
+  ],
+  "meta": {
+    "product": "claude",
+    "model": "gemini-3.1-flash-lite",
+    "mode": "batch",
+    "generated_at": "2026-10-06T03:14:13+00:00",
+    "llm_calls": 1,
+    "cache_hits": 1,
+    "input_tokens": 22354,
+    "output_tokens": 2863,
+    "cost_usd": 0.009883,
+    "evidence_in_source": 1.0,
+    "unknown_source_ids": []
+  }
+}

@@ -1,0 +1,9 @@
+product,model,mode,pages_found,pages_used,crawl_seconds,llm_calls,input_tokens,output_tokens,cost_usd,extract_seconds,schema_valid,price_plan_correct,price_plan_note,pages_sent,cache_hits,thoughts_tokens,facts,plans,evidence_in_source,schema_errors,truncated,evidence_truncated
+claude,gemini-3.1-flash-lite,batch,3770,29,198.23,1,22354,2863,0.009883,7.12,True,False,"Pro trả năm = 16.67 (tự tính), trang ghi $17",10,1,0,40,9,1.0,0,0,0
+claude,gemini-3.1-flash-lite,per_page,3770,29,198.23,29,69855,33321,0.067445,107.8,True,False,"lẫn giá API theo token vào plans + dòng rác (Paid plans, Personal)",29,29,0,308,22,0.987,0,0,1
+claude,gemini-3.5-flash-lite,batch,3770,29,198.23,1,22354,2706,0.013471,6.72,True,True,"đúng giá; Pro trả năm ghi billing_period=year nhưng 17 là giá/tháng, period mơ hồ",10,1,0,34,9,1.0,0,0,0
+claude,gemini-3.5-flash-lite,per_page,3770,29,198.23,29,69855,27363,0.089364,101.62,True,False,"lẫn mục không phải plan (Paid plans, Team không giá, K-12)",29,29,0,221,13,0.986,0,0,0
+dreamina,gemini-3.1-flash-lite,batch,5139,27,165.3,1,22589,1901,0.008499,5.67,True,False,"Advanced, Ultra lấy giá tháng đầu khuyến mãi thay vì giá niêm yết (4.145.379; 13.557.213)",10,1,0,23,4,0.957,0,0,0
+dreamina,gemini-3.1-flash-lite,per_page,5139,27,165.3,27,70970,31637,0.065198,108.09,True,False,"lẫn giá Seedance/giây, giá US $1.50, gán 4.145.379 cho Standard",27,27,0,275,13,0.978,0,0,2
+dreamina,gemini-3.5-flash-lite,batch,5139,27,165.3,1,22589,2442,0.012882,6.38,True,False,"như 3.1 batch: Advanced, Ultra lấy giá tháng đầu khuyến mãi",10,1,0,26,4,0.923,0,0,0
+dreamina,gemini-3.5-flash-lite,per_page,5139,27,165.3,27,70970,35372,0.109721,122.56,True,False,"lẫn giá Seedance/giây và USD, plan trùng lặp",27,27,0,248,11,0.988,0,0,6

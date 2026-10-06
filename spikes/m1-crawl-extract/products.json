@@ -1,0 +1,4 @@
+[
+  { "slug": "claude", "name": "Claude", "url": "https://claude.com", "allow_subdomains": true },
+  { "slug": "dreamina", "name": "Dreamina", "url": "https://dreamina.capcut.com" }
+]

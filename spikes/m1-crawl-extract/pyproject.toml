@@ -1,0 +1,18 @@
+[project]
+name = "m1-crawl-extract"
+version = "0.1.0"
+description = "Spike M1: crawl → markdown → PKB JSON (issue #6)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "crawl4ai>=0.9.4",
+    "google-genai>=2.28.0",
+    "pydantic>=2",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
