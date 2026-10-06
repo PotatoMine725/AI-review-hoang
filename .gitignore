@@ -33,3 +33,8 @@ build/
 
 # Node (pnpm dlx supabase)
 node_modules/
+
+# Personal Claude Code configuration
+CLAUDE.local.md
+.local/
+.claude/settings.local.json
