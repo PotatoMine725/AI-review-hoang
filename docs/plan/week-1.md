@@ -75,7 +75,7 @@ Tuần 1 đạt khi có đủ 8 đầu ra dưới đây trước buổi review c
 
 | Hạng mục | Quy ước |
 | --- | --- |
-| Ra quyết định | Người phụ trách đề xuất → thảo luận ≤ 1 ngày → đồng thuận hoặc BE (tech lead) quyết về kỹ thuật, BA quyết về nghiệp vụ; ghi Decision log |
+| Ra quyết định | Người phụ trách đề xuất → thảo luận ≤ 1 ngày → đồng thuận hoặc người phụ trách module đề xuất + team lead @VV6505 duyệt cuối về kỹ thuật, BA quyết về nghiệp vụ; ghi Decision log (cập nhật 07/10, decision-log #12) |
 | Tài liệu kỹ thuật | ADR ngắn (bối cảnh, lựa chọn, quyết định, hệ quả) trong `/docs/adr`, đánh số tuần tự |
 | Board | GitHub Projects; mỗi nhiệm vụ trong bảng trên là 1 card, có người phụ trách và hạn |
 | Git | Trunk-based: nhánh `feat/<module>-<mô-tả>`, `fix/…`, `docs/…`; PR cần ≥ 1 review; squash merge vào `main` |

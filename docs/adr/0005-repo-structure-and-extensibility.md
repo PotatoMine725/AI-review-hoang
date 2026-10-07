@@ -3,7 +3,7 @@
 - **Trạng thái:** Đề xuất (chốt ở buổi review thứ Sáu 09/10)
 - **Ngày:** 2026-10-05
 - **Người đề xuất:** @PotatoMine725
-- **Người quyết định:** BE (tech lead)
+- **Người quyết định:** team lead @VV6505 (decision-log #12)
 
 > Số 0001–0004 được dành cho các ADR đã giao trong kế hoạch tuần 1:
 > ADR-001 crawl tool, ADR-002 LLM provider, ADR-003 render engine, ADR-004 avatar + TTS.

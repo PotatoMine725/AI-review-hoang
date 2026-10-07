@@ -9,7 +9,7 @@ Tổ chức theo **Spec-driven development**: viết spec → lập plan → là
 |---|---|---|---|
 | [`specs/`](specs/) | Làm gì? | PRD, đặc tả module, API contract. Có acceptance criteria | Người phụ trách module, BA duyệt |
 | [`plan/`](plan/) | Làm thế nào? | Kế hoạch tuần/sprint, cách chia task cho 1 spec | Người phụ trách |
-| [`adr/`](adr/) | Vì sao chọn vậy? | Quyết định kỹ thuật lớn, đánh số tuần tự | Người đề xuất, tech lead duyệt |
+| [`adr/`](adr/) | Vì sao chọn vậy? | Quyết định kỹ thuật lớn, đánh số tuần tự | Người phụ trách module đề xuất, team lead duyệt |
 | [`report/`](report/) | Đã làm gì? | Kết quả 1 task/sprint: thay đổi, số liệu, lệch so với plan | Người làm |
 | [`review/`](review/) | Đạt chưa? | Nghiệm thu: đối chiếu từng acceptance criteria trong spec | Tester / người review |
 | [`snapshot/`](snapshot/) | Hôm nay thế nào? | Bản ghi cuối ngày, viết câu ngắn (xem mẫu) | @PotatoMine725 |
@@ -30,7 +30,7 @@ Template ADR nằm ở `adr/0000-template.md`.
 
 ## Vòng đời
 
-1. **Spec** có acceptance criteria → BA/tech lead duyệt.
+1. **Spec** có acceptance criteria → BA (nghiệp vụ) / team lead (kỹ thuật) duyệt.
 2. **Plan** chia spec thành issue. Mỗi issue giao cho agent có 1 file trong `prompts/`.
 3. Làm: 1 issue → 1 branch → 1 PR vào `dev`.
 4. **Report** khi xong task/sprint.

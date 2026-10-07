@@ -3,7 +3,7 @@
 - **Trạng thái:** Đề xuất | Đã chốt | Thay thế bởi ADR-XXXX
 - **Ngày:** YYYY-MM-DD
 - **Người đề xuất:** @...
-- **Người quyết định:** @... (tech lead với kỹ thuật, BA với nghiệp vụ)
+- **Người quyết định:** @... (team lead @VV6505 với kỹ thuật, BA với nghiệp vụ; decision-log #12)
 
 ## Bối cảnh
 Vấn đề cần quyết định là gì? Ràng buộc nào ảnh hưởng: chi phí, license, thời gian, kỹ năng team?

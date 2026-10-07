@@ -2,7 +2,7 @@
 
 Mọi quyết định đã chốt được ghi ở đây, kể cả quyết định nhỏ. Quyết định kỹ thuật lớn thì viết ADR trong `docs/adr/` và link vào cột "Chi tiết".
 
-Quy trình: người phụ trách đề xuất → thảo luận tối đa 1 ngày → đồng thuận. Nếu không đồng thuận: tech lead quyết về kỹ thuật, BA quyết về nghiệp vụ.
+Quy trình: người phụ trách đề xuất → thảo luận tối đa 1 ngày → đồng thuận. Nếu không đồng thuận: người phụ trách module đề xuất về kỹ thuật, team lead @VV6505 duyệt cuối; BA quyết về nghiệp vụ (xem #12).
 
 | # | Ngày | Quyết định | Lý do ngắn | Người quyết | Chi tiết |
 |---|---|---|---|---|---|
@@ -17,3 +17,4 @@ Quy trình: người phụ trách đề xuất → thảo luận tối đa 1 ng�
 | 9 | 2026-10-05 | Spike M1 gọi thẳng SDK `google-genai` qua 1 hàm adapter. Có dùng LiteLLM hay không do ADR-002 quyết | LiteLLM 1.82.7, 1.82.8 trên PyPI bị cài mã độc (24/03/2026); spike chỉ cần 1 provider | @PotatoMine725 | [plan/m1-spike-crawl-extract.md](../plan/m1-spike-crawl-extract.md) |
 | 10 | 2026-10-06 | AI-1 phụ trách toàn bộ Module 1 (1.2–1.6, 1.8). AI-2 làm Module 2, 4 (issue #14) | Kế hoạch tuần 1 đã giao AI-2 làm Module 2, 4; đặc tả M1 v0.1 giao 1.4–1.6 cho "AI dev 2" nên mâu thuẫn (qa-log #4) | @khanhphi27 | [specs/m1-product-intelligence.md](../specs/m1-product-intelligence.md) |
 | 11 | 2026-10-06 | Merchant approve PKB (giữ FR-07). Nội dung sau login do merchant upload qua FR-10. Ngôn ngữ MVP: tiếng Anh cho site nguồn, PKB, video (issue #15) | PRD nhắm thị trường global; crawler không tự đăng nhập trong MVP (qa-log #1, #2, #3, #8) | @khanhphi27 | [specs/m1-product-intelligence.md](../specs/m1-product-intelligence.md) |
+| 12 | 2026-10-07 | Team không có tech lead. Tech stack của từng module do thành viên phụ trách module đề xuất (ADR); **team lead @VV6505 duyệt cuối**. BA quyết về nghiệp vụ | Phản ánh cách team thực sự vận hành; kế hoạch tuần 1 giả định BE kiêm tech lead | @VV6505 | [plan/week-1.md](../plan/week-1.md) mục Quy ước |
