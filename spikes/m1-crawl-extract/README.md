@@ -32,6 +32,18 @@ Output nằm trong `output/<slug>/`:
 - `llm_cache/` (không commit): kết quả từng lời gọi LLM, khoá theo `content_hash` (SP-07).
 - `output/metrics.csv` (commit): 1 dòng / product × model × mode.
 
+## Demo
+
+`demo.py` đọc output đã có (`output/*/pkb.*.json`, `metrics.csv`) và sinh 1 trang HTML tĩnh `output/demo.html` để trình bày. Không gọi LLM, không crawl, không cần mạng, chỉ dùng thư viện chuẩn.
+
+```bash
+uv run python demo.py                               # PKB mode batch của gemini-3.5-flash-lite
+uv run python demo.py --model gemini-3.1-flash-lite # đổi model
+```
+
+Mở `output/demo.html` bằng trình duyệt. File này bị gitignore. Trang có: luồng + tổng chi phí, PKB từng product (kèm evidence và link nguồn), bảng `metrics.csv` (hàng `batch` nổi bật), bài học về giá lấy từ mục "Đề xuất cho đặc tả v0.2".
+PKB không ghi cờ "evidence khớp nguồn" theo từng fact, nên trang chỉ hiện tỉ lệ `evidence_in_source` của cả PKB.
+
 ## Crawl lịch sự (NFR-05)
 
 | Quy tắc | Cách làm | Bằng chứng trong `crawl.json` |
