@@ -1,0 +1,306 @@
+%% Nguồn: @tranquangthong03, 2026-10-07 (file gốc: erd_v0.mermaid). Bản vẽ của erd.dbml (v1.3.1). Chờ @VV6505 duyệt.
+erDiagram
+    %% ============================================
+    %% AUTH
+    %% ============================================
+    auth_users ||--o| merchants : "1:1 (user_id UNIQUE)"
+    auth_users ||--o| creators : "1:1 (user_id UNIQUE)"
+    auth_users ||--o{ commissions : "records payment"
+
+    %% ============================================
+    %% SECTION 1 — IDENTITY & PROFILES
+    %% ============================================
+    creators ||--o{ creator_accounts : "owns N social accounts"
+    creators ||--o{ creator_campaigns : "enrolls in N campaigns"
+    merchants ||--o{ products : "owns N products"
+    merchants ||--o{ campaigns : "owns N campaigns"
+
+    %% ============================================
+    %% SECTION 2 — PRODUCT INTELLIGENCE
+    %% ============================================
+    products ||--o{ product_knowledge : "has N PKB versions"
+    products ||--o{ campaigns : "promoted by N campaigns"
+    products ||--o{ generation_jobs : "has N jobs"
+    products ||--o{ conversions : "receives N conversions"
+    products ||--o{ commission_eligibility : "has N eligibility gates"
+
+    %% ============================================
+    %% SECTION 3 — CAMPAIGN & ENROLLMENT
+    %% ============================================
+    campaigns ||--o{ creator_campaigns : "has N enrollments"
+    campaigns ||--o{ content_scripts : "generates N scripts"
+    campaigns ||--o{ videos : "produces N videos"
+    campaigns ||--o{ published_posts : "distributed via N posts"
+
+    creator_campaigns ||--o{ published_posts : "creator posts"
+    creator_campaigns ||--o{ commission_eligibility : "wins eligibility"
+    creator_campaigns ||--o{ commissions : "earns commissions"
+
+    %% ============================================
+    %% SECTION 4 — CONTENT & VIDEO
+    %% ============================================
+    content_scripts ||--o{ generation_jobs : "processed by N jobs"
+    content_scripts ||--o{ videos : "rendered into N videos"
+
+    generation_jobs ||--|| videos : "produces 1 video"
+
+    videos ||--o{ videos : "parent variant lineage"
+
+    %% ============================================
+    %% SECTION 5 — DISTRIBUTION & TRACKING
+    %% ============================================
+    creator_accounts ||--o{ published_posts : "used for N posts"
+    videos ||--o{ published_posts : "posted as N posts"
+
+    published_posts ||--|| tracking_links : "has 1 link"
+    tracking_links ||--o{ tracking_events : "generates N clicks"
+
+    %% ============================================
+    %% SECTION 6 — CONVERSION & COMMISSION
+    %% ============================================
+    tracking_events ||--o{ conversions : "attributed to N conversions"
+
+    conversions ||--|| commission_eligibility : "first paid claims"
+    conversions ||--|| commissions : "wins 1 commission"
+    commission_eligibility ||--|| commissions : "gates 1 commission"
+
+    %% ============================================
+    %% TABLE DEFINITIONS
+    %% ============================================
+
+    auth_users {
+        uuid id PK
+        text email
+    }
+
+    merchants {
+        uuid id PK
+        uuid user_id FK "UNIQUE, default auth.uid()"
+        text company_name
+        text company_slug UK
+        text website
+        text logo_url
+        text description
+        text contact_email
+        text country
+        text status "pending|active|suspended"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    creators {
+        uuid id PK
+        uuid user_id FK "UNIQUE (FIX needed), default auth.uid()"
+        text display_name
+        text bio
+        text niche
+        text language
+        text country
+        text avatar_url
+        text status "pending|active|suspended"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    creator_accounts {
+        uuid id PK
+        uuid creator_id FK
+        text platform
+        text handle
+        text platform_handle UK "GENERATED platform:handle"
+        text url
+        bigint follower_count
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    products {
+        uuid id PK
+        uuid merchant_id FK
+        text website_url UK
+        text affiliate_url
+        text name "nullable until activation"
+        text description
+        text category
+        jsonb merchant_input
+        int current_knowledge_version FK
+        text status "draft|active|archived"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    product_knowledge {
+        uuid product_id PK "composite"
+        int version PK "composite"
+        text status "draft|approved|rejected"
+        jsonb data
+        jsonb sources
+        uuid approved_by FK
+        timestamptz approved_at
+        timestamptz created_at
+    }
+
+    campaigns {
+        uuid id PK
+        uuid merchant_id FK
+        uuid product_id FK
+        text name
+        text slug UK
+        text description
+        timestamptz start_date
+        timestamptz end_date
+        text target_audience
+        text_array target_countries
+        text target_language
+        text content_brief
+        text_array approved_claims
+        text_array forbidden_claims
+        text cta
+        text commission_type "flat|percentage"
+        numeric commission_value
+        varchar currency "USD only"
+        timestamptz terms_locked_at "permanent marker"
+        text status "draft|active|paused|ended|archived"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    creator_campaigns {
+        uuid id PK
+        uuid creator_id FK
+        uuid campaign_id FK
+        text status "active|left|removed"
+        text commission_type_snapshot "flat|percentage"
+        numeric commission_value_snapshot
+        varchar currency_snapshot "USD"
+        timestamptz joined_at "immutable on rejoin"
+        timestamptz left_at
+        timestamptz updated_at
+    }
+
+    content_scripts {
+        uuid id PK
+        uuid campaign_id FK
+        uuid product_id FK
+        int knowledge_version FK
+        text idea
+        text hook
+        text intent "awareness|education|consideration|conversion"
+        text script_text
+        text platform
+        text language
+        timestamptz created_at
+    }
+
+    generation_jobs {
+        uuid id PK
+        uuid product_id FK
+        uuid content_script_id FK "NULL for crawl"
+        text job_type "crawl|video"
+        text status "queued|running|completed|failed"
+        text idempotency_key UK
+        jsonb input_snapshot
+        jsonb result_manifest
+        text error
+        int attempts
+        timestamptz created_at
+        timestamptz finished_at
+    }
+
+    videos {
+        uuid id PK
+        uuid campaign_id FK
+        uuid content_script_id FK
+        uuid generation_job_id FK "UNIQUE"
+        uuid parent_video_id FK "self-ref variant lineage"
+        text storage_path
+        text thumbnail_path
+        text caption
+        text_array hashtags
+        text cta
+        text posting_instructions
+        timestamptz first_approved_at "permanent freeze"
+        jsonb evidence
+        text review_notes "mutable after approval"
+        text status "pending_review|approved|rejected|archived"
+        uuid reviewed_by FK
+        timestamptz reviewed_at
+        timestamptz created_at
+    }
+
+    published_posts {
+        uuid id PK
+        uuid creator_campaign_id FK "server-derived"
+        uuid creator_id FK "server-derived"
+        uuid campaign_id FK "server-derived"
+        uuid creator_account_id FK "client-provided"
+        uuid video_id FK "client-provided"
+        text status "selected|published|removed"
+        text post_url UK
+        timestamptz posted_at
+        bigint views
+        timestamptz views_updated_at
+        timestamptz created_at
+    }
+
+    tracking_links {
+        uuid id PK
+        uuid published_post_id FK "UNIQUE 1:1"
+        text slug UK
+        text destination_url "server-derived"
+        text status "active|disabled"
+        timestamptz created_at
+    }
+
+    tracking_events {
+        uuid id PK "IS the click_id sent to merchant"
+        uuid tracking_link_id FK
+        text event_type "click only"
+        text visitor_id
+        timestamptz occurred_at
+    }
+
+    conversions {
+        uuid id PK
+        uuid product_id FK
+        uuid attributed_click_id FK "NULL if unattributed"
+        text source "integration namespace"
+        text external_event_id
+        text external_user_id "customer key"
+        text external_order_id "paid only"
+        text event_type "signup|trial|paid"
+        numeric amount
+        varchar currency "USD"
+        text status "valid|voided"
+        text void_reason
+        text eligibility_status "not_applicable|pending|eligible|already_claimed|unattributed"
+        timestamptz eligibility_checked_at
+        jsonb attribution_snapshot
+        timestamptz occurred_at
+        timestamptz received_at
+    }
+
+    commission_eligibility {
+        uuid product_id PK "composite"
+        text source PK "composite"
+        text external_user_id PK "composite"
+        uuid first_paid_conversion_id FK "UNIQUE"
+        uuid first_creator_campaign_id FK "nullable if unattributed"
+        timestamptz claimed_at
+    }
+
+    commissions {
+        uuid id PK
+        uuid conversion_id FK "UNIQUE 1:1"
+        uuid creator_campaign_id FK
+        numeric basis_amount
+        numeric amount
+        varchar currency "USD"
+        jsonb calculation_snapshot
+        text status "pending|approved|paid|reversed"
+        timestamptz approved_at
+        timestamptz paid_at
+        text payment_reference
+        uuid payment_recorded_by FK
+        timestamptz created_at
+    }

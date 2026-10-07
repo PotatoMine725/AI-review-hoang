@@ -1,0 +1,465 @@
+// Nguồn: @tranquangthong03 gửi nhóm ngày 2026-10-07 (file gốc: erd_v0.dbml, nội dung ERD v1.3.1).
+// Đưa vào repo nguyên văn. Trạng thái: chờ @VV6505 duyệt (decision-log #12). Góp ý: issue #23.
+// File này là nguồn chuẩn của ERD; erd.mermaid và data-dictionary.md diễn giải từ file này.
+
+Project ai_review_mvp_v1_3_1 {
+  database_type: 'PostgreSQL'
+  Note: '''MVP SCHEMA BASELINE v1.3.1, 2026-10-07. 16 business tables plus existing Supabase auth.users. Scope frozen for one-month pilot: one merchant per product, one product per campaign, manual QA and posting, one language/template/provider, USD, one-time flat/percentage commission. No recurring commission, wallet, automated payout, vector RAG or partial-refund automation.
+This DBML is the agreed implementation target for this iteration, NOT an executable production migration. SQL REQUIRED notes are acceptance requirements. Preserve and ALTER existing profile tables; do not recreate auth.users.
+Eligibility means first valid paid event successfully accepted by the database for a canonical (product, source, external_user_id), NOT earliest occurred_at or lifetime first purchase outside known data. That first payment consumes eligibility even without attribution. Subsequent valid payments remain revenue but create no additional commission. Full reversal never frees eligibility automatically.
+Release configuration must explicitly set attribution_window_days, revenue_basis, settlement_hold_days and policy_version before processing paid events. No silent defaults. These are configuration choices, not additional tables. The merchant integration must return a verifiable click_id; missing/invalid attribution earns no commission.'''
+}
+
+// AUTH: existing Supabase table; not counted in business tables.
+Table auth.users {
+  id uuid [pk]
+  email text
+}
+
+// ============================================================================
+// SECTION 1 — EXISTING PROFILES (Task 1 + Task Merchant, existing in supplied source; deployment status verified separately)
+// ============================================================================
+
+// 01. Existing Merchant profile
+Table merchants {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, unique, default: `auth.uid()`, ref: - auth.users.id]
+  company_name text [not null]
+  company_slug text [not null, unique]
+  website text
+  logo_url text
+  description text
+  contact_email text
+  country text
+  status text [not null, default: 'pending', check: `status IN ('pending','active','suspended')`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  indexes { status }
+  Note: 'EXISTING TABLE. Preserve checks, normalization, owner RLS, column grants, slug lifecycle trigger. Admin role must be server-controlled.'
+}
+
+// 02. Existing Creator profile
+Table creators {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, unique, default: `auth.uid()`, ref: - auth.users.id]
+  display_name text [not null]
+  bio text
+  niche text
+  language text
+  country text
+  avatar_url text
+  status text [not null, default: 'pending', check: `status IN ('pending','active','suspended')`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  Note: 'EXISTING TABLE. FIX: add UNIQUE(user_id) after checking duplicates (migration 20261007XXXXXX). Preserve profile checks/RLS/grants. Same user may have both creator and merchant profiles.'
+}
+
+// 03. Existing social accounts
+Table creator_accounts {
+  id uuid [pk, default: `gen_random_uuid()`]
+  creator_id uuid [not null, ref: > creators.id]
+  platform text [not null]
+  handle text [not null]
+  platform_handle text [unique, note: 'SQL REQUIRED: preserve GENERATED ALWAYS AS platform || colon || handle STORED and normalization.']
+  url text
+  follower_count bigint [not null, default: 0, check: `follower_count >= 0`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  indexes { 
+    creator_id
+    (id, creator_id) [unique]
+  }
+  Note: 'EXISTING TABLE. creator_id resolved server-side, immutable. Preserve checks/RLS/grants. Handle uniqueness is not ownership verification. Lock platform after referenced by any selected or published post.'
+}
+
+// ============================================================================
+// SECTION 2 — PRODUCT INTELLIGENCE (Task 3 prerequisite)
+// ============================================================================
+
+// 04. Product intake; JSON stores optional merchant input.
+Table products {
+  id uuid [pk, default: `gen_random_uuid()`]
+  merchant_id uuid [not null, ref: > merchants.id]
+  website_url text [not null, unique]
+  affiliate_url text [not null, note: 'Validated redirect destination, not program information page.']
+  name text [note: 'May be null during URL-only intake; required before activation.']
+  description text
+  category text
+  merchant_input jsonb [not null, default: `'{}'::jsonb`]
+  current_knowledge_version int
+  status text [not null, default: 'draft', check: `status IN ('draft','active','archived')`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  indexes { 
+    merchant_id
+    (id, merchant_id) [unique]
+  }
+  Note: 'SQL REQUIRED: canonical URL + HTTP(S) validation; merchant ownership resolved server-side. Active requires name and approved PKB. Current PKB pointer must be approved. Immutable merchant when referenced. Domain uniqueness NOT imposed — confirm with M1 team.'
+}
+
+// 05. PKB: authoritative pricing/features/evidence, versioned JSON.
+Table product_knowledge {
+  product_id uuid [not null, ref: > products.id]
+  version int [not null, check: `version > 0`]
+  status text [not null, default: 'draft', check: `status IN ('draft','approved','rejected')`]
+  data jsonb [not null, note: 'Schema-validated: identity, pricing, features, audience, USP, limitations, brand, claims; facts carry source IDs.']
+  sources jsonb [not null, note: 'Source IDs, URLs, crawl times, hashes, evidence excerpts and private Storage paths.']
+  approved_by uuid [ref: > auth.users.id]
+  approved_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+  indexes { (product_id, version) [pk] }
+  checks { `status <> 'approved' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)` }
+  Note: 'SQL REQUIRED: approved row immutable; recrawl/edit creates new version. Allocate versions transactionally. Validate fact sources. Authorized merchant/admin approves. Use approved JSON directly as AI input; no vector RAG in pilot.'
+}
+Ref: products.(id, current_knowledge_version) > product_knowledge.(product_id, version)
+
+// ============================================================================
+// SECTION 3 — CAMPAIGN & ENROLLMENT
+// ============================================================================
+
+// 06. Campaign: one product, fixed commission for the pilot.
+Table campaigns {
+  id uuid [pk, default: `gen_random_uuid()`]
+  merchant_id uuid [not null, ref: > merchants.id]
+  product_id uuid [not null]
+  name text [not null]
+  slug text [not null, unique]
+  description text
+  start_date timestamptz [not null]
+  end_date timestamptz [not null]
+  target_audience text
+  target_countries text[]
+  target_language text [not null]
+  content_brief text
+  approved_claims text[]
+  forbidden_claims text[]
+  cta text
+  commission_type text [not null, check: `commission_type IN ('flat','percentage')`]
+  commission_value numeric(12,4) [not null]
+  currency varchar(3) [not null, check: `currency = 'USD'`, note: 'Pilot: USD only.']
+  terms_locked_at timestamptz [note: 'Server-managed permanent marker, set atomically by first enrollment; never cleared.']
+  status text [not null, default: 'draft', check: `status IN ('draft','active','paused','ended','archived')`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+  indexes { 
+    (id, product_id) [unique]
+    status
+  }
+  checks {
+    `end_date > start_date`
+    `commission_value >= 0 AND (commission_type <> 'percentage' OR commission_value <= 100)`
+  }
+  Note: 'SQL REQUIRED (D008): active merchant/product and approved PKB before activation. Enrollment transaction locks campaign FOR UPDATE, sets terms_locked_at if null, snapshots terms and inserts enrollment. Campaign UPDATE trigger rejects changes to merchant_id, product_id, commission_type, commission_value or currency whenever OLD.terms_locked_at is set; marker immutable thereafter and not client-writable. Prevent changing terms and setting lock in same operation. No enrollment deletion or reassignment. Lock campaign before enrollment. Existing enrollment backfill sets marker before opening writes. Change commission via NEW campaign. Claim changes require affected videos to be withdrawn/re-reviewed. Currency USD only; validate in SQL.'
+}
+Ref: campaigns.(product_id, merchant_id) > products.(id, merchant_id)
+
+// 07. One enrollment per creator/campaign; rejoin reuses it. Snapshot terms immutable.
+Table creator_campaigns {
+  id uuid [pk, default: `gen_random_uuid()`]
+  creator_id uuid [not null, ref: > creators.id]
+  campaign_id uuid [not null, ref: > campaigns.id]
+  status text [not null, default: 'active', check: `status IN ('active','left','removed')`]
+  commission_type_snapshot text [not null, check: `commission_type_snapshot IN ('flat','percentage')`]
+  commission_value_snapshot numeric(12,4) [not null]
+  currency_snapshot varchar(3) [not null, check: `currency_snapshot = 'USD'`]
+  joined_at timestamptz [not null, default: `now()`]
+  left_at timestamptz
+  updated_at timestamptz [not null, default: `now()`]
+  indexes {
+    (creator_id, campaign_id) [unique]
+    (id, creator_id, campaign_id) [unique]
+    status
+  }
+  checks {
+    `commission_value_snapshot >= 0 AND (commission_type_snapshot <> 'percentage' OR commission_value_snapshot <= 100)`
+    `(status = 'active' AND left_at IS NULL) OR (status IN ('left','removed') AND left_at IS NOT NULL)`
+  }
+  Note: 'SQL REQUIRED: derive creator from auth.uid(); snapshot terms from campaign under FOR UPDATE lock, set permanent terms_locked_at in same transaction. creator_id/campaign_id and snapshots immutable; no DELETE. Snapshots immutable. Join/rejoin only eligible active campaign within dates. Rejoin retains original joined_at AND original commission snapshots (D009) — clears left_at. Removed creators require admin reinstatement. Existing eligible clicks keep original attribution after exit. Commission change requires new campaign.'
+}
+
+// ============================================================================
+// SECTION 4 — CONTENT & VIDEO GENERATION
+// ============================================================================
+
+// 08. Idea + hook + script in one table. Backend-only writes.
+Table content_scripts {
+  id uuid [pk, default: `gen_random_uuid()`]
+  campaign_id uuid [not null]
+  product_id uuid [not null]
+  knowledge_version int [not null]
+  idea text
+  hook text
+  intent text [check: `intent IN ('awareness','education','consideration','conversion')`]
+  script_text text [not null]
+  platform text [not null]
+  language text [not null]
+  created_at timestamptz [not null, default: `now()`]
+  indexes { 
+    (id, campaign_id) [unique]
+    campaign_id
+  }
+  Note: 'SQL REQUIRED (D012): sync API generation with request idempotency; service_role writes only after API authorization. RLS: deny all INSERT/UPDATE/DELETE from authenticated. SELECT restricted to owning merchants and authorized admin/backend; creators receive approved videos, not raw scripts. Approved PKB only. Script immutable once used; revision creates new row. No separate idea/hook workflow in pilot.'
+}
+Ref: content_scripts.(campaign_id, product_id) > campaigns.(id, product_id)
+Ref: content_scripts.(product_id, knowledge_version) > product_knowledge.(product_id, version)
+
+// 09. Shared job status for crawl or video generation.
+Table generation_jobs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  product_id uuid [not null, ref: > products.id]
+  content_script_id uuid [ref: > content_scripts.id]
+  job_type text [not null, check: `job_type IN ('crawl','video')`]
+  status text [not null, default: 'queued', check: `status IN ('queued','running','completed','failed')`]
+  idempotency_key text [not null, unique]
+  input_snapshot jsonb [not null]
+  result_manifest jsonb [note: 'PKB version or video IDs + Storage paths; NOT a second source of truth.']
+  error text
+  attempts int [not null, default: 0, check: `attempts >= 0`]
+  created_at timestamptz [not null, default: `now()`]
+  finished_at timestamptz
+  checks {
+    `(job_type = 'crawl' AND content_script_id IS NULL) OR (job_type = 'video' AND content_script_id IS NOT NULL)`
+  }
+  Note: 'SQL REQUIRED: script belongs to product. Worker-only writes. Claim jobs atomically, bounded retry, idempotent output persistence. One job per generated output; deliberate rerun uses new key. Background queue is implementation concern.'
+}
+
+// 10. Video output + distribution text + manual QA.
+Table videos {
+  id uuid [pk, default: `gen_random_uuid()`]
+  campaign_id uuid [not null, ref: > campaigns.id]
+  content_script_id uuid [not null]
+  generation_job_id uuid [not null, unique, ref: - generation_jobs.id]
+  parent_video_id uuid [ref: > videos.id, note: 'Optional variant lineage; each variant is a normal video.']
+  storage_path text [not null]
+  thumbnail_path text
+  caption text [not null]
+  hashtags text[]
+  cta text
+  posting_instructions text
+  first_approved_at timestamptz [note: 'Set on first approval, never cleared or changed; permanent content lock.']
+  evidence jsonb [not null, note: 'Source references + test recording/output paths; empty evidence cannot support tested-experience claims.']
+  review_notes text [note: 'Mutable after approval (D010).']
+  status text [not null, default: 'pending_review', check: `status IN ('pending_review','approved','rejected','archived')`]
+  reviewed_by uuid [ref: > auth.users.id]
+  reviewed_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+  indexes { 
+    (id, campaign_id) [unique]
+    campaign_id
+    status
+  }
+  checks {
+    `status <> 'approved' OR first_approved_at IS NOT NULL`
+    `first_approved_at IS NULL OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL AND status IN ('approved','archived'))`
+  }
+  Note: 'SQL REQUIRED (D010): first approval atomically sets first_approved_at, reviewed_by and reviewed_at. Once first_approved_at is set, freeze campaign_id, content_script_id, generation_job_id, parent_video_id, storage_path, thumbnail_path, caption, hashtags, cta, posting_instructions, evidence and original approval metadata. Freeze applies even after archive; changing content in same UPDATE that archives is forbidden. Admin may edit review_notes; approved can only transition to archived, archived is terminal. Revisions create a new row and require fresh QA. Job must be video type and use same script; parent must be a different video in same campaign. Server-only QA and signed authorized downloads.'
+}
+Ref: videos.(content_script_id, campaign_id) > content_scripts.(id, campaign_id)
+
+// ============================================================================
+// SECTION 5 — DISTRIBUTION & TRACKING
+// ============================================================================
+
+// 11. Selected post exists before publishing, so a link can exist first.
+Table published_posts {
+  id uuid [pk, default: `gen_random_uuid()`]
+  creator_campaign_id uuid [not null]
+  creator_id uuid [not null]
+  campaign_id uuid [not null]
+  creator_account_id uuid [not null]
+  video_id uuid [not null]
+  status text [not null, default: 'selected', check: `status IN ('selected','published','removed')`]
+  post_url text [unique]
+  posted_at timestamptz
+  views bigint [not null, default: 0, check: `views >= 0`]
+  views_updated_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+  indexes {
+    campaign_id
+    creator_campaign_id
+    status
+  }
+  checks { `status <> 'published' OR (post_url IS NOT NULL AND posted_at IS NOT NULL)` }
+  Note: 'SQL REQUIRED (D011): BEFORE INSERT derive creator_id from auth.uid(), campaign_id from video, creator_campaign_id from active enrollment. Client INSERT permits only creator_account_id and video_id. Composite FKs plus owner RLS enforce ownership; account platform matches script and video must be approved. All relationship IDs immutable immediately after INSERT. Owner calls confirm_post RPC with post_url and posted_at; backend canonicalizes URL and performs selected-to-published transition. Repeated identical confirmation is idempotent; removed is terminal. Views updated through owner-authorized API and labelled manual/unverified; views_updated_at server-managed. No direct client status or ownership writes.'
+}
+Ref: published_posts.(creator_campaign_id, creator_id, campaign_id) > creator_campaigns.(id, creator_id, campaign_id)
+Ref: published_posts.(creator_account_id, creator_id) > creator_accounts.(id, creator_id)
+Ref: published_posts.(video_id, campaign_id) > videos.(id, campaign_id)
+
+// 12. One tracking link for one selected/published post.
+Table tracking_links {
+  id uuid [pk, default: `gen_random_uuid()`]
+  published_post_id uuid [not null, unique, ref: - published_posts.id]
+  slug text [not null, unique]
+  destination_url text [not null]
+  status text [not null, default: 'active', check: `status IN ('active','disabled')`]
+  created_at timestamptz [not null, default: `now()`]
+  Note: 'SQL REQUIRED: derive + validate destination from product affiliate_url; never allow arbitrary client redirects. Preserve affiliate parameters and add click_id through agreed merchant integration. Immutable post association. New eligible clicks require active enrollment/campaign within dates, nonremoved post and approved video. Otherwise reject tracking redirect with inactive-link response. Historical eligible clicks retain attribution within configured window after exit/end. No new link requires an already published URL.'
+}
+
+// 13. Clicks only for pilot; no impression/landing pipeline.
+Table tracking_events {
+  id uuid [pk, default: `gen_random_uuid()`, note: 'This IS the click_id sent to merchant.']
+  tracking_link_id uuid [not null, ref: > tracking_links.id]
+  event_type text [not null, default: 'click', check: `event_type = 'click'`]
+  visitor_id text
+  occurred_at timestamptz [not null, default: `now()`]
+  indexes { (tracking_link_id, occurred_at) }
+  Note: 'Server redirect handler only. Each redirect gets new click_id. No commission from raw clicks. Store minimal visitor data; click counts are raw observed clicks, not verified unique humans.'
+}
+
+// ============================================================================
+// SECTION 6 — CONVERSION, ELIGIBILITY, COMMISSION
+// ============================================================================
+
+// 14. Events persisted FIRST; eligibility resolved by one transactional RPC.
+Table conversions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  product_id uuid [not null, ref: > products.id]
+  attributed_click_id uuid [ref: > tracking_events.id]
+  source text [not null, note: 'Stable integration namespace; same namespace for import and webhook of same upstream event.']
+  external_event_id text [not null]
+  external_user_id text [not null]
+  external_order_id text [note: 'Paid transaction/invoice ID; NOT subscription ID.']
+  event_type text [not null, check: `event_type IN ('signup','trial','paid')`]
+  amount numeric(14,2) [check: `amount >= 0`]
+  currency varchar(3)
+  status text [not null, default: 'valid', check: `status IN ('valid','voided')`]
+  void_reason text
+  eligibility_status text [not null, default: 'not_applicable', note: 'Derived server-side: not_applicable | pending | eligible | already_claimed | unattributed']
+  eligibility_checked_at timestamptz
+  attribution_snapshot jsonb [note: 'Selected click, policy version/window, reason; null click means unattributed.']
+  occurred_at timestamptz [not null]
+  received_at timestamptz [not null, default: `now()`]
+  indexes {
+    (product_id, source, external_event_id) [unique]
+    (product_id, source, external_order_id) [unique]
+    (product_id, source, external_user_id)
+    (id, product_id, source, external_user_id) [unique]
+    eligibility_status
+  }
+  checks {
+    `(event_type = 'paid' AND external_order_id IS NOT NULL AND amount IS NOT NULL AND currency IS NOT NULL) OR (event_type IN ('signup','trial') AND external_order_id IS NULL AND amount IS NULL AND currency IS NULL)`
+    `status <> 'voided' OR void_reason IS NOT NULL`
+    `eligibility_status IN ('not_applicable','pending','eligible','already_claimed','unattributed')`
+    `event_type = 'paid' OR (eligibility_status = 'not_applicable' AND eligibility_checked_at IS NULL)`
+    `eligibility_status NOT IN ('eligible','already_claimed','unattributed') OR (event_type = 'paid' AND eligibility_checked_at IS NOT NULL)`
+    `eligibility_status <> 'eligible' OR attributed_click_id IS NOT NULL`
+    `eligibility_status <> 'unattributed' OR attributed_click_id IS NULL`
+    `event_type <> 'paid' OR currency = 'USD'`
+  }
+  Note: 'SQL REQUIRED (D007): trusted ingest_conversion RPC only. Insert conversion before eligibility to satisfy immediate FK; no BEFORE INSERT eligibility claim. Validate payload and idempotency; retry existing event/order returns original result without rewriting attribution. Valid paid starts pending and is resolved before commit. First successful customer claim with valid click becomes eligible; without valid attribution becomes unattributed but still consumes eligibility. Customer-key conflict becomes already_claimed, still counts as revenue. Signup/trial and newly received voided events are not_applicable and do not claim. eligibility_checked_at set for processed paid events. Freeze identity, amount, currency and finalized attribution; status may be voided only by authorized atomic reversal before settlement. Keep original eligibility label for audit. Invalid click is stored as reason in snapshot; attributed_click_id is null. Do not infer attribution by matching visitor alone.'
+}
+
+// 15. NEW v1.3 (D007) — One-time eligibility gate per product customer.
+Table commission_eligibility {
+  product_id uuid [not null, ref: > products.id]
+  source text [not null]
+  external_user_id text [not null]
+  first_paid_conversion_id uuid [not null, unique, note: 'First accepted valid paid event; composite FK guarantees exact customer identity.']
+  first_creator_campaign_id uuid [ref: > creator_campaigns.id, note: 'Nullable only for first paid event without valid attribution.']
+  claimed_at timestamptz [not null, default: `now()`]
+  indexes {
+    (product_id, source, external_user_id) [pk]
+    (first_paid_conversion_id, first_creator_campaign_id) [unique]
+  }
+  Note: 'SQL REQUIRED: append-only gate. Claim AFTER conversion insert within same RPC transaction, using explicit customer-key ON CONFLICT DO NOTHING RETURNING. At most one winner; PK alone does not guarantee processing completeness. Winner must be valid paid at claim time. Enrollment must equal attributed click post enrollment, or null when unattributed. Retry same winner returns previous result, not already_claimed. No UPDATE/DELETE, including after void/refund. first accepted refers to successful DB claim order, not occurred_at. Out-of-order historical corrections require manual reconciliation before payment, never automatic reassignment.'
+}
+
+Ref: commission_eligibility.(first_paid_conversion_id, product_id, source, external_user_id) > conversions.(id, product_id, source, external_user_id)
+
+// 16. Earnings + manual settlement; no wallet.
+Table commissions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  conversion_id uuid [not null, unique, ref: - conversions.id]
+  creator_campaign_id uuid [not null, ref: > creator_campaigns.id]
+  basis_amount numeric(14,2) [not null, check: `basis_amount >= 0`]
+  amount numeric(14,2) [not null, check: `amount >= 0`]
+  currency varchar(3) [not null, check: `currency = 'USD'`]
+  calculation_snapshot jsonb [not null, note: 'Enrollment rate/type, revenue basis, rounding, pilot policy version.']
+  status text [not null, default: 'pending', check: `status IN ('pending','approved','paid','reversed')`]
+  approved_at timestamptz
+  paid_at timestamptz
+  payment_reference text
+  payment_recorded_by uuid [ref: > auth.users.id]
+  created_at timestamptz [not null, default: `now()`]
+  indexes { 
+    creator_campaign_id
+    status
+  }
+  checks {
+    `status <> 'paid' OR (paid_at IS NOT NULL AND payment_reference IS NOT NULL AND payment_recorded_by IS NOT NULL)`
+    `status NOT IN ('approved','paid') OR approved_at IS NOT NULL`
+  }
+  Note: 'SQL REQUIRED: same ingest transaction creates commission only for valid paid eligible winner. Composite FK requires exact winning conversion AND enrollment; UNIQUE conversion_id limits to one commission. Nullable enrollment on unattributed eligibility cannot be matched by nonnull commission enrollment. Calculate from immutable enrollment snapshot; USD required and revenue basis/rounding snapshotted. Identity, calculation and amounts immutable. Settlement and void RPCs lock conversion then commission in same order and recheck status; no paying a voided event or voiding an already paid commission through pilot path. Reversal retains original amount but excludes earnings; eligibility never released. Manual full settlement after configured hold, with reference and trusted actor. No direct authenticated financial writes.'
+}
+
+Ref: commissions.(conversion_id, creator_campaign_id) > commission_eligibility.(first_paid_conversion_id, first_creator_campaign_id)
+
+// ============================================================================
+// MIGRATION / API GATES — required acceptance criteria, not DBML features
+// ============================================================================
+// 1. ALTER existing profile tables; preserve checks/triggers/RLS/grants. Fix
+//    creators.user_id UNIQUE after duplicate inspection. Never recreate auth.users.
+// 2. Normalize URLs/strings/platforms; preserve generated platform_handle. Set
+//    updated_at server-side. Validate JSON schemas and all USD currency fields.
+// 3. Owner RLS on profiles/posts/earnings; creators discover eligible campaigns
+//    and approved video packages. Raw PKB/evidence/jobs are private. Since videos
+//    contain evidence, use safe API DTOs/column grants, not unrestricted SELECT *.
+//    Scripts are backend-only writes, with owning merchant/admin reads.
+// 4. Client selects account/video; server derives post ownership. Immutable FKs
+//    from initial insert. confirm_post RPC sets posted_at/status after ownership
+//    checks. Manual views API sets views_updated_at and labels data unverified.
+// 5. Enrollment RPC: lock campaign FOR UPDATE, validate eligibility/dates, set
+//    terms_locked_at once, snapshot, insert. Lock campaign before enrollment.
+//    Reject locked terms edits, marker clearing, enrollment DELETE/reassignment.
+//    Creator rejoin retains original joined_at/snapshots. Removed requires admin.
+// 6. first_approved_at is permanent: freeze content, lineage and approval metadata
+//    forever after approval, including during/after archive. Notes remain admin
+//    editable. Revisions are new rows; archived is terminal. File bytes at referenced
+//    Storage paths must also be immutable; replacing bytes must create a new path.
+// 7. ingest_conversion RPC is the sole ingestion/claim/commission transaction:
+//    validate -> insert/dedup event -> claim eligibility -> label -> commission.
+//    Persist conversion FIRST (not a BEFORE INSERT claim). Use explicit customer
+//    conflict target and RETURNING. Losers retain valid revenue, no commission.
+//    Retry returns existing result. No request commits a valid paid row as pending.
+//    Commission failure rolls back newly inserted conversion and eligibility too.
+// 8. Eligibility customer key matches winning conversion via composite FK.
+//    Commission must match winning conversion/enrollment via composite FK. Trigger
+//    or trusted function also validates paid status and click enrollment. Freeze
+//    identity columns. Prevent direct SQL paths bypassing required business gates.
+// 9. First valid accepted paid consumes eligibility even without attribution.
+//    No automatic reallocation after refund or historical earlier event. Merchant
+//    customer IDs/source namespaces must be canonical and stable across import
+//    and webhook. True lifetime first purchase needs merchant evidence; not assumed.
+// 10. Attribution: merchant returns authenticated click_id, within configured
+//     window, same product and timestamp order. Signup-to-paid can reuse previously
+//     verified acquisition click for same customer only within window. Define a
+//     single canonical returned-click policy in integration contract. Record policy
+//     version/reason. Missing attribution never creates a commission.
+// 11. Configure attribution_window_days (>0), settlement_hold_days (>=0), approved
+//     revenue_basis and policy_version before paid ingest; fail configuration check
+//     if absent. USD only. These values are operational launch requirements.
+//     Record the basis and eligible amount in calculation_snapshot/basis_amount.
+// 12. Void full payment before payout atomically reverses commission (if any), but
+//     never removes eligibility. Lock conversion then commission for both payment
+//     and void operations. Post-payment/partial refunds require manual reconciliation
+//     outside automated pilot. Keep original amounts; do not rewrite history.
+// 13. Restrict deletes on historical products/campaigns/content/conversions/earnings.
+//     Archive instead. Prevent auth deletion from cascading into earnings. Restrict
+//     mutation of all referenced lineage; approved PKB cannot be overwritten.
+// 14. Worker retries are idempotent; claim job atomically with bounded retries.
+//     Sync script endpoint authorizes caller, validates approved PKB and uses
+//     request idempotency. Service credentials remain server-side; admin identity
+//     is verified, never supplied/trusted blindly from client.
+// 15. Revenue = valid paid events, including already_claimed/unattributed. Paid
+//     users = distinct canonical customer keys. Earnings exclude reversed amounts.
+//     Views are current manually reported totals; clicks are observed redirects.
+//     Financial dashboards must distinguish merchant sales revenue vs commission.
+// 16. Update M1 specification/API contract for simplified JSON sources/assets,
+//     no vector RAG and sync scripts. FE/AI/BE share one versioned JSON contract.
+// 17. Minimum integration tests: parallel same-customer claims; retry same order;
+//     unattributed first payment then attributed repeat; rollback on commission
+//     failure; first enrollment vs terms edit; cross-owner post; archive freeze;
+//     concurrent void vs payout; late events still counted as revenue; invalid
+//     currency/config rejection; FK prevents commission for nonwinning conversion.
