@@ -29,12 +29,23 @@ Quy tắc:
   (copy đúng chữ, ≤ 200 ký tự). Không viết lại evidence.
 - `origin` luôn là "crawled".
 - Giữ nguyên ngôn ngữ của trang nguồn cho tên và mô tả.
-- pricing.plans: mỗi plan × mỗi cách tính tiền (trả tháng / trả năm) là 1 mục. Ghi `price_text` nguyên văn,
-  `price` là số (null nếu không có giá, vd. "Contact sales"), `currency` theo mã ISO 4217 (USD, VND…).
-  Chỉ lấy plan của sản phẩm chính; bỏ giá API theo token nếu nó không phải plan.
 - features: tính năng cụ thể của sản phẩm (tối đa 15, quan trọng nhất trước). use_cases: tối đa 8. limitations: hạn
   chế, giới hạn dùng, điều kiện được ghi rõ (tối đa 8).
-- Không tìm thấy thì để null hoặc danh sách rỗng."""
+- Không tìm thấy thì để null hoặc danh sách rỗng.
+
+Quy tắc giá (pricing):
+1. Tách giá niêm yết và khuyến mãi: `list_price` là giá thường; `promo_price` + `promo_terms` là giá khuyến mãi
+   (vd. "tháng đầu"). Không ghi giá khuyến mãi vào `list_price`.
+2. Không tự tính, không quy đổi (năm → tháng, đổi tiền). Giá là con số in trên trang. `price_text` chép nguyên văn.
+3. `price_unit` (month | year | seat_month | seat_year | one_time) và `billing_cycle` (monthly | quarterly |
+   yearly | one_time) là bắt buộc khi có giá. 1 plan có nhiều chu kỳ thì ghi nhiều dòng. Plan Free: `list_price` 0.
+   Plan "Contact sales": `list_price` null, `price_unit` và `billing_cycle` null.
+4. `plans` chỉ chứa gói đăng ký. Giá theo token, theo giây video, theo credit đưa vào `usage_prices`.
+5. `default_view`: tab / chu kỳ trang giá đang hiển thị (vd. "monthly"). `other_views`: các tab khác có trên trang
+   nhưng nội dung chưa có trong nguồn.
+Ví dụ đúng: trang ghi "Pro $17 per month with annual subscription discount ($200 billed up front), $20 if billed
+monthly" → 2 dòng: {name: Pro, list_price: 17, price_unit: month, billing_cycle: yearly} và
+{name: Pro, list_price: 20, price_unit: month, billing_cycle: monthly}. Không ghi 16.67 (= 200/12)."""
 
 
 # ---------------------------------------------------------------- env + client
@@ -171,7 +182,7 @@ def merge(parts: list[dict]) -> dict:
     Danh sách: nối và bỏ trùng theo tên/giá trị."""
     out: dict = {
         "identity": {"models": []},
-        "pricing": {"plans": []},
+        "pricing": {"plans": [], "usage_prices": [], "other_views": []},
         "features": [],
         "use_cases": [],
         "limitations": [],
@@ -196,14 +207,30 @@ def merge(parts: list[dict]) -> dict:
         for field, value in pricing.items():
             if field == "plans":
                 for pl in value or []:
-                    add(out["pricing"]["plans"], pl, "plans", _key(pl.get("name"), pl.get("price_text")))
+                    add(
+                        out["pricing"]["plans"],
+                        pl,
+                        "plans",
+                        _key(pl.get("name"), pl.get("price_text"), pl.get("billing_cycle")),
+                    )
+            elif field == "usage_prices":
+                for up in value or []:
+                    add(
+                        out["pricing"]["usage_prices"],
+                        up,
+                        "usage_prices",
+                        _key(up.get("name"), up.get("unit"), up.get("price")),
+                    )
+            elif field == "other_views":
+                for v in value or []:
+                    add(out["pricing"]["other_views"], v, "other_views", _key(v))
             elif value and not out["pricing"].get(field):
                 out["pricing"][field] = value
         for f in p.get("features") or []:
             add(out["features"], f, "features", _key(f.get("name")))
-        for group in ("use_cases", "limitations"):
+        for group, text_key in (("use_cases", "title"), ("limitations", "text")):
             for f in p.get(group) or []:
-                add(out[group], f, group, _key(f.get("value")))
+                add(out[group], f, group, _key(f.get(text_key)))
     # Trang không phải pricing hay nhắc tên plan mà không có giá ("Pro and Max plans"):
     # bỏ mục không có số nếu đã có mục cùng tên kèm giá.
     plans = out["pricing"]["plans"]

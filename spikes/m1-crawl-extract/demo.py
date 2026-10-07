@@ -18,6 +18,8 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
+from schema import PKB_SCHEMA_VERSION
+
 ROOT = Path(__file__).parent
 OUTPUT_DIR = ROOT / "output"
 OUT_FILE = OUTPUT_DIR / "demo.html"
@@ -166,27 +168,61 @@ def identity_html(pkb: dict, product: dict) -> str:
     return f'<h3>Identity</h3><dl class="id">{dl}</dl>'
 
 
-def plans_html(pkb: dict) -> str:
-    plans = pkb["pricing"].get("plans", [])
+def plans_html(data: dict) -> str:
+    pricing = data["pricing"]
+    plans = pricing.get("plans", [])
     head = (
-        "<tr><th style='width:14%'>Plan</th><th class='num' style='width:14%'>Giá</th>"
-        "<th style='width:9%'>Tiền tệ</th><th style='width:10%'>Chu kỳ</th><th>price_text (nguyên văn)</th></tr>"
+        "<tr><th style='width:11%'>Plan</th><th class='num' style='width:9%'>list_price</th>"
+        "<th class='num' style='width:9%'>promo_price</th><th style='width:8%'>Tiền tệ</th>"
+        "<th style='width:10%'>price_unit</th><th style='width:10%'>billing_cycle</th>"
+        "<th>price_text (nguyên văn)</th></tr>"
     )
     rows = "".join(
-        f"<tr><td>{esc(p['name'])}</td><td class='num'>{esc(fmt_price(p.get('price')))}</td>"
-        f"<td>{esc(p.get('currency') or '—')}</td><td>{esc(p.get('billing_period'))}</td>"
-        f"<td>{esc(p.get('price_text'))}</td></tr>"
+        f"<tr><td>{esc(p['name'])}</td><td class='num'>{esc(fmt_price(p.get('list_price')))}</td>"
+        f"<td class='num' title='{esc(p.get('promo_terms'))}'>{esc(fmt_price(p.get('promo_price')))}</td>"
+        f"<td>{esc(p.get('currency') or '—')}</td><td>{esc(p.get('price_unit') or '—')}</td>"
+        f"<td>{esc(p.get('billing_cycle') or '—')}</td><td>{esc(p.get('price_text'))}</td></tr>"
         for p in plans
     )
-    return f"<h3>Plan và giá ({len(plans)})</h3><table>{head}{rows}</table>"
+    views = (
+        f"Tab mặc định: <b>{esc(pricing.get('default_view') or '—')}</b> · "
+        f"tab chưa lấy: <b>{esc(', '.join(pricing.get('other_views') or []) or '—')}</b> · "
+        f"vùng IP: <b>{esc(pricing.get('region') or '—')}</b> · locale: <b>{esc(pricing.get('locale') or '—')}</b>"
+    )
+    return f"<h3>Plan và giá ({len(plans)})</h3><p class='meta'>{views}</p><table>{head}{rows}</table>"
+
+
+def usage_prices_html(data: dict) -> str:
+    items = data["pricing"].get("usage_prices", [])
+    if not items:
+        return "<h3>usage_prices</h3><p class='meta'>Không có.</p>"
+    head = (
+        "<tr><th style='width:30%'>Tên</th><th style='width:25%'>Đơn vị</th>"
+        "<th class='num' style='width:15%'>Giá</th><th>Tiền tệ</th></tr>"
+    )
+    rows = "".join(
+        f"<tr><td>{esc(u['name'])}</td><td>{esc(u['unit'])}</td>"
+        f"<td class='num'>{esc(fmt_price(u.get('price')))}</td><td>{esc(u.get('currency') or '—')}</td></tr>"
+        for u in items
+    )
+    return f"<h3>usage_prices ({len(items)})</h3><table>{head}{rows}</table>"
+
+
+def blocked_html(product: dict, report: dict) -> str:
+    return (
+        f'<section class="card"><h2>{esc(product["name"])}</h2>'
+        f"<p><span class='bad'>Không crawl được.</span> {esc(report.get('blocked') or 'không rõ lý do')}</p>"
+        "<p class='meta'>Không có PKB. Không vượt chặn: không đổi User-Agent, không dùng proxy.</p></section>"
+    )
 
 
 def product_html(product: dict, pkb: dict) -> str:
-    sources = {s["source_id"]: s for s in pkb["sources"]}
+    data = pkb["data"]
+    sources = {s["id"]: s for s in pkb["sources"]}
     meta = pkb["meta"]
-    features = [fact_item(f["name"], f.get("description"), f, sources) for f in pkb["features"]]
-    use_cases = [fact_item(f["value"], None, f, sources) for f in pkb["use_cases"]]
-    limitations = [fact_item(f["value"], None, f, sources) for f in pkb["limitations"]]
+    features = [fact_item(f["name"], f.get("description"), f, sources) for f in data["features"]]
+    use_cases = [fact_item(f["title"], None, f, sources) for f in data["use_cases"]]
+    limitations = [fact_item(f["text"], None, f, sources) for f in data["limitations"]]
     unknown = meta.get("unknown_source_ids") or []
     note = (
         f"Evidence khớp nguyên văn nguồn: <b>{meta['evidence_in_source'] * 100:.1f}%</b> "
@@ -197,7 +233,7 @@ def product_html(product: dict, pkb: dict) -> str:
     return (
         f'<section class="card"><h2>{esc(product["name"])}</h2>'
         f'<p class="meta">{note}</p>'
-        f"{identity_html(pkb, product)}{plans_html(pkb)}"
+        f"{identity_html(data, product)}{plans_html(data)}{usage_prices_html(data)}"
         f"{fact_list('Features', features)}"
         f"{fact_list('Use cases', use_cases)}"
         f"{fact_list('Limitations', limitations)}"
@@ -222,8 +258,11 @@ def metrics_html(rows: list[dict], names: dict[str, str]) -> str:
     )
     body = []
     for r in rows:
-        ok = r["price_plan_correct"].strip().lower() == "true"
-        verdict = '<span class="ok">✔ Đúng</span>' if ok else '<span class="bad">✘ Sai</span>'
+        correct = r["price_plan_correct"].strip().lower()
+        verdict = {
+            "true": '<span class="ok">✔ Đúng</span>',
+            "false": '<span class="bad">✘ Sai</span>',
+        }.get(correct, "—")
         cls = ' class="hl"' if r["mode"] == "batch" else ""
         body.append(
             f"<tr{cls}><td>{esc(names.get(r['product'], r['product']))}</td>"
@@ -247,11 +286,16 @@ def lessons_html(lessons: list[tuple[str, str]]) -> str:
     return f'<ul class="lessons">{items}</ul>'
 
 
-def build_page(model: str, products: list[dict], pkbs: dict[str, dict], metrics: list[dict]) -> str:
+def build_page(
+    model: str, products: list[dict], pkbs: dict[str, dict], reports: dict[str, dict], metrics: list[dict]
+) -> str:
     names = {p["slug"]: p["name"] for p in products}
     run_date = max(p["meta"]["generated_at"] for p in pkbs.values())[:10]
-    run_total = sum(float(r["cost_usd"]) for r in metrics)
-    cards = "".join(product_html(p, pkbs[p["slug"]]) for p in products)
+    run_total = sum(float(r["cost_usd"] or 0) for r in metrics)
+    cards = "".join(
+        product_html(p, pkbs[p["slug"]]) if p["slug"] in pkbs else blocked_html(p, reports[p["slug"]])
+        for p in products
+    )
     return f"""<!doctype html>
 <html lang="vi">
 <head>
@@ -265,13 +309,13 @@ def build_page(model: str, products: list[dict], pkbs: dict[str, dict], metrics:
 <h1>Spike M1: từ URL đến Product Knowledge Base</h1>
 <div class="flow">URL → crawl (Crawl4AI) → markdown → Gemini (structured output) → PKB (JSON)</div>
 <p class="meta">Ngày chạy: <b>{esc(run_date)}</b> · Model đang xem: <b>{esc(model)}</b> (mode batch) ·
-Tổng chi phí 8 lần chạy trong bảng: <b>${run_total:.3f}</b>
-(≈ $0.40 tính cả 2 smoke test và lần gọi lại, theo README) · Chi phí tính theo giá gói trả phí.</p>
+Schema PKB: <b>v{esc(PKB_SCHEMA_VERSION)}</b> · Tổng chi phí các lần chạy trong bảng: <b>${run_total:.3f}</b>
+· Chi phí tính theo giá gói trả phí.</p>
 
 <h2>1. Product knowledge base (PKB)</h2>
 {cards}
 
-<h2>2. Số liệu 2 product × 2 model × 2 mode</h2>
+<h2>2. Số liệu lần chạy v0.2</h2>
 {metrics_html(metrics, names)}
 
 <h2>3. Bài học về giá</h2>
@@ -290,8 +334,12 @@ def main() -> int:
     args = parser.parse_args()
 
     products = load_json(ROOT / "products.json")
-    pkbs = {}
+    pkbs: dict[str, dict] = {}
+    reports: dict[str, dict] = {}
     for p in products:
+        reports[p["slug"]] = load_json(OUTPUT_DIR / p["slug"] / "crawl.json")
+        if reports[p["slug"]]["pages_used"] == 0:  # crawl bị chặn: hiện thẻ báo lỗi, không có PKB
+            continue
         path = OUTPUT_DIR / p["slug"] / f"pkb.{args.model}.json"
         if not path.exists():
             print(
@@ -301,7 +349,7 @@ def main() -> int:
             return 1
         pkbs[p["slug"]] = load_json(path)
 
-    OUT_FILE.write_text(build_page(args.model, products, pkbs, load_metrics()), encoding="utf-8")
+    OUT_FILE.write_text(build_page(args.model, products, pkbs, reports, load_metrics()), encoding="utf-8")
     print(f"Đã ghi {OUT_FILE}")
     return 0
 

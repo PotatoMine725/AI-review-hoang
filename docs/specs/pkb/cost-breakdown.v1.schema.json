@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CostBreakdown",
+  "description": "generation_jobs.cost_breakdown v1. Worker chỉ ghi cột này; tokens_in, tokens_out, cost_usd do DB tự tính. Xem issue #23.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "currency", "items"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "currency": { "const": "USD" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Item" }
+    }
+  },
+  "$defs": {
+    "Item": {
+      "description": "1 lần gọi có tốn tiền (hoặc 1 lần lấy từ cache). Retry = thêm item, attempt tăng dần.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "attempt", "cache_hit", "cost_usd"],
+      "properties": {
+        "category": { "enum": ["llm", "tts", "video_provider", "other"] },
+        "step": { "type": "string", "description": "Bước pipeline, vd. extract." },
+        "provider": { "type": "string", "description": "vd. google." },
+        "model": { "type": "string", "description": "vd. gemini-3.5-flash-lite." },
+        "attempt": { "type": "integer", "minimum": 1 },
+        "cache_hit": { "type": "boolean" },
+        "tokens_in": { "type": "integer", "minimum": 0, "description": "Chỉ item llm." },
+        "tokens_out": { "type": "integer", "minimum": 0, "description": "Chỉ item llm. Gồm thinking." },
+        "unit_price_in_per_1m": { "type": "number", "minimum": 0 },
+        "unit_price_out_per_1m": { "type": "number", "minimum": 0 },
+        "prices_checked_at": { "type": "string", "format": "date" },
+        "cost_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Giữ 6 chữ số thập phân. 0 nếu cache_hit."
+        }
+      },
+      "if": { "properties": { "cache_hit": { "const": true } } },
+      "then": { "properties": { "cost_usd": { "const": 0 } } }
+    }
+  }
+}

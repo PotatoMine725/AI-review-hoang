@@ -21,20 +21,23 @@ uv run python run.py --dry-run # bước 2: chọn trang, đếm token (count_to
 uv run python run.py           # bước 2: ước tính rồi chạy 2 product × 2 model × 2 mode, ghi pkb + metrics.csv
 ```
 
-`run.py` luôn in ước tính trước lần gọi đầu và dừng nếu chi phí xấu nhất > `BUDGET_USD` ($2, trong `config.py`).
+`run.py` luôn in ước tính trước lần gọi đầu và dừng nếu chi phí xấu nhất > `BUDGET_USD` (đặt $0.20 cho lần chạy v0.2, trong `config.py`; lần chạy v0.1 dùng $2).
+Lần chạy v0.2: `uv run python run.py --models gemini-3.5-flash-lite --modes batch`. Product không crawl được (0 trang) bị bỏ qua.
+`uv run python export_schema.py` xuất JSON Schema của PKB v0.2 ra `docs/specs/pkb/`.
 Thêm `--no-cache` để gọi lại LLM dù nội dung không đổi; `--models` / `--modes` để chạy 1 phần.
 
 Output nằm trong `output/<slug>/`:
 - `crawl.json` (commit): danh sách trang lấy và bỏ kèm lý do, log từng request, kết quả robots.txt, `content_hash`.
   Để file gọn, trang bị bỏ vì robots, bị chặn, trùng hoặc redirect được ghi đủ; `over_limit` chỉ ghi 50 trang điểm cao nhất; lý do khác chỉ đếm trong `skipped_counts`.
 - `pages/<source_id>-<page_type>-<slug>.md` (không commit): markdown đã lọc (`fit_markdown`). File `.raw.md` là markdown chưa lọc.
-- `pkb.<model>.json` (commit): PKB của mode `batch`. `pkb.<model>.per-page.json`: PKB của mode `per_page`.
+- `pkb.<model>.json` (commit): PKB v0.2 của mode `batch`, gồm `data` (cột `product_knowledge.data`), `sources` (cột `product_knowledge.sources`) và `meta` (số đo của spike).
 - `llm_cache/` (không commit): kết quả từng lời gọi LLM, khoá theo `content_hash` (SP-07).
-- `output/metrics.csv` (commit): 1 dòng / product × model × mode.
+- `output/metrics.csv` (commit): 1 dòng / product × model × mode của lần chạy v0.2 (có cột `schema_version`).
+- `output/v0.1/` (commit): kết quả v0.1 (`metrics.csv`, `pkb.*.json` cả 2 mode), giữ để so sánh. Schema v0.1 nằm trong git history.
 
 ## Demo
 
-`demo.py` đọc output đã có (`output/*/pkb.*.json`, `metrics.csv`) và sinh 1 trang HTML tĩnh `output/demo.html` để trình bày. Không gọi LLM, không crawl, không cần mạng, chỉ dùng thư viện chuẩn.
+`demo.py` đọc PKB v0.2 (`output/*/pkb.*.json`, `metrics.csv`; không đọc được PKB v0.1 trong `output/v0.1/`) và sinh 1 trang HTML tĩnh `output/demo.html` để trình bày. Không gọi LLM, không crawl, không cần mạng, chỉ dùng thư viện chuẩn.
 
 ```bash
 uv run python demo.py                               # PKB mode batch của gemini-3.5-flash-lite
@@ -210,6 +213,33 @@ Hai điểm cần xử lý khi đưa vào pipeline: `fit_markdown` làm rơi th�
 4. **`period` bắt buộc và tách nghĩa.** Spike đã bắt buộc trường này (tên `billing_period`), nên cả 8 file đều có giá trị, nhưng nghĩa bị lẫn: Pro "17 $ / tháng, trả theo năm" ghi `price = 17`, `billing_period = year`, nên không biết 17 là giá của kỳ nào. Đề xuất 2 trường bắt buộc: `price_unit` (giá tính cho: tháng, năm, seat/tháng…) và `billing_cycle` (trả tháng / trả năm / 1 lần). Không cho giá trị `unknown` ở trang pricing (3/4 file mode `per_page` có 2–5 dòng `unknown`).
 5. **Tách plan trả phí khỏi giá API và giá theo đơn vị.** Giá theo token, theo giây video (Seedance), theo credit không phải plan nhưng vẫn bị ghi vào `plans` ở mode `per_page`. Đề xuất mục riêng, vd. `pricing.usage_prices` (đơn vị, giá, tiền tệ), và prompt chỉ cho đưa vào `plans` các gói đăng ký.
 6. **Ghi lại tab / chu kỳ mặc định của trang giá.** Crawl chỉ thấy tab đang mở (Dreamina mở tab Monthly; còn Yearly, Quarterly, 1-month). PKB cần ghi trang hiển thị chu kỳ nào và còn tab nào chưa lấy (vd. `pricing.default_view`, `pricing.other_views`), để biết giá đã đủ hay chưa.
+
+## Kết quả v0.2
+
+Chạy ngày 07/10/2026. Schema PKB v0.2 (`schema.py`), prompt có 5 quy tắc giá + 1 ví dụ (`extract.py`). Chỉ chạy `gemini-3.5-flash-lite`, mode `batch`, 10 trang/product. Không dùng lại cache v0.1 vì prompt và schema đổi.
+
+**Gamma không crawl được.** `GET https://gamma.app/robots.txt` (UA của dự án) trả `403`, `server: cloudflare`, `cf-mitigated: challenge`, `cf-ray: a46b266308fbdd4b-HKG`, body là trang HTML của app. Đây là trang thử thách của Cloudflare WAF, không phải robots.txt. Crawler dừng ở trang chủ, 0 trang. Không đổi UA, không retry, không dùng proxy. `crawl.py` nay ghi lý do `waf_challenge` (không ghi "robots.txt không cho phép"). `output/gamma/crawl.json` được sửa tay theo kết quả chẩn đoán này, không request lại. Gamma đã nhận 3 request, cả 3 đều 403 (robots.txt, sitemap.xml trong lần crawl, và 1 lần chẩn đoán). Golden Facts của Gamma chưa có trong repo (qa-log #11): **chờ đối chiếu với Golden Facts**.
+
+Đối chiếu giá (AC-04 v0.2): so từng plan trong PKB mới với markdown raw của trang pricing đã crawl (`pages/*.raw.md`), không mở web lần 2. Vì thế kết quả chỉ chứng minh "PKB đúng với những gì crawler thấy", chưa chứng minh "đúng với website".
+
+| Product | v0.1 (3.5-flash-lite, batch) | v0.2 (3.5-flash-lite, batch) |
+|---|---|---|
+| Claude | Đúng giá, nhưng Pro trả năm ghi `billing_period=year` cho giá 17 $/tháng (mơ hồ) | **Đúng 9/9 plan**: Pro `17, month, yearly` và `20, month, monthly`; Team, Enterprise tính theo `seat_month`; 16 `usage_prices` khớp trang |
+| Dreamina | Sai: Advanced, Ultra lấy giá tháng đầu khuyến mãi làm giá chính | **Đúng 4/4 plan**: Advanced `4.145.379` (promo `2.487.227`, "first month"), Ultra `13.557.213` (promo `8.134.328`) |
+| Gamma | chưa chạy | Không có PKB (WAF). Chờ Golden Facts |
+| Chi phí / product | $0.0135 / $0.0129 | $0.0195 / $0.0129 |
+| Evidence khớp nguyên văn | 1.00 / 0.92 | 1.00 / 0.81 |
+
+Số liệu: `price_plan_correct` 2/2 product đã chạy (v0.1: 1/2 ở cùng model + mode, 1/8 cả ma trận). Mẫu nhỏ, chưa phải NFR-03 (cần golden set 10 product). Chi phí API thật của lần chạy: **$0.0324** (ngân sách $0.20). Schema hợp lệ 2/2, 0 fact thiếu `source_id` hoặc `evidence`.
+
+**Lỗi còn lại, không làm đẹp:**
+1. Dreamina `other_views` rỗng dù trang có tab Yearly / Quarterly / 1-month. Quy tắc 5 chưa đạt. Dreamina cũng không có dòng plan Free (trang không in giá cho Free).
+2. Claude `other_views` ghi các tab đối tượng (Developer, Team & Enterprise, API), không phải chu kỳ. Plan Team và Enterprise vẫn được lấy.
+3. Claude "Max" chỉ có 1 dòng `From 100 $`: trang pricing không in giá riêng cho Max 5x và Max 20x.
+4. Dreamina `evidence_in_source` giảm từ 0.92 xuống 0.81 (4 trong 21 fact có evidence không tìm thấy nguyên văn). Chưa tìm nguyên nhân (không so được từng fact với v0.1, vì khác schema).
+5. `region = VN` và `locale = en-US` là hằng số đặt tay trong `config.py` (`CRAWL_REGION`, `CRAWL_LOCALE`), crawler chưa đo vùng IP và locale thật.
+6. `price_unit` và `billing_cycle` chỉ cho phép null khi `list_price` null (plan "Contact sales"). Validator của `Plan` bắt buộc cả hai khi có giá. Spec M1 chưa nói rõ trường hợp này.
+7. Chỉ 2 product, 1 lần chạy mỗi product. Chưa đo độ ổn định giữa các lần chạy.
 
 ## Acceptance criteria
 

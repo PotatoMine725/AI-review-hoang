@@ -22,7 +22,7 @@ from pathlib import Path
 
 import config
 import extract
-from schema import PKB, PKBExtract
+from schema import PKB_SCHEMA_VERSION, PKBExtract, PKBFile
 
 ROOT = Path(__file__).parent
 OUTPUT_DIR = ROOT / "output"
@@ -30,7 +30,7 @@ METRICS_FILE = OUTPUT_DIR / "metrics.csv"
 MODES = ("per_page", "batch")
 COLUMNS = [
     # cột theo spec
-    "product", "model", "mode", "pages_found", "pages_used", "crawl_seconds", "llm_calls",
+    "product", "schema_version", "model", "mode", "pages_found", "pages_used", "crawl_seconds", "llm_calls",
     "input_tokens", "output_tokens", "cost_usd", "extract_seconds", "schema_valid", "price_plan_correct",
     # đối chiếu tay (AC-04)
     "price_plan_note",
@@ -66,6 +66,7 @@ def load_docs(slug: str) -> tuple[dict, list[dict]]:
                 "fetched_at": p["fetched_at"],
                 "variant": variant,
                 "content_hash": p[f"{variant}_hash"],
+                "path": p["raw_file" if variant == "raw" else "file"],
                 "text": extract.clean_for_llm(md),
             }
         )
@@ -75,6 +76,19 @@ def load_docs(slug: str) -> tuple[dict, list[dict]]:
 def mode_docs(docs: list[dict], mode: str) -> list[dict]:
     """per_page: mọi trang; batch: TOP_PAGES trang điểm cao nhất."""
     return docs if mode == "per_page" else docs[: config.TOP_PAGES]
+
+
+def assemble(data: dict, report: dict) -> dict:
+    """Điền các trường do code làm (không phải LLM): website, region, locale, id của feature."""
+    if not data:
+        return data
+    data = {**data, "schema_version": PKB_SCHEMA_VERSION}
+    if isinstance(data.get("identity"), dict):
+        data["identity"] = {**data["identity"], "website": report["root_url"]}
+    if isinstance(data.get("pricing"), dict):
+        data["pricing"] = {**data["pricing"], "region": config.CRAWL_REGION, "locale": config.CRAWL_LOCALE}
+    data["features"] = [{**f, "id": f"f{i}"} for i, f in enumerate(data.get("features") or [], 1)]
+    return data
 
 
 def plan_calls(docs: list[dict], mode: str) -> list[list[dict]]:
@@ -156,13 +170,20 @@ def run_one(client, prod: dict, model: str, mode: str, use_cache: bool) -> dict:
     ev_ratio, unknown, n_facts = extract.check_evidence(data, texts)
     cost = extract.cost_usd(model, in_tok, out_tok)
     pkb = {
-        **data,
+        "data": assemble(data, prod["report"]),
         "sources": [
-            {k: d[k] for k in ("source_id", "url", "page_type", "fetched_at", "variant", "content_hash")}
+            {
+                "id": d["source_id"],
+                **{k: d[k] for k in ("url", "page_type", "fetched_at", "variant", "content_hash")},
+                "region": config.CRAWL_REGION,
+                "locale": config.CRAWL_LOCALE,
+                "markdown_path": d["path"],
+            }
             for d in docs
         ],
         "meta": {
             "product": slug,
+            "schema_version": PKB_SCHEMA_VERSION,
             "model": model,
             "mode": mode,
             "generated_at": now_iso(),
@@ -176,7 +197,7 @@ def run_one(client, prod: dict, model: str, mode: str, use_cache: bool) -> dict:
         },
     }
     try:
-        pkb = PKB.model_validate(pkb).model_dump(mode="json")
+        pkb = PKBFile.model_validate(pkb).model_dump(mode="json")
         valid = not errors
     except Exception as e:  # noqa: BLE001 — ghi lỗi validate vào file để xem lại
         errors.append(f"final: {str(e)[:500]}")
@@ -189,7 +210,7 @@ def run_one(client, prod: dict, model: str, mode: str, use_cache: bool) -> dict:
 
     report = prod["report"]
     return {
-        "product": slug, "model": model, "mode": mode,
+        "product": slug, "schema_version": PKB_SCHEMA_VERSION, "model": model, "mode": mode,
         "pages_found": report["pages_found"], "pages_used": report["pages_used"],
         "crawl_seconds": report["crawl_seconds"], "llm_calls": calls,
         "input_tokens": in_tok, "output_tokens": out_tok, "cost_usd": f"{cost:.6f}",
@@ -259,6 +280,11 @@ def main() -> None:
         if args.slugs and p["slug"] not in args.slugs:
             continue
         report, docs = load_docs(p["slug"])
+        if not docs:
+            print(
+                f"\n{p['name']}: bỏ qua, crawl không có trang nào ({report.get('blocked') or 'không rõ lý do'})"
+            )
+            continue
         selected.append({"slug": p["slug"], "name": p["name"], "report": report, "docs": docs})
         print(f"\n{p['name']}: {len(docs)} trang gửi LLM")
         for d in docs:

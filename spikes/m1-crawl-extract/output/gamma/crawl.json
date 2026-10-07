@@ -1,0 +1,78 @@
+{
+  "product": "gamma",
+  "name": "Gamma",
+  "root_url": "https://gamma.app",
+  "allowed_hosts": [
+    "gamma.app"
+  ],
+  "user_agent": "AIReviewContentFactory-Spike/0.1 (+https://github.com/PotatoMine725/AI-review-BE; M1 research spike)",
+  "limits": {
+    "max_pages": 30,
+    "max_extra_host_pages": 5,
+    "min_interval_s": 1.0
+  },
+  "started_at": "2026-10-07T07:18:36.398+00:00",
+  "blocked": "waf_challenge: status=403 cf-ray=a46b266308fbdd4b-HKG server=cloudflare (cf-mitigated: challenge)",
+  "sitemaps": [
+    {
+      "url": "https://gamma.app/sitemap.xml",
+      "status": 403,
+      "urls": 0,
+      "children": 0,
+      "error": "HTTP Error 403: Forbidden"
+    }
+  ],
+  "finished_at": "2026-10-07T07:18:38.562+00:00",
+  "crawl_seconds": 2.17,
+  "robots": {
+    "gamma.app": {
+      "host": "gamma.app",
+      "url": "https://gamma.app/robots.txt",
+      "status": 403,
+      "policy": "disallow_all",
+      "sitemaps": [],
+      "fetched_at": "2026-10-07T07:18:36.398+00:00",
+      "error": "waf_challenge: status=403 cf-ray=a46b266308fbdd4b-HKG server=cloudflare (cf-mitigated: challenge)",
+      "group": "",
+      "rules": [],
+      "crawl_delay": null
+    }
+  },
+  "requests": [
+    {
+      "url": "https://gamma.app/robots.txt",
+      "kind": "robots",
+      "host": "gamma.app",
+      "t": 3636.031,
+      "fetched_at": "2026-10-07T07:18:36.398+00:00",
+      "status": 403
+    },
+    {
+      "url": "https://gamma.app/sitemap.xml",
+      "kind": "sitemap",
+      "host": "gamma.app",
+      "t": 3637.046,
+      "fetched_at": "2026-10-07T07:18:37.404+00:00",
+      "status": 403
+    }
+  ],
+  "min_observed_interval_s": {
+    "gamma.app": 1.015
+  },
+  "pages_found": 1,
+  "pages_used": 0,
+  "skipped_counts": {
+    "waf_challenge": 1
+  },
+  "skipped": [
+    {
+      "url": "https://gamma.app/",
+      "reason": "waf_challenge: status=403 cf-ray=a46b266308fbdd4b-HKG server=cloudflare (cf-mitigated: challenge)",
+      "page_type": "other",
+      "score": 1000,
+      "found_via": "home"
+    }
+  ],
+  "pages": [],
+  "diagnosis": "Sửa tay từ chẩn đoán 07/10/2026 (1 GET robots.txt, UA dự án); không request lại Gamma."
+}

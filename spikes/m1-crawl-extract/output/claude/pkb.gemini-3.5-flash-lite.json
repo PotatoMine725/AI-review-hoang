@@ -1,370 +1,608 @@
 {
-  "identity": {
-    "name": {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure",
-      "value": "Claude"
+  "data": {
+    "identity": {
+      "name": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "What is Claude and how does it work?\nClaude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your",
+        "value": "Claude"
+      },
+      "website": "https://claude.com",
+      "tagline": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Think fast,build faster",
+        "value": "Think fast, build faster"
+      },
+      "description": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+        "value": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work."
+      },
+      "category": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+        "value": "AI assistant"
+      },
+      "company": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+        "value": "Anthropic"
+      },
+      "version": null,
+      "models": [
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Mythos",
+          "name": "Mythos"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Fable",
+          "name": "Fable"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Opus",
+          "name": "Opus"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Sonnet",
+          "name": "Sonnet"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Haiku",
+          "name": "Haiku"
+        }
+      ]
     },
-    "tagline": {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Think fast,build faster\nBrainstorm in chat, build in Cowork",
-      "value": "Think fast, build faster"
+    "pricing": {
+      "currency": {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "17 $\nPer month with annual subscription discount (200 $ billed up front). 20 $ if billed monthly.",
+        "value": "USD"
+      },
+      "region": "VN",
+      "locale": "en-US",
+      "default_view": "Individual",
+      "other_views": [
+        "Developer",
+        "Team & Enterprise",
+        "API"
+      ],
+      "plans": [
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "0 $\nFree for everyone",
+          "name": "Free",
+          "currency": "USD",
+          "list_price": 0.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "0 $",
+          "limits": [
+            "Limited use with no payment required"
+          ],
+          "audience": "individuals"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "17 $\nPer month with annual subscription discount (200 $ billed up front). 20 $ if billed monthly.",
+          "name": "Pro",
+          "currency": "USD",
+          "list_price": 17.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "yearly",
+          "price_text": "17 $/month billed annually (200 $ billed up front)",
+          "limits": [],
+          "audience": "individuals"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "17 $\nPer month with annual subscription discount (200 $ billed up front). 20 $ if billed monthly.",
+          "name": "Pro",
+          "currency": "USD",
+          "list_price": 20.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "20 $ if billed monthly",
+          "limits": [],
+          "audience": "individuals"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "From 100 $\nPer month",
+          "name": "Max",
+          "currency": "USD",
+          "list_price": 100.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "From 100 $ Per month",
+          "limits": [],
+          "audience": "individuals"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "20 $\nPer seat / month if billed annually. 25 $ if billed monthly.",
+          "name": "Team - Standard seat",
+          "currency": "USD",
+          "list_price": 20.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "seat_month",
+          "billing_cycle": "yearly",
+          "price_text": "20 $ Per seat / month if billed annually",
+          "limits": [],
+          "audience": "teams"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "20 $\nPer seat / month if billed annually. 25 $ if billed monthly.",
+          "name": "Team - Standard seat",
+          "currency": "USD",
+          "list_price": 25.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "seat_month",
+          "billing_cycle": "monthly",
+          "price_text": "25 $ if billed monthly",
+          "limits": [],
+          "audience": "teams"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "100 $\nPer seat / month if billed annually. 125 $ if billed monthly.",
+          "name": "Team - Premium seat",
+          "currency": "USD",
+          "list_price": 100.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "seat_month",
+          "billing_cycle": "yearly",
+          "price_text": "100 $ Per seat / month if billed annually",
+          "limits": [],
+          "audience": "teams"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "100 $\nPer seat / month if billed annually. 125 $ if billed monthly.",
+          "name": "Team - Premium seat",
+          "currency": "USD",
+          "list_price": 125.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "seat_month",
+          "billing_cycle": "monthly",
+          "price_text": "125 $ if billed monthly",
+          "limits": [],
+          "audience": "teams"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "US$20/seat/month, billed annually. Usage cost scales with model and task.",
+          "name": "Enterprise",
+          "currency": "USD",
+          "list_price": 20.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "seat_month",
+          "billing_cycle": "yearly",
+          "price_text": "US$20/seat/month, billed annually",
+          "limits": [],
+          "audience": "enterprises"
+        }
+      ],
+      "usage_prices": [
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.25 / MTok\nWrite\n$12.50 / MTok\nInput\n$10 / MTok\nOutput\n$50 / MTok",
+          "name": "Fable 5.1 - Read",
+          "unit": "1M tokens",
+          "price": 0.25,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.25 / MTok\nWrite\n$12.50 / MTok\nInput\n$10 / MTok\nOutput\n$50 / MTok",
+          "name": "Fable 5.1 - Write",
+          "unit": "1M tokens",
+          "price": 12.5,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.25 / MTok\nWrite\n$12.50 / MTok\nInput\n$10 / MTok\nOutput\n$50 / MTok",
+          "name": "Fable 5.1 - Input",
+          "unit": "1M tokens",
+          "price": 10.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.25 / MTok\nWrite\n$12.50 / MTok\nInput\n$10 / MTok\nOutput\n$50 / MTok",
+          "name": "Fable 5.1 - Output",
+          "unit": "1M tokens",
+          "price": 50.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$5 / MTok\nInput\n$4 / MTok\nOutput\n$20 / MTok",
+          "name": "Opus 5.5 - Read",
+          "unit": "1M tokens",
+          "price": 0.2,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$5 / MTok\nInput\n$4 / MTok\nOutput\n$20 / MTok",
+          "name": "Opus 5.5 - Write",
+          "unit": "1M tokens",
+          "price": 5.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$5 / MTok\nInput\n$4 / MTok\nOutput\n$20 / MTok",
+          "name": "Opus 5.5 - Input",
+          "unit": "1M tokens",
+          "price": 4.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$5 / MTok\nInput\n$4 / MTok\nOutput\n$20 / MTok",
+          "name": "Opus 5.5 - Output",
+          "unit": "1M tokens",
+          "price": 20.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$2.50 / MTok\nInput\n$2 / MTok\nOutput\n$10 / MTok",
+          "name": "Sonnet 5.5 - Read",
+          "unit": "1M tokens",
+          "price": 0.2,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$2.50 / MTok\nInput\n$2 / MTok\nOutput\n$10 / MTok",
+          "name": "Sonnet 5.5 - Write",
+          "unit": "1M tokens",
+          "price": 2.5,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$2.50 / MTok\nInput\n$2 / MTok\nOutput\n$10 / MTok",
+          "name": "Sonnet 5.5 - Input",
+          "unit": "1M tokens",
+          "price": 2.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.20 / MTok\nWrite\n$2.50 / MTok\nInput\n$2 / MTok\nOutput\n$10 / MTok",
+          "name": "Sonnet 5.5 - Output",
+          "unit": "1M tokens",
+          "price": 10.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.10 / MTok\nWrite\n$1.25 / MTok\nInput\n$1 / MTok\nOutput\n$5 / MTok",
+          "name": "Haiku 4.5 - Read",
+          "unit": "1M tokens",
+          "price": 0.1,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.10 / MTok\nWrite\n$1.25 / MTok\nInput\n$1 / MTok\nOutput\n$5 / MTok",
+          "name": "Haiku 4.5 - Write",
+          "unit": "1M tokens",
+          "price": 1.25,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.10 / MTok\nWrite\n$1.25 / MTok\nInput\n$1 / MTok\nOutput\n$5 / MTok",
+          "name": "Haiku 4.5 - Input",
+          "unit": "1M tokens",
+          "price": 1.0,
+          "currency": "USD"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Read\n$0.10 / MTok\nWrite\n$1.25 / MTok\nInput\n$1 / MTok\nOutput\n$5 / MTok",
+          "name": "Haiku 4.5 - Output",
+          "unit": "1M tokens",
+          "price": 5.0,
+          "currency": "USD"
+        }
+      ],
+      "free_plan": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Free for everyone",
+        "value": true
+      },
+      "trial_days": null
     },
-    "description": {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
-      "value": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work."
-    },
-    "category": {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "trusted assistant for you to do your best work.",
-      "value": "AI assistant"
-    },
-    "company": {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI",
-      "value": "Anthropic"
-    },
-    "version": null,
-    "models": [
+    "features": [
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Mythos",
-        "name": "Mythos"
+        "source_id": "src_01",
+        "evidence": "Chat on web, iOS, Android, and on your desktop",
+        "id": "f1",
+        "name": "Cross-platform chat",
+        "description": "Chat on web, iOS, Android, and on your desktop",
+        "screenshot_ids": []
       },
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Fable",
-        "name": "Fable"
+        "source_id": "src_01",
+        "evidence": "Generate code and visualize data",
+        "id": "f2",
+        "name": "Code generation and data visualization",
+        "description": "Generate code and visualize data",
+        "screenshot_ids": []
       },
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Opus",
-        "name": "Opus"
+        "source_id": "src_01",
+        "evidence": "Write, edit, and create content",
+        "id": "f3",
+        "name": "Content creation and editing",
+        "description": "Write, edit, and create content",
+        "screenshot_ids": []
       },
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Sonnet",
-        "name": "Sonnet"
+        "source_id": "src_01",
+        "evidence": "Ability to search the web",
+        "id": "f4",
+        "name": "Web search",
+        "description": "Ability to search the web",
+        "screenshot_ids": []
       },
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Haiku",
-        "name": "Haiku"
-      }
-    ]
-  },
-  "pricing": {
-    "currency": {
-      "origin": "crawled",
-      "source_id": "src_02",
-      "evidence": "17 $\nPer month with annual subscription discount (200 $ billed up front). 20 $ if billed monthly.",
-      "value": "USD"
-    },
-    "plans": [
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Free\nTry Claude\n0 $\nFree for everyone",
-        "name": "Free",
-        "price": 0.0,
-        "price_text": "0 $",
-        "billing_period": "month",
-        "currency": "USD",
-        "audience": "Free for everyone"
+        "source_id": "src_01",
+        "evidence": "Memory across conversations",
+        "id": "f5",
+        "name": "Memory across conversations",
+        "description": "Memory across conversations",
+        "screenshot_ids": []
       },
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "20 $ if billed monthly.",
-        "name": "Pro",
-        "price": 20.0,
-        "price_text": "20 $ if billed monthly.",
-        "billing_period": "month",
-        "currency": "USD",
-        "audience": "Individual"
+        "source_id": "src_01",
+        "evidence": "Create files and execute code",
+        "id": "f6",
+        "name": "File creation and code execution",
+        "description": "Create files and execute code",
+        "screenshot_ids": []
       },
       {
         "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "Per month with annual subscription discount (200 $ billed up front).",
-        "name": "Pro",
-        "price": 17.0,
-        "price_text": "17 $ Per month with annual subscription discount (200 $ billed up front).",
-        "billing_period": "year",
-        "currency": "USD",
-        "audience": "Individual"
-      },
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "From 100 $\nPer month",
-        "name": "Max",
-        "price": 100.0,
-        "price_text": "From 100 $ Per month",
-        "billing_period": "month",
-        "currency": "USD",
-        "audience": "Individual"
-      },
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "25 $ if billed monthly.",
-        "name": "Team - Standard seat",
-        "price": 25.0,
-        "price_text": "25 $ if billed monthly.",
-        "billing_period": "month",
-        "currency": "USD",
-        "audience": "teams of 2 to 150"
-      },
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "20 $\nPer seat / month if billed annually.",
-        "name": "Team - Standard seat",
-        "price": 20.0,
-        "price_text": "20 $ Per seat / month if billed annually.",
-        "billing_period": "year",
-        "currency": "USD",
-        "audience": "teams of 2 to 150"
-      },
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "125 $ if billed monthly.",
-        "name": "Team - Premium seat",
-        "price": 125.0,
-        "price_text": "125 $ if billed monthly.",
-        "billing_period": "month",
-        "currency": "USD",
-        "audience": "teams of 2 to 150"
-      },
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "100 $\nPer seat / month if billed annually.",
-        "name": "Team - Premium seat",
-        "price": 100.0,
-        "price_text": "100 $ Per seat / month if billed annually.",
-        "billing_period": "year",
-        "currency": "USD",
-        "audience": "teams of 2 to 150"
-      },
-      {
-        "origin": "crawled",
-        "source_id": "src_02",
-        "evidence": "US$20/seat/month, billed annually. Usage cost scales with model and task.",
-        "name": "Enterprise",
-        "price": 20.0,
-        "price_text": "US$20/seat/month, billed annually",
-        "billing_period": "year",
-        "currency": "USD",
-        "audience": "large businesses operating at scale"
+        "source_id": "src_01",
+        "evidence": "Extended thinking for complex work",
+        "id": "f7",
+        "name": "Extended thinking",
+        "description": "Extended thinking for complex work",
+        "screenshot_ids": []
       }
     ],
-    "free_plan": {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Free for everyone",
-      "value": true
-    },
-    "trial_days": null
+    "use_cases": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Claude can process large amounts of information, brainstorm ideas, generate text and code, help you understand subjects, coach you through difficult situations, simplify your busywork so you can",
+        "title": "Brainstorming and ideation"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_08",
+        "evidence": "Claude returns account briefs, proposal decks in your template, and Friday forecasts ready for review with citations linked to sources.",
+        "title": "Sales workflows and account brief preparation"
+      }
+    ],
+    "limitations": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Anthropic's discretion.",
+        "text": "Usage limits apply and prices are subject to change."
+      }
+    ],
+    "schema_version": "0.2",
+    "audiences": [],
+    "usp": [],
+    "competitors": [],
+    "brand": null,
+    "compliance": null,
+    "affiliate": null,
+    "quality": null
   },
-  "features": [
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Chat on web, iOS, Android, and on your desktop",
-      "name": "Chat on web, iOS, Android, and desktop",
-      "description": "Access chat across web, desktop, and mobile devices."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Generate code and visualize data",
-      "name": "Code generation and data visualization",
-      "description": "Generate code and visualize data."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Ability to search the web",
-      "name": "Web search",
-      "description": "Search the web for current information."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Memory across conversations",
-      "name": "Memory",
-      "description": "Maintain memory across conversations."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Create files and execute code",
-      "name": "Create files and execute code",
-      "description": "Create files and execute code."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Connect Slack and Google Workspace services",
-      "name": "Connect Slack and Google Workspace",
-      "description": "Connect Slack and Google Workspace services."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_02",
-      "evidence": "Create Artifacts",
-      "name": "Artifacts",
-      "description": "Create artifacts."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_02",
-      "evidence": "Claude Code",
-      "name": "Claude Code",
-      "description": "Use Claude in your terminal to write, review, and ship code."
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_02",
-      "evidence": "Voice mode",
-      "name": "Voice mode",
-      "description": "Talk to Claude instead of typing."
-    }
-  ],
-  "use_cases": [
-    {
-      "origin": "crawled",
-      "source_id": "src_01",
-      "evidence": "Claude can process large amounts of information, brainstorm ideas, generate text and code, help you understand subjects",
-      "value": "Process large amounts of information, brainstorm ideas, generate text and code"
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_08",
-      "evidence": "Claude handles the tedious work behind every deal, so sales teams spend more time with customers.",
-      "value": "Sales operations, account briefs, and proposals"
-    },
-    {
-      "origin": "crawled",
-      "source_id": "src_09",
-      "evidence": "Legal research drafting\nHand Claude a task, not just a question. Tackle routines, tangled ideas, and big projects.",
-      "value": "Legal research and drafting"
-    }
-  ],
-  "limitations": [
-    {
-      "origin": "crawled",
-      "source_id": "src_02",
-      "evidence": "Usage limits apply. Prices shown don’t include applicable tax. Price and plans are subject to change at Anthropic's discretion.",
-      "value": "Usage limits apply and plans are subject to change."
-    }
-  ],
   "sources": [
     {
-      "source_id": "src_01",
+      "id": "src_01",
       "url": "https://claude.com/",
       "page_type": "other",
       "fetched_at": "2026-10-06T02:44:07.823+00:00",
+      "content_hash": "sha256:a33815648f82aea5d3fbf947c88f474826720ff3bdfa5108abe9dc7aa0b64ffb",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:a33815648f82aea5d3fbf947c88f474826720ff3bdfa5108abe9dc7aa0b64ffb"
+      "markdown_path": "pages/src_01-other-home.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_02",
+      "id": "src_02",
       "url": "https://claude.com/pricing",
       "page_type": "pricing",
       "fetched_at": "2026-10-06T02:44:13.646+00:00",
+      "content_hash": "sha256:1978f7becac3f4eb19dad3e7ba421539183c494faf4b5500911b89a8f80e90bd",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "raw",
-      "content_hash": "sha256:1978f7becac3f4eb19dad3e7ba421539183c494faf4b5500911b89a8f80e90bd"
+      "markdown_path": "pages/src_02-pricing-pricing.raw.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_03",
+      "id": "src_03",
       "url": "https://claude.com/code-with-claude",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:44:20.153+00:00",
+      "content_hash": "sha256:862354b8b3836bbbad5f69671947f54243087a0bcf917830021007da42998ee9",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:862354b8b3836bbbad5f69671947f54243087a0bcf917830021007da42998ee9"
+      "markdown_path": "pages/src_03-features-code-with-claude.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_04",
+      "id": "src_04",
       "url": "https://support.claude.com/en",
       "page_type": "faq",
       "fetched_at": "2026-10-06T02:44:26.721+00:00",
+      "content_hash": "sha256:82bcb3d4e02f775875d662db2766bb1310cb171321fb07a2a1f92d2f237c182b",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:82bcb3d4e02f775875d662db2766bb1310cb171321fb07a2a1f92d2f237c182b"
+      "markdown_path": "pages/src_04-faq-en.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_05",
+      "id": "src_05",
       "url": "https://claude.com/product/tag",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:44:32.438+00:00",
+      "content_hash": "sha256:b4ec1ee4728a0e372887cb8c9af2f81e77dc7d34979a61fd0258b187b80bf5fa",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:b4ec1ee4728a0e372887cb8c9af2f81e77dc7d34979a61fd0258b187b80bf5fa"
+      "markdown_path": "pages/src_05-features-product-tag.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_06",
+      "id": "src_06",
       "url": "https://claude.com/product/cowork",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:44:39.118+00:00",
+      "content_hash": "sha256:69fd3d823cb7ea74b44356efd41e9f19b97cdd59bf88b1598c4e5f701c9fd82c",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:69fd3d823cb7ea74b44356efd41e9f19b97cdd59bf88b1598c4e5f701c9fd82c"
+      "markdown_path": "pages/src_06-features-product-cowork.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_07",
+      "id": "src_07",
       "url": "https://claude.com/product/design",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:44:46.397+00:00",
+      "content_hash": "sha256:dd12b7abd9cbf9c989aaa66ed470d97d0c74ef5cdafb6342c10a3714c31ff55b",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:dd12b7abd9cbf9c989aaa66ed470d97d0c74ef5cdafb6342c10a3714c31ff55b"
+      "markdown_path": "pages/src_07-features-product-design.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_08",
+      "id": "src_08",
       "url": "https://claude.com/solutions/sales",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:44:52.996+00:00",
+      "content_hash": "sha256:ea644a8afb8a2f92bc9cc31bdf8dcf99d847e62635a96986d3d57b7620bd3d39",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:ea644a8afb8a2f92bc9cc31bdf8dcf99d847e62635a96986d3d57b7620bd3d39"
+      "markdown_path": "pages/src_08-features-solutions-sales.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_09",
+      "id": "src_09",
       "url": "https://claude.com/product/overview",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:44:59.919+00:00",
+      "content_hash": "sha256:47e22ad196e0f2042a649980bc7df0555379769f0c854f09565395eab391d4e0",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:47e22ad196e0f2042a649980bc7df0555379769f0c854f09565395eab391d4e0"
+      "markdown_path": "pages/src_09-features-product-overview.md",
+      "image_paths": []
     },
     {
-      "source_id": "src_10",
+      "id": "src_10",
       "url": "https://claude.com/solutions/agents",
       "page_type": "features",
       "fetched_at": "2026-10-06T02:45:06.907+00:00",
+      "content_hash": "sha256:157ebf1369426e6de6d37a9d4bd1f3fcefa2d4edab0a431c12963f4e3e04343e",
+      "region": "VN",
+      "locale": "en-US",
       "variant": "fit",
-      "content_hash": "sha256:157ebf1369426e6de6d37a9d4bd1f3fcefa2d4edab0a431c12963f4e3e04343e"
+      "markdown_path": "pages/src_10-features-solutions-agents.md",
+      "image_paths": []
     }
   ],
   "meta": {
     "product": "claude",
+    "schema_version": "0.2",
     "model": "gemini-3.5-flash-lite",
     "mode": "batch",
-    "generated_at": "2026-10-06T03:14:13+00:00",
+    "generated_at": "2026-10-07T07:40:08+00:00",
     "llm_calls": 1,
-    "cache_hits": 1,
-    "input_tokens": 22354,
-    "output_tokens": 2706,
-    "cost_usd": 0.013471,
+    "cache_hits": 0,
+    "input_tokens": 22647,
+    "output_tokens": 5100,
+    "cost_usd": 0.019544,
     "evidence_in_source": 1.0,
     "unknown_source_ids": []
   }

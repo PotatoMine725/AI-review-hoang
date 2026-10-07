@@ -16,5 +16,7 @@ TOP_PAGES = 10  # mode batch: gom N trang điểm cao nhất vào 1 lời gọi.
 RAW_PAGE_TYPES = ("pricing",)  # page_type gửi raw markdown (fit_markdown làm rơi thẻ giá)
 # Chặn trên output mỗi lời gọi (gồm cả thinking token); cũng dùng để tính chi phí xấu nhất.
 MAX_OUTPUT_TOKENS = {"per_page": 4096, "batch": 16384}
-BUDGET_USD = 2.0  # tổng chi phí dự kiến (xấu nhất) vượt mức này thì dừng trước khi gọi
+BUDGET_USD = 0.20  # tổng chi phí dự kiến (xấu nhất) vượt mức này thì dừng trước khi gọi (lần chạy v0.2)
+CRAWL_REGION = "VN"  # vùng IP của máy crawl (đặc tả M1, quy tắc giá số 6); đặt tay, chưa đo
+CRAWL_LOCALE = "en-US"  # locale mặc định của trình duyệt crawl; đặt tay, chưa đo
 TEMPERATURE = 0.0

@@ -217,16 +217,31 @@ class Throttle:
         return result
 
 
-def http_get(url: str) -> tuple[int | None, bytes, str]:
-    """GET bằng urllib với UA dự án. Trả (status, body, lỗi)."""
+def http_get(url: str) -> tuple[int | None, bytes, str, dict[str, str]]:
+    """GET bằng urllib với UA dự án. Trả (status, body, lỗi, header viết thường)."""
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity"})
     try:
         with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT_S) as resp:
-            return resp.status, resp.read(), ""
+            return resp.status, resp.read(), "", {k.lower(): v for k, v in resp.headers.items()}
     except urllib.error.HTTPError as e:
-        return e.code, b"", str(e)
+        # Đọc ít byte để dò trang challenge; lỗi HTTP không cần cả body
+        body = e.read(4096)
+        return e.code, body, str(e), {k.lower(): v for k, v in e.headers.items()}
     except Exception as e:  # noqa: BLE001 — spike: ghi lỗi mạng vào crawl.json
-        return None, b"", f"{type(e).__name__}: {e}"
+        return None, b"", f"{type(e).__name__}: {e}", {}
+
+
+def waf_challenge(status: int | None, body: bytes, headers: dict[str, str]) -> str:
+    """Trả mô tả nếu response là trang thử thách của WAF (Cloudflare…), ngược lại chuỗi rỗng.
+    Không vượt thử thách: chỉ nhận diện để ghi đúng lý do."""
+    text = body.decode("utf-8", errors="replace")
+    if (
+        headers.get("cf-mitigated", "").lower() == "challenge"
+        or BLOCK_HTML_MARKERS.search(text)
+        or BLOCK_TEXT_MARKERS.search(text)
+    ):
+        return f"waf_challenge: status={status} cf-ray={headers.get('cf-ray', '-')} server={headers.get('server', '-')}"
+    return ""
 
 
 UA_TOKEN = USER_AGENT.split("/", 1)[0].lower()  # product token để khớp nhóm User-agent trong robots.txt
@@ -323,9 +338,12 @@ async def fetch_robots(base: str, throttle: Throttle) -> Robots:
     """Tự tải robots.txt bằng UA dự án (RobotFileParser.read() dùng UA Python-urllib)."""
     url = urljoin(base, "/robots.txt")
     log = await throttle.wait(url, "robots")
-    status, body, err = await asyncio.to_thread(http_get, url)
+    status, body, err, headers = await asyncio.to_thread(http_get, url)
     log["status"] = status
     host = urlsplit(base).netloc
+    if challenge := waf_challenge(status, body, headers):
+        # Trang thử thách của WAF, không phải robots.txt: không nói gì về việc được phép hay không → không crawl.
+        return Robots(host, url, status, "disallow_all", [], log["fetched_at"], challenge)
     if status == 200:
         rules, delay, sitemaps, group = parse_robots(body.decode("utf-8", errors="replace"))
         if delay:
@@ -353,7 +371,7 @@ async def fetch_sitemap_urls(
             continue
         seen.add(sm)
         log = await throttle.wait(sm, "sitemap")
-        status, body, err = await asyncio.to_thread(http_get, sm)
+        status, body, err, _ = await asyncio.to_thread(http_get, sm)
         log["status"] = status
         entry = {"url": sm, "status": status, "urls": 0, "children": 0, "error": err}
         report.append(entry)
@@ -547,11 +565,19 @@ async def crawl_product(product: dict) -> dict:
             robots = await robots_for(cand.url)
             robots_ok, robots_rule = robots.decide(cand.url)
             if not robots_ok:
-                cand.skip_reason = f"robots_disallow ({robots_rule})"
+                cand.skip_reason = (
+                    robots.error
+                    if robots.error.startswith("waf_challenge")
+                    else f"robots_disallow ({robots_rule})"
+                )
                 skipped[cand.url] = frontier.pop(cand.url)
                 crawled.discard(cand.url)
                 if is_home:
-                    report["blocked"] = f"robots.txt không cho phép trang chủ (status {robots.status})"
+                    report["blocked"] = (
+                        robots.error
+                        if robots.error.startswith("waf_challenge")
+                        else f"robots.txt không cho phép trang chủ (status {robots.status})"
+                    )
                     break
                 continue
 
@@ -671,7 +697,7 @@ def trim_skipped(rows: list[dict]) -> list[dict]:
     """Giữ crawl.json gọn: ghi đủ trang bị bỏ vì robots / chặn / trùng / redirect (bằng chứng AC-01),
     chỉ giữ SKIPPED_DETAIL_LIMIT trang over_limit điểm cao nhất; lý do khác chỉ đếm trong skipped_counts.
     `rows` phải đã sắp theo điểm giảm dần."""
-    always = ("robots_disallow", "blocked", "duplicate_of", "redirect_out_of_scope")
+    always = ("robots_disallow", "waf_challenge", "blocked", "duplicate_of", "redirect_out_of_scope")
     keep = [r for r in rows if r["reason"].startswith(always)]
     keep += [r for r in rows if r["reason"] == "over_limit"][:SKIPPED_DETAIL_LIMIT]
     return keep
