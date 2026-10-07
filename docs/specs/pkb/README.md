@@ -87,53 +87,7 @@ Trong spike, `markdown_path` là đường dẫn file cục bộ. Khi lên produ
 
 ## Chi phí job crawl (generation_jobs)
 
-Đã chốt ở [issue #23](https://github.com/PotatoMine725/AI-review-BE/issues/23), Option A. Chi phí và token nằm ở **cột riêng** của `generation_jobs`, không nằm trong `result_manifest`:
-
-| Cột | Kiểu | Ai ghi |
-|---|---|---|
-| `tokens_in` | int | DB tự tính từ `cost_breakdown` |
-| `tokens_out` | int (gồm thinking) | DB tự tính từ `cost_breakdown` |
-| `cost_usd` | numeric(10,4) NOT NULL DEFAULT 0 | DB tự tính từ `cost_breakdown` |
-| `cost_breakdown` | jsonb | **Worker** (chỉ ghi cột này) |
-
-Nhờ vậy tổng và chi tiết không lệch nhau.
-
-### `cost_breakdown` v1
-
-Schema: `cost-breakdown.v1.schema.json`. Gồm `schema_version` (= 1), `currency` (= `USD`) và `items[]`. Năm quy tắc:
-
-1. `category` là `llm`, `tts`, `video_provider` hoặc `other`. Job crawl (M1) chỉ dùng `llm`. Storage không tính theo job (hoá đơn theo tháng).
-2. Retry: mỗi lần gọi có tốn tiền là 1 item (`attempt` = 1, 2, 3…), tất cả đều cộng vào tổng. Lần gọi lấy từ cache: `cache_hit: true`, `cost_usd: 0`.
-3. `cost_usd = round(sum(items[].cost_usd), 4)`. `tokens_in` và `tokens_out` là tổng của các item `llm`. DB tự tính (generated column hoặc trigger `BEFORE INSERT/UPDATE`).
-4. Job `failed` vẫn ghi chi phí đã tiêu.
-5. `cost_usd` của từng item giữ 6 chữ số thập phân. Chỉ cột tổng làm tròn 4 số.
-
-Ví dụ, lấy từ `meta` của `spikes/m1-crawl-extract/output/claude/pkb.gemini-3.5-flash-lite.json` (22647 token vào, 5100 token ra, $0.019544):
-
-```json
-{
-  "schema_version": 1,
-  "currency": "USD",
-  "items": [
-    {
-      "category": "llm",
-      "step": "extract",
-      "provider": "google",
-      "model": "gemini-3.5-flash-lite",
-      "attempt": 1,
-      "cache_hit": false,
-      "tokens_in": 22647,
-      "tokens_out": 5100,
-      "unit_price_in_per_1m": 0.30,
-      "unit_price_out_per_1m": 2.50,
-      "prices_checked_at": "2026-10-06",
-      "cost_usd": 0.019544
-    }
-  ]
-}
-```
-
-Với ví dụ này DB tính ra `tokens_in = 22647`, `tokens_out = 5100`, `cost_usd = 0.0195`.
+Chi phí và token nằm ở **cột riêng** của `generation_jobs` (`tokens_in`, `tokens_out`, `cost_usd`, `cost_breakdown`), không nằm trong `result_manifest`. Worker chỉ ghi `cost_breakdown`; DB tự tính 3 cột còn lại. Schema và quy tắc: [`docs/specs/contracts/`](../contracts/README.md) (issue #23).
 
 ### `result_manifest`
 
