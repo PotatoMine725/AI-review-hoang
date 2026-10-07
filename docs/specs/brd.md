@@ -1,15 +1,15 @@
 <!--
-Bản nháp BRD (Business Requirements Document) v0.1 do BA (@khanhphi27) soạn, được @PotatoMine725 đưa vào repo ngày 2026-10-07 để cả team dẫn link.
-Nội dung giữ nguyên văn bản BA gửi. Góp ý và câu hỏi mở: xem issue góp ý BRD/SRS và docs/logs/qa-log.md.
-Khi mâu thuẫn với decision-log / đặc tả module đã chốt, các tài liệu đó được ưu tiên cho tới khi BA cập nhật bản này.
+BRD (Business Requirements Document) v0.2 ("Updated from Feedback"), do team lead (@VV6505) gửi ngày 2026-10-07 (file gốc: tempbrd.md), dựa trên bản của BA (@khanhphi27). Được @PotatoMine725 đưa vào repo ngày 2026-10-07.
+Nội dung giữ nguyên văn. Góp ý và câu hỏi mở: xem issue #28, #23 và docs/logs/qa-log.md. Từ bản này, mọi thay đổi đi qua PR vào docs/specs/.
+Khi mâu thuẫn với decision-log / đặc tả module / ERD đã chốt, các tài liệu đó được ưu tiên cho tới khi bản này được cập nhật.
 -->
 
 **BUSINESS REQUIREMENTS DOCUMENT**
 
 **Project:** AI Review Content Factory & Affiliate Network
 **Document Type:** Business Requirements Document — BRD
-**Version:** 0.1
-**Status:** Draft for Stakeholder Review
+**Version:** 0.2
+**Status:** Draft for Stakeholder Review (Updated from Feedback)
 **Product Stage:** MVP
 
 **1. Introduction**
@@ -190,8 +190,8 @@ Các KPI chính bao gồm:
 - Revenue / Video
 
 - Revenue / Creator
-- Revenue / 1,000 Views
-
+- Revenue / 1,000 Views (RPM)
+- ROI (Return on Investment = Revenue Generated / Commission Expense)
 - Affiliate Commission
 
 **Network Metrics**
@@ -253,7 +253,7 @@ Creator có nhu cầu:
 - Download video.
 
 - Nhận caption và CTA.
-- Nhận affiliate link.
+- Nhận Tracking link.
 
 - Đăng content.
 - Theo dõi clicks, conversions và earnings.
@@ -296,7 +296,7 @@ MVP tập trung vào các nhóm chức năng sau.
 - Pricing
 - Features
 
-- Affiliate information
+- Merchant Affiliate URL
 
 **AI Content Generation**
 
@@ -324,7 +324,7 @@ MVP tập trung vào các nhóm chức năng sau.
 - Content Library
 - Content Download
 
-- Affiliate Link
+- Tracking Link
 
 **Campaign**
 
@@ -401,7 +401,7 @@ Ví dụ:
 → tìm creator
 → gửi brief
 → creator đăng video
-→ sử dụng affiliate link
+→ sử dụng tracking link
 → Merchant thu thập analytics
 → Merchant cố gắng xác định nội dung nào tạo revenue.
 
@@ -458,7 +458,7 @@ Quy trình mong muốn:
 
 ↓
 
-**Creator uses unique Affiliate Link**
+**Creator uses unique Tracking link**
 
 ↓
 
@@ -480,7 +480,7 @@ Quy trình mong muốn:
 
 **Future Content is optimized**
 
-Creator workflow cốt lõi của PRD là Join Campaign → Choose Product → Select AI-generated Video → Download → Copy Caption → Post → Attach Affiliate Link → Track Traffic → Conversion → Commission.
+Creator workflow cốt lõi của PRD là Join Campaign → Choose Product → Select AI-generated Video → Download → Copy Caption → Post → Attach Tracking Link → Track Traffic → Conversion → Commission.
 
 **10. Business Requirements**
 
@@ -488,12 +488,18 @@ Creator workflow cốt lõi của PRD là Join Campaign → Choose Product → S
 
 Platform phải cho phép Merchant đưa một AI Product vào hệ thống.
 
-Merchant có thể cung cấp các thông tin như:
+Trong phạm vi MVP, Merchant phải cung cấp tối thiểu:
+
+- **Website URL**
+- **Merchant Affiliate URL**
+
+Website URL được sử dụng làm nguồn đầu vào để Platform thu thập thông tin công khai và xây dựng Product Knowledge Base.
+
+Merchant Affiliate URL là URL do Merchant cung cấp liên quan đến chương trình affiliate hoặc destination của Product và **khác với Tracking Link do Platform tạo cho Creator**.
+
+Các thông tin khác có thể được Merchant cung cấp thủ công hoặc được Platform thu thập/suy luận từ Product source, bao gồm:
 
 - Product Name
-- Website
-
-- Product URL
 - Description
 
 - Target Audience
@@ -503,17 +509,15 @@ Merchant có thể cung cấp các thông tin như:
 - Use Cases
 
 - Competitors
-- Affiliate Program
-
 - Commission
+
 - USP
-
 - Limitations
-- Brand Guidelines
 
+- Brand Guidelines
 - Forbidden Claims
 
-PRD cũng đề xuất luồng đơn giản hơn là Merchant chỉ paste URL và AI tự xây dựng Product Knowledge Base.
+Merchant phải có khả năng review và xác nhận Product Knowledge trước khi dữ liệu được sử dụng cho các bước tạo content tiếp theo. Hệ thống phải tự động phát hiện và cảnh báo các xung đột dữ liệu (ví dụ chênh lệch giá giữa form nhập và nội dung cào từ web) để Merchant chủ động lựa chọn.
 
 **BR-02 — Product Intelligence**
 
@@ -521,20 +525,23 @@ Platform phải có khả năng tổng hợp thông tin cần thiết để hi�
 
 - Features
 - Pricing
-
 - Target Users
 - Use Cases
-
 - USP
 - Limitations
-
 - Competitors
 - Positioning
-
 - Differentiators
 - Audience
-
 - Jobs-to-be-done.
+
+Mọi thông tin/tính năng bóc tách được phải gắn liền với nguồn trích dẫn và bằng chứng xác thực (đoạn trích dẫn nguyên văn từ website sản phẩm) để đảm bảo tính minh bạch, giúp Merchant tuyệt đối tin tưởng và dễ dàng kiểm chứng.
+
+Trong phạm vi MVP, Merchant chịu trách nhiệm review, chỉnh sửa và approve Product Knowledge của Product.
+
+Platform Admin không tham gia vào từng lần approve Product Knowledge.
+
+Product Knowledge chỉ được xem là approved sau khi Merchant xác nhận.
 
 **BR-03 — Content Opportunity Generation**
 
@@ -592,11 +599,10 @@ Các format có thể bao gồm:
 
 - Screen Recording
 - AI Avatar
-
 - Faceless
 - Hybrid.
 
-PRD đặc biệt ưu tiên Screen Recording vì AI Product review cần evidence và product demonstration.
+Trong giai đoạn MVP và mô hình zero-budget, hệ thống ưu tiên tuyệt đối định dạng **Screen Recording (chụp/quay màn hình sản phẩm thực tế kết hợp lồng tiếng và phụ đề)**. Format này vừa đảm bảo bằng chứng xác thực (evidence) cao nhất cho người mua, vừa tiết kiệm 100% chi phí thuê ngoài các dịch vụ avatar AI tốn kém.
 
 **BR-07 — Video Variations**
 
@@ -604,7 +610,6 @@ Một script có thể tạo thành nhiều creative variations dựa trên:
 
 - Hook
 - Persona
-
 - Format
 - Length.
 
@@ -618,19 +623,14 @@ Campaign có thể bao gồm:
 
 - Campaign Name
 - Product
-
 - Start Date
 - End Date
-
 - Target Audience
 - Target Country
-
-- Language
+- Language – English
 - Commission
-
 - Content Requirements
 - Approved Claims
-
 - Forbidden Claims
 - CTA.
 
@@ -646,12 +646,10 @@ Campaign information có thể bao gồm:
 
 - Product
 - Commission
-
 - Recommended Content
 - Expected Audience
-
 - Video Library
-- Affiliate Link.
+- Tracking Link.
 
 **BR-11 — Creator Content Library**
 
@@ -659,12 +657,12 @@ Creator phải có khả năng truy cập các content asset liên quan đến c
 
 - Video
 - Caption
-
 - Hashtags
 - CTA
-
-- Affiliate Link
+- Tracking Link
 - Posting Instructions.
+
+Giao diện thư viện phải thiết kế dạng "1-click" tiện lợi, sẵn sàng để Creator sử dụng ngay mà không đòi hỏi kỹ năng chỉnh sửa video phức tạp.
 
 **BR-12 — Content Distribution**
 
@@ -674,24 +672,22 @@ Creator:
 
 - Download video.
 - Copy content/caption.
-
 - Publish trên social platform.
-- Attach affiliate link.
+- Attach tracking link.
+- **Nộp lại Proof of Publishing (link bài đăng thực tế trên TikTok/Reels/Shorts)** qua chức năng "Tôi đã đăng" để hệ thống và Merchant theo dõi được trạng thái chiến dịch.
 
 Platform không tự động đăng nhập và publish trên hàng nghìn social accounts trong MVP.
 
-**BR-13 — Affiliate Link Generation**
+**BR-13 — Tracking Link Generation**
 
-Platform phải tạo unique tracking link có thể xác định tối thiểu:
+Platform phải tạo **unique Tracking Link** có thể xác định tối thiểu:
 
 - Creator
 - Campaign
 
-- Product.
+- Product
 
-PRD mô tả tracking flow:
-
-**Impression → Click → Landing → Signup → Trial → Purchase → Revenue.**
+Tracking Link được Platform tạo cho từng hoạt động phân phối và không phải là Merchant Affiliate URL được Merchant cung cấp trong Product Onboarding.
 
 **BR-14 — Conversion Attribution**
 
@@ -889,6 +885,18 @@ MVP sử dụng semi-automatic distribution.
 
 Creator tự publish nội dung lên platform của họ.
 
+**BRULE-09 — Zero Upfront Financial Risk for Merchants**
+
+Merchant tham gia platform với mô hình chia sẻ doanh thu thuần túy (affiliate commission khi có conversion thành công). Không áp dụng phí khởi tạo, phí duy trì hay chi phí tạo video trả trước nhằm tối đa hóa việc thu hút Merchant tham gia hệ thống.
+
+**BRULE-10 — Zero Friction Distribution for Creators**
+
+Nội dung cung cấp trong Content Library phải đạt tiêu chuẩn sẵn sàng đăng ngay (1-click ready). Creator không cần đầu tư thiết bị hay kỹ năng quay dựng chuyên nghiệp để có thể tham gia kiếm tiền từ mạng lưới.
+
+**BRULE-11 — Full Evidence Traceability**
+
+Mọi fact/tính năng trong Product Knowledge Base dùng để tạo kịch bản video review bắt buộc phải có nguồn trích dẫn từ tài liệu công khai của sản phẩm và có đoạn trích chứng minh (evidence), triệt tiêu hoàn toàn rủi ro AI bịa đặt thông tin.
+
 **12. Constraints**
 
 **12.1 MVP Scope Constraint**
@@ -901,10 +909,8 @@ Không thực hiện automated login và mass posting trên social platforms tro
 
 - Platform Policy
 - Spam
-
 - Duplicate Content
 - Account Ban
-
 - Account Safety.
 
 **12.3 Content Compliance Constraint**
@@ -913,11 +919,20 @@ AI-generated content phải tuân thủ:
 
 - Merchant Brand Guidelines
 - Approved Claims
-
 - Forbidden Claims
 - Platform Rules
-
 - Các yêu cầu disclosure phù hợp khi sử dụng AI Avatar.
+
+**12.4 MVP Language Constraint**
+
+Trong phạm vi MVP, ngôn ngữ được hỗ trợ chính là English đối với:
+
+- Product source
+- Product Knowledge Base
+- AI-generated content
+- AI-generated video
+
+Multilingual support và Localization không thuộc phạm vi MVP và được xem xét trong các phase sau.
 
 **13. Assumptions**
 
@@ -925,7 +940,7 @@ Các giả định dưới đây cần được stakeholder xác nhận trước
 
 **A-01**
 
-Merchant chịu trách nhiệm cung cấp thông tin sản phẩm chính xác hoặc xác nhận Product Knowledge được AI thu thập.
+Merchant chịu trách nhiệm cung cấp thông tin sản phẩm chính xác và review, chỉnh sửa, approve Product Knowledge được Platform thu thập hoặc tạo ra.
 
 **A-02**
 
@@ -937,11 +952,19 @@ Merchant có affiliate program hoặc có cơ chế xác định commission cho 
 
 **A-04**
 
-Platform có thể nhận hoặc thu thập dữ liệu cần thiết để xác định clicks, signups, conversions và revenue.
+Trong phạm vi MVP, Merchant cung cấp dữ liệu Signup, Trial, Paid Conversion và Revenue cho Platform thông qua CSV file import theo format do Platform quy định (gồm các cột cốt lõi: `click_id`, `external_user_id`, `order_id`, `event_type`: `signup` / `trial` / `paid`, `event_time`, `revenue_amount`, `currency`).
+
+Platform sử dụng dữ liệu trong CSV kết hợp với Tracking Link/Click Identifier và `external_user_id` để thực hiện conversion attribution và kiểm tra điều kiện hoa hồng (`commission_eligibility`).
+
+Realtime integration thông qua API, Webhook, SDK hoặc Pixel không thuộc phạm vi MVP.
 
 **A-05**
 
 Creator và Merchant sử dụng web platform trong MVP vì Mobile App nằm ngoài phạm vi MVP.
+
+**A-06**
+
+Để đảm bảo khả thi cho mô hình bootstrap/zero-budget, hệ thống sử dụng Full PKB Prompt Context thay vì hạ tầng vector database đắt đỏ trong MVP, đảm bảo chi phí LLM trung bình $\le \$0.05$/sản phẩm.
 
 **14. Risks**
 
@@ -1112,21 +1135,19 @@ Các nội dung dưới đây chưa được PRD mô tả đủ chi tiết và c
 | Q-03 | Creator có tự do join campaign hay Merchant phải approve? |
 | Q-04 | Merchant có thể giới hạn số Creator trong một Campaign không? |
 | Q-05 | Commission được tính theo signup, purchase hay recurring revenue? |
-| Q-06 | Platform nhận dữ liệu conversion từ Merchant bằng API, webhook hay tracking pixel? |
-| Q-07 | Khi nào commission được xác nhận là payable? |
-| Q-08 | MVP có xử lý payout thật cho Creator hay chỉ hiển thị commission? |
-| Q-09 | Merchant có phải approve video trước khi Creator download/publish không? |
-| Q-10 | AI-generated video có cần manual QA không? |
-| Q-11 | Creator có được chỉnh sửa video/caption do AI tạo không? |
-| Q-12 | Nếu Product Knowledge do crawler thu thập sai thì ai chịu trách nhiệm xác nhận? |
-| Q-13 | Merchant có thể pause hoặc terminate campaign không? |
-| Q-14 | Creator có thể tham gia nhiều campaign cùng lúc không? |
-| Q-15 | Một Product có thể thuộc nhiều Campaign không? |
-| Q-16 | MVP hỗ trợ những social platform nào đầu tiên? |
-| Q-17 | Analytics lấy Views và Engagement trực tiếp từ social platform hay Creator nhập thủ công? |
-| Q-18 | Có yêu cầu fraud detection nào bắt buộc trong MVP không? |
-| Q-19 | Có cơ chế dispute commission giữa Merchant và Creator không? |
-| Q-20 | Data retention và privacy requirements của hệ thống là gì? |
+| Q-06 | Khi nào commission được xác nhận là payable? |
+| Q-07 | MVP có xử lý payout thật cho Creator hay chỉ hiển thị commission? |
+| Q-08 | Merchant có phải approve video trước khi Creator download/publish không? |
+| Q-09 | AI-generated video có cần manual QA không? |
+| Q-10 | Creator có được chỉnh sửa video/caption do AI tạo không? |
+| Q-11 | Merchant có thể pause hoặc terminate campaign không? |
+| Q-12 | Creator có thể tham gia nhiều campaign cùng lúc không? |
+| Q-13 | Một Product có thể thuộc nhiều Campaign không? |
+| Q-14 | MVP hỗ trợ những social platform nào đầu tiên? |
+| Q-15 | Analytics lấy Views và Engagement trực tiếp từ social platform hay Creator nhập thủ công? |
+| Q-16 | Có yêu cầu fraud detection nào bắt buộc trong MVP không? |
+| Q-17 | Có cơ chế dispute commission giữa Merchant và Creator không? |
+| Q-18 | Data retention và privacy requirements của hệ thống là gì? |
 
 **20. Requirement Traceability — Business Level**
 
