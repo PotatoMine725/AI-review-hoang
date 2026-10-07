@@ -1452,12 +1452,20 @@ dependencies = [
     { name = "pydantic" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "jsonschema" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "crawl4ai", specifier = ">=0.9.4" },
     { name = "google-genai", specifier = ">=2.28.0" },
     { name = "pydantic", specifier = ">=2" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "jsonschema", specifier = ">=4.26.0" }]
 
 [[package]]
 name = "markdown-it-py"

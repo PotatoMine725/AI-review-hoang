@@ -661,6 +661,16 @@
     },
     "Plan": {
       "description": "1 dòng = 1 plan × 1 chu kỳ trả. Giá số là con số in trên trang, không tự tính.",
+      "if": {
+        "properties": {
+          "list_price": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "list_price"
+        ]
+      },
       "properties": {
         "audience": {
           "anyOf": [
@@ -811,6 +821,24 @@
         "name",
         "price_text"
       ],
+      "then": {
+        "properties": {
+          "billing_cycle": {
+            "not": {
+              "type": "null"
+            }
+          },
+          "price_unit": {
+            "not": {
+              "type": "null"
+            }
+          }
+        },
+        "required": [
+          "price_unit",
+          "billing_cycle"
+        ]
+      },
       "title": "Plan",
       "type": "object"
     },
@@ -1205,8 +1233,8 @@
       "default": null
     },
     "schema_version": {
-      "default": "0.2",
-      "description": "Version của contract này.",
+      "const": "0.2",
+      "description": "Version của contract này. Bắt buộc, luôn là '0.2'.",
       "title": "Schema Version",
       "type": "string"
     },
@@ -1227,7 +1255,8 @@
   },
   "required": [
     "identity",
-    "pricing"
+    "pricing",
+    "schema_version"
   ],
   "title": "PKBData",
   "type": "object"

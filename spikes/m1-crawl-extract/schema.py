@@ -17,6 +17,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 PKB_SCHEMA_VERSION = "0.2"
+SchemaVersion = Literal["0.2"]  # phải khớp PKB_SCHEMA_VERSION
 EVIDENCE_MAX = 200
 
 Origin = Literal["crawled", "merchant", "inferred"]
@@ -63,6 +64,17 @@ class Identity(BaseModel):
     models: list[ModelVersion] = Field(
         default_factory=list, description="Các model AI product đang cung cấp."
     )
+
+
+# Luật của validator `Plan` ở dạng JSON Schema. Chỉ gắn vào schema xuất ra (export_schema.py),
+# không gắn vào PKBExtract: schema đó gửi cho Gemini và nằm trong khoá cache của run.py.
+PLAN_PRICE_RULE = {
+    "if": {"required": ["list_price"], "properties": {"list_price": {"type": "number"}}},
+    "then": {
+        "required": ["price_unit", "billing_cycle"],
+        "properties": {"price_unit": {"not": {"type": "null"}}, "billing_cycle": {"not": {"type": "null"}}},
+    },
+}
 
 
 class Plan(Fact):
@@ -193,7 +205,7 @@ class Quality(BaseModel):
 class PKBData(PKBExtract):
     """Nội dung cột `product_knowledge.data`."""
 
-    schema_version: str = Field(default=PKB_SCHEMA_VERSION, description="Version của contract này.")
+    schema_version: SchemaVersion = Field(description="Version của contract này. Bắt buộc, luôn là '0.2'.")
     audiences: list[Audience] = Field(default_factory=list)
     usp: list[Usp] = Field(default_factory=list)
     competitors: list[Competitor] = Field(default_factory=list)

@@ -23,7 +23,7 @@ Cột "Bắt buộc": có nghĩa là schema không cho thiếu. "Ai điền": 1.
 
 | Trường | Kiểu | Bắt buộc | Ai điền | Ví dụ |
 |---|---|---|---|---|
-| `schema_version` | string | có (có mặc định) | code | `"0.2"` |
+| `schema_version` | string, `const "0.2"` | có (không có mặc định) | code | `"0.2"` |
 | `identity.name` | fact text | có | 1.4 | `{"value": "Claude", "origin": "crawled", "source_id": "src_01", "evidence": "…"}` |
 | `identity.website` | string | không | code | `"https://claude.com"` |
 | `identity.tagline`, `description`, `category`, `company`, `version` | fact text | không | 1.4 | `"AI assistant"` |
@@ -63,7 +63,7 @@ Cột "Bắt buộc": có nghĩa là schema không cho thiếu. "Ai điền": 1.
 | `price_text` | string | Giá nguyên văn |
 | `limits[]`, `audience` | string | Giới hạn và đối tượng của plan |
 
-`price_unit` và `billing_cycle` chỉ được null khi `list_price` là null. Schema JSON không biểu diễn được luật này; validator Pydantic của `Plan` kiểm tra nó. Ví dụ Claude Pro: `17, month, yearly` và `20, month, monthly`.
+`price_unit` và `billing_cycle` chỉ được null khi `list_price` là null. Luật này có ở 2 chỗ: validator Pydantic của `Plan`, và `if/then` trong `pkb-data.v0.2.schema.json` (khi `list_price` là số thì `price_unit`, `billing_cycle` bắt buộc và khác null). Ví dụ Claude Pro: `17, month, yearly` và `20, month, monthly`.
 
 ## Bảng trường `sources[]` (1 phần tử)
 
@@ -91,12 +91,14 @@ Chi phí và token nằm ở **cột riêng** của `generation_jobs` (`tokens_i
 
 ### `result_manifest`
 
-`result_manifest` của job `crawl` chỉ có 3 key:
+`result_manifest` của job `crawl` chỉ có 3 key, và **chỉ áp dụng khi job `completed`**:
 
 | Key | Kiểu | Ý nghĩa |
 |---|---|---|
 | `pkb_version` | int | Giá trị cột `product_knowledge.version` vừa tạo |
 | `pages_used` | int | Số trang đã gửi cho LLM |
 | `model` | string | Model đã dùng, vd. `gemini-3.5-flash-lite` |
+
+Job `failed` (gồm bị WAF chặn) chưa tạo PKB: `result_manifest = null`. Lỗi ghi ở cột `error`, mã ngắn đứng đầu, vd. `waf_challenge: 403 cf-mitigated=challenge`. `cost_breakdown` vẫn ghi chi phí đã tiêu.
 
 Số đo của spike (`meta` trong `pkb.<model>.json`) có `input_tokens`, `output_tokens`, `cost_usd`, `model` để ghi vào các cột và key trên.
