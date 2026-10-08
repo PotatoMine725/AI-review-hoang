@@ -1,10 +1,12 @@
 // Nguồn: @tranquangthong03 gửi nhóm ngày 2026-10-07 (file gốc: erd_v0.dbml, nội dung ERD v1.3.1).
 // Đưa vào repo nguyên văn. Trạng thái: chờ @VV6505 duyệt (decision-log #12). Góp ý: issue #23.
 // File này là nguồn chuẩn của ERD; erd.mermaid và data-dictionary.md diễn giải từ file này.
+// v1.3.3 (2026-10-08, Issue #23 follow-up, decision-log #18): PKB review metadata (review_note,
+// reviewer_role; rename approved_by/approved_at -> reviewed_by/reviewed_at); content_scripts cost columns.
 
-Project ai_review_mvp_v1_3_1 {
+Project ai_review_mvp_v1_3_3 {
   database_type: 'PostgreSQL'
-  Note: '''MVP SCHEMA BASELINE v1.3.1, 2026-10-07. 16 business tables plus existing Supabase auth.users. Scope frozen for one-month pilot: one merchant per product, one product per campaign, manual QA and posting, one language/template/provider, USD, one-time flat/percentage commission. No recurring commission, wallet, automated payout, vector RAG or partial-refund automation.
+  Note: '''MVP SCHEMA BASELINE v1.3.3, 2026-10-08 (baseline v1.3.1 2026-10-07; v1.3.3 adds PKB review metadata and content_scripts cost columns per Issue #23, decision-log #17). 16 business tables plus existing Supabase auth.users. Scope frozen for one-month pilot: one merchant per product, one product per campaign, manual QA and posting, one language/template/provider, USD, one-time flat/percentage commission. No recurring commission, wallet, automated payout, vector RAG or partial-refund automation.
 This DBML is the agreed implementation target for this iteration, NOT an executable production migration. SQL REQUIRED notes are acceptance requirements. Preserve and ALTER existing profile tables; do not recreate auth.users.
 Eligibility means first valid paid event successfully accepted by the database for a canonical (product, source, external_user_id), NOT earliest occurred_at or lifetime first purchase outside known data. That first payment consumes eligibility even without attribution. Subsequent valid payments remain revenue but create no additional commission. Full reversal never frees eligibility automatically.
 Release configuration must explicitly set attribution_window_days, revenue_basis, settlement_hold_days and policy_version before processing paid events. No silent defaults. These are configuration choices, not additional tables. The merchant integration must return a verifiable click_id; missing/invalid attribution earns no commission.'''
@@ -104,16 +106,19 @@ Table product_knowledge {
   status text [not null, default: 'draft', check: `status IN ('draft','in_review','approved','rejected')`]
   data jsonb [not null, note: 'Schema-validated: identity, pricing, features, audience, USP, limitations, brand, claims; facts carry source IDs.']
   sources jsonb [not null, note: 'Source IDs, URLs, crawl times, hashes, evidence excerpts and private Storage paths.']
-  approved_by uuid [ref: > auth.users.id]
-  approved_at timestamptz
+  reviewed_by uuid [ref: > auth.users.id, note: 'Actor (merchant or admin) who approved or rejected the PKB; set for BOTH approve and reject paths, not just approve. Renamed from approved_by in v1.3.3 (Issue #23).']
+  reviewed_at timestamptz [note: 'Timestamp of the approve or reject action; set for BOTH paths. Renamed from approved_at in v1.3.3 (Issue #23).']
+  reviewer_role text [check: `reviewer_role IN ('merchant','admin')`, note: 'Whether the actor was the owning merchant or an admin (pilot rule: merchant approves; admin can only reject for policy violations). Nullable.']
+  review_note text [note: 'Reason for a PKB rejection, or an approval note. Nullable; max length 1000 characters. Review metadata, NOT part of the data JSON payload (data is bound by PKB v0.2 with additionalProperties: false).']
   created_at timestamptz [not null, default: `now()`]
   indexes { (product_id, version) [pk] }
-  checks { `status <> 'approved' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)` }
+  checks { `status <> 'approved' OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL)` }
   Note: 'SQL REQUIRED: approved row immutable; recrawl/edit creates new version. Allocate versions transactionally. Validate fact sources. Authorized merchant/admin approves. Use approved JSON directly as AI input; no vector RAG in pilot.
 LIFECYCLE: draft -> in_review -> approved | rejected. in_review is submitted by merchant awaiting review; approved requires merchant approver; rejected may be set by admin for policy violations.
+REVIEW METADATA (v1.3.3, Issue #23): reviewed_by + reviewed_at record the actor and timestamp for BOTH approve and reject (renamed from approved_by/approved_at, which named only the approve path). reviewer_role records merchant vs admin. review_note stores the rejection reason (or an approval note), max 1000 characters. All these columns are nullable at the DB level; the valid combination per status is SQL REQUIRED (see the migration gate) and is NOT enforced in this task. reviewed_by FK -> auth.users.id. review_action is intentionally NOT a column; the terminal outcome is already recorded in status (approved or rejected). This avoids a redundant pair of columns that would need to stay in sync.
 APPROVAL PERMISSIONS (PLANNED — not enforced by any migration): only the merchant who owns the product may approve its PKB. Admin may reject a PKB only for policy violations, and that rejection must record a reason which is retained. Admin cannot edit or approve PKB content. Approval and rejection must record the actor and timestamp.
-GAP (rejection reason): this ERD has no column or JSON field that can hold a policy-rejection reason. The existing audit fields approved_by / approved_at record actor and timestamp only, and product_knowledge.data / sources are schema-bound PKB v0.2 payloads with additionalProperties: false. No unapproved column or table was added to represent the reason; this gap is reported for decision in issue #23.
-GAP (reject semantics): approved_by / approved_at are named for the approve path. Using them to record a rejection actor is semantically inconsistent. A dedicated reviewed_action or rejection_actor column may be needed; decision deferred to Issue #23.
+GAP (rejection reason): RESOLVED in v1.3.3 (Issue #23) — product_knowledge.review_note now stores the rejection reason (nullable, max 1000 characters, required and non-empty when status = rejected). It is review metadata and does not live inside the data JSON payload because data is bound by PKB v0.2 with additionalProperties: false.
+GAP (reject semantics): RESOLVED in v1.3.3 (Issue #23) — approved_by/approved_at were renamed to reviewed_by/reviewed_at so they record BOTH approve and reject, and reviewer_role plus review_note were added (review_action was dropped on M1 review as redundant with status). See SQL REQUIRED (PKB review consistency) in the migration gate.
 CONFLICT (historical, noted not skipped): status change applied per Issue #23 approval. Historical conflict with SRS FR-PI-03 and M1 spec FR-07 (which list only draft/in_review/approved) is flagged for update in their respective specs; M1 spec v0.3 update is tracked in Issue #23. Separately, BRD 5.x line 542, SRS FR-PI-03 (line 356), M1 spec FR-07 and qa-log #1 / decision-log #11 state that Platform Admin does not participate in PKB approval in the MVP; the admin policy-reject rule above is not yet reconciled with those documents, which take precedence until updated.'
 }
 Ref: products.(id, current_knowledge_version) > product_knowledge.(product_id, version)
@@ -198,12 +203,16 @@ Table content_scripts {
   script_text text [not null]
   platform text [not null]
   language text [not null]
+  cost_breakdown jsonb [default: `'{}'::jsonb`, note: 'Same cost_breakdown v1 contract as generation_jobs.cost_breakdown (docs/specs/contracts/cost-breakdown.v1.schema.json). Worker/backend writes this column; empty object means cost not yet recorded.']
+  cost_usd numeric(12,6) [note: 'Derived from cost_breakdown by the database; worker never writes it. Same type numeric(12,6) and same derivation rules as generation_jobs.cost_usd. Nullable, no default.']
   created_at timestamptz [not null, default: `now()`]
-  indexes { 
+  indexes {
     (id, campaign_id) [unique]
     campaign_id
   }
-  Note: 'SQL REQUIRED (D012): sync API generation with request idempotency; service_role writes only after API authorization. RLS: deny all INSERT/UPDATE/DELETE from authenticated. SELECT restricted to owning merchants and authorized admin/backend; creators receive approved videos, not raw scripts. Approved PKB only. Script immutable once used; revision creates new row. No separate idea/hook workflow in pilot.'
+  Note: 'SQL REQUIRED (D012): sync API generation with request idempotency; service_role writes only after API authorization. RLS: deny all INSERT/UPDATE/DELETE from authenticated. SELECT restricted to owning merchants and authorized admin/backend; creators receive approved videos, not raw scripts. Approved PKB only. Script immutable once used; revision creates new row. No separate idea/hook workflow in pilot.
+COST (v1.3.3, Issue #23): content scripts are generated via sync API (D012) and have no generation_jobs entry, but they still consume LLM cost. cost_breakdown (cost_breakdown v1 contract) plus the DB-derived cost_usd keep the NFR-02 cost/product measurement from missing the script-generation step. tokens_in/tokens_out are intentionally NOT added in MVP (M1 initially proposed only 2 columns, NFR-02 measures cost not tokens, and scripts use a single LLM call unlike batch crawl); add them later by additive migration if the AI team needs script tokens.
+COST SCOPE NOTE (Issue #23): the cost_breakdown and cost_usd columns on content_scripts measure M2's own script-generation cost. This measurement is separate from M1's NFR-02 budget (≤ $0.05/product), which only counts crawl + extract. The pilot tracks this cost for visibility; it does NOT include it in the total product budget. Column design and derivation rules are unchanged.'
 }
 Ref: content_scripts.(campaign_id, product_id) > campaigns.(id, product_id)
 Ref: content_scripts.(product_id, knowledge_version) > product_knowledge.(product_id, version)
@@ -231,7 +240,7 @@ Table generation_jobs {
   }
   Note: 'SQL REQUIRED: script belongs to product. Worker-only writes. Claim jobs atomically, bounded retry, idempotent output persistence. One job per generated output; deliberate rerun uses new key. Background queue is implementation concern.
 COST / TOKEN (PLANNED — issue #23, contract cost_breakdown v1): worker writes cost_breakdown only; the database derives tokens_in, tokens_out and cost_usd from it. Aggregation, derivation, validation, write restrictions, budget limits and alerts are NOT implemented in this task (no trigger, generated column or RPC added). Retry calls are extra items and are included in the totals per the merged contract; failed jobs still retain cost already incurred; cost_usd is numeric(12,6) with no 4-decimal rounding. Cache behaviour, token accounting and cost_status follow cost_breakdown v1 exactly. Backend validation is additionally planned to check (a) call_id is unique within items and (b) tokens_in_cached <= tokens_in for each applicable item.
-GAP (nullability): authoritative inputs state a default of an empty JSON object for cost_breakdown only. For tokens_in, tokens_out and cost_usd no input states NOT NULL or a default, so this DBML records them as nullable (no NOT NULL, no default) and the properties are left as an open decision rather than invented. DB column nullability/defaults must not be inferred from the JSON Schema of individual cost items.'
+COST NULLABILITY (resolved, Issue #23): the 3 total columns are nullable by design to distinguish three states: cost_breakdown = ''{}'' -> 3 columns NULL (cost not yet recorded); cost_breakdown = valid v1 payload with items[].cost_usd = 0 -> 3 columns = 0 (job genuinely cost $0, e.g. full cache hit); cost_breakdown = normal v1 payload -> 3 columns > 0. Assigning default 0 or NOT NULL would lose the distinction between "not yet measured" and "measured as zero", producing incorrect NFR-02 cost/product dashboards. No schema change in this task.'
 }
 
 // 10. Video output + distribution text + manual QA.
@@ -491,3 +500,27 @@ Ref: commissions.(conversion_id, creator_campaign_id) > commission_eligibility.(
 //     worker writes only cost_breakdown (cost_breakdown v1); the database derives
 //     tokens_in, tokens_out and cost_usd from it. Validation to add: call_id unique
 //     within items, and tokens_in_cached <= tokens_in per applicable item.
+//     Additionally, the 3 total columns must be non-null when cost_breakdown is a
+//     valid v1 payload (not '{}') and null when cost_breakdown = '{}', so that
+//     "not yet measured" stays distinct from "measured as zero". Enforce in worker
+//     validation or trigger, not a simple CHECK (validating a JSONB payload against
+//     schema v1 needs application logic). See 22 for the content_scripts mirror.
+// 20. SQL REQUIRED (review_note) — PLANNED, not implemented in this task: when
+//     status = 'rejected', review_note must be non-empty. CHECK:
+//     (status <> 'rejected' OR (review_note IS NOT NULL
+//         AND char_length(btrim(review_note)) > 0)). When status = 'approved',
+//     review_note is optional. Max length 1000 characters.
+// 21. SQL REQUIRED (PKB review consistency) — PLANNED, not implemented in this task:
+//     status = 'approved' → reviewed_by NOT NULL, reviewed_at NOT NULL, reviewer_role = 'merchant';
+//     status = 'rejected' → reviewed_by NOT NULL, reviewed_at NOT NULL, reviewer_role IN ('merchant','admin'), review_note NOT NULL and non-empty;
+//     status IN ('draft','in_review') → reviewed_by NULL, reviewed_at NULL, reviewer_role NULL, review_note NULL.
+//     Enforcement via trigger or application-level check; a single CHECK constraint cannot express this combination reliably.
+// 22. SQL REQUIRED (content_scripts cost) — PLANNED, not implemented in this task:
+//     same nullability and derivation rules as generation_jobs.cost_usd. Worker or
+//     backend writes cost_breakdown; the database derives cost_usd from it.
+//     Enforcement mirrors generation_jobs: cost_breakdown = valid v1 payload ->
+//     cost_usd NOT NULL; cost_breakdown = '{}' -> cost_usd NULL.
+// 23. Nullability/default of generation_jobs tokens_in, tokens_out, cost_usd is by
+//     design (Issue #23), not an open gap: keep them nullable with no default so
+//     "not yet measured" differs from "measured as zero" (see the cost note on the
+//     table). No schema change for generation_jobs in this task.

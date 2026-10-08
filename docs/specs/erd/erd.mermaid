@@ -1,10 +1,18 @@
-%% Nguồn: @tranquangthong03, 2026-10-07 (file gốc: erd_v0.mermaid). Bản vẽ của erd.dbml (v1.3.1). Chờ @VV6505 duyệt.
+%% Nguồn: @tranquangthong03, 2026-10-07 (file gốc: erd_v0.mermaid). Bản vẽ của erd.dbml (v1.3.3). Chờ @VV6505 duyệt.
 %%
 %% Bổ sung cho issue #23 (xem erd.dbml và data-dictionary.md — 2 file đó giữ chi tiết đầy đủ):
 %%   generation_jobs: tokens_in, tokens_out, cost_usd, cost_breakdown (contract cost_breakdown v1).
 %%     Worker chỉ ghi cost_breakdown; DB tự tính 3 cột còn lại. Aggregation/validation/write
 %%     restriction là PLANNED, chưa implement trong task này.
-%%     GAP: đầu vào không nêu NOT NULL/default cho tokens_in, tokens_out, cost_usd -> để nullable.
+%%     COST NULLABILITY (resolved, #23): 3 cột tổng nullable theo thiết kế để phân biệt
+%%     '{}' -> NULL (chưa đo), payload v1 có item cost_usd=0 -> 0 (thật sự tốn 0), payload
+%%     v1 thường -> > 0. Không có schema change cho generation_jobs trong task này.
+%%   content_scripts: cost_breakdown (cùng contract cost_breakdown v1) + cost_usd numeric(12,6)
+%%     do DB suy ra. Script tạo qua sync API (D012), không có generation_jobs, nhưng vẫn tốn
+%%     LLM cost. tokens_in/tokens_out cố ý KHÔNG thêm ở MVP. PLANNED.
+%%     COST SCOPE NOTE (#23): 2 cột này đo chi phí sinh script của M2; RIÊNG BIỆT với ngân sách
+%%     NFR-02 của M1 (≤ $0.05/product) vốn chỉ tính crawl + extract. Pilot chỉ theo dõi để thấy,
+%%     KHÔNG cộng vào tổng ngân sách của product. Thiết kế cột và quy tắc suy dẫn không đổi.
 %%   videos: merchant_flagged_at, merchant_flag_reason. Enforcement là PLANNED, chưa implement.
 %%     Chỉ merchant sở hữu product của video được flag; cần timestamp + reason không rỗng;
 %%     server cấp merchant_flagged_at; flag không tự approve/reject/archive/remove video.
@@ -14,10 +22,17 @@
 %%     rejected có thể do admin set khi vi phạm policy. (Đổi theo Issue #23.)
 %%     Chỉ merchant sở hữu product được approve PKB; admin chỉ reject được khi
 %%     vi phạm policy và phải ghi reason; admin không sửa/approve nội dung PKB. PLANNED.
-%%     GAP: ERD không có cột/field nào lưu reason của rejection.
-%%     GAP: approved_by / approved_at mang tên theo đường approve; dùng để ghi actor
-%%     của rejection là không nhất quán về ngữ nghĩa. Có thể cần cột
-%%     reviewed_action hoặc rejection_actor; chờ Issue #23 quyết.
+%%     v1.3.3 (#23): approved_by/approved_at -> reviewed_by/reviewed_at (ghi cả approve và
+%%     reject); thêm reviewer_role (merchant|admin). KHÔNG có cột review_action — kết quả cuối
+%%     đã nằm ở status (approved hoặc rejected), tránh cặp cột dư phải đồng bộ.
+%%     review_note lưu reason của rejection / ghi chú approval (nullable, tối đa 1000 ký tự);
+%%     khi status = rejected thì review_note phải không rỗng; approve thì tùy chọn. Review
+%%     metadata này KHÔNG nằm trong payload data JSON (data theo PKB v0.2 additionalProperties:false).
+%%     GAP (rejection reason) và GAP (reject semantics) ĐÃ RESOLVED ở v1.3.3.
+%%     SQL REQUIRED (PKB review consistency) PLANNED: approved -> reviewed_by/at NOT NULL,
+%%     reviewer_role='merchant'; rejected -> reviewed_by/at NOT NULL, reviewer_role IN
+%%     (merchant,admin), review_note non-empty; draft/in_review -> reviewed_by/at, reviewer_role,
+%%     review_note đều NULL. Trigger hoặc app-level check, không dùng 1 CHECK.
 %%     CONFLICT: BRD §542, SRS FR-PI-03 (dòng 356), M1 spec FR-07 và qa-log #1 /
 %%     decision-log #11 nói Admin KHÔNG tham gia approve PKB trong MVP — chưa đồng bộ.
 %%     CONFLICT lịch sử (đã note, không bỏ qua): SRS và M1 spec liệt kê status chỉ
@@ -158,8 +173,10 @@ erDiagram
         text status "draft|in_review|approved|rejected"
         jsonb data
         jsonb sources
-        uuid approved_by FK
-        timestamptz approved_at
+        uuid reviewed_by FK "actor for BOTH approve and reject; renamed from approved_by"
+        timestamptz reviewed_at "set for BOTH approve and reject; renamed from approved_at"
+        text reviewer_role "merchant|admin; NULL"
+        text review_note "NULL; max 1000 chars; reason for reject (or approval note)"
         timestamptz created_at
     }
 
@@ -212,6 +229,8 @@ erDiagram
         text script_text
         text platform
         text language
+        jsonb cost_breakdown "DEFAULT {}; worker-written; cost_breakdown v1 contract"
+        numeric cost_usd "numeric(12,6); NULL; derived; same rules as generation_jobs"
         timestamptz created_at
     }
 
@@ -226,9 +245,9 @@ erDiagram
         jsonb result_manifest
         text error
         int attempts
-        int tokens_in "NULL; derived from cost_breakdown"
-        int tokens_out "NULL; derived from cost_breakdown"
-        numeric cost_usd "numeric(12,6); NULL; derived; 6 decimals"
+        int tokens_in "NULL by design; derived from cost_breakdown"
+        int tokens_out "NULL by design; derived from cost_breakdown"
+        numeric cost_usd "numeric(12,6); NULL by design; derived; 6 decimals"
         jsonb cost_breakdown "DEFAULT {}; worker-written; v1 contract"
         timestamptz created_at
         timestamptz finished_at

@@ -3,10 +3,10 @@ Nguồn: @tranquangthong03 gửi nhóm ngày 2026-10-07 (file gốc: mo_ta_csdl_
 "erd_v1_3_1.dbml" trong tài liệu = docs/specs/erd/erd.dbml. Trạng thái: chờ @VV6505 duyệt. Góp ý: issue #23.
 -->
 
-# Từ điển dữ liệu hệ thống AI Review MVP v1.3.1
-Tài liệu giải thích từng bảng và từng thuộc tính trong **erd_v1_3_1.dbml**, phục vụ BE, FE, AI và người phụ trách nghiệp vụ. Phạm vi là **16 bảng nghiệp vụ và một bảng Auth được tham chiếu**, hướng tới pilot một tháng. Đây là mô tả thiết kế mục tiêu, không phải xác nhận migration đã triển khai hoặc kiểm thử database đã pass.
+# Từ điển dữ liệu hệ thống AI Review MVP v1.3.3
+Tài liệu giải thích từng bảng và từng thuộc tính trong **erd_v1_3_3.dbml**, phục vụ BE, FE, AI và người phụ trách nghiệp vụ. Phạm vi là **16 bảng nghiệp vụ và một bảng Auth được tham chiếu**, hướng tới pilot một tháng. Đây là mô tả thiết kế mục tiêu, không phải xác nhận migration đã triển khai hoặc kiểm thử database đã pass.
 
-Nguồn đối chiếu: ERD v1.3.1 ngày 07/10/2026. Tài liệu này không thay đổi ERD và không thêm bảng/cột. Các ví dụ tiền, ID, nội dung chỉ minh họa; không phải cấu hình kinh doanh đã được team chốt.
+Nguồn đối chiếu: ERD v1.3.3 ngày 08/10/2026 (v1.3.1 ngày 07/10/2026). Tài liệu này không thay đổi ERD và không thêm bảng/cột. Các ví dụ tiền, ID, nội dung chỉ minh họa; không phải cấu hình kinh doanh đã được team chốt.
 
 ## 1. Cách đọc tài liệu
 
@@ -172,8 +172,10 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 | `status` | `text` | Không | 'draft' | draft: chưa submit; in_review: đã submit chờ duyệt; approved: kiến thức được duyệt; rejected: không được chấp nhận. CHECK: status IN ('draft','in_review','approved','rejected'). |
 | `data` | `jsonb` | Không | — | JSON kiến thức chuẩn: identity, pricing, features, audience, USP, limitations, brand và claims. Fact phải liên kết nguồn hoặc ghi rõ origin theo hợp đồng JSON. |
 | `sources` | `jsonb` | Không | — | JSON danh mục nguồn: source ID, URL, thời điểm crawl, hash, đoạn bằng chứng và Storage path. Cần phân biệt dữ liệu crawl với suy luận/merchant nhập. |
-| `approved_by` | `uuid` | Có | — | Tài khoản **merchant sở hữu product** đã duyệt PKB; không chỉ là tác giả nội dung. Theo PLANNED, admin không approve PKB. Xem GAP (ngữ nghĩa reject) bên dưới: cột này mang tên theo đường approve. FK → auth.users.id. |
-| `approved_at` | `timestamptz` | Có | — | Thời điểm PKB được phê duyệt. Bắt buộc khi status=approved. |
+| `reviewed_by` | `uuid` | Có | — | Tài khoản (merchant hoặc admin) đã **approve hoặc reject** PKB. Không chỉ là tác giả nội dung. Ghi cho **cả hai đường approve và reject**, vì đây là actor + timestamp chứ không chỉ approve. Đổi tên từ `approved_by` ở v1.3.3 (Issue #23). FK → auth.users.id. |
+| `reviewed_at` | `timestamptz` | Có | — | Thời điểm actor thực hiện approve/reject, ghi cho **cả hai đường**. Bắt buộc khi status=approved. Đổi tên từ `approved_at` ở v1.3.3 (Issue #23). |
+| `reviewer_role` | `text` | Có | — | Vai trò actor: merchant (chủ product) hoặc admin. Theo pilot, merchant approve; admin chỉ reject được khi vi phạm policy. CHECK: reviewer_role IN ('merchant','admin'). |
+| `review_note` | `text` | Có | — | Lý do **từ chối** PKB, hoặc ghi chú khi approve. Tối đa **1000 ký tự**. Là **review metadata**, KHÔNG nằm trong payload `data` JSON (data bị ràng buộc PKB v0.2 với `additionalProperties: false`). Khi status = rejected thì phải không rỗng (SQL REQUIRED, chưa enforce); khi status = approved là tùy chọn. Đã giải quyết GAP (lý do reject) ở v1.3.3 (Issue #23). |
 | `created_at` | `timestamptz` | Không | `now()` | Thời điểm tạo bản ghi trong hệ thống; giá trị mặc định được gán khi INSERT. |
 
 **Khóa/index được khai báo ở cấp bảng:**
@@ -182,7 +184,9 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 
 **CHECK kết hợp nhiều trường trong DBML:**
 
-- `status <> 'approved' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)`
+- `status <> 'approved' OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL)`
+
+**Không có cột `review_action`:** kết quả cuối của mỗi PKB version (`approved` hoặc `rejected`) đã nằm ở `status`; thêm một cột hành động song song sẽ tạo cặp cột dư phải luôn đồng bộ, nên **cố ý không** tạo cột này.
 
 #### Quyền duyệt PKB (PLANNED — chưa enforce)
 
@@ -193,11 +197,23 @@ Các rule dưới đây là thiết kế đã duyệt cho phần duyệt PKB. Ta
 - **Chỉ merchant sở hữu product được approve PKB của product đó**, suy theo `products.merchant_id`. Không merchant khác hay creator nào approve được.
 - **Admin chỉ được reject PKB khi vi phạm policy**, và lần reject đó phải ghi lý do; **lý do phải được giữ lại**.
 - **Admin không được sửa hoặc approve nội dung PKB.**
-- **Cả approve và reject đều phải ghi actor và timestamp.**
+- **Cả approve và reject đều phải ghi actor và timestamp** bằng `reviewed_by` / `reviewed_at` (ghi cho cả hai đường).
 
-**GAP (lý do reject):** ERD **không** có cột hay field JSON nào lưu được **lý do reject theo policy**. `approved_by` / `approved_at` chỉ ghi actor và timestamp. `data` và `sources` là payload PKB v0.2 bị ràng buộc schema (`additionalProperties: false`), không phải chỗ chứa lý do kiểm duyệt. Task này **không** thêm cột/bảng chưa được duyệt để biểu diễn lý do; gap này được báo lại để #23 quyết.
+**SQL REQUIRED (review_note) — PLANNED, chưa enforce:** khi `status = 'rejected'` thì `review_note` phải **không rỗng**. CHECK:
 
-**GAP (ngữ nghĩa reject):** `approved_by` / `approved_at` mang tên theo **đường approve**. Dùng chúng để ghi **actor của rejection** là không nhất quán về ngữ nghĩa. Có thể cần một cột riêng như `reviewed_action` hoặc `rejection_actor`; quyết định **hoãn sang Issue #23**. Task này không thêm cột/bảng nào.
+```sql
+(status <> 'rejected' OR (review_note IS NOT NULL AND char_length(btrim(review_note)) > 0))
+```
+
+Khi `status = 'approved'`, `review_note` là tùy chọn. Độ dài tối đa 1000 ký tự.
+
+**SQL REQUIRED (PKB review consistency) — PLANNED, chưa enforce:** thực thi bằng trigger hoặc check ở tầng ứng dụng; **một CHECK constraint không diễn đạt được tổ hợp này một cách đáng tin cậy**.
+
+- `status = 'approved'` → `reviewed_by NOT NULL`, `reviewed_at NOT NULL`, `reviewer_role = 'merchant'`.
+- `status = 'rejected'` → `reviewed_by NOT NULL`, `reviewed_at NOT NULL`, `reviewer_role IN ('merchant','admin')`, `review_note NOT NULL` và không rỗng.
+- `status IN ('draft','in_review')` → `reviewed_by NULL`, `reviewed_at NULL`, `reviewer_role NULL`, `review_note NULL`.
+
+Các cột review (`reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note`) đều **nullable** ở tầng DB; ràng buộc tổ hợp hợp lệ theo status là SQL REQUIRED, **chưa** được enforce trong task này.
 
 **CONFLICT lịch sử (đã note, không bỏ qua):** thay đổi status ở trên **được áp theo phê duyệt của Issue #23**. Xung đột lịch sử với SRS FR-PI-03 và đặc tả M1 FR-07 (hai tài liệu chỉ liệt kê `draft / in_review / approved`) được **đánh dấu để cập nhật trong chính 2 spec đó**; việc cập nhật đặc tả M1 v0.3 được theo dõi ở Issue #23.
 
@@ -292,12 +308,20 @@ Các rule dưới đây là thiết kế đã duyệt cho phần duyệt PKB. Ta
 | `script_text` | `text` | Không | — | Toàn bộ kịch bản dùng để dựng video; là dữ liệu đầu vào có thể truy vết. |
 | `platform` | `text` | Không | — | Nền tảng đích, ví dụ TikTok hoặc YouTube. DBML chưa quy định danh sách giá trị hợp lệ. |
 | `language` | `text` | Không | — | Ngôn ngữ nội dung/hồ sơ; định dạng mã ngôn ngữ cần thống nhất trong validation. |
+| `cost_breakdown` | `jsonb` | Có | `'{}'` | Chi tiết chi phí theo **cùng contract `cost_breakdown` v1** như `generation_jobs.cost_breakdown` (`docs/specs/contracts/cost-breakdown.v1.schema.json`). Worker/backend chỉ ghi cột này; `{}` nghĩa là **chưa ghi dữ liệu chi phí**, không phải script tốn 0 USD, và `{}` không phải payload v1 hợp lệ. |
+| `cost_usd` | `numeric(12,6)` | Có | — | Tổng chi phí script bằng USD, DB suy ra từ `cost_breakdown`. Cùng kiểu `numeric(12,6)` và cùng quy tắc suy dẫn như `generation_jobs.cost_usd`. 6 chữ số thập phân. NULL khi chưa ghi chi phí. |
 | `created_at` | `timestamptz` | Không | `now()` | Thời điểm tạo bản ghi trong hệ thống; giá trị mặc định được gán khi INSERT. |
 
 **Khóa/index được khai báo ở cấp bảng:**
 
 - `(id, campaign_id) [unique]`
 - `campaign_id`
+
+**Chi phí của script (v1.3.3, Issue #23):** content script được tạo qua **sync API** (D012) nên **không có** row `generation_jobs`, nhưng nó vẫn tiêu LLM cost. Không có 2 cột này thì đo NFR-02 (cost/product) sẽ **bỏ sót bước sinh script**. Cột `tokens_in` / `tokens_out` **cố ý KHÔNG thêm** ở MVP: M1 ban đầu chỉ đề xuất 2 cột, NFR-02 đo **cost** chứ không đo token, và script dùng **một** lần gọi LLM (khác batch crawl). Nếu sau này đội AI cần token cho script thì thêm bằng migration bổ sung.
+
+**SQL REQUIRED (content_scripts cost) — PLANNED, chưa enforce:** cùng quy tắc nullability và suy dẫn như `generation_jobs.cost_usd`. Worker hoặc backend ghi `cost_breakdown`; DB suy ra `cost_usd`. Thực thi giống `generation_jobs`: `cost_breakdown` là payload v1 hợp lệ → `cost_usd NOT NULL`; `cost_breakdown = '{}'` → `cost_usd NULL`.
+
+**COST SCOPE NOTE (Issue #23):** 2 cột `cost_breakdown` và `cost_usd` trên `content_scripts` đo **chi phí sinh script của riêng M2**. Đo lường này **tách riêng** với ngân sách NFR-02 của M1 (≤ $0.05/product) vốn **chỉ tính crawl + extract**. Pilot theo dõi chi phí này để thấy, **không** cộng vào tổng ngân sách của product. Thiết kế cột và quy tắc suy dẫn không đổi.
 
 ### 9. `generation_jobs` — Theo dõi công việc AI
 
@@ -324,7 +348,9 @@ Các rule dưới đây là thiết kế đã duyệt cho phần duyệt PKB. Ta
 | `created_at` | `timestamptz` | Không | `now()` | Thời điểm tạo bản ghi trong hệ thống; giá trị mặc định được gán khi INSERT. |
 | `finished_at` | `timestamptz` | Có | — | Thời điểm job kết thúc. DBML cho NULL và chưa có CHECK bắt buộc theo trạng thái; worker phải ghi đúng. |
 
-**Giới hạn nullability (cost):** đầu vào chỉ nêu default `'{}'` cho `cost_breakdown`. Với `tokens_in`, `tokens_out`, `cost_usd` không đầu vào nào nêu NOT NULL hoặc default, nên DBML ghi chúng là nullable và **các thuộc tính này để mở**, không tự quyết. Không suy nullability/default của cột database từ yêu cầu JSON Schema của từng item chi phí.
+**COST NULLABILITY (đã chốt, Issue #23):** ba cột tổng `tokens_in`, `tokens_out`, `cost_usd` **nullable theo thiết kế** (không NOT NULL, không default) để phân biệt ba trạng thái: `cost_breakdown = '{}'` → 3 cột **NULL** (chưa đo chi phí); `cost_breakdown` là payload v1 hợp lệ với `items[].cost_usd = 0` → 3 cột **= 0** (job thật sự tốn 0 USD, ví dụ cache hit toàn phần); `cost_breakdown` là payload v1 thường → 3 cột **> 0**. Gán default 0 hay NOT NULL sẽ làm mất phân biệt "chưa đo" với "đo được 0", dẫn tới dashboard cost/product NFR-02 sai. Task này **không** đổi schema `generation_jobs`.
+
+**SQL REQUIRED (generation_jobs cost nullability) — PLANNED, chưa enforce:** khi `cost_breakdown` là payload v1 hợp lệ (≠ `'{}'`) thì 3 cột tổng phải NOT NULL; khi `cost_breakdown = '{}'` thì chúng phải NULL. Enforce bằng validation ở worker hoặc trigger — **không** dùng CHECK đơn giản vì kiểm một payload JSONB theo schema v1 cần logic ứng dụng.
 
 **Chi phí và token (PLANNED — issue #23, contract `cost_breakdown` v1):** worker chỉ ghi `cost_breakdown`; DB suy ra `tokens_in`, `tokens_out`, `cost_usd`. Việc tổng hợp, suy dẫn, validation, hạn chế ghi, giới hạn ngân sách và cảnh báo **chưa được triển khai** trong task này (không thêm trigger, generated column hay RPC). Retry là item bổ sung và được cộng vào tổng theo contract đã merge; job `failed` vẫn giữ chi phí đã tiêu. `cost_usd` dùng `numeric(12,6)`. Hành vi cache, cách tính token và `cost_status` theo đúng contract v1. BE dự kiến kiểm thêm: (a) `call_id` duy nhất trong `items`, (b) `tokens_in_cached <= tokens_in` cho từng item liên quan. Chi phí `estimated` phải phân biệt được với `exact` bằng `cost_status` của item.
 
@@ -690,6 +716,7 @@ ERD đã chốt **cột lưu JSON**, nhưng chưa chốt đầy đủ tên key/s
 | `generation_jobs.input_snapshot` | Đầu vào và cấu hình thực tế của lần chạy | Tham chiếu sống có thể đổi theo product hiện tại |
 | `generation_jobs.result_manifest` | ID/path/version của kết quả | Bản dữ liệu chuẩn cạnh tranh với PKB/videos |
 | `generation_jobs.cost_breakdown` | Chi tiết từng lần gọi tốn tiền theo contract `cost_breakdown` v1: `schema_version`, `currency`, `items[]` với `call_id`, `category`, `attempt`, `cache_hit`, `cost_usd`, `cost_status` | Một payload v1 hợp lệ khi giá trị là `{}`; `{}` chỉ là "chưa ghi dữ liệu chi phí", không phải job tốn 0 USD. Chi phí `estimated` vẫn là chi phí |
+| `content_scripts.cost_breakdown` | Cùng contract `cost_breakdown` v1 như `generation_jobs.cost_breakdown`, cho bước sinh script qua sync API | Một payload v1 hợp lệ khi giá trị là `{}`; `{}` chỉ là "chưa ghi dữ liệu chi phí", không phải script tốn 0 USD |
 | `videos.evidence` | Bằng chứng cho claim cụ thể, test output/recording nếu có | Việc mặc định mọi screenshot chứng minh đã test sản phẩm |
 | `conversions.attribution_snapshot` | Policy version, lý do, click/cửa sổ được kiểm tra | Chỉ một nhãn do client gửi |
 | `commissions.calculation_snapshot` | Loại/mức commission, basis, rounding và policy version thực tế | Công thức lấy lại từ campaign hiện tại khi xem lịch sử |
@@ -770,6 +797,6 @@ Các nhóm có thể được chia cho BE/AI/FE làm song song khi contract đã
 
 ## 13. Phạm vi xác minh của tài liệu
 
-Tài liệu mô tả đủ 17 bảng được khai báo trong ERD v1.3.1, cùng các FK ghép và gate triển khai. `auth.users` chỉ là mô hình tham chiếu rút gọn; trạng thái triển khai/merge không suy ra từ ERD.
+Tài liệu mô tả đủ 17 bảng được khai báo trong ERD v1.3.3, cùng các FK ghép và gate triển khai. `auth.users` chỉ là mô hình tham chiếu rút gọn; trạng thái triển khai/merge không suy ra từ ERD.
 
-Bản v1.3.1 có 186 thuộc tính. Theo issue #23, task này thêm **6 cột đã được duyệt** vào ERD (không thêm bảng): `generation_jobs.tokens_in`, `.tokens_out`, `.cost_usd`, `.cost_breakdown` và `videos.merchant_flagged_at`, `.merchant_flag_reason` — tổng **192 thuộc tính**. Các cấu trúc JSON chi tiết và giá trị chính sách cần được ghi vào API/spec của team trước khi code phần tương ứng.
+Bản v1.3.1 có 186 thuộc tính. Theo issue #23, v1.3.3 (decision-log #18) đổi ERD (không thêm bảng): thêm `product_knowledge.review_note`, `product_knowledge.reviewer_role`; đổi tên `approved_by` → `reviewed_by` và `approved_at` → `reviewed_at` (số cột `product_knowledge` tăng 2); thêm `content_scripts.cost_breakdown` và `content_scripts.cost_usd` (tăng 2). Ghi chú: v1.3.2 (PR #49) đã thêm 6 cột `generation_jobs.tokens_in/.tokens_out/.cost_usd/.cost_breakdown` và `videos.merchant_flagged_at/.merchant_flag_reason`. Task v1.3.3 **không** đổi schema `generation_jobs` (nullability đã đúng). Tổng kết quả: **196 thuộc tính**. Các cấu trúc JSON chi tiết và giá trị chính sách cần được ghi vào API/spec của team trước khi code phần tương ứng.
