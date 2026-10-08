@@ -33,3 +33,4 @@ jobs:
       # Sinh type cho route (LayoutProps, PageProps...) trước khi type-check
       - run: pnpm exec next typegen
       - run: pnpm exec tsc --noEmit
+      - run: pnpm test
