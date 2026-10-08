@@ -86,6 +86,8 @@ Khớp với giá spike dùng (`spikes/m1-crawl-extract/config.py`). Cả 4 mode
 Dependency gián tiếp `unclecode-litellm 1.81.13` do `crawl4ai` kéo vào thuộc phạm vi ADR-001, không lặp lại ở đây.
 
 ## Quyết định 4: Model embedding cho 1.8
+> **Hoãn:** MVP không dùng vector RAG (ERD v1.3.1, qa-log #5, #23). 1.8 ra khỏi MVP nên chưa cần chọn embedding. Nội dung dưới giữ lại để dùng khi làm RAG ở phase sau.
+
 Nguồn: [tài liệu embedding của Gemini](https://ai.google.dev/gemini-api/docs/embeddings) và [README pgvector](https://github.com/pgvector/pgvector#hnsw), tra 07/10/2026.
 
 - `gemini-embedding-2` và `gemini-embedding-001` đều mặc định **3 072 chiều**, nhận giá trị 128–3 072, Google khuyên dùng 768, 1 536 hoặc 3 072. `gemini-embedding-2` nhận tối đa 8 192 token mỗi lần (bản `001`: 2 048), tự chuẩn hóa vector khi cắt chiều (bản `001` cần chuẩn hóa tay) và hỗ trợ hơn 100 ngôn ngữ.
