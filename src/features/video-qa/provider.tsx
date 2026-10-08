@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { initialVideos, parseVideos, VIDEO_KEY, type VideoAsset, type VideoState } from "./model";
 
-type VideoContextValue = VideoState & { ready: boolean; error: string; updateVideo: (id: string, update: (asset: VideoAsset) => VideoAsset) => void };
+type VideoContextValue = VideoState & { ready: boolean; error: string; addVideo: (asset: VideoAsset) => void; updateVideo: (id: string, update: (asset: VideoAsset) => VideoAsset) => void };
 const VideoContext = createContext<VideoContextValue | null>(null);
 export function VideoProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState(initialVideos);
@@ -23,6 +23,14 @@ export function VideoProvider({ children }: { children: ReactNode }) {
     });
     return () => { cancelled = true; };
   }, []);
+  function addVideo(asset: VideoAsset) {
+    if (!ready) throw new Error("Đang khôi phục thư viện.");
+    const raw = localStorage.getItem(VIDEO_KEY);
+    if (raw && parseVideos(raw).revision !== current.current.revision) throw new Error("Thư viện đã đổi ở tab khác. Tải lại trước khi lưu.");
+    const next = { ...current.current, revision: current.current.revision + 1, assets: [asset, ...current.current.assets] };
+    try { localStorage.setItem(VIDEO_KEY, JSON.stringify(next)); current.current = next; setState(next); setError(""); }
+    catch { throw new Error("Không thể lưu video mới trong trình duyệt."); }
+  }
   function updateVideo(id: string, update: (asset: VideoAsset) => VideoAsset) {
     if (!ready) throw new Error("Đang khôi phục thư viện.");
     try {
@@ -39,7 +47,7 @@ export function VideoProvider({ children }: { children: ReactNode }) {
       setError(message); throw new Error(message);
     }
   }
-  return <VideoContext.Provider value={{ ...state, ready, error, updateVideo }}>{children}</VideoContext.Provider>;
+  return <VideoContext.Provider value={{ ...state, ready, error, updateVideo, addVideo }}>{children}</VideoContext.Provider>;
 }
 export function useVideos() {
   const value = useContext(VideoContext);

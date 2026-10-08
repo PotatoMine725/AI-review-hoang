@@ -30,10 +30,11 @@ export function Header() {
   const pathname = usePathname();
   const { projects } = useWorkspace();
   const admin = pathname.startsWith("/admin");
-  const legacy = !admin && pathname !== "/" && !pathname.startsWith("/merchant");
-  const navigation = admin ? adminNavigation : legacy ? legacyNavigation : merchantNavigation;
-  const home = admin ? "/admin" : "/merchant";
-  const area = admin ? "Admin" : "Merchant";
+  const creator = pathname.startsWith("/creator");
+  const legacy = !creator && !admin && pathname !== "/" && !pathname.startsWith("/merchant");
+  const navigation = creator ? [{ label: "Thư viện nội dung", icon: Library, href: "/creator/library" }, { label: "Campaigns", icon: Globe, href: "/creator/campaigns" }] : admin ? adminNavigation : legacy ? legacyNavigation : merchantNavigation;
+  const home = creator ? "/creator/library" : admin ? "/admin" : "/merchant";
+  const area = creator ? "Creator" : admin ? "Admin" : "Merchant";
   const [menuOpen, setMenuOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   const active = [...navigation].reverse().find(({ href }) => href === pathname || (pathname === "/" && href === "/merchant") ||
@@ -66,7 +67,7 @@ export function Header() {
       </header>
       <aside id="workspace-navigation" className={`factory-sidebar workspace-sidebar ${menuOpen ? "menu-open" : ""}`}>
         <Link href={home} className="brand" onClick={() => setMenuOpen(false)}>reviewlab<span className="brand-dot">.</span></Link>
-        <p className="nav-label">{admin ? "KIỂM DUYỆT NỀN TẢNG" : "MERCHANT WORKSPACE"}</p>
+        <p className="nav-label">{creator ? "CREATOR WORKSPACE" : admin ? "KIỂM DUYỆT NỀN TẢNG" : "MERCHANT WORKSPACE"}</p>
         <nav aria-label="Điều hướng chính">
           {navigation.map(({ label, icon: Icon, href }) => (
             <Link key={href} href={href} className={`nav-item ${active?.href === href ? "active" : ""}`} aria-current={active?.href === href ? "page" : undefined} onClick={() => setMenuOpen(false)}>
@@ -74,7 +75,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="sidebar-bottom role-switch"><span>{area} workspace</span><small>Dữ liệu mẫu · chưa đăng nhập</small><Link href={admin ? "/merchant" : "/admin"} onClick={() => setMenuOpen(false)}><ArrowLeftRight size={14} />{admin ? "Chuyển sang Merchant" : "Chuyển sang Admin"}</Link></div>
+        <div className="sidebar-bottom role-switch"><span>{area} workspace</span><small>Dữ liệu mẫu · chưa đăng nhập</small><Link href={admin ? "/merchant" : "/admin"} onClick={() => setMenuOpen(false)}><ArrowLeftRight size={14} />{admin ? "Chuyển sang Merchant" : "Chuyển sang Admin"}</Link>{!creator && <Link href="/creator/library" onClick={() => setMenuOpen(false)}>Chuyển sang Creator</Link>}{creator && <Link href="/merchant" onClick={() => setMenuOpen(false)}>Chuyển sang Merchant</Link>}</div>
       </aside>
     </>
   );

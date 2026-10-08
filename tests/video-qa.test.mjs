@@ -8,10 +8,29 @@ const modelUrl = new URL("../src/features/video-qa/model.ts", import.meta.url).h
 registerHooks({ resolve(specifier, context, nextResolve) {
   return nextResolve(context.parentURL === modelUrl && specifier === "../reviews/demo" ? "../reviews/demo.ts" : specifier, context);
 } });
-const { checks, decideVideo, flagVideo, initialVideos, parseVideos } = await import(modelUrl);
+const { checks, decideVideo, flagVideo, initialVideos, parseVideos, requestVideo, changeRender, hookCategory, distributionCaption } = await import(modelUrl);
+const { initialProjects } = await import("../src/features/content-factory/model.ts");
 const allChecked = Object.fromEntries(checks.map(({ key }) => [key, true]));
 const pending = () => structuredClone(initialVideos.assets.find(a => a.status === "pending_review"));
 const approved = () => decideVideo(pending(), "approved", allChecked, "", true);
+
+test("generated jobs need approved PKB and finished 9:16 render; reload preserves source version and trusted media", () => {
+  assert.throws(() => requestVideo(initialProjects[1], "Demo", "Hook"));
+  const queued = requestVideo(initialProjects[0], "Use case", "Hook");
+  assert.throws(() => decideVideo(queued, "approved", allChecked, "", true));
+  assert.throws(() => changeRender(queued, "completed"));
+  const failed = changeRender(changeRender(queued, "running"), "failed");
+  const ready = changeRender(changeRender(failed, "running"), "completed");
+  assert.equal(ready.review.id, queued.review.id);
+  assert.throws(() => decideVideo({ ...ready, duration: 61 }, "approved", allChecked, "", true));
+  assert.throws(() => decideVideo({ ...ready, width: 1920 }, "approved", allChecked, "", true));
+  const locked = decideVideo(ready, "approved", allChecked, "", true);
+  assert.throws(() => changeRender(locked, "running"));
+  const state = structuredClone(initialVideos); state.assets.push(locked);
+  state.assets.at(-1).review.videoUrl = "https://untrusted.example/video.mp4";
+  const restored = parseVideos(JSON.stringify(state)).assets.at(-1);
+  assert.equal(restored.review.videoUrl, "/media/leader-demo.mp4"); assert.equal(restored.knowledgeVersion, 1);
+});
 
 test("initial video approval requires approved PKB and QA; pending rejection requires a reason", () => {
   assert.throws(() => decideVideo(pending(), "approved", allChecked, "", false));
@@ -56,4 +75,16 @@ test("video saves round-trip locked approvals and migrate legacy fixtures withou
   assert.ok(migrated.assets.find(a => a.status === "approved").firstApprovedAt);
   const invalid = structuredClone(state); invalid.assets[0].status = "rejected";
   assert.throws(() => parseVideos(JSON.stringify(invalid)), /lifecycle/);
+});
+
+test("hook category persists independently of hook wording; distribution supplies hashtags without changing approved content", () => {
+  const asset = requestVideo(initialProjects[0], "Problem", "A custom opening sentence", "Pain");
+  const restored = parseVideos(JSON.stringify({ ...initialVideos, assets: [...initialVideos.assets, asset] })).assets.at(-1);
+  assert.equal(hookCategory(restored), "Pain");
+  assert.equal(restored.hook, "A custom opening sentence");
+  const locked = structuredClone(initialVideos.assets.find(item => item.status === "approved"));
+  const before = structuredClone(locked);
+  assert.match(distributionCaption(locked), /#ProductReview/);
+  assert.deepEqual(locked, before);
+  assert.equal(distributionCaption({ ...locked, caption: "Caption #ExistingTag" }), "Caption #ExistingTag");
 });

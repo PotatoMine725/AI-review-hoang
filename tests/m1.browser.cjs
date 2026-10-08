@@ -28,6 +28,7 @@ const key = 'reviewlab.m1.mock.v2';
     await page.getByLabel('Mô tả sản phẩm', { exact: true }).waitFor();
     assert.match(await page.getByLabel('Mô tả sản phẩm', { exact: true }).inputValue(), /English-language/);
     assert.ok(await page.getByLabel('Giá niêm yết', { exact: true }).isVisible());
+    await page.getByRole('tab', {name:'Đối tượng / JTBD',exact:true}).click();
     assert.ok(await page.getByText('AI suy luận (mock)', { exact: true }).first().isVisible());
 
     await page.getByLabel('Mô tả sản phẩm', { exact: true }).fill('A merchant-edited English product description.');

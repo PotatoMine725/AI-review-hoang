@@ -1,9 +1,26 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedKnowledge, changeJob, createMockContent, createMockProject, initialWorkspace, latestKnowledge, newDraft, normalizeWebsiteUrl, parseWorkspace, saveKnowledge, transitionKnowledge } from "../src/features/content-factory/model.ts";
+import { approvedKnowledge, changeJob, createMockContent, createMockProject, initialWorkspace, latestKnowledge, newDraft, normalizeWebsiteUrl, parseWorkspace, saveKnowledge, transitionKnowledge, enrichKnowledge, startRecrawl, knowledgeErrors, updatePricingMeta } from "../src/features/content-factory/model.ts";
 
 function draft() { return changeJob(changeJob(createMockProject("https://demo.example/tool", "https://demo.example/?ref=test", "test"), "running"), "completed"); }
 function approve(project) { return transitionKnowledge(transitionKnowledge(project, "in_review", "merchant"), "approved", "merchant"); }
+
+test("merchant conflicts, evidence limits and explicit price confirmation block approval; recrawl preserves approved snapshots", () => {
+  const project = draft();
+  const version = enrichKnowledge(latestKnowledge(project), { name: "Demo", tagline: "Demo", pricing: "$35 / month", features: ["Merchant feature"], forbiddenClaims: "No guarantees", logo: "", color: "#333333", uploads: [] });
+  assert.equal(version.data.facts.features.origin, "merchant");
+  assert.ok(knowledgeErrors(version).some(message => message.includes("xung đột")));
+  assert.ok(knowledgeErrors(version).some(message => message.includes("giá Merchant")));
+  version.data.conflicts.forEach(conflict => { conflict.resolved = "merchant"; });
+  version.data.pricing.plans[0].listPrice = 35; version.data.pricing.plans[0].priceConfirmed = true;
+  assert.deepEqual(knowledgeErrors(version), []);
+  version.data.facts.description.evidence = "x".repeat(201);
+  assert.ok(knowledgeErrors(version).some(message => message.includes("200")));
+  const approved = approve(project), original = structuredClone(approvedKnowledge(approved));
+  const recrawled = changeJob(changeJob(startRecrawl(approved), "running"), "completed");
+  assert.deepEqual(approvedKnowledge(recrawled), original); assert.equal(latestKnowledge(recrawled).version, 2);
+  assert.throws(() => startRecrawl(recrawled));
+});
 test("canonical URL collapses scheme/www/slash/fragment but retains product paths and query", () => {
   assert.equal(normalizeWebsiteUrl(" HTTP://www.Gamma.app/#hero "), "https://gamma.app");
   assert.notEqual(normalizeWebsiteUrl("https://github.com/features/copilot"), normalizeWebsiteUrl("https://github.com/features/another-product"));
@@ -61,4 +78,14 @@ test("saved workspace round-trips jobs, drafts, approvals and English content sn
   assert.match(restored.projects[0].content.script, /Language: English/);
   assert.throws(() => parseWorkspace('{"schema":1}'));
   saved.projects[0].currentKnowledgeVersion = 99; assert.throws(() => parseWorkspace(JSON.stringify(saved)));
+});
+
+test("currency edits update plan units without converting numbers or changing the saved PKB", () => {
+  const original = structuredClone(initialWorkspace.projects[0].knowledge[0].data);
+  const edited = updatePricingMeta(original, "currency", "VND");
+  assert.equal(edited.pricing.currency, "VND");
+  assert.equal(edited.pricing.plans[0].currency, "VND");
+  assert.equal(edited.pricing.plans[0].listPrice, original.pricing.plans[0].listPrice);
+  assert.equal(edited.pricing.plans[0].origin, "merchant");
+  assert.equal(original.pricing.currency, "USD");
 });

@@ -5,6 +5,7 @@ import { ArrowRight, Plus, ShieldCheck } from "lucide-react";
 import { useWorkspace } from "../content-factory/workspace-provider";
 import { latestKnowledge } from "../content-factory/model";
 import { useVideos } from "../video-qa/provider";
+import { Pipeline } from "./pipeline";
 import { videoLabels } from "../video-qa/model";
 
 export function DemoNotice() {
@@ -21,11 +22,12 @@ export function MerchantDashboard() {
     {(storageError || error) && <p role="alert" className="form-error">{storageError || error}</p>}
     {!ready || !videosReady ? <p role="status">Đang khôi phục dashboard…</p> : <>
       <section className="overview-grid" aria-label="Tình trạng Merchant">
-        {[{ label: "Sản phẩm của bạn", value: projects.length, href: "/merchant/products", note: "Quản lý sản phẩm" }, { label: "PKB cần xử lý", value: pending.length + failed.length, href: "/merchant/products", note: "Kiểm tra nguồn và duyệt" }, { label: "Video đã duyệt", value: assets.filter(a => a.status === "approved").length, href: "/merchant/library", note: "Mở thư viện nội dung" }].map(item => <Link key={item.label} href={item.href} className="overview-card"><span>{item.label}</span><strong>{item.value}</strong><small>{item.note}<ArrowRight size={14} /></small></Link>)}
+        {[{ label: "Sản phẩm active", value: projects.filter(p => p.status === "active").length, href: "/merchant/products", note: "PKB đã duyệt" }, { label: "Video đã tạo", value: assets.filter(a => a.render?.status === "completed").length, href: "/merchant/library", note: "Render hoàn tất (mock)" }, { label: "Creator hoạt động", value: projects.some(p => p.campaign?.active && p.campaign.joined) ? 1 : 0, href: "/merchant/campaigns", note: "1 tài khoản Creator demo" }, { label: "Views / Clicks", value: `${projects.reduce((n, p) => n + (p.campaign?.views ?? 0), 0)} / ${projects.reduce((n, p) => n + (p.campaign?.clicks ?? 0), 0)}`, href: "/merchant/campaigns", note: "Chưa có tracking thật" }].map(item => <Link key={item.label} href={item.href} className="overview-card"><span>{item.label}</span><strong>{item.value}</strong><small>{item.note}<ArrowRight size={14} /></small></Link>)}
       </section>
+      <Pipeline />
       <div className="portal-columns">
         <section className="portal-panel"><div className="section-heading"><div><h2>Việc cần làm</h2><p>Ưu tiên dữ liệu sản phẩm trước khi tạo nội dung.</p></div></div>
-          {[...failed, ...pending].length ? [...failed, ...pending].map(p => <Link className="task-row" href={`/merchant/products/${p.id}`} key={p.id}><span><strong>{p.name}</strong><small>{p.job.status === "failed" ? "Job crawl thất bại · kiểm tra và thử lại" : `PKB v${latestKnowledge(p)?.version} · ${latestKnowledge(p)?.status === "in_review" ? "chờ bạn duyệt" : "cần review bản nháp"}`}</small></span><ArrowRight size={16} /></Link>) : <div className="empty-list"><p>Không có PKB cần xử lý.</p></div>}
+          {[...failed, ...pending].length ? [...new Map([...failed, ...pending].map(p => [p.id, p])).values()].map(p => <Link className="task-row" href={`/merchant/products/${p.id}`} key={p.id}><span><strong>{p.name}</strong><small>{p.job.status === "failed" ? "Job crawl thất bại · kiểm tra và thử lại" : `PKB v${latestKnowledge(p)?.version} · ${latestKnowledge(p)?.status === "in_review" ? "chờ bạn duyệt" : "cần review bản nháp"}`}</small></span><ArrowRight size={16} /></Link>) : <div className="empty-list"><p>Không có PKB cần xử lý.</p></div>}
         </section>
         <section className="portal-panel"><div className="section-heading"><div><h2>Nội dung gần đây</h2><p>Video và trạng thái kiểm duyệt.</p></div></div>{assets.map(asset => <Link className="task-row" href={`/merchant/library/${asset.review.id}`} key={asset.review.id}><span><strong>{asset.review.product}</strong><small>{asset.review.title}</small></span><span className={`status-chip ${asset.status}`}>{videoLabels[asset.status]}</span></Link>)}</section>
       </div>

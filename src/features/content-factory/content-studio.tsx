@@ -4,12 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useVideos } from "../video-qa/provider";
+import { requestVideo, hookTypes, angles } from "../video-qa/model";
 import { approvedKnowledge, createMockContent } from "./model";
 import { useWorkspace } from "./workspace-provider";
 import { confirmDiscard, useUnsavedChanges } from "./use-unsaved-changes";
 
 export function ContentStudio({ productPath = "/products" }: { productPath?: string }) {
   const { projects, selectedId, setSelectedId, updateProject, ready } = useWorkspace();
+  const { addVideo, ready: videoReady } = useVideos();
+  const [angle, setAngle] = useState("Demo");
+  const [hookType, setHookType] = useState<typeof hookTypes[number]>("Curiosity");
+  const [hook, setHook] = useState("Could this fit your workflow?");
   const selected = projects.find(p => p.id === selectedId)!;
   const approved = approvedKnowledge(selected);
   const [tab, setTab] = useState<"hook" | "script" | "caption">("hook");
@@ -27,10 +33,11 @@ export function ContentStudio({ productPath = "/products" }: { productPath?: str
     const a = document.createElement("a"); a.href = url; a.download = "review-content-demo.md"; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return <section className="studio-section">
-    <div className="section-heading"><div><h2>Content Factory</h2><p>Template demo, không mô phỏng job AI. Luôn dùng một snapshot PKB đã duyệt.</p></div><div className="product-selector"><label htmlFor="selected-product">Sản phẩm</label><select id="selected-product" disabled={!ready} value={selectedId} onChange={e => { if (confirmDiscard(dirty) && run(() => setSelectedId(e.target.value))) setDirty(false); }}>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div></div>
+    <div className="section-heading"><div><h2>Content Factory</h2><p>Template và job render mock, điều khiển thủ công. Luôn dùng một snapshot PKB đã duyệt.</p></div><div className="product-selector"><label htmlFor="selected-product">Sản phẩm</label><select id="selected-product" disabled={!ready} value={selectedId} onChange={e => { if (confirmDiscard(dirty) && run(() => setSelectedId(e.target.value))) setDirty(false); }}>{projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div></div>
     <div className="content-panel">
       <p className="content-pkb">{approved ? `PKB hiện tại: v${approved.version} · approved · English` : "Chưa có PKB được merchant duyệt."} <Link href={`${productPath}/${selected.id}`}>Review PKB ↗</Link></p>
       <div className="generation-settings"><div><label htmlFor="content-audience">Đối tượng</label><select id="content-audience" value={audience} onChange={e => setAudience(e.target.value)}><option>Content creators</option><option>Students</option><option>Product teams</option></select></div><div><label htmlFor="content-platform">Nền tảng</label><select id="content-platform" value={platform} onChange={e => setPlatform(e.target.value)}><option>TikTok / Reels</option><option>YouTube Shorts</option></select></div></div>
+      <div className="generation-settings"><div><label htmlFor="video-angle">Angle</label><select id="video-angle" value={angle} onChange={e => setAngle(e.target.value)}>{angles.map(value => <option key={value}>{value}</option>)}</select></div><div><label htmlFor="video-hook-type">Loại Hook</label><select id="video-hook-type" value={hookType} onChange={e => setHookType(e.target.value as typeof hookType)}>{hookTypes.map(value => <option key={value}>{value}</option>)}</select></div><div><label htmlFor="video-hook">Hook</label><select id="video-hook" value={hook} onChange={e => setHook(e.target.value)}><option>Could this fit your workflow?</option><option>One feature worth reviewing</option><option>Before you choose a product</option></select></div></div><p className="demo-note">US · English · 1 video / job · 9:16 · 15 giây. Tạo bản preview local từ fixture; chưa gọi AI.</p><Button disabled={!ready || !videoReady || !approved || dirty} onClick={() => run(() => addVideo(requestVideo(selected, angle, hook, hookType)))}>Tạo video mock</Button><Link className="inline-action" href="/merchant">Theo dõi job render ↗</Link>
       {selected.content && <p className="demo-note">Content đang lưu dùng PKB v{selected.content.knowledgeVersion}.{selected.content.knowledgeVersion !== approved?.version && " Đã có PKB mới; tạo lại nếu muốn dùng phiên bản hiện tại."}</p>}
       <div className="output-tabs" role="tablist" aria-label="Loại nội dung">{(["hook", "script", "caption"] as const).map(key => <button key={key} id={`tab-${key}`} type="button" role="tab" aria-selected={tab === key} aria-controls="content-output" className={tab === key ? "active" : ""} onClick={() => { if (key !== tab && confirmDiscard(dirty)) { setDirty(false); setTab(key); } }}>{labels[key]}</button>)}</div>
       <div role="tabpanel" id="content-output" aria-labelledby={`tab-${tab}`}>

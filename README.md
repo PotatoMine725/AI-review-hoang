@@ -41,23 +41,35 @@ pnpm exec next typegen && pnpm exec tsc --noEmit
 pnpm test
 ```
 
-## Màn hình Merchant / Admin (demo local ngày 08/10)
+## Năm màn mock theo yêu cầu leader (08/10)
 
-Trang `/` mở Dashboard Merchant. Menu riêng theo khu vực; nút **Chuyển sang Admin/Merchant** dùng để thử vai trò, không phải đăng nhập hoặc phân quyền thật.
+Trang `/` mở Dashboard Merchant. Menu chuyển Merchant / Admin / Creator chỉ mô phỏng vai trò; chưa có authentication hoặc authorization thật.
 
-| Màn theo issue BE #38 | Route | Thao tác demo |
+| Màn | Route | Thao tác mock đã có |
 | --- | --- | --- |
-| Dashboard Merchant | `/merchant` | Thống kê từ dữ liệu local, PKB cần xử lý, nội dung gần đây |
-| Onboarding | `/merchant/onboarding` | Nhập Website + affiliate URL, tạo product/job rồi mở review |
-| Review PKB | `/merchant/products/:id` | Sửa draft, nguồn/evidence, gửi review, Merchant approve, lịch sử phiên bản |
-| Content Library | `/merchant/library` và `/:id` | Lọc trạng thái, xem video/transcript, tải video + caption khi đã duyệt, báo sai |
-| Admin QA Video | `/admin/videos` và `/:id` | Hàng đợi và báo sai, 4 mục QA, approve hoặc reject với lý do |
+| Onboarding | `/merchant/onboarding` | URL + affiliate bắt buộc, optional name/tagline/pricing/features/claims/logo/color, Save Draft, upload PDF/ảnh, processing 3 bước và WAF fallback |
+| Review PKB | `/merchant/products/:id` | 4 tab, bảng giá/giới hạn, feature cards, origin badge, evidence popover ≤200 ký tự, conflict radios, inline edit, history/diff, recrawl, submit/approve khóa version |
+| Dashboard | `/merchant` | 4 metrics, crawl/extract/render monitor, progress mock, lỗi/retry và product table với PKB/video/campaign actions |
+| Content Library | `/merchant/library`, `/creator/library` và `/:id` | Product/Angle/loại Hook/status filters, card 9:16, preview modal/player + scene/voiceover/screenshot, report modal; MP4/caption/hashtags/clipboard/tracking cho Creator |
+| Admin QA | `/admin/videos` và `/:id` | Queue table/split view, Safe Zone toggle, 6 checklist items, PKB snapshot, approve/reject có lý do, dismiss report hoặc archive |
 
-Admin có `/admin` và `/admin/pkb`: kiểm tra và reject PKB `in_review`, không có thao tác approve PKB. Merchant không có thao tác approve/reject video. `/merchant/content` giữ trình biên tập template từ PKB đã duyệt; `/merchant/products` là danh sách sản phẩm, onboarding đã tách riêng.
+`/merchant/content` tạo template và job video từ PKB approved. Render được điều khiển thủ công ở Dashboard, giữ version PKB nguồn rồi đưa vào QA; chưa gọi AI hoặc worker. `/merchant/campaigns` mở/đóng campaign mock; `/creator/campaigns` tham gia với 1 Creator demo. Views/clicks hiện 0 vì chưa có tracking thật. Link mẫu có dạng `/r/<slug>`; backend phải tạo `click_id` cho từng click, không nhúng một `click_id` cố định vào link chia sẻ.
 
-Trạng thái video demo lưu ở `reviewlab.video-qa.mock.v1` trong localStorage; trạng thái M1 cũ được giữ ở `reviewlab.m1.mock.v2`. Báo sai làm video xuất hiện lại trong hàng đợi Admin. Chỉ approve khi PKB nguồn đã approved và đủ 4 mục QA; reject bản pending_review cần lý do. Video đã approved chỉ giữ duyệt hoặc chuyển archived; firstApprovedAt và metadata duyệt ban đầu được giữ, archived không duyệt lại được. Storage video dùng schema 2 trên key hiện có; bản schema 1 được chuyển đổi khi đọc, metadata bổ sung chỉ là dữ liệu demo. Reload giữ quyết định; lỗi lưu không báo thành công. Video là clip workspace không âm thanh, không phải video sản phẩm 9:16 hoặc kết quả AI thật. Đây là 5 màn prototype để review, chưa xác nhận tích hợp backend hoặc nghiệm thu Figma.
+Website trùng được kiểm tra theo normalized URL, vẫn cho phép các sản phẩm khác path trên cùng domain theo M1/ERD. Xung đột ưu tiên Merchant nhưng cần xác nhận; giá Merchant dạng text cần nhập lại số tiền ở PKB trước khi gửi duyệt. Không tự quy đổi giá hoặc giả định giá sản phẩm thực tế.
 
-Kiểm tra các màn mới: `node tests/roles.browser.cjs` với `PLAYWRIGHT_MODULE`, `CHROME_PATH`, `TEST_BASE_URL`, `TEST_OUTPUT_DIR` như các test trình duyệt bên dưới. Test bao gồm quyền thao tác theo màn, PKB chặn duyệt video, tải file, báo sai → giữ duyệt/lưu trữ, lỗi lưu và responsive 390/320 px. Các route cũ `/products`, `/content`, `/reviews`, `/review/:id` được giữ để không làm mất luồng demo trước đó.
+Trạng thái DB video giữ `pending_review / approved / rejected / archived`. Processing/Ready được suy ra từ render, Flagged là cờ báo sai. Approved chỉ giữ duyệt hoặc archive; metadata duyệt đầu tiên, caption và snapshot nguồn được giữ nguyên. Archived là trạng thái kết thúc. Chỉ approve khi render hoàn tất, media 1080×1920 / 15–60s, PKB nguồn approved và đủ checklist.
+
+Dữ liệu mock lưu trong localStorage (`reviewlab.m1.mock.v2`, `reviewlab.video-qa.mock.v1`); PDF/ảnh gốc lưu bằng IndexedDB (`reviewlab.uploads`). Reload khôi phục drafts/jobs/decisions. Lỗi lưu giữ nội dung đang nhập; cảnh báo rời trang khi có chỉnh sửa chưa lưu. Cache video cũ được migrate checklist/media mẫu, không xóa thư viện hoặc quyết định đã lưu.
+
+`public/media/leader-demo.mp4` là video workspace tự tạo, 1080×1920, 15 giây, có giọng TTS hệ thống và không nhạc nền. Tất cả sản phẩm dùng clip mẫu này; chưa phải footage/render riêng theo sản phẩm. Screenshot, PKB, giá, progress và Safe Zone phục vụ review mock. Các route cũ `/products`, `/content`, `/reviews`, `/review/:id` vẫn giữ luồng demo trước đó.
+
+Kiểm tra thêm qua `node tests/leader.browser.cjs` và `node tests/roles.browser.cjs`. Đặt `PLAYWRIGHT_MODULE`, `CHROME_PATH`, `TEST_BASE_URL`, `TEST_OUTPUT_DIR` theo phần test bên dưới. Test bao gồm WAF/upload bytes, conflict/price guards, version locks, render retry, kích thước MP4 thực, Creator clipboard/tracking/download, report lifecycle và responsive 320/390px.
+
+Đây là triển khai UI/mock local; chưa thay thế việc bàn giao 5 frame Figma và link nghiệm thu Issue BE #38.
+
+Rà soát bổ sung ngày 08/10: stepper đánh dấu bước Review PKB; PKB approved có badge và conflict chỉ đọc dạng text. Bộ lọc Hook dùng Curiosity/Pain/Challenge, Angle dùng Problem/Comparison/Tutorial/Demo; cache cũ vẫn được giữ. Đổi currency trong draft cập nhật currency từng gói và nguồn thành Merchant, không quy đổi số tiền hoặc sửa snapshot đã lưu. Dashboard dùng logo sản phẩm và chỉ đếm video đã render, đã duyệt ở cột sẵn sàng. Caption phân phối bổ sung hashtags mẫu khi thiếu, giữ nguyên caption gốc đã duyệt.
+
+Kiểm chứng lần rà soát: 18 unit test, lint, TypeScript và production build đạt; chạy lại `leader.browser.cjs` và `roles.browser.cjs` trên production build, gồm luồng đầy đủ và responsive 1440/390/320px. Kết quả đủ cho review phần UI/mock của 5 màn; chưa phải nghiệm thu Figma hoặc tích hợp backend.
 
 ## Các luồng FE Sprint 1 trước đó
 

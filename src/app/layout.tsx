@@ -9,6 +9,7 @@ import { ErrorBoundary } from "@/features/workspace/error-boundary";
 import { VideoProvider } from "@/features/video-qa/provider";
 import { UnsavedChangesGuard } from "@/features/content-factory/use-unsaved-changes";
 import "./roles.css";
+import "./leader.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

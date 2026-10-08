@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { initialWorkspace, parseWorkspace, WORKSPACE_KEY, type DemoRole, type Project, type WorkspaceState } from "./model";
+import { initialWorkspace, parseWorkspace, WORKSPACE_KEY, type DemoRole, type Project, type WorkspaceState, type IntakeDraft } from "./model";
 
-type Workspace = WorkspaceState & { ready: boolean; storageError: string; setSelectedId: (id: string) => void; setRole: (role: DemoRole) => void; addProject: (project: Project) => void; updateProject: (id: string, update: (project: Project) => Project) => void };
+type Workspace = WorkspaceState & { ready: boolean; storageError: string; setSelectedId: (id: string) => void; setRole: (role: DemoRole) => void; addProject: (project: Project) => void; updateProject: (id: string, update: (project: Project) => Project) => void; saveIntake: (draft: IntakeDraft | null) => void };
 const WorkspaceContext = createContext<Workspace | null>(null);
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
@@ -41,7 +41,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   function setRole(role: DemoRole) { commit((value) => ({ ...value, role })); }
   function addProject(project: Project) {
     if (current.current.projects.some((p) => p.url === project.url)) throw new Error("Website URL đã có trong workspace.");
-    commit((value) => ({ ...value, projects: [project, ...value.projects], selectedId: project.id }));
+    commit((value) => ({ ...value, projects: [project, ...value.projects], selectedId: project.id, intakeDraft: null }));
   }
   function updateProject(id: string, update: (project: Project) => Project) {
     const project = current.current.projects.find((item) => item.id === id);
@@ -49,7 +49,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const next = update(project);
     commit((value) => ({ ...value, projects: value.projects.map((item) => item.id === id ? next : item) }));
   }
-  return <WorkspaceContext.Provider value={{ ...state, ready, storageError, setSelectedId, setRole, addProject, updateProject }}>{children}</WorkspaceContext.Provider>;
+  const saveIntake = (draft: IntakeDraft | null) => commit(value => ({ ...value, intakeDraft: draft }));
+  return <WorkspaceContext.Provider value={{ ...state, ready, storageError, setSelectedId, setRole, addProject, updateProject, saveIntake }}>{children}</WorkspaceContext.Provider>;
 }
 export function useWorkspace() {
   const workspace = useContext(WorkspaceContext);

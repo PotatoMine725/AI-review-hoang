@@ -51,10 +51,11 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/roles')
     await page.goto(base + '/merchant/library/notion-workspace');
     const videoDownload = page.waitForEvent('download');
     await page.getByRole('link', { name: 'Tải video demo', exact: true }).click();
-    assert.match((await videoDownload).suggestedFilename(), /demo.webm$/);
+    assert.match((await videoDownload).suggestedFilename(), /demo.mp4$/);
     const captionDownload = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Tải caption', exact: true }).click();
     assert.match((await captionDownload).suggestedFilename(), /caption-demo.txt$/);
+    await page.getByRole('button', {name:'Báo sai video',exact:true}).click();
     await page.getByLabel('Nội dung cần kiểm tra').fill('Pricing claim needs another review.');
     // A storage failure must preserve the reason and leave the video unflagged.
     await page.evaluate(() => {
@@ -78,6 +79,7 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/roles')
     for (const field of ['firstApprovedAt', 'reviewedAt', 'reviewedBy', 'caption', 'review', 'checklist', 'knowledgeVersion']) assert.deepEqual(retained[field], approval[field], `${field} stays locked after closing a report`);
     assert.equal(retained.status, 'approved'); assert.equal(retained.flaggedAt, null);
     await page.goto(base + '/merchant/library/notion-workspace');
+    await page.getByRole('button', {name:'Báo sai video',exact:true}).click();
     await page.getByLabel('Nội dung cần kiểm tra').fill('Price still needs correction.');
     await page.getByRole('button', { name: 'Gửi báo sai' }).click();
     await page.getByText('Báo sai đã gửi;', { exact: false }).waitFor();
@@ -102,10 +104,11 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/roles')
     await page.goto(base + '/merchant/onboarding');
     await page.getByLabel('Website URL').fill('https://portal.example/tool');
     await page.getByLabel('Merchant affiliate URL').fill('https://portal.example/?ref=merchant');
-    await page.getByRole('button', { name: 'Thêm sản phẩm', exact: true }).click();
+    await page.getByRole('button', { name: 'Bắt đầu phân tích', exact: true }).click();
+    await page.getByRole('button', { name: 'Bước tiếp theo (mock)', exact: true }).click();
+    await page.getByRole('button', { name: 'Bước tiếp theo (mock)', exact: true }).click();
+    await page.getByRole('button', { name: 'Hoàn tất và review PKB', exact: true }).click();
     await page.waitForURL('**/merchant/products/*');
-    await page.getByRole('button', { name: 'Bắt đầu job mock' }).click();
-    await page.getByRole('button', { name: 'Hoàn tất job mock' }).click();
     await page.getByRole('button', { name: 'Gửi review', exact: true }).waitFor();
     await page.getByRole('button', { name: 'Gửi review', exact: true }).click();
     page.once('dialog', dialog => dialog.accept());
@@ -125,7 +128,7 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/roles')
       await preview.goto(base + route); await preview.locator('.workspace-footer').waitFor();
       await preview.waitForTimeout(250);
       await preview.evaluate(() => document.fonts.ready);
-      await preview.waitForFunction(() => !document.querySelector('video') || document.querySelector('video').readyState >= 2);
+      await preview.waitForFunction(() => !document.querySelector('video') || document.querySelector('video').readyState >= 4);
       await preview.screenshot({ path: path.join(output, `${name}-desktop.png`), fullPage: true });
     }
     for (const width of [390, 320]) {
@@ -133,7 +136,7 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/roles')
       for (const [name, route] of screens) {
         await preview.goto(base + route); await preview.waitForTimeout(200);
         await preview.evaluate(() => document.fonts.ready);
-        await preview.waitForFunction(() => !document.querySelector('video') || document.querySelector('video').readyState >= 2);
+        await preview.waitForFunction(() => !document.querySelector('video') || document.querySelector('video').readyState >= 4);
         assert.ok(await preview.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${route} has no overflow at ${width}px`);
         await preview.screenshot({ path: path.join(output, `${name}-${width}.png`), fullPage: true });
       }
