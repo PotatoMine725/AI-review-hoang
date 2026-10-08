@@ -56,7 +56,7 @@ PKB không ghi cờ "evidence khớp nguồn" theo từng fact, nên trang chỉ
 | ≤ 30 trang | `MAX_PAGES = 30` tính cả trang lỗi, trùng hoặc bị chặn, và cả trang của host phụ | `pages_used`, `requests[kind=page]` |
 | UA định danh | `AIReviewContentFactory-Spike/0.1 (+https://github.com/PotatoMine725/AI-review-BE; M1 research spike)` | `user_agent` |
 | Chỉ trong domain gốc | Host của URL product. Product có `"allow_subdomains": true` (chỉ Claude) nhận thêm `*.claude.com`, tối đa 5 trang (`MAX_EXTRA_HOST_PAGES`), chỉ trang loại faq / pricing (`EXTRA_HOST_TYPES`). Dreamina không bật, vì domain gốc của `dreamina.capcut.com` là `capcut.com` (sản phẩm khác) | `allowed_hosts`, `limits`, `skipped_counts.out_of_scope` |
-| Không vượt chặn | Không bật `magic`, `simulate_user`, `override_navigator`, `enable_stealth`, không đổi UA ngẫu nhiên, không proxy. Gặp 403/429, trang thử thách Cloudflare hoặc bị chuyển tới trang login → dừng product đó | `blocked` |
+| Không vượt chặn | Không bật `magic`, `simulate_user`, `override_navigator`, `enable_stealth`, không đổi UA ngẫu nhiên, không proxy. Gặp 403/429, trang thử thách Cloudflare → dừng product đó. Trang chủ bị chuyển tới trang login → cũng dừng. Trang con bị chuyển tới trang login (vd. `/app` của ElevenLabs) → chỉ bỏ qua trang đó (`skipped[].reason = blocked: login_redirect: …`), không theo link vào trang login, crawl tiếp (đổi ở PR ElevenLabs; trước đó dừng cả product và ElevenLabs chỉ lấy được 4 trang) | `blocked`, `skipped[].reason` |
 
 Đã kiểm tra giá trị mặc định của crawl4ai 0.9.4 (đọc bằng `inspect.signature`): `BrowserConfig.enable_stealth=False`, `user_agent_mode=''`, `proxy_config=None`;
 `CrawlerRunConfig.magic=False`, `simulate_user=False`, `override_navigator=False`, `max_retries=0`, `fallback_fetch_function=None`, `proxy_rotation_strategy=None`.
@@ -236,10 +236,48 @@ Số liệu: `price_plan_correct` 2/2 product đã chạy (v0.1: 1/2 ở cùng m
 1. Dreamina `other_views` rỗng dù trang có tab Yearly / Quarterly / 1-month. Quy tắc 5 chưa đạt. Dreamina cũng không có dòng plan Free (trang không in giá cho Free).
 2. Claude `other_views` ghi các tab đối tượng (Developer, Team & Enterprise, API), không phải chu kỳ. Plan Team và Enterprise vẫn được lấy.
 3. Claude "Max" chỉ có 1 dòng `From 100 $`: trang pricing không in giá riêng cho Max 5x và Max 20x.
-4. Dreamina `evidence_in_source` giảm từ 0.92 xuống 0.81 (4 trong 21 fact có evidence không tìm thấy nguyên văn). Chưa tìm nguyên nhân (không so được từng fact với v0.1, vì khác schema).
+4. Dreamina `evidence_in_source` giảm từ 0.92 xuống 0.81 (4 trong 21 fact có evidence không tìm thấy nguyên văn). Nguyên nhân đã tìm ra ở mục "Điều tra evidence của Dreamina" bên dưới: LLM gán sai `source_id`.
 5. `region = VN` và `locale = en-US` là hằng số đặt tay trong `config.py` (`CRAWL_REGION`, `CRAWL_LOCALE`), crawler chưa đo vùng IP và locale thật.
 6. `price_unit` và `billing_cycle` chỉ cho phép null khi `list_price` null (plan "Contact sales"). Validator của `Plan` bắt buộc cả hai khi có giá. Spec M1 chưa nói rõ trường hợp này.
 7. Chỉ 2 product, 1 lần chạy mỗi product. Chưa đo độ ổn định giữa các lần chạy.
+
+### ElevenLabs (08/10/2026, thay Gamma theo #38)
+
+Cùng cấu hình: `gemini-3.5-flash-lite`, mode `batch`, 10 trang gửi LLM (`pages_sent = 10`, trong 29 trang đã crawl). Không bật `allow_subdomains`.
+
+- **Crawl:** 29 trang, tìm thấy 1.041 URL, 218 giây, khoảng cách request tối thiểu 1,0 giây. Không có WAF. `/app` bị chuyển tới `/app/sign-in` nên được bỏ qua (xem mục Crawl lịch sự); 9 URL dưới `/app/` bị `robots_disallow`. Lần crawl đầu (trước khi sửa `crawl.py`) dừng ở 4 trang vì `login_redirect`; đã crawl lại, chỉ ElevenLabs.
+- **LLM:** 1 lời gọi, 21.973 token vào, 3.082 token ra, **$0.0143**, 10,4 giây. Schema hợp lệ, 7 plan, 32 fact, `evidence_in_source` = 0.938. `validate_contracts.py` đạt.
+- **Đối chiếu giá (AC-04)** với raw markdown `/pricing` và `/pricing/api`, không mở web lần 2: **7/7 plan khớp**, 4/4 giá API đã trích khớp.
+
+| Plan | Giá tháng | Ghi chú |
+|---|---|---|
+| Free | $0 | 10k credit |
+| Starter | $6 | tháng đầu $1 (giảm 83%), 30k credit |
+| Creator | $22 | tháng đầu $11 (giảm 50%), 121k credit |
+| Pro | $99 | 600k credit |
+| Scale | $299 | 1,8M credit, 3 seat |
+| Business | $990 | 6M credit, 10 seat |
+| Enterprise | custom | liên hệ |
+
+- **Vùng giá:** trang chỉ hiện ký hiệu `$`, không thấy tiền khác. Trang không in mã tiền tệ, USD suy ra từ ký hiệu `$`. Crawl từ IP Việt Nam (qa-log #9); `region = VN` là hằng số trong `config.py`, chưa đo thật.
+- **Chưa đủ:** giá trả năm (FAQ ghi Starter $5, Creator $18.33, Pro $82.50, Scale $249.17, Business $825 mỗi tháng) chưa vào PKB, `other_views` chỉ có `"yearly"`, giống lỗi 1 của Dreamina. Nhiều giá API chưa được trích (Scribe Realtime, Voice Isolator, Voice Changer, Sound Effects, Dubbing). Giá API v4 là khuyến mãi 72% đến 12/10 (giá gốc $0.08 / 1K ký tự); PKB lưu giá khuyến mãi $0.022.
+- **Evidence:** 2 trong 32 fact không khớp. Cả hai là giá API v4: raw ghi `~~$0.08~~`, LLM chép thành `~~$0.08%%` (đổi chữ, nguyên nhân c).
+- Chờ đối chiếu Golden Facts của QA (file chưa có trong repo, qa-log #11).
+
+### Điều tra evidence của Dreamina (không gọi LLM)
+
+Dùng lại `check_evidence` trên `output/dreamina/pkb.gemini-3.5-flash-lite.json` (10 trang gửi LLM) với bản text LLM nhận. 4 trong 21 fact không khớp:
+
+| # | Fact | `source_id` LLM ghi | Có nguyên văn ở | Nguyên nhân |
+|---|---|---|---|---|
+| 1 | Mô tả "Dreamina is an all-in-one AI creative platform…" | `src_02` (pricing, raw) | `src_01` (trang chủ) | (b) gán sai `source_id` |
+| 2-4 | "Dreamina brings advanced AI models—like Seedance 2.0…" (3 fact dùng chung evidence) | `src_02` | `src_01` | (b) gán sai `source_id` |
+
+- Không phải (a): bản raw/fit LLM nhận đúng bản đang so, và cả hai bản của `src_01` đều chứa câu đó.
+- Không phải (d): ký tự gạch nối không ngắt (U+2011) có trong cả nguồn lẫn evidence nên `_norm` vẫn khớp; không có fact nào lệch vì dấu phân cách hay xuống dòng.
+- Không phải (c): không có fact ghép hai câu hay đổi chữ ở Dreamina.
+- **Kết luận:** lỗi nằm ở LLM, không ở bước kiểm tra, nên **không sửa `check_evidence`** và số của Claude (1.00) và Dreamina (0.81) giữ nguyên. Cả 4 fact sai cùng một kiểu: trích đúng câu từ trang chủ nhưng gắn nhãn `src_02`.
+- **Đề xuất (chưa làm, không sửa prompt trong PR này):** (1) nhắc LLM rằng `source_id` phải là trang chứa nguyên văn evidence; (2) thêm bước tất định: nếu evidence không có trong trang `source_id` mà có đúng một trang khác, tự sửa `source_id` và ghi lại cho người đọc. Chỉ nên làm (2) khi chấp nhận PKB do code chỉnh `source_id`.
 
 ## Acceptance criteria
 

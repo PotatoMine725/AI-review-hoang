@@ -595,8 +595,8 @@ async def crawl_product(product: dict) -> dict:
             if block:
                 cand.skip_reason = f"blocked: {block}"
                 skipped[cand.url] = frontier.pop(cand.url)
-                if is_home or block.startswith(("http_403", "http_429", "bot_challenge", "login_redirect")):
-                    # Dừng cả product: không cố vượt chặn
+                if is_home or block.startswith(("http_403", "http_429", "bot_challenge")):
+                    # Dừng cả product: không cố vượt chặn. login_redirect ở trang con (vd. /app) chỉ bỏ qua trang đó.
                     report["blocked"] = f"{cand.url}: {block}"
                     break
                 continue
