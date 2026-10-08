@@ -5,6 +5,8 @@ Các contract JSON dùng chung cho nhiều module (FE, BE, AI). Contract riêng 
 | File | Dùng cho |
 |---|---|
 | `cost-breakdown.v1.schema.json` | Cột `cost_breakdown` của `generation_jobs` (job `crawl`, `video`) và `content_scripts` (đề xuất, chờ #23) |
+| `script.v0.schema.json` | Kịch bản video dọc 9:16 (M2 -> M3), lưu vào `content_scripts` |
+
 
 ## `cost_breakdown` v1
 
@@ -162,3 +164,42 @@ Item thứ 2 lấy từ `llm_cache` của worker: không gọi provider, không 
   ]
 }
 ```
+
+## `script.v0`
+
+Hợp đồng kịch bản video dọc 9:16 (thời lượng 15–60 giây). Module 2 (Content Strategy) nhận PKB approved từ Module 1 để tạo script; Module 3 (AI Video Factory) đọc script để dựng video (FR-CONT-04, FR-VID-02).
+
+### Quy tắc chính
+1. **Định dạng và thời lượng:** `aspect_ratio = "9:16"`, `language = "en"`, `target_duration_s` từ 15 đến 60 giây. Tổng `duration_s` các phân cảnh phải nằm trong 15–60 giây (kiểm tra qua `validate_contracts.py`).
+2. **Cấu trúc phân cảnh (`scenes[]`):** Tối thiểu 3 scene, khuyến nghị cấu trúc 6 scene: `hook` -> `problem` -> `demo` -> `result` -> `proof` -> `cta` (PRD §14).
+3. **Truy xuất nguồn gốc (`fact_ref`):** Mọi phát biểu trong `claims[]` về giá, tính năng, giới hạn bắt buộc có `fact_ref` gồm `source_id` và `field_path` theo dot-bracket notation (vd. `pricing.plans[1]`, `features[0]`) trỏ tới fact trong PKB. Claim không có `fact_ref` là không hợp lệ (FR-QA-01, BRULE-05).
+4. **AI Avatar Disclosure:** Khi `format = "ai_avatar"`, bắt buộc phải có `disclosure` (FR-VID-09).
+5. **Call To Action (CTA):** Bắt buộc `uses_tracking_link: true` nhằm đảm bảo gắn link affiliate/attribution của campaign.
+6. **Experience Claims:** Mặc định cấm các câu "I tested/I used" trừ khi có `evidence_ref` (FR-QA-07).
+
+### Ánh xạ vào ERD (`content_scripts`)
+Khi backend lưu script, các trường JSON v0 ánh xạ sang bảng `content_scripts`:
+- `product_id` -> `content_scripts.product_id`
+- `knowledge_version` -> `content_scripts.knowledge_version`
+- `intent` -> `content_scripts.intent` (`awareness|education|consideration|conversion`)
+- `platform` -> `content_scripts.platform`
+- `language` -> `content_scripts.language`
+- `hook.text` -> `content_scripts.hook`
+- `hook.angle` -> `content_scripts.idea` (nếu có)
+
+> [!NOTE]
+> **Câu hỏi mở cho @tranquangthong03 (Issue #50):**
+> Bảng `content_scripts` hiện có cột `script_text text [not null]`. Đề xuất lưu JSON script v0 ở đâu:
+> - **Lựa chọn A:** Lưu chuỗi JSON serialized vào `script_text`.
+> - **Lựa chọn B:** Bổ sung cột `script jsonb` (hoặc `script_json jsonb`) vào bảng `content_scripts`.
+> *Tuân thủ nguyên tắc: Không tự ý sửa file `docs/specs/erd/` khi chưa chốt ở Issue #50.*
+
+### Ví dụ kịch bản
+Các file ví dụ được lưu tại `docs/specs/contracts/examples/`:
+
+| File | Kỳ vọng | Ý nghĩa |
+|---|---|---|
+| `valid-script-elevenlabs.json` | pass | Kịch bản mẫu 30s (6 scenes), fact_ref trỏ tới fact thật trong PKB ElevenLabs |
+| `invalid-script-missing-fact-ref.json` | fail | Claim về giá thiếu trường bắt buộc `fact_ref` |
+| `invalid-script-avatar-missing-disclosure.json` | fail | Format `ai_avatar` nhưng thiếu khai báo `disclosure` |
+

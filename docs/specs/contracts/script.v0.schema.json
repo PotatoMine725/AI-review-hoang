@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specs.ai-review.internal/contracts/script.v0.schema.json",
+  "title": "Script v0 Schema",
+  "description": "JSON Schema cho kịch bản video dọc 9:16 (Module 2 sinh ra, Module 3 dựng video).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "product_id",
+    "knowledge_version",
+    "platform",
+    "language",
+    "intent",
+    "format",
+    "target_duration_s",
+    "aspect_ratio",
+    "hook",
+    "scenes",
+    "cta"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0",
+      "description": "Phiên bản schema, luôn là '0' cho bản v0."
+    },
+    "product_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID của sản phẩm được review (FK -> products.id)."
+    },
+    "knowledge_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Phiên bản PKB approved được dùng để sinh kịch bản."
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["tiktok", "reels", "shorts"],
+      "description": "Nền tảng video ngắn dọc hướng tới."
+    },
+    "language": {
+      "type": "string",
+      "const": "en",
+      "description": "Ngôn ngữ kịch bản. MVP cố định là tiếng Anh ('en')."
+    },
+    "intent": {
+      "type": "string",
+      "enum": ["awareness", "education", "consideration", "conversion"],
+      "description": "Ý định nội dung, khớp CHECK constraint của ERD content_scripts.intent."
+    },
+    "format": {
+      "type": "string",
+      "enum": ["screen_recording", "faceless", "hybrid", "ai_avatar"],
+      "description": "Định dạng video (FR-VID-02). Khi format = 'ai_avatar', bắt buộc có disclosure."
+    },
+    "target_duration_s": {
+      "type": "integer",
+      "minimum": 15,
+      "maximum": 60,
+      "description": "Thời lượng mục tiêu (15-60 giây). Tổng duration_s của các scene được kiểm tra bởi validator."
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "const": "9:16",
+      "description": "Tỉ lệ khung hình video dọc chuẩn 1080x1920 px (FR-VID-02)."
+    },
+    "hook": {
+      "type": "object",
+      "required": ["hook_id", "text", "type"],
+      "properties": {
+        "hook_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Mã hook trong bộ 20 hook (vd. h01..h20)."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "description": "Câu mở đầu ngắn gọn, tối đa 15 từ tiếng Anh."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "curiosity",
+            "pain",
+            "result",
+            "comparison",
+            "controversy",
+            "challenge",
+            "demo",
+            "mistake"
+          ],
+          "description": "Loại hook theo PRD §13."
+        },
+        "angle": {
+          "type": "string",
+          "description": "Góc tiếp cận theo nhóm Content Idea (FR-CONT-01)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 3,
+      "description": "Danh sách các phân cảnh (tối thiểu 3 scene). Thứ tự chuẩn: Hook -> Problem -> Demo -> Result -> Proof -> CTA.",
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "role",
+          "duration_s",
+          "voiceover",
+          "on_screen_text",
+          "visual"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Số thứ tự phân cảnh, tăng dần từ 1."
+          },
+          "role": {
+            "type": "string",
+            "enum": ["hook", "problem", "demo", "result", "proof", "cta"],
+            "description": "Vai trò phân cảnh theo FR-CONT-04 và PRD §14."
+          },
+          "duration_s": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Thời lượng phân cảnh tính bằng giây."
+          },
+          "voiceover": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Lời đọc lồng tiếng AI (Text-to-Speech) theo FR-VID-04."
+          },
+          "on_screen_text": {
+            "type": "string",
+            "description": "Văn bản phụ đề hiển thị trong Safe Zone 9:16 (FR-VID-02, FR-VID-05)."
+          },
+          "visual": {
+            "type": "object",
+            "required": ["kind", "ref"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["screenshot", "screen_recording", "text_card", "logo"],
+                "description": "Loại visual cho phân cảnh (FR-VID-03)."
+              },
+              "ref": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Đường dẫn ảnh/video trong sources[].image_paths hoặc mô tả shot trực quan."
+              }
+            },
+            "additionalProperties": false
+          },
+          "claims": {
+            "type": "array",
+            "description": "Các tuyên bố về sản phẩm trong scene. Bắt buộc có fact_ref trỏ tới PKB.",
+            "items": {
+              "type": "object",
+              "required": ["text", "type", "fact_ref"],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Nội dung tuyên bố về sản phẩm."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["pricing", "feature", "limitation", "identity", "experience", "other"],
+                  "description": "Phân loại tuyên bố."
+                },
+                "fact_ref": {
+                  "type": "object",
+                  "required": ["source_id", "field_path"],
+                  "properties": {
+                    "source_id": {
+                      "type": "string",
+                      "pattern": "^src_[0-9]{2,}$",
+                      "description": "ID trang nguồn trong PKB (vd. src_01, src_02)."
+                    },
+                    "field_path": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Đường dẫn JSON trỏ tới fact trong PKB (vd. pricing.plans[1], features[0])."
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "evidence_ref": {
+                  "type": "string",
+                  "description": "Bắt buộc khi type = 'experience' (FR-QA-07)."
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cta": {
+      "type": "object",
+      "required": ["text", "uses_tracking_link"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Lời kêu gọi hành động (Call to Action)."
+        },
+        "uses_tracking_link": {
+          "type": "boolean",
+          "const": true,
+          "description": "Bắt buộc là true để bảo đảm gắn link affiliate/tracking của campaign."
+        }
+      },
+      "additionalProperties": false
+    },
+    "disclosure": {
+      "type": ["object", "null"],
+      "description": "Thông báo nội dung AI (bắt buộc khi format = 'ai_avatar' theo FR-VID-09).",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Nội dung disclosure."
+        },
+        "placement": {
+          "type": "string",
+          "enum": ["on_screen", "voiceover", "both"],
+          "description": "Vị trí đặt disclosure."
+        }
+      },
+      "additionalProperties": false
+    },
+    "experience_claims": {
+      "type": ["array", "null"],
+      "description": "Danh sách các claim trải nghiệm cá nhân (mặc định cấm, chỉ cho phép khi có evidence_ref theo FR-QA-07).",
+      "items": {
+        "type": "object",
+        "required": ["claim", "evidence_ref"],
+        "properties": {
+          "claim": { "type": "string" },
+          "evidence_ref": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "format": { "const": "ai_avatar" }
+        }
+      },
+      "then": {
+        "required": ["disclosure"],
+        "properties": {
+          "disclosure": {
+            "type": "object",
+            "required": ["text", "placement"]
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
