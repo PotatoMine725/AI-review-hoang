@@ -163,16 +163,16 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 
 **Một row:** Một phiên bản kiến thức của một product.
 
-**Quy tắc và quyền sử dụng:** PK ghép (product_id, version). PKB approved là nguồn fact cho AI; bản đã duyệt bất biến, thay đổi tạo version mới. Merchant/admin có quyền duyệt. Không có bảng pricing/features riêng và không có vector index trong MVP. PKB JSON không phải permission bypass: nguồn và nội dung vẫn cần validate.
+**Quy tắc và quyền sử dụng:** PK ghép (product_id, version). PKB approved là nguồn fact cho AI; bản đã duyệt bất biến, thay đổi tạo version mới. **Chỉ merchant sở hữu product được approve**; admin chỉ reject được khi vi phạm policy và không sửa/approve nội dung — xem "Quyền duyệt PKB" cuối mục này (PLANNED, chưa enforce). Không có bảng pricing/features riêng và không có vector index trong MVP. PKB JSON không phải permission bypass: nguồn và nội dung vẫn cần validate.
 
 | Thuộc tính | Kiểu | NULL | Mặc định | Mô tả nghiệp vụ |
 |---|---|---|---|---|
 | `product_id` | `uuid` | Không | — | Product mà bản ghi thuộc về; không phải ID của merchant. FK → products.id. |
 | `version` | `int` | Không | — | Số phiên bản kiến thức trong phạm vi một product, bắt đầu từ số dương. Product khác có thể cùng version. CHECK: version > 0. |
-| `status` | `text` | Không | 'draft' | draft: chưa duyệt; approved: kiến thức được duyệt để AI sử dụng; rejected: không được chấp nhận. CHECK: status IN ('draft','approved','rejected'). |
+| `status` | `text` | Không | 'draft' | draft: chưa submit; in_review: đã submit chờ duyệt; approved: kiến thức được duyệt; rejected: không được chấp nhận. CHECK: status IN ('draft','in_review','approved','rejected'). |
 | `data` | `jsonb` | Không | — | JSON kiến thức chuẩn: identity, pricing, features, audience, USP, limitations, brand và claims. Fact phải liên kết nguồn hoặc ghi rõ origin theo hợp đồng JSON. |
 | `sources` | `jsonb` | Không | — | JSON danh mục nguồn: source ID, URL, thời điểm crawl, hash, đoạn bằng chứng và Storage path. Cần phân biệt dữ liệu crawl với suy luận/merchant nhập. |
-| `approved_by` | `uuid` | Có | — | Tài khoản merchant/admin được phép duyệt PKB; không chỉ là tác giả nội dung. FK → auth.users.id. |
+| `approved_by` | `uuid` | Có | — | Tài khoản **merchant sở hữu product** đã duyệt PKB; không chỉ là tác giả nội dung. Theo PLANNED, admin không approve PKB. Xem GAP (ngữ nghĩa reject) bên dưới: cột này mang tên theo đường approve. FK → auth.users.id. |
 | `approved_at` | `timestamptz` | Có | — | Thời điểm PKB được phê duyệt. Bắt buộc khi status=approved. |
 | `created_at` | `timestamptz` | Không | `now()` | Thời điểm tạo bản ghi trong hệ thống; giá trị mặc định được gán khi INSERT. |
 
@@ -183,6 +183,25 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 **CHECK kết hợp nhiều trường trong DBML:**
 
 - `status <> 'approved' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)`
+
+#### Quyền duyệt PKB (PLANNED — chưa enforce)
+
+Các rule dưới đây là thiết kế đã duyệt cho phần duyệt PKB. Task này **không** thêm migration, trigger, RLS hay RPC nào để thực thi chúng.
+
+**Vòng đời:** `draft → in_review → approved | rejected`. `in_review` là trạng thái merchant đã submit và đang chờ duyệt; `approved` cần merchant approve; `rejected` có thể do admin set khi vi phạm policy. Không thêm rule resubmit hay chuyển trạng thái nào ngoài chuỗi này.
+
+- **Chỉ merchant sở hữu product được approve PKB của product đó**, suy theo `products.merchant_id`. Không merchant khác hay creator nào approve được.
+- **Admin chỉ được reject PKB khi vi phạm policy**, và lần reject đó phải ghi lý do; **lý do phải được giữ lại**.
+- **Admin không được sửa hoặc approve nội dung PKB.**
+- **Cả approve và reject đều phải ghi actor và timestamp.**
+
+**GAP (lý do reject):** ERD **không** có cột hay field JSON nào lưu được **lý do reject theo policy**. `approved_by` / `approved_at` chỉ ghi actor và timestamp. `data` và `sources` là payload PKB v0.2 bị ràng buộc schema (`additionalProperties: false`), không phải chỗ chứa lý do kiểm duyệt. Task này **không** thêm cột/bảng chưa được duyệt để biểu diễn lý do; gap này được báo lại để #23 quyết.
+
+**GAP (ngữ nghĩa reject):** `approved_by` / `approved_at` mang tên theo **đường approve**. Dùng chúng để ghi **actor của rejection** là không nhất quán về ngữ nghĩa. Có thể cần một cột riêng như `reviewed_action` hoặc `rejection_actor`; quyết định **hoãn sang Issue #23**. Task này không thêm cột/bảng nào.
+
+**CONFLICT lịch sử (đã note, không bỏ qua):** thay đổi status ở trên **được áp theo phê duyệt của Issue #23**. Xung đột lịch sử với SRS FR-PI-03 và đặc tả M1 FR-07 (hai tài liệu chỉ liệt kê `draft / in_review / approved`) được **đánh dấu để cập nhật trong chính 2 spec đó**; việc cập nhật đặc tả M1 v0.3 được theo dõi ở Issue #23.
+
+**CONFLICT (admin và approve):** BRD (mục 5.3, dòng 542), SRS FR-PI-03 (dòng 356), đặc tả M1 FR-07 (dòng 143) và qa-log #1 / decision-log #11 đều nói **Platform Admin không tham gia từng lần approve PKB trong MVP**. Rule admin policy-reject ở trên chưa được đồng bộ với các tài liệu đó; theo ghi chú ưu tiên trong chính BRD/SRS, các tài liệu đã chốt được ưu tiên cho tới khi được cập nhật. Xem issue #23.
 
 ### 6. `campaigns` — Chiến dịch quảng bá
 
@@ -298,8 +317,16 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 | `result_manifest` | `jsonb` | Có | — | JSON tham chiếu kết quả như PKB version, video ID, Storage path; không phải nơi lưu kiến thức chuẩn thứ hai. |
 | `error` | `text` | Có | — | Thông tin lỗi của job để vận hành/debug; không nên trả chi tiết nhạy cảm cho creator. |
 | `attempts` | `int` | Không | 0 | Bộ đếm số lần thử do worker quản lý. Cần thống nhất thời điểm tăng khi worker nhận việc. CHECK: attempts >= 0. |
+| `tokens_in` | `int` | Có | — | Tổng token vào của job, DB suy ra từ `cost_breakdown`; worker không ghi trực tiếp. Chỉ cộng item `llm`. NULL khi chưa có dữ liệu chi phí. |
+| `tokens_out` | `int` | Có | — | Tổng token ra của job, DB suy ra từ `cost_breakdown`; worker không ghi trực tiếp. Chỉ cộng item `llm`. NULL khi chưa có dữ liệu chi phí. |
+| `cost_usd` | `numeric(12,6)` | Có | — | Tổng chi phí job bằng USD, DB suy ra từ `cost_breakdown`. 6 chữ số thập phân; không dùng làm tròn 4 chữ số. NULL khi chưa có dữ liệu chi phí. |
+| `cost_breakdown` | `jsonb` | Có | `'{}'` | Chi tiết chi phí theo contract `cost_breakdown` v1 (`docs/specs/contracts/`). **Worker chỉ ghi cột này**; 3 cột tổng phía trên do DB suy ra. `{}` nghĩa là **chưa ghi dữ liệu chi phí**, không phải job tốn 0 USD, và `{}` **không phải** payload v1 hợp lệ. |
 | `created_at` | `timestamptz` | Không | `now()` | Thời điểm tạo bản ghi trong hệ thống; giá trị mặc định được gán khi INSERT. |
 | `finished_at` | `timestamptz` | Có | — | Thời điểm job kết thúc. DBML cho NULL và chưa có CHECK bắt buộc theo trạng thái; worker phải ghi đúng. |
+
+**Giới hạn nullability (cost):** đầu vào chỉ nêu default `'{}'` cho `cost_breakdown`. Với `tokens_in`, `tokens_out`, `cost_usd` không đầu vào nào nêu NOT NULL hoặc default, nên DBML ghi chúng là nullable và **các thuộc tính này để mở**, không tự quyết. Không suy nullability/default của cột database từ yêu cầu JSON Schema của từng item chi phí.
+
+**Chi phí và token (PLANNED — issue #23, contract `cost_breakdown` v1):** worker chỉ ghi `cost_breakdown`; DB suy ra `tokens_in`, `tokens_out`, `cost_usd`. Việc tổng hợp, suy dẫn, validation, hạn chế ghi, giới hạn ngân sách và cảnh báo **chưa được triển khai** trong task này (không thêm trigger, generated column hay RPC). Retry là item bổ sung và được cộng vào tổng theo contract đã merge; job `failed` vẫn giữ chi phí đã tiêu. `cost_usd` dùng `numeric(12,6)`. Hành vi cache, cách tính token và `cost_status` theo đúng contract v1. BE dự kiến kiểm thêm: (a) `call_id` duy nhất trong `items`, (b) `tokens_in_cached <= tokens_in` cho từng item liên quan. Chi phí `estimated` phải phân biệt được với `exact` bằng `cost_status` của item.
 
 **CHECK kết hợp nhiều trường trong DBML:**
 
@@ -327,6 +354,8 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 | `first_approved_at` | `timestamptz` | Có | — | Mốc lần đầu được duyệt. Khác reviewed_at ở vai trò khóa vĩnh viễn; không được xóa hoặc sửa sau khi đã đặt. |
 | `evidence` | `jsonb` | Không | — | JSON bằng chứng hỗ trợ claim trong video: source ID, bản test, kết quả test, recording và đường dẫn liên quan. Không được lộ toàn bộ cho creator qua SELECT *. |
 | `review_notes` | `text` | Có | — | Ghi chú nội bộ của admin, vẫn được sửa sau phê duyệt. Không dùng để thay đổi ngầm evidence hoặc nội dung đã duyệt. |
+| `merchant_flagged_at` | `timestamptz` | Có | — | Thời điểm merchant báo video. Server cấp giá trị; client không gửi. NULL nghĩa là chưa có báo cáo. |
+| `merchant_flag_reason` | `text` | Có | — | Lý do merchant gửi kèm báo cáo; phải không rỗng khi có báo cáo. NULL khi chưa báo cáo. |
 | `status` | `text` | Không | 'pending_review' | pending_review: chờ QA; approved: được phát hành; rejected: không đạt; archived: không phát hành mới. Video đã approved chỉ chuyển sang archived. CHECK: status IN ('pending_review','approved','rejected','archived'). |
 | `reviewed_by` | `uuid` | Có | — | Tài khoản admin duyệt video; metadata của lần approval gốc bị khóa sau first_approved_at. FK → auth.users.id. |
 | `reviewed_at` | `timestamptz` | Có | — | Thời điểm review. Trước approval có thể phản ánh xử lý review; sau approval metadata gốc phải được giữ nguyên. |
@@ -344,6 +373,24 @@ Phạm vi MVP cố định: USD, một language/template/provider, QA thủ côn
 - `first_approved_at IS NULL OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL AND status IN ('approved','archived'))`
 
 **Giới hạn CHECK:** CHECK bảo đảm metadata tồn tại theo trạng thái; không tự chặn sửa metadata/nội dung. Cần trigger bảo vệ cả OLD và NEW, kể cả khi cập nhật đồng thời nội dung và status.
+
+**Merchant báo video (PLANNED — chưa enforce):** hai cột `merchant_flagged_at` và `merchant_flag_reason` chưa được thực thi: task này không thêm trigger, RPC hay policy nào.
+
+- Chỉ **merchant sở hữu product của video** được báo video đó. Quyền sở hữu suy theo chuỗi video → campaign → product → merchants (`merchant_id`), không dựa vào bảng videos.
+- Một báo cáo hợp lệ cần **timestamp và lý do không rỗng**; `merchant_flagged_at` do **server cấp**, client không gửi.
+- Báo cáo **không** tự approve, reject, archive hay xóa video, và **không** đổi `status`.
+- **Admin vẫn chịu trách nhiệm duyệt video** (`first_approved_at`, `reviewed_by`, `reviewed_at`).
+- Hai cột này lưu tối đa **một báo cáo hiện hành**: chúng **không** cung cấp lịch sử báo cáo và **không** phải quy trình kiểm duyệt.
+- **Hành vi khi báo cáo lặp lại / ghi đè CHƯA được chốt** trong task này. Không thêm bảng report, status kiểm duyệt, logic tự động gỡ video hay trường audit khác.
+
+**SQL REQUIRED (chưa implement):** khi `merchant_flagged_at IS NOT NULL` thì `merchant_flag_reason` phải **không rỗng**. CHECK:
+
+```sql
+(merchant_flagged_at IS NULL AND merchant_flag_reason IS NULL)
+OR (merchant_flagged_at IS NOT NULL
+    AND merchant_flag_reason IS NOT NULL
+    AND char_length(btrim(merchant_flag_reason)) > 0)
+```
 
 ### 11. `published_posts` — Bài đăng dự kiến hoặc đã đăng
 
@@ -642,6 +689,7 @@ ERD đã chốt **cột lưu JSON**, nhưng chưa chốt đầy đủ tên key/s
 | `product_knowledge.sources` | Danh mục nguồn và bằng chứng có ID/path/time/hash | Quyền truy cập công khai mọi tài liệu |
 | `generation_jobs.input_snapshot` | Đầu vào và cấu hình thực tế của lần chạy | Tham chiếu sống có thể đổi theo product hiện tại |
 | `generation_jobs.result_manifest` | ID/path/version của kết quả | Bản dữ liệu chuẩn cạnh tranh với PKB/videos |
+| `generation_jobs.cost_breakdown` | Chi tiết từng lần gọi tốn tiền theo contract `cost_breakdown` v1: `schema_version`, `currency`, `items[]` với `call_id`, `category`, `attempt`, `cache_hit`, `cost_usd`, `cost_status` | Một payload v1 hợp lệ khi giá trị là `{}`; `{}` chỉ là "chưa ghi dữ liệu chi phí", không phải job tốn 0 USD. Chi phí `estimated` vẫn là chi phí |
 | `videos.evidence` | Bằng chứng cho claim cụ thể, test output/recording nếu có | Việc mặc định mọi screenshot chứng minh đã test sản phẩm |
 | `conversions.attribution_snapshot` | Policy version, lý do, click/cửa sổ được kiểm tra | Chỉ một nhãn do client gửi |
 | `commissions.calculation_snapshot` | Loại/mức commission, basis, rounding và policy version thực tế | Công thức lấy lại từ campaign hiện tại khi xem lịch sử |
@@ -654,9 +702,9 @@ Bảng này diễn giải gate quyền trong ERD; quyền cụ thể vẫn phả
 
 | Vai trò | Đọc chính | Ghi/thao tác chính | Không được tự làm |
 |---|---|---|---|
-| Merchant | Profile, product/PKB/campaign và kết quả thuộc mình; script theo quyền | Input product, campaign trước khi khóa, duyệt PKB nếu được phép | Sửa terms đã khóa, ghi commission tùy ý, xem dữ liệu merchant khác |
+| Merchant | Profile, product/PKB/campaign và kết quả thuộc mình; script theo quyền | Input product, campaign trước khi khóa, **approve PKB của product mình**, báo video bằng `merchant_flagged_at`/`merchant_flag_reason` (PLANNED) | Sửa terms đã khóa, ghi commission tùy ý, xem dữ liệu merchant khác, approve PKB của product khác |
 | Creator | Profile, account, enrollment/post/earnings của mình; campaign đủ điều kiện và video approved | Profile/account được cấp quyền, join/leave, chọn video/account, confirm post, cập nhật views theo API | Tự active profile, tự chọn owner khác, tự approve video, tự ghi conversion/commission |
-| Admin | Dữ liệu quản trị theo quyền | Kích hoạt/đình chỉ, QA, khôi phục creator bị removed, đối soát và ghi thanh toán | Bỏ qua bất biến lịch sử như sửa video đã approved hoặc xóa eligibility |
+| Admin | Dữ liệu quản trị theo quyền | Kích hoạt/đình chỉ, **QA video**, khôi phục creator bị removed, đối soát và ghi thanh toán, **reject PKB khi vi phạm policy** (không sửa/approve PKB — PLANNED) | Bỏ qua bất biến lịch sử như sửa video đã approved hoặc xóa eligibility, **approve PKB** |
 | Backend/worker | Đầu vào cần cho pipeline | Job, script, output, redirect, ingest event, eligibility và commission qua luồng được phép | Tin owner/actor/currency/amount tùy ý từ client; để lộ service credentials |
 | Người truy cập link | Redirect hợp lệ | Tạo click gián tiếp thông qua handler | Ghi trực tiếp vào tracking_events hoặc bảng tài chính |
 
@@ -722,4 +770,6 @@ Các nhóm có thể được chia cho BE/AI/FE làm song song khi contract đã
 
 ## 13. Phạm vi xác minh của tài liệu
 
-Tài liệu mô tả đủ 17 bảng và 186 thuộc tính được khai báo trong ERD v1.3.1, cùng các FK ghép và gate triển khai. `auth.users` chỉ là mô hình tham chiếu rút gọn; trạng thái triển khai/merge không suy ra từ ERD. Không có bảng/cột mới nào được thêm vào file DBML trong quá trình viết tài liệu. Các cấu trúc JSON chi tiết và giá trị chính sách cần được ghi vào API/spec của team trước khi code phần tương ứng.
+Tài liệu mô tả đủ 17 bảng được khai báo trong ERD v1.3.1, cùng các FK ghép và gate triển khai. `auth.users` chỉ là mô hình tham chiếu rút gọn; trạng thái triển khai/merge không suy ra từ ERD.
+
+Bản v1.3.1 có 186 thuộc tính. Theo issue #23, task này thêm **6 cột đã được duyệt** vào ERD (không thêm bảng): `generation_jobs.tokens_in`, `.tokens_out`, `.cost_usd`, `.cost_breakdown` và `videos.merchant_flagged_at`, `.merchant_flag_reason` — tổng **192 thuộc tính**. Các cấu trúc JSON chi tiết và giá trị chính sách cần được ghi vào API/spec của team trước khi code phần tương ứng.

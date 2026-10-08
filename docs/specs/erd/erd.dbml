@@ -101,7 +101,7 @@ Table products {
 Table product_knowledge {
   product_id uuid [not null, ref: > products.id]
   version int [not null, check: `version > 0`]
-  status text [not null, default: 'draft', check: `status IN ('draft','approved','rejected')`]
+  status text [not null, default: 'draft', check: `status IN ('draft','in_review','approved','rejected')`]
   data jsonb [not null, note: 'Schema-validated: identity, pricing, features, audience, USP, limitations, brand, claims; facts carry source IDs.']
   sources jsonb [not null, note: 'Source IDs, URLs, crawl times, hashes, evidence excerpts and private Storage paths.']
   approved_by uuid [ref: > auth.users.id]
@@ -109,7 +109,12 @@ Table product_knowledge {
   created_at timestamptz [not null, default: `now()`]
   indexes { (product_id, version) [pk] }
   checks { `status <> 'approved' OR (approved_by IS NOT NULL AND approved_at IS NOT NULL)` }
-  Note: 'SQL REQUIRED: approved row immutable; recrawl/edit creates new version. Allocate versions transactionally. Validate fact sources. Authorized merchant/admin approves. Use approved JSON directly as AI input; no vector RAG in pilot.'
+  Note: 'SQL REQUIRED: approved row immutable; recrawl/edit creates new version. Allocate versions transactionally. Validate fact sources. Authorized merchant/admin approves. Use approved JSON directly as AI input; no vector RAG in pilot.
+LIFECYCLE: draft -> in_review -> approved | rejected. in_review is submitted by merchant awaiting review; approved requires merchant approver; rejected may be set by admin for policy violations.
+APPROVAL PERMISSIONS (PLANNED — not enforced by any migration): only the merchant who owns the product may approve its PKB. Admin may reject a PKB only for policy violations, and that rejection must record a reason which is retained. Admin cannot edit or approve PKB content. Approval and rejection must record the actor and timestamp.
+GAP (rejection reason): this ERD has no column or JSON field that can hold a policy-rejection reason. The existing audit fields approved_by / approved_at record actor and timestamp only, and product_knowledge.data / sources are schema-bound PKB v0.2 payloads with additionalProperties: false. No unapproved column or table was added to represent the reason; this gap is reported for decision in issue #23.
+GAP (reject semantics): approved_by / approved_at are named for the approve path. Using them to record a rejection actor is semantically inconsistent. A dedicated reviewed_action or rejection_actor column may be needed; decision deferred to Issue #23.
+CONFLICT (historical, noted not skipped): status change applied per Issue #23 approval. Historical conflict with SRS FR-PI-03 and M1 spec FR-07 (which list only draft/in_review/approved) is flagged for update in their respective specs; M1 spec v0.3 update is tracked in Issue #23. Separately, BRD 5.x line 542, SRS FR-PI-03 (line 356), M1 spec FR-07 and qa-log #1 / decision-log #11 state that Platform Admin does not participate in PKB approval in the MVP; the admin policy-reject rule above is not yet reconciled with those documents, which take precedence until updated.'
 }
 Ref: products.(id, current_knowledge_version) > product_knowledge.(product_id, version)
 
@@ -215,12 +220,18 @@ Table generation_jobs {
   result_manifest jsonb [note: 'PKB version or video IDs + Storage paths; NOT a second source of truth.']
   error text
   attempts int [not null, default: 0, check: `attempts >= 0`]
+  tokens_in int [note: 'Derived from cost_breakdown by the database; worker never writes it. Nullable: nullability is not stated by authoritative inputs — see the cost note below.']
+  tokens_out int [note: 'Derived from cost_breakdown by the database; worker never writes it. Nullable: nullability is not stated by authoritative inputs — see the cost note below.']
+  cost_usd numeric(12,6) [note: 'Derived from cost_breakdown by the database; worker never writes it. 6 decimals; no 4-decimal rounding. Nullable: nullability is not stated by authoritative inputs — see the cost note below.']
+  cost_breakdown jsonb [default: `'{}'::jsonb`, note: 'cost_breakdown v1 contract (docs/specs/contracts/). Worker writes only this column. Empty object means cost not yet recorded; it is NOT a valid v1 payload and does NOT mean the job cost is zero. Estimated items stay distinguishable via per-item cost_status.']
   created_at timestamptz [not null, default: `now()`]
   finished_at timestamptz
   checks {
     `(job_type = 'crawl' AND content_script_id IS NULL) OR (job_type = 'video' AND content_script_id IS NOT NULL)`
   }
-  Note: 'SQL REQUIRED: script belongs to product. Worker-only writes. Claim jobs atomically, bounded retry, idempotent output persistence. One job per generated output; deliberate rerun uses new key. Background queue is implementation concern.'
+  Note: 'SQL REQUIRED: script belongs to product. Worker-only writes. Claim jobs atomically, bounded retry, idempotent output persistence. One job per generated output; deliberate rerun uses new key. Background queue is implementation concern.
+COST / TOKEN (PLANNED — issue #23, contract cost_breakdown v1): worker writes cost_breakdown only; the database derives tokens_in, tokens_out and cost_usd from it. Aggregation, derivation, validation, write restrictions, budget limits and alerts are NOT implemented in this task (no trigger, generated column or RPC added). Retry calls are extra items and are included in the totals per the merged contract; failed jobs still retain cost already incurred; cost_usd is numeric(12,6) with no 4-decimal rounding. Cache behaviour, token accounting and cost_status follow cost_breakdown v1 exactly. Backend validation is additionally planned to check (a) call_id is unique within items and (b) tokens_in_cached <= tokens_in for each applicable item.
+GAP (nullability): authoritative inputs state a default of an empty JSON object for cost_breakdown only. For tokens_in, tokens_out and cost_usd no input states NOT NULL or a default, so this DBML records them as nullable (no NOT NULL, no default) and the properties are left as an open decision rather than invented. DB column nullability/defaults must not be inferred from the JSON Schema of individual cost items.'
 }
 
 // 10. Video output + distribution text + manual QA.
@@ -239,6 +250,8 @@ Table videos {
   first_approved_at timestamptz [note: 'Set on first approval, never cleared or changed; permanent content lock.']
   evidence jsonb [not null, note: 'Source references + test recording/output paths; empty evidence cannot support tested-experience claims.']
   review_notes text [note: 'Mutable after approval (D010).']
+  merchant_flagged_at timestamptz [note: 'Server-supplied timestamp of a merchant report. Nullable, no default.']
+  merchant_flag_reason text [note: 'Reason supplied with a merchant report; must be non-empty when a flag is submitted. Nullable, no default.']
   status text [not null, default: 'pending_review', check: `status IN ('pending_review','approved','rejected','archived')`]
   reviewed_by uuid [ref: > auth.users.id]
   reviewed_at timestamptz
@@ -252,7 +265,8 @@ Table videos {
     `status <> 'approved' OR first_approved_at IS NOT NULL`
     `first_approved_at IS NULL OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL AND status IN ('approved','archived'))`
   }
-  Note: 'SQL REQUIRED (D010): first approval atomically sets first_approved_at, reviewed_by and reviewed_at. Once first_approved_at is set, freeze campaign_id, content_script_id, generation_job_id, parent_video_id, storage_path, thumbnail_path, caption, hashtags, cta, posting_instructions, evidence and original approval metadata. Freeze applies even after archive; changing content in same UPDATE that archives is forbidden. Admin may edit review_notes; approved can only transition to archived, archived is terminal. Revisions create a new row and require fresh QA. Job must be video type and use same script; parent must be a different video in same campaign. Server-only QA and signed authorized downloads.'
+  Note: 'SQL REQUIRED (D010): first approval atomically sets first_approved_at, reviewed_by and reviewed_at. Once first_approved_at is set, freeze campaign_id, content_script_id, generation_job_id, parent_video_id, storage_path, thumbnail_path, caption, hashtags, cta, posting_instructions, evidence and original approval metadata. Freeze applies even after archive; changing content in same UPDATE that archives is forbidden. Admin may edit review_notes; approved can only transition to archived, archived is terminal. Revisions create a new row and require fresh QA. Job must be video type and use same script; parent must be a different video in same campaign. Server-only QA and signed authorized downloads.
+MERCHANT FLAG (PLANNED — enforcement not implemented; no trigger, RPC or policy added in this task): only the merchant who owns the video product may flag it; ownership resolves video -> campaign -> product -> merchants (merchant_id). A submitted flag requires a timestamp and a non-empty reason, and merchant_flagged_at is supplied by the server, not the client. Flagging does not approve, reject, archive or remove a video, and does not change its status. Admin remains responsible for video approval (first_approved_at / reviewed_by / reviewed_at). These two columns store at most one current flag: they provide no report history and no moderation workflow. Repeated-report / overwrite behaviour is NOT decided by this task. Do not add report tables, moderation statuses, automatic takedown logic or additional audit fields.'
 }
 Ref: videos.(content_script_id, campaign_id) > content_scripts.(id, campaign_id)
 
@@ -463,3 +477,17 @@ Ref: commissions.(conversion_id, creator_campaign_id) > commission_eligibility.(
 //     failure; first enrollment vs terms edit; cross-owner post; archive freeze;
 //     concurrent void vs payout; late events still counted as revenue; invalid
 //     currency/config rejection; FK prevents commission for nonwinning conversion.
+// 18. SQL REQUIRED (video flag) — PLANNED, not implemented, no trigger/RPC/policy
+//     added in this task: when merchant_flagged_at IS NOT NULL, merchant_flag_reason
+//     must be non-empty. CHECK:
+//     (merchant_flagged_at IS NULL AND merchant_flag_reason IS NULL)
+//     OR (merchant_flagged_at IS NOT NULL
+//         AND merchant_flag_reason IS NOT NULL
+//         AND char_length(btrim(merchant_flag_reason)) > 0)
+//     Only the merchant owning the video product may set these columns; the server
+//     supplies merchant_flagged_at. Flagging must not approve/reject/archive/remove
+//     the video or change its status.
+// 19. SQL REQUIRED (generation_jobs cost) — PLANNED, not implemented in this task:
+//     worker writes only cost_breakdown (cost_breakdown v1); the database derives
+//     tokens_in, tokens_out and cost_usd from it. Validation to add: call_id unique
+//     within items, and tokens_in_cached <= tokens_in per applicable item.

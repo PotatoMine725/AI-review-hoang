@@ -1,4 +1,27 @@
 %% Nguồn: @tranquangthong03, 2026-10-07 (file gốc: erd_v0.mermaid). Bản vẽ của erd.dbml (v1.3.1). Chờ @VV6505 duyệt.
+%%
+%% Bổ sung cho issue #23 (xem erd.dbml và data-dictionary.md — 2 file đó giữ chi tiết đầy đủ):
+%%   generation_jobs: tokens_in, tokens_out, cost_usd, cost_breakdown (contract cost_breakdown v1).
+%%     Worker chỉ ghi cost_breakdown; DB tự tính 3 cột còn lại. Aggregation/validation/write
+%%     restriction là PLANNED, chưa implement trong task này.
+%%     GAP: đầu vào không nêu NOT NULL/default cho tokens_in, tokens_out, cost_usd -> để nullable.
+%%   videos: merchant_flagged_at, merchant_flag_reason. Enforcement là PLANNED, chưa implement.
+%%     Chỉ merchant sở hữu product của video được flag; cần timestamp + reason không rỗng;
+%%     server cấp merchant_flagged_at; flag không tự approve/reject/archive/remove video.
+%%     Không có report history. Hành vi ghi đè khi report lặp CHƯA chốt.
+%%   product_knowledge: trạng thái PKB: draft -> in_review -> approved | rejected.
+%%     in_review = merchant đã submit, chờ duyệt; approved cần merchant approve;
+%%     rejected có thể do admin set khi vi phạm policy. (Đổi theo Issue #23.)
+%%     Chỉ merchant sở hữu product được approve PKB; admin chỉ reject được khi
+%%     vi phạm policy và phải ghi reason; admin không sửa/approve nội dung PKB. PLANNED.
+%%     GAP: ERD không có cột/field nào lưu reason của rejection.
+%%     GAP: approved_by / approved_at mang tên theo đường approve; dùng để ghi actor
+%%     của rejection là không nhất quán về ngữ nghĩa. Có thể cần cột
+%%     reviewed_action hoặc rejection_actor; chờ Issue #23 quyết.
+%%     CONFLICT: BRD §542, SRS FR-PI-03 (dòng 356), M1 spec FR-07 và qa-log #1 /
+%%     decision-log #11 nói Admin KHÔNG tham gia approve PKB trong MVP — chưa đồng bộ.
+%%     CONFLICT lịch sử (đã note, không bỏ qua): SRS và M1 spec liệt kê status chỉ
+%%     draft/in_review/approved; change này áp theo Issue #23 và cần cập nhật 2 spec đó.
 erDiagram
     %% ============================================
     %% AUTH
@@ -132,7 +155,7 @@ erDiagram
     product_knowledge {
         uuid product_id PK "composite"
         int version PK "composite"
-        text status "draft|approved|rejected"
+        text status "draft|in_review|approved|rejected"
         jsonb data
         jsonb sources
         uuid approved_by FK
@@ -203,6 +226,10 @@ erDiagram
         jsonb result_manifest
         text error
         int attempts
+        int tokens_in "NULL; derived from cost_breakdown"
+        int tokens_out "NULL; derived from cost_breakdown"
+        numeric cost_usd "numeric(12,6); NULL; derived; 6 decimals"
+        jsonb cost_breakdown "DEFAULT {}; worker-written; v1 contract"
         timestamptz created_at
         timestamptz finished_at
     }
@@ -222,6 +249,8 @@ erDiagram
         timestamptz first_approved_at "permanent freeze"
         jsonb evidence
         text review_notes "mutable after approval"
+        timestamptz merchant_flagged_at "NULL, no default; server-supplied"
+        text merchant_flag_reason "NULL, no default; non-empty when flagged"
         text status "pending_review|approved|rejected|archived"
         uuid reviewed_by FK
         timestamptz reviewed_at
