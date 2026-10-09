@@ -14,7 +14,7 @@ PKB là Product Knowledge Base do Module 1 tạo ra. FE, BE và AI dùng chung 1
 | Toàn bộ PKB (identity, pricing, features…) | cột `product_knowledge.data` (jsonb) |
 | Danh sách trang nguồn | cột `product_knowledge.sources` (jsonb, mảng) |
 
-Các trường sau là **cột của bảng**, không nằm trong JSON: `product_id`, `version`, `status`, `approved_by`.
+Các trường sau là **cột của bảng**, không nằm trong JSON: `product_id`, `version`, `status`, `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note`.
 JSON chỉ có `schema_version`. Đó là version của contract, khác với cột `version` (số lần sửa PKB của 1 product).
 
 ## Bảng trường chính (`data`)

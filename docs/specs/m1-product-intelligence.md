@@ -1,8 +1,8 @@
 # Module 1 — Product Intelligence: Đặc tả kỹ thuật
 
-Oct 5, 2026 · @Hoang Nguyen · **v0.3** (08/10/2026, issue #23, #38) · Lịch sử: xem cuối file
+Oct 5, 2026 · @Hoang Nguyen · **v0.3.1** (08/10/2026, issue #50) · Lịch sử: xem cuối file
 
-> **Nguồn chuẩn của data model:** ERD v1.3.1 ([`docs/specs/erd/`](erd/)). Đặc tả này chỉ nêu bảng và cột M1 dùng, không chép DBML. ERD đã gộp thay đổi của #23 (PR #49): `in_review`, 4 cột chi phí của `generation_jobs`. Ghi chú "chờ #50" nghĩa là điểm ERD còn để mở, chưa có quyết định.
+> **Nguồn chuẩn của data model:** ERD v1.3.3 ([`docs/specs/erd/`](erd/)). Đặc tả này chỉ nêu bảng và cột M1 dùng, không chép DBML. ERD đã gộp thay đổi của #23 (PR #49): `in_review`, 4 cột chi phí của `generation_jobs`; và PR #51 (decision-log #18, #19): cột review `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note`, quy tắc nullability của chi phí.
 
 ## Tổng quan
 
@@ -32,7 +32,7 @@ Module 1 gồm 7 sub-module trong MVP, chạy tuần tự trong một job; 1.3 v
 | 1.4 Structured Extraction | LLM trích xuất theo JSON schema; mỗi fact kèm `source_id` + đoạn trích ngắn. **Mode mặc định `batch`:** gom top-k trang theo điểm (spike: k = 10) vào 1 lời gọi. Trang pricing gửi raw markdown, trang khác gửi fit markdown. Giá theo [Quy tắc trích xuất giá](#quy-tắc-trích-xuất-giá) | Markdown → fact |
 | 1.5 Normalize & Merge | Gộp fact nhiều trang, khử trùng tính năng, chuẩn hóa giá (tiền tệ, chu kỳ) bằng code và ghi nguồn, áp thứ tự ưu tiên merchant > crawl > inferred, đánh dấu xung đột | Fact rời → PKB draft |
 | 1.6 Enrichment | Suy ra audience, JTBD, use case, USP, đối thủ gợi ý; gắn nhãn `origin: inferred` | PKB draft → PKB draft đầy đủ |
-| 1.7 Validation & Review | Validate schema, tính `completeness`, hiện xung đột; merchant sửa và gửi duyệt (`draft → in_review`), **chỉ merchant sở hữu product approve** → version mới (qa-log #1). Admin chỉ reject bản `in_review` khi vi phạm chính sách, bắt buộc lý do; admin không sửa, không approve. Đây là bổ sung cho decision-log #11 (đã chốt ở #23). Nơi lưu lý do reject và ý nghĩa `approved_by` / `approved_at` khi reject: chờ #50 | PKB draft → PKB approved vN |
+| 1.7 Validation & Review | Validate schema, tính `completeness`, hiện xung đột; merchant sửa và gửi duyệt (`draft → in_review`), **chỉ merchant sở hữu product approve** → version mới (qa-log #1). Admin chỉ reject bản `in_review` khi vi phạm chính sách, bắt buộc lý do; admin không sửa, không approve. Đây là bổ sung cho decision-log #11 (đã chốt ở #23). Reject: `review_note` bắt buộc; quy tắc 4 cột review xem FR-07 | PKB draft → PKB approved vN |
 | ~~1.8 Knowledge Indexing~~ | **Bỏ khỏi MVP** (FR-08 hạ xuống Later). Không có chunk, embedding, pgvector. M2, M4 dùng nguyên PKB approved (JSON). Nguồn: ERD v1.3.1, qa-log #5, #23 | — |
 
 ## Input
@@ -60,7 +60,7 @@ Nguồn cấu hình hệ thống: giới hạn 30 trang/job (tính cả trang ho
 
 Output chính là một PKB JSON; mỗi fact mang `source_id` (crawl) hoặc `origin: merchant`, fact `inferred` phải được duyệt trước khi Module 2 dùng. Hợp đồng đầy đủ: [`docs/specs/pkb/`](pkb/README.md) (schema máy đọc được ở đó, không chép lại ở đây).
 
-PKB nằm trong cột `product_knowledge.data`. `product_id`, `version`, `status`, `approved_by` là **cột của bảng**, không nằm trong JSON. JSON chỉ có `schema_version`. Danh sách trang nguồn nằm ở cột `product_knowledge.sources`.
+PKB nằm trong cột `product_knowledge.data`. `product_id`, `version`, `status`, `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note` là **cột của bảng**, không nằm trong JSON. JSON chỉ có `schema_version`. Danh sách trang nguồn nằm ở cột `product_knowledge.sources`.
 
 Ví dụ rút gọn của `data`:
 
@@ -133,7 +133,7 @@ Yêu cầu cốt lõi: không fact nào được vào PKB mà thiếu nguồn ho
 | FR-04 | Trích xuất theo JSON schema; mỗi fact có `source_id` + evidence; giá theo [Quy tắc trích xuất giá](#quy-tắc-trích-xuất-giá) | Must |
 | FR-05 | Fact suy luận gắn `origin: inferred`, không được dùng khi chưa duyệt | Must |
 | FR-06 | Chụp screenshot full-page, desktop 1440×900, mobile 430×932 @3x, element theo section tính năng; logo ưu tiên SVG. Ảnh lưu Storage, metadata trong `sources` (`image_paths`); M3 đọc ảnh theo metadata này | Must |
-| FR-07 | Merchant xem, sửa, approve PKB; mỗi lần approve tạo version mới. Trạng thái: `draft \| in_review \| approved \| rejected`. **Chỉ merchant sở hữu product approve.** Admin chỉ reject bản `in_review` khi vi phạm chính sách, bắt buộc lý do; admin không sửa, không approve (bổ sung cho decision-log #11, đã chốt ở #23). Nơi lưu lý do reject và ý nghĩa `approved_by` / `approved_at` khi reject: chờ #50. Bản `approved` không sửa được; thu hồi làm ở mức product (`products.status` → `archived`) hoặc pause campaign (#23, #38) | Must |
+| FR-07 | Merchant xem, sửa, approve PKB; mỗi lần approve tạo version mới. Trạng thái: `draft \| in_review \| approved \| rejected`. **Chỉ merchant sở hữu product approve.** Admin chỉ reject bản `in_review` khi vi phạm chính sách, bắt buộc lý do; admin không sửa, không approve (bổ sung cho decision-log #11, đã chốt ở #23). Cả approve và reject đều ghi `reviewed_by`, `reviewed_at`. Approve: `reviewer_role = 'merchant'`. Reject: `reviewer_role` là `merchant` hoặc `admin`, `review_note` bắt buộc, không rỗng, tối đa 1000 ký tự (lý do reject lưu ở đây). `draft`, `in_review`: 4 cột review đều null (ERD v1.3.3, decision-log #18, #19). Bản `approved` không sửa được; thu hồi làm ở mức product (`products.status` → `archived`) hoặc pause campaign (#23, #38) | Must |
 | FR-08 | ~~Index PKB approved vào pgvector, API search~~ **Hoãn sau MVP** (qa-log #5, ERD v1.3.1, #23). M2, M4 dùng nguyên PKB approved (JSON) | Later |
 | FR-09 | Phát hiện xung đột (form vs crawl, giá khác nhau giữa các trang) và hiện cho reviewer | Should |
 | FR-10 | Upload PDF/ảnh cho phần sau login, đưa vào extraction | Should |
@@ -146,12 +146,12 @@ Yêu cầu cốt lõi: không fact nào được vào PKB mà thiếu nguồn ho
 | ID | Yêu cầu | Mục tiêu |
 | --- | --- | --- |
 | NFR-01 | Thời gian xử lý 1 product (30 trang) | ≤ 5 phút p95 |
-| NFR-02 | Chi phí LLM mỗi product (crawl + extract) | ≤ $0.05, đọc từ `generation_jobs.cost_usd` (DB tính tổng từ `cost_breakdown`). Chỉ tính job có `cost_breakdown` khác `'{}'`: `'{}'` (mặc định) nghĩa là chưa ghi chi phí, khác chi phí = 0. Spike đo **~$0.01** ($0.008–0.014) với mode `batch` (10 trang, 1 lời gọi); mode `per_page` $0.065–0.110, không đạt. Mẫu 2 product, giá gói trả phí Standard; cần xác nhận trên golden set (qa-log #6) |
+| NFR-02 | Chi phí LLM mỗi product (crawl + extract) | ≤ $0.05, đọc từ `generation_jobs.cost_usd` (DB tính tổng từ `cost_breakdown`). Chỉ tính job có `cost_usd` khác null: `cost_breakdown = '{}'` (mặc định) → `cost_usd` null, nghĩa là chưa ghi chi phí, khác chi phí = 0. Cost của `content_scripts` là số đo của M2, không tính vào NFR-02. Spike đo **~$0.01** ($0.008–0.014) với mode `batch` (10 trang, 1 lời gọi); mode `per_page` $0.065–0.110, không đạt. Mẫu 2 product, giá gói trả phí Standard; cần xác nhận trên golden set (qa-log #6) |
 | NFR-03 | Độ chính xác giá + tên plan trước review | ≥ 95% trên golden set 10 product, so cùng vùng IP lúc crawl. Spike: 1/8 lần chạy đúng (trước khi có Quy tắc trích xuất giá) |
 | NFR-04 | Retry | 3 lần, exponential backoff; job idempotent theo `content_hash` |
 | NFR-05 | Lịch sự với site | ≤ 1 request/giây/domain, User-Agent định danh platform |
 | NFR-06 | Bảo mật | File upload và tài liệu merchant chỉ merchant + admin đọc (Supabase RLS) |
-| NFR-07 | Quan sát | Log từng bước, trace mọi lời gọi LLM. Token và chi phí ghi ở `generation_jobs` (`tokens_in`, `tokens_out`, `cost_usd`, `cost_breakdown`). Worker chỉ ghi `cost_breakdown` theo [contract](contracts/README.md); DB tự tính 3 cột còn lại. Worker ghi payload v1 đầy đủ khi job kết thúc (`completed` hoặc `failed`). `NOT NULL` / default của `tokens_in`, `tokens_out`, `cost_usd`: chờ #50. Pilot không đặt ngân sách tổng / product |
+| NFR-07 | Quan sát | Log từng bước, trace mọi lời gọi LLM. Token và chi phí ghi ở `generation_jobs` (`tokens_in`, `tokens_out`, `cost_usd`, `cost_breakdown`). Worker chỉ ghi `cost_breakdown` theo [contract](contracts/README.md); DB tự tính 3 cột còn lại. Worker ghi payload v1 đầy đủ khi job kết thúc (`completed` hoặc `failed`). `tokens_in`, `tokens_out`, `cost_usd` nullable, không default: `cost_breakdown = '{}'` → 3 cột null (chưa ghi chi phí); payload v1 tổng 0 → 3 cột = 0 (thật sự $0); payload v1 thường → > 0. Pilot không đặt ngân sách tổng / product |
 | NFR-08 | Thay provider | Đổi model LLM bằng config, không sửa code |
 
 ## Tech stack
@@ -182,13 +182,13 @@ Giá Gemini tra lại ngày **07/10/2026** tại trang giá chính thức <https
 
 ## Data model và API
 
-M1 dùng 3 bảng của ERD v1.3.1 ([`docs/specs/erd/`](erd/erd.dbml), [data dictionary](erd/data-dictionary.md)). Không có bảng riêng cho crawl, trang, asset, chunk hay input.
+M1 dùng 3 bảng của ERD v1.3.3 ([`docs/specs/erd/`](erd/erd.dbml), [data dictionary](erd/data-dictionary.md)). Không có bảng riêng cho crawl, trang, asset, chunk hay input.
 
 | Bảng | Cột M1 dùng | Ghi chú |
 | --- | --- | --- |
 | `products` | `id`, `merchant_id`, `website_url`, `affiliate_url`, `name`, `merchant_input`, `current_knowledge_version`, `status` | `website_url` unique sau khi chuẩn hoá URL, không unique theo domain. Form merchant nhập nằm ở `merchant_input` |
-| `product_knowledge` | `product_id`, `version`, `status`, `data`, `sources`, `approved_by`, `approved_at` | PK `(product_id, version)`. `data` = PKB JSON, `sources` = trang nguồn + đường dẫn Storage (theo [`docs/specs/pkb/`](pkb/README.md)). `status`: `draft \| in_review \| approved \| rejected` Lý do reject: chờ #50 |
-| `generation_jobs` | `id`, `product_id`, `job_type`, `status`, `idempotency_key`, `input_snapshot`, `result_manifest`, `error`, `attempts`, `finished_at` | M1 dùng `job_type = 'crawl'`. Cột chi phí `tokens_in`, `tokens_out`, `cost_usd` `numeric(12,6)`, `cost_breakdown` `jsonb DEFAULT '{}'`. `'{}'` = chưa ghi chi phí, khác chi phí = 0; worker ghi payload v1 đầy đủ khi job `completed` hoặc `failed`. Nullability của `tokens_in`, `tokens_out`, `cost_usd`: chờ #50 |
+| `product_knowledge` | `product_id`, `version`, `status`, `data`, `sources`, `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note` | PK `(product_id, version)`. `data` = PKB JSON, `sources` = trang nguồn + đường dẫn Storage (theo [`docs/specs/pkb/`](pkb/README.md)). `status`: `draft \| in_review \| approved \| rejected` Lý do reject ở `review_note` (≤ 1000 ký tự). Quy tắc 4 cột review theo `status`: xem FR-07 |
+| `generation_jobs` | `id`, `product_id`, `job_type`, `status`, `idempotency_key`, `input_snapshot`, `result_manifest`, `error`, `attempts`, `finished_at` | M1 dùng `job_type = 'crawl'`. Cột chi phí `tokens_in`, `tokens_out`, `cost_usd` `numeric(12,6)`, `cost_breakdown` `jsonb DEFAULT '{}'`. `'{}'` = chưa ghi chi phí, khác chi phí = 0; worker ghi payload v1 đầy đủ khi job `completed` hoặc `failed`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default |
 
 `result_manifest`: job `completed` có `pkb_version`, `pages_used`, `model`. Job `failed`: `result_manifest = null`, lỗi ở cột `error` (mã ngắn đứng đầu, vd. `waf_challenge`). Markdown nguồn, screenshot, file upload nằm trong Supabase Storage (private), không có bảng riêng.
 
@@ -245,7 +245,7 @@ Câu hỏi còn mở:
 - ~~`evidence_in_source` của Dreamina giảm (0.92 → 0.81)~~ → đã điều tra (PR #39): 4 fact lệch do LLM gán sai `source_id` (evidence nằm ở `src_01`, ghi `src_02`); `check_evidence` không lỗi. Đề xuất cho contract / pipeline sau: code tìm evidence trên mọi trang rồi tự sửa `source_id`.
 - Sản phẩm chính sprint 1 thay Gamma (bị WAF): M1 đề xuất ElevenLabs, chờ QA chốt (#38).
 - Vùng giá → qa-log #9. Golden Facts → qa-log #11. Cả hai giữ nguyên trạng thái.
-- Nơi lưu lý do reject PKB, ý nghĩa `approved_by` / `approved_at` khi reject, nullability của `tokens_in` / `tokens_out` / `cost_usd` → chờ #50.
+- ~~Nơi lưu lý do reject PKB, ý nghĩa cột review khi reject, nullability của `tokens_in` / `tokens_out` / `cost_usd`~~ → đã chốt ở ERD v1.3.3 (decision-log #18, #19, issue #50).
 - NFR-02 trên golden set → chờ qa-log #6.
 - Chọn model extraction / merge (3.1 hay 3.5 Flash-Lite), có dùng LiteLLM không → chờ ADR-002 (team lead chốt 09/10).
 
@@ -256,3 +256,4 @@ Câu hỏi còn mở:
 | v0.1 | 05/10/2026 | @Hoang Nguyen | Bản đầu |
 | v0.2 | 07/10/2026 | @PotatoMine725 (issue #5) | Thay Gemini 2.5 Flash-Lite bằng ứng viên Flash-Lite 3.x, tra lại giá 07/10/2026 trên trang chính thức, chọn model chờ ADR-002. NFR-02 ghi số đo spike (~$0.01/product, mode `batch`), link qa-log #6. Embedding ứng viên `gemini-embedding-2` 768 chiều; phạm vi RAG chờ qa-log #5. Ghi rủi ro LiteLLM. AI-1 làm toàn bộ M1 (#14). Merchant approve PKB, nội dung sau login qua FR-10, MVP tiếng Anh (#15). Thêm Quy tắc trích xuất giá từ spike #6 (tách giá niêm yết / khuyến mãi, cấm model tự tính giá, `price_unit` + `billing_cycle` bắt buộc, `usage_prices`, `default_view`, vùng IP), mode `batch` mặc định, crawl host phụ cùng domain gốc (≤ 5 trang). Thêm `identity.version`, `models[]`, logo ưu tiên SVG, FR-13 `media_sample` (Could) từ video tham khảo |
 | v0.3 | 08/10/2026 | @PotatoMine725 (issue #23, #38) | Theo ERD v1.3.1: bỏ 5 bảng riêng (`crawl_jobs`, `crawled_pages`, `product_assets`, `knowledge_chunks`, `product_inputs`), dùng `products`, `product_knowledge`, `generation_jobs`. Bỏ vector RAG: 1.8 ra khỏi MVP, FR-08 hạ xuống Later, bỏ `/knowledge/search`, hoãn embedding. `website_url` unique sau chuẩn hoá. Thêm Quy tắc crawl (robots RFC 9309, WAF `waf_challenge`). Trạng thái PKB `draft \| in_review \| approved \| rejected`, chỉ merchant approve, admin chỉ reject có lý do. Chi phí đọc từ `generation_jobs.cost_usd`. Output dẫn contract `docs/specs/pkb/`. Điểm ERD còn để mở ghi "chờ #50". Đồng bộ theo ERD đã merge (PR #49): `cost_breakdown` `'{}'` = chưa ghi chi phí, NFR-02 chỉ tính job đã ghi; admin chỉ reject (bổ sung decision-log #11) |
+| v0.3.1 | 08/10/2026 | @PotatoMine725 (issue #50) | Theo ERD v1.3.3 (PR #51, decision-log #18, #19): `approved_by` / `approved_at` đổi thành `reviewed_by` / `reviewed_at` (ghi cho cả approve và reject), thêm `reviewer_role`, `review_note` (lý do reject), quy tắc theo `status`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default; NFR-02 chỉ tính job có `cost_usd` khác null; cost của `content_scripts` không tính vào NFR-02. Bỏ các dòng "chờ #50" |
