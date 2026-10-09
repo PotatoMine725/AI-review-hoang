@@ -1,6 +1,6 @@
 <!--
-SRS (Software Requirements Specification) v0.2 ("Updated from Feedback"), do team lead (@VV6505) gửi ngày 2026-10-07 (file gốc: tempsrs.md), dựa trên bản của BA (@khanhphi27). Được @PotatoMine725 đưa vào repo ngày 2026-10-07.
-Nội dung giữ nguyên văn. Góp ý và câu hỏi mở: xem issue #28, #23 và docs/logs/qa-log.md. Từ bản này, mọi thay đổi đi qua PR vào docs/specs/.
+SRS (Software Requirements Specification) v0.3 Draft for Review (2026-10-08), cập nhật từ v0.2 của team lead (@VV6505) theo ERD v1.3.3, đặc tả M1 v0.3 và 7 User Story Sprint 1.
+Các điểm chưa chốt và góp ý liên tài liệu: xem issue #28, #23 và docs/logs/qa-log.md. Mọi thay đổi đi qua PR vào docs/specs/.
 Khi mâu thuẫn với decision-log / đặc tả module / ERD đã chốt, các tài liệu đó được ưu tiên cho tới khi bản này được cập nhật.
 -->
 
@@ -8,8 +8,8 @@ Khi mâu thuẫn với decision-log / đặc tả module / ERD đã chốt, các
 
 **Project:** AI Review Content Factory & Affiliate Network\
 **Document Type:** Software Requirements Specification — SRS\
-**Version:** 0.2\
-**Status:** Draft for Review (Updated from Feedback)\
+**Version:** 0.3\
+**Status:** Draft for Review\
 **Product Stage:** MVP\
 **Based on:** PRD v1.0 + BRD Draft
 
@@ -164,6 +164,7 @@ Admin có quyền quản lý:
 - Creators
 - Campaigns
 - Videos
+- Review và approve/reject Videos bằng Manual QA; xem báo cáo video của Merchant
 - Content
 - Conversion
 - Revenue
@@ -267,6 +268,8 @@ Các thông tin còn lại có thể do Merchant cung cấp hoặc được Plat
 
 Merchant phải nhập **Website URL** và **Merchant Affiliate URL** hợp lệ khi onboard Product.
 
+`website_url` phải được chuẩn hóa trước khi kiểm tra trùng và unique trên toàn hệ thống theo URL đầy đủ; không chặn hai Product chỉ vì cùng domain nhưng khác path. Merchant Affiliate URL là đích redirect hợp lệ, không chỉ là trang thông tin affiliate program.
+
 -----
 **FR-PROD-03 — Crawl Product URL**
 
@@ -280,6 +283,8 @@ Trong MVP:
 - Không tự động đăng nhập vào Product Website.
 - Nội dung chỉ có sau đăng nhập không được crawler tự truy cập.
 - Merchant có thể cung cấp screenshot/PDF hoặc tài liệu bổ sung đối với nội dung không public.
+- Khi site chặn bằng WAF/challenge, crawl job phải `failed`, lỗi bắt đầu bằng `waf_challenge`, không retry hoặc né WAF; Merchant được hướng dẫn upload tài liệu theo FR-10 của đặc tả M1.
+- Khi trang con chuyển hướng sang đăng nhập, bỏ qua trang đó và tiếp tục crawl public pages; nếu trang chủ chuyển hướng sang đăng nhập thì dừng job. Chi tiết giới hạn host phụ, retry và evidence theo đặc tả M1.
 
 -----
 **FR-PROD-04 — Review Product Information**
@@ -300,13 +305,13 @@ Minimum status:
 
 - Draft
 - Active
-- Inactive
+- Archived
 
 **Note:** Product Status và Product Knowledge Status là hai lifecycle độc lập.
 
-Product Status mô tả trạng thái sử dụng của Product (Draft / Active / Inactive).
+Product Status mô tả trạng thái sử dụng của Product (`draft` / `active` / `archived`).
 
-Product Knowledge Status mô tả trạng thái review/approval của từng PKB version (draft / in\_review / approved).
+Product Knowledge Status mô tả trạng thái review/approval của từng PKB version (`draft` / `in_review` / `approved` / `rejected`).
 
 -----
 **5.3 Product Intelligence**
@@ -336,11 +341,11 @@ Các nhóm thông tin này được định nghĩa trong Product Intelligence En
 
 Product Knowledge phải được lưu và liên kết với Product tương ứng. 
 
-Mọi fact/tính năng (features, pricing plans, limitations) bóc tách từ website phải lưu kèm:
-- `source_id`: Tham chiếu đến ID/URL của trang nguồn cụ thể.
-- `evidence`: Đoạn trích dẫn nguyên văn bằng chứng ($\le 200$ ký tự) từ nội dung trang nguồn.
+Mọi fact/tính năng (features, pricing plans, limitations) bóc tách từ website hoặc tài liệu Merchant upload phải lưu kèm:
+- `source_id`: Tham chiếu đến trang public hoặc file nguồn Merchant cung cấp.
+- `evidence`: Đoạn trích ngắn từ nội dung nguồn; nguồn upload phải truy xuất được theo quyền.
 
-Mọi fact do AI tự suy luận mà không có nguồn trực tiếp từ trang web phải gắn nhãn `origin: inferred`.
+Fact do Merchant nhập trực tiếp phải gắn `origin: merchant`. Fact do AI suy luận mà không có nguồn trực tiếp phải gắn `origin: inferred` và được Merchant xác nhận trước khi cấp cho module sau. Không trình bày hai loại fact này như trích dẫn từ trang public.
 
 -----
 **FR-PI-03 — Review and Approve Product Knowledge**
@@ -352,15 +357,16 @@ Product Knowledge phải trải qua các trạng thái:
 - draft
 - in\_review
 - approved
+- rejected
 
-Trong phạm vi MVP, **Merchant là actor chịu trách nhiệm approve Product Knowledge**. Platform Admin không tham gia từng lần approve.
+Vòng đời: `draft → in_review → approved | rejected`. Merchant sở hữu Product gửi bản nháp đi review và là actor duy nhất được approve bản `in_review` đã qua validation. Platform Admin không sửa hoặc approve PKB; Admin chỉ reject bản `in_review` khi vi phạm chính sách, bắt buộc ghi lý do.
 
 -----
 **FR-PI-04 — Product Knowledge Versioning**
 
 Hệ thống phải hỗ trợ versioning cho Product Knowledge.
 
-Mỗi lần Merchant approve một Product Knowledge đã được cập nhật, hệ thống phải tạo một version mới.
+Mỗi lần Merchant approve một Product Knowledge đã được cập nhật, hệ thống phải tạo một version mới và cập nhật `products.current_knowledge_version`. Bản `approved` không được sửa; sửa hoặc re-crawl tạo version mới.
 
 Version trước đó phải được giữ lại và có khả năng truy xuất ở chế độ read-only.
 
@@ -368,8 +374,9 @@ Mỗi version tối thiểu phải xác định được:
 
 - Version number
 - Status
-- Approval time
-- Approved by
+- Review time (`reviewed_at`)
+- Review actor (`reviewed_by`) và `reviewer_role`
+- Lý do reject ở `product_knowledge.review_note` khi status là `rejected`
 - Product tương ứng.
 
 -----
@@ -379,14 +386,14 @@ Hệ thống phải tự động phát hiện và đánh dấu các điểm xung
 
 Giao diện phải highlight rõ điểm xung đột và cho phép Merchant lựa chọn giá trị ưu tiên trước khi bấm Approve (mặc định ưu tiên: Merchant nhập > Web crawl > AI suy luận).
 
-**Note về RAG trong MVP:** Để tối ưu chi phí (zero-budget), hệ thống sử dụng Full PKB Prompt Injection (đưa toàn bộ PKB làm context cho LLM) thay vì bắt buộc dùng pgvector embedding, giữ chi phí xử lý $\le \$0.05$/sản phẩm.
+**Note về RAG trong MVP:** M2/M4 dùng nguyên PKB `approved` (JSON) làm context thay vì pgvector embedding. Ngân sách M1 ≤ $0.05/Product chỉ tính crawl + extract; chi phí sinh script của M2 được đo riêng.
 
 -----
 **5.4 Content Factory**
 
 **FR-CONT-01 — Generate Content Ideas**
 
-Hệ thống phải có khả năng tạo Content Ideas từ Product Knowledge.
+Hệ thống phải có khả năng tạo Content Ideas từ Product Knowledge `approved` của đúng Product và Campaign.
 
 Content Ideas có thể thuộc các nhóm:
 
@@ -452,19 +459,9 @@ Hệ thống phải có khả năng generate caption cho content.
 Hệ thống phải có khả năng cung cấp hashtag recommendation cho content.
 
 -----
-**FR-CONT-07 — Content Status**
+**FR-CONT-07 — Content Script Lifecycle**
 
-Content phải có trạng thái.
-
-Minimum đề xuất:
-
-- Draft
-- Generated
-- Under Review
-- Approved
-- Rejected
-
-**TBD:** Workflow approval cần stakeholder xác nhận.
+Content script được tạo từ PKB `approved` và gắn với một Campaign. Trong MVP, `content_scripts` không có status duyệt riêng: script không được sửa sau khi đã dùng để tạo video; sửa nội dung tạo một bản ghi script mới. Trạng thái review/approval nằm ở `videos`, không nằm ở script.
 
 -----
 **FR-CONT-08 — Edit Generated Content**
@@ -475,6 +472,8 @@ Người dùng có quyền phù hợp phải có khả năng chỉnh sửa:
 - Script
 - Caption
 - CTA.
+
+Việc chỉnh sửa sau khi script đã được dùng phải tạo bản script mới theo FR-CONT-07.
 -----
 **5.5 AI Video Factory**
 
@@ -516,7 +515,7 @@ Hệ thống phải có khả năng chuyển đổi Script thành giọng đọc
 Yêu cầu chi tiết:
 - Hỗ trợ giọng đọc tiếng Anh tự nhiên (English US/UK theo phạm vi MVP tiếng Anh).
 - Tự động căn chỉnh timing khớp với từng phân đoạn kịch bản (Hook, Problem, Demo, Result, CTA) và Screen Recording visuals.
-- Sử dụng giải pháp TTS chi phí thấp / open-source (Edge-TTS hoặc Web Speech API / free-tier) nhằm tuân thủ nguyên tắc zero-budget.
+- Sử dụng giải pháp TTS chi phí thấp, có thể thay provider bằng cấu hình/adapter; provider cụ thể được chốt ở ADR hoặc quyết định kỹ thuật, không cố định trong SRS.
 
 -----
 **FR-VID-05 — Subtitle**
@@ -545,11 +544,16 @@ Người dùng phải có khả năng preview video trước khi sử dụng.
 -----
 **FR-VID-08 — Video Download**
 
-Video được approve phải có thể download theo quyền của user (kèm theo asset package sẵn sàng 1-click cho Creator).
+Platform Admin phải thực hiện Manual QA cho video `pending_review`, approve hoặc reject và ghi actor/thời điểm review. Chỉ video `approved` mới có thể download theo quyền của user (kèm theo asset package sẵn sàng 1-click cho Creator).
 
 **FR-VID-09 — AI Avatar Disclosure**
 
 Khi video sử dụng AI Avatar, hệ thống phải hỗ trợ áp dụng disclosure phù hợp theo platform policy hoặc campaign requirement trước khi content được sử dụng/publish.
+
+-----
+**FR-VID-10 — Merchant Report Video**
+
+Merchant sở hữu Product phải có khả năng báo cáo video có vấn đề, kèm lý do không rỗng. Hệ thống ghi `merchant_flagged_at` và `merchant_flag_reason`; báo cáo không tự approve, reject hoặc archive video. Platform Admin xem báo cáo và quyết định xử lý theo quyền Manual QA. Việc báo cáo lặp/ghi đè còn chờ chốt trước khi triển khai.
 
 -----
 
@@ -579,9 +583,7 @@ Các trường này được PRD mô tả trong Campaign System.
 -----
 **FR-CAMP-02 — Link Product to Campaign**
 
-Mỗi Campaign phải được liên kết với ít nhất một Product.
-
-**TBD:** Một Campaign có được liên kết nhiều Product hay không.
+Mỗi Campaign liên kết đúng một Product trong pilot theo ERD v1.3.3. Hỗ trợ nhiều Product/Campaign sẽ cần quyết định và thay đổi data model riêng.
 
 -----
 **FR-CAMP-03 — Campaign Status**
@@ -679,7 +681,7 @@ Sau khi tải video và đăng lên mạng xã hội (TikTok, Instagram Reels, Y
 
 **FR-LIB-01 — Campaign Content Library**
 
-Mỗi Campaign phải có Content Library chứa content đã được duyệt và cho phép sử dụng. Giao diện thiết kế theo triết lý "1-Click Ready" để Creator thao tác trong dưới 1 phút.
+Mỗi Campaign phải có Content Library chỉ chứa video đã được Platform Admin approve và cho phép sử dụng. Giao diện thiết kế theo triết lý "1-Click Ready" để Creator thao tác trong dưới 1 phút.
 
 -----
 **FR-LIB-02 — View Content**
@@ -767,7 +769,7 @@ Hệ thống phải có khả năng nhận Paid Conversion Event (`event_type = 
 -----
 **FR-ATTR-04 — Track Revenue**
 
-Conversion record phải có khả năng chứa Revenue Amount nếu Merchant cung cấp.
+Sự kiện `paid` phải có Revenue Amount (`amount`) và `currency = 'USD'` trong pilot; sự kiện `signup`/`trial` không có hai giá trị này.
 
 -----
 **FR-ATTR-05 — Attribute Conversion**
@@ -787,7 +789,7 @@ PRD yêu cầu hệ thống biết “Video nào → Creator nào → Campaign n
 -----
 **FR-ATTR-06 — Commission Record**
 
-Hệ thống phải có khả năng tạo Commission Record dựa trên conversion và Campaign Commission Rule.
+Hệ thống chỉ tạo Commission Record cho paid conversion đủ điều kiện theo Campaign Commission Rule. Paid event đầu tiên được hệ thống chấp nhận cho khóa `(product_id, source, external_user_id)` tiêu thụ quyền hoa hồng một lần, kể cả khi không xác định được click hợp lệ; những paid event sau vẫn ghi doanh thu nhưng không tạo thêm commission.
 
 **TBD:** Công thức tính commission cuối cùng.
 
@@ -798,19 +800,20 @@ Trong phạm vi MVP, hệ thống phải hỗ trợ nhập dữ liệu conversio
 
 Merchant hoặc người dùng có quyền phù hợp có thể upload file CSV chứa dữ liệu conversion để hệ thống thực hiện đối soát và attribution. 
 
-Cấu trúc các cột chuẩn của file CSV:
+Cấu trúc các cột chuẩn của file CSV (tên API/DB tương ứng ghi trong mô tả):
 
 | Tên cột | Bắt buộc | Kiểu dữ liệu | Mô tả |
 |---|---|---|---|
-| `click_id` | Có | String | Mã click identifier gắn với Tracking Link của Creator |
-| `external_user_id` | Có | String | Mã định danh khách hàng trên hệ thống Merchant (bắt buộc để kiểm tra `commission_eligibility`, chỉ trả hoa hồng cho first-time purchase của user) |
-| `order_id` | Có | String | Mã đơn hàng / giao dịch phía Merchant |
-| `event_type` | Có | Enum | Loại sự kiện: `signup`, `trial`, hoặc `paid` (khớp với enum `paid` trong ERD) |
-| `event_time` | Có | ISO 8601 | Thời gian phát sinh sự kiện |
-| `revenue_amount` | Có | Decimal | Giá trị doanh thu của đơn hàng |
-| `currency` | Không | String | Đơn vị tiền tệ (mặc định: `USD`) |
+| `event_id` | Có | String | Mã sự kiện nguồn; lưu ở `conversions.external_event_id` và dùng chống trùng cho mọi event |
+| `external_user_id` | Có | String | Mã khách hàng phía Merchant; dùng cho `commission_eligibility` |
+| `event_type` | Có | Enum | `signup`, `trial` hoặc `paid` |
+| `event_time` | Có | ISO 8601 | Thời gian phát sinh, lưu ở `occurred_at` |
+| `click_id` | Không | UUID | Nếu có, phải xác thực và đối soát với `tracking_events.id`; thiếu/không hợp lệ thì lưu conversion không attribution |
+| `order_id` | Chỉ khi `paid` | String | Mã giao dịch/hóa đơn phía Merchant, lưu ở `external_order_id`; `signup`/`trial` để trống |
+| `revenue_amount` | Chỉ khi `paid` | Decimal | Giá trị doanh thu, lưu ở `amount`; `signup`/`trial` để trống |
+| `currency` | Chỉ khi `paid` | String | Bắt buộc là `USD` trong pilot; `signup`/`trial` để trống |
 
-Hệ thống phải tự động kiểm tra trùng lặp `order_id`, bỏ qua bản ghi lỗi, sử dụng `click_id` để map ngược về **Creator, Campaign và Product** tương ứng để ghi nhận attributed revenue, đồng thời đối soát `external_user_id` để xác định điều kiện hưởng hoa hồng (`commission_eligibility`).
+`source` là namespace tích hợp ổn định do hệ thống xác định từ Merchant/luồng import, không lấy từ một cột tự khai trong CSV. Hệ thống phải validate từng dòng, chống trùng theo `(product_id, source, event_id)` và thêm `order_id` cho paid event; retry cùng sự kiện phải trả kết quả cũ, không tạo commission hai lần. Nếu thiếu hoặc không xác thực được `click_id`, vẫn ghi paid conversion và doanh thu ở trạng thái `unattributed`; lần paid đầu vẫn tiêu thụ `commission_eligibility` nhưng không trả hoa hồng. Dòng lỗi phải có kết quả đối soát rõ ràng, không âm thầm bỏ qua.
 
 -----
 **5.11 Merchant Analytics**
@@ -1006,18 +1009,18 @@ Admin phải có khả năng disable content vi phạm policy hoặc requirement
 **Main Flow:**
 
 1. Merchant chọn Add Product.
-1. Merchant nhập Product URL và/hoặc thông tin Product.
+1. Merchant nhập Website URL và Merchant Affiliate URL hợp lệ; các thông tin Product khác là tùy chọn.
 1. Merchant submit.
-1. System lưu Product.
+1. System chuẩn hóa Website URL, kiểm tra unique theo URL đầy đủ và lưu Product; URL trùng trả lỗi rõ ràng, không tạo Product/job trùng.
 1. System thu thập/phân tích Product information.
 1. System tạo Product Knowledge.
 1. Merchant review Product Knowledge.
-1. Merchant xác nhận hoặc chỉnh sửa.
-1. Product được lưu.
+1. Merchant xác nhận hoặc chỉnh sửa PKB nháp, gửi duyệt (`draft → in_review`) rồi approve bản hợp lệ.
+1. System tạo PKB version `approved` và cập nhật version hiện hành của Product.
 
 **Postcondition:**
 
-Product sẵn sàng để sử dụng cho content generation.
+Product sẵn sàng để sử dụng cho content generation khi có PKB `approved`.
 
 -----
 **UC-02 — Merchant Generates Content**
@@ -1027,7 +1030,8 @@ Product sẵn sàng để sử dụng cho content generation.
 **Preconditions:**
 
 - Product tồn tại.
-- Product Knowledge đã có.
+- Product Knowledge của Product đã `approved`.
+- Campaign gắn với Product đã được tạo để lưu script và video.
 
 **Main Flow:**
 
@@ -1048,7 +1052,8 @@ Product sẵn sàng để sử dụng cho content generation.
 
 **Preconditions:**
 
-- Approved Script tồn tại.
+- Campaign gắn với Product đã tồn tại và PKB của Product đã `approved`.
+- Script gắn với Campaign đã được tạo.
 
 **Main Flow:**
 
@@ -1058,7 +1063,8 @@ Product sẵn sàng để sử dụng cho content generation.
 1. System tạo video.
 1. System chạy Quality Control.
 1. Merchant preview video.
-1. Merchant approve hoặc reject video.
+1. Platform Admin thực hiện Manual QA và approve hoặc reject video, lưu actor và thời điểm review.
+1. Merchant có thể report video kèm lý do; Admin quyết định xử lý, báo cáo không tự đổi trạng thái video.
 -----
 **UC-04 — Merchant Creates Campaign**
 
@@ -1127,43 +1133,39 @@ MVP sử dụng semi-automatic distribution; platform không tự login và mass
 4. System redirect Visitor đến Merchant landing page kèm tham số truy vấn `?ref={click_id}`.
 
 *Phase 2: Conversion Ingestion & Attribution (CSV Batch)*
-5. Khi khách hàng phát sinh hành vi chuyển đổi trên Merchant website, hệ thống Merchant lưu lại `click_id` và mã khách hàng `external_user_id`.
+5. Khi khách hàng phát sinh hành vi chuyển đổi trên Merchant website, hệ thống Merchant lưu `external_user_id` và `event_id`; `click_id` được lưu khi có click hợp lệ.
 6. Merchant định kỳ export file CSV chứa các giao dịch và upload lên Platform (FR-ATTR-07).
-7. System parse file CSV, validate schema (bắt buộc có `click_id`, `external_user_id`, `order_id`, `event_type`: `signup` / `trial` / `paid`, `event_time`, `revenue_amount`).
-8. System đối soát `click_id` với bảng `clicks` để xác định Creator, Campaign, Product và Video tương ứng.
-9. System kiểm tra `external_user_id` để đánh giá điều kiện hưởng hoa hồng (`commission_eligibility`) nhằm ngăn chặn fraud/trùng lặp.
-10. System tạo bản ghi Conversion (`paid` / `signup` / `trial`).
-11. System tính toán Commission cho Creator dựa trên Campaign commission rule.
+7. System parse từng dòng CSV theo FR-ATTR-07: `event_id`, `external_user_id`, `event_type`, `event_time` bắt buộc; `order_id`, `revenue_amount`, `currency` chỉ bắt buộc cho `paid`; `click_id` tùy chọn.
+8. System đối soát `click_id` với `tracking_events.id` khi có; click thiếu/không hợp lệ tạo conversion không attribution.
+9. System lưu Conversion (`paid` / `signup` / `trial`) một cách idempotent theo product, source và `event_id`; paid event còn chống trùng `order_id`.
+10. Với paid event, System kiểm tra `external_user_id` và cập nhật `commission_eligibility` theo lần paid hợp lệ đầu tiên, kể cả khi không có attribution.
+11. System chỉ tính Commission cho paid conversion đủ điều kiện và có click hợp lệ theo Campaign commission rule.
 12. System cập nhật doanh thu và các chỉ số hiệu suất (RPM, ROI, Conversion Rate) trên Merchant và Creator Dashboard.
 -----
 **7. Data Requirements**
 
 **7.1 Core Entities**
 
-Dựa trên PRD, các entity chính bao gồm:
+Dữ liệu MVP theo ERD v1.3.3 gồm 16 bảng nghiệp vụ (ngoài `auth.users`):
 
-- users
 - merchants
+- creators
+- creator\_accounts
 - products
 - product\_knowledge
 - campaigns
-- creators
-- creator\_accounts
 - creator\_campaigns
-- content\_ideas
 - content\_scripts
+- generation\_jobs
 - videos
-- video\_variants
+- published\_posts
 - tracking\_links
 - tracking\_events
-- clicks
-- signups
 - conversions
-- orders
-- commissions
-- analytics.
+- commission\_eligibility
+- commissions.
 
-PRD cung cấp core database ở mức định hướng với các entity này (lưu ý: `features` và `pricing` được lưu cấu trúc trong `product_knowledge.data` JSONB thay vì tách bảng độc lập).
+ERD/data dictionary là nguồn chuẩn cho tên bảng, cột và ràng buộc. `features` và `pricing` nằm trong `product_knowledge.data` JSONB; idea/hook nằm trong `content_scripts`, variation là bản ghi `videos` có `parent_video_id`, click nằm trong `tracking_events`. Các khái niệm PRD như `clicks`, `signups`, `orders`, `analytics` không phải bảng riêng của MVP.
 
 -----
 **7.2 Merchant Entity**
@@ -1172,10 +1174,11 @@ Bảng `merchants` đại diện cho hồ sơ doanh nghiệp sở hữu sản ph
 
 |**Field**|**Description**|
 | :-: | :-: |
-|merchant\_id|Unique Merchant ID (UUID)|
+|id|Unique Merchant ID (UUID)|
 |user\_id|Tài khoản đăng nhập (`auth.users.id`)|
 |company\_name|Tên công ty / Brand|
-|website\_url|Website chính thức|
+|company\_slug|Slug unique của Merchant|
+|website|Website chính thức|
 |contact\_email|Email liên hệ|
 |status|Trạng thái (active, pending, suspended)|
 |created\_at|Thời gian tạo|
@@ -1183,36 +1186,40 @@ Bảng `merchants` đại diện cho hồ sơ doanh nghiệp sở hữu sản ph
 -----
 **7.3 Product Entity**
 
-Minimum fields đề xuất (với `merchant_id` là khóa ngoại trỏ tới `merchants.merchant_id`):
+Các cột Product chính theo ERD (với `merchant_id` trỏ tới `merchants.id`):
 
 |**Field**|**Description**|
 | :-: | :-: |
-|product\_id|Unique Product ID|
-|merchant\_id|Product Owner (`merchants.merchant_id`)|
-|name|Product Name|
+|id|Unique Product ID|
+|merchant\_id|Product Owner (`merchants.id`)|
+|name|Product Name; có thể null khi chỉ mới nhập URL|
 |website\_url|Website chính thức của sản phẩm|
+|affiliate\_url|Đích redirect do Merchant cung cấp, bắt buộc|
 |description|Product Description|
-|target\_audience|Target Audience|
+|merchant\_input|Dữ liệu tùy chọn Merchant nhập (JSONB)|
+|current\_knowledge\_version|Version PKB `approved` hiện hành|
 |status|Product Status|
 |created\_at|Creation Time|
 |updated\_at|Last Update|
+
+`website_url` unique sau chuẩn hóa URL, không unique theo domain. Pricing, features, audience và evidence của từng version nằm trong `product_knowledge.data`/`sources`, không phải cột riêng của `products`.
 
 -----
 **7.4 Campaign Entity**
 
 |**Field**|**Description**|
 | :-: | :-: |
-|campaign\_id|Unique ID|
+|id|Unique ID|
 |merchant\_id|Campaign Owner|
-|product\_id|Product|
-|campaign\_name|Campaign Name|
+|product\_id|Một Product của Campaign trong pilot|
+|name|Campaign Name|
 |start\_date|Start Date|
 |end\_date|End Date|
 |target\_audience|Target Audience|
-|country|Target Country|
-|language|Language|
-|commission\_rule|Commission|
-|content\_requirement|Content Requirement|
+|target\_countries|Target Countries|
+|target\_language|Language|
+|commission\_type / commission\_value / currency|Commission trong pilot (USD)|
+|content\_brief|Content Requirement|
 |approved\_claims|Approved Claims|
 |forbidden\_claims|Forbidden Claims|
 |status|Campaign Status|
@@ -1222,32 +1229,19 @@ Minimum fields đề xuất (với `merchant_id` là khóa ngoại trỏ tới `
 
 |**Field**|**Description**|
 | :-: | :-: |
-|creator\_id|Unique Creator ID|
+|id|Unique Creator ID|
 |user\_id|User Account|
 |niche|Creator Niche|
 |country|Country|
 |language|Language|
-|primary\_platform|Social Platform|
-|follower\_count|Followers|
-|avg\_views|Average Views|
-|engagement\_rate|Engagement Rate|
 |status|Creator Status|
+
+Platform/handle/follower count nằm trong `creator_accounts`. `avg_views` và `engagement_rate` chưa là cột của ERD MVP; nếu cần lưu để match creator, phải chốt schema qua ERD trước.
 
 -----
 **7.6 Tracking Entity**
 
-Minimum attribution data:
-
-- video\_id
-- creator\_id
-- campaign\_id
-- product\_id
-- click\_id
-- visitor\_id
-- signup\_id
-- order\_id
-- revenue
-- commission.
+Attribution data nằm trong các bảng `tracking_links`, `tracking_events` (mỗi redirect có một `click_id` = `tracking_events.id`), `conversions`, `commission_eligibility` và `commissions`. `conversions` lưu `external_event_id`, `external_user_id`, `external_order_id` (chỉ paid), `attributed_click_id` (có thể null), `amount`/`currency` (chỉ paid) và trạng thái eligibility. Quan hệ đến Creator/Campaign/Video được truy qua click và tracking link; không tạo bảng `clicks`, `signups` hoặc `orders` riêng.
 -----
 **8. External Interface Requirements**
 
@@ -1312,16 +1306,15 @@ Hệ thống phải cho phép upload CSV chứa các loại dữ liệu:
 
 - Signup
 - Trial
-- Purchase
-- Revenue
+- Paid (`event_type = 'paid'`, kèm revenue)
 
 Sau khi file được upload, hệ thống phải:
 
-1. Validate cấu trúc và dữ liệu CSV.
-1. Xác định tracking identifier/click tương ứng.
-1. Liên kết conversion với Creator, Campaign và Product.
-1. Tạo hoặc cập nhật Conversion Record.
-1. Ghi nhận Revenue nếu có.
+1. Validate cấu trúc và dữ liệu từng dòng CSV theo FR-ATTR-07, gồm điều kiện riêng cho `paid` và `signup`/`trial`.
+1. Xác thực `click_id` khi có; dòng không có click hợp lệ vẫn được ghi nhận là không attribution.
+1. Liên kết conversion với Creator/Campaign/Video khi có click hợp lệ; Product và source phải được xác định từ ngữ cảnh import đáng tin cậy.
+1. Tạo Conversion Record một cách idempotent; retry không ghi đè identity, revenue hoặc attribution đã chốt.
+1. Ghi nhận Revenue của paid event, kể cả khi không attribution.
 1. Cập nhật dữ liệu Analytics/Attribution liên quan.
 -----
 **8.4 Social Platform Interface**
@@ -1577,7 +1570,7 @@ Social analytics như Views/Engagement có thể cần external API hoặc manua
 |BR-03 Content Opportunity|FR-CONT-01, FR-CONT-02|
 |BR-04 Hook Generation|FR-CONT-03|
 |BR-05 Script Generation|FR-CONT-04|
-|BR-06 AI Video|FR-VID-01 → FR-VID-09 (Screen Recording, AI Voice, Subtitles, Disclosure)|
+|BR-06 AI Video|FR-VID-01 → FR-VID-10 (Screen Recording, AI Voice, Subtitles, Disclosure, Admin QA và Merchant Report)|
 |BR-07 Video Variations|FR-VID-06|
 |BR-08 Campaign Management|FR-CAMP-01 → FR-CAMP-08|
 |BR-09 Creator Registration|FR-CRE-01 → FR-CRE-05 (kèm Submit Proof of Publishing)|
@@ -1585,13 +1578,25 @@ Social analytics như Views/Engagement có thể cần external API hoặc manua
 |BR-11 Content Library|FR-LIB-01 → FR-LIB-07|
 |BR-12 Content Distribution|UC-06, FR-CRE-05|
 |BR-13 Tracking Link|FR-AFF-01 → FR-AFF-05|
-|BR-14 Conversion Attribution|FR-ATTR-01 → FR-ATTR-07 (kèm CSV batch và external_user_id)|
+|BR-14 Conversion Attribution|FR-ATTR-01 → FR-ATTR-07 (CSV batch: `event_id`, `external_user_id`, click tùy chọn và trường paid có điều kiện)|
 |BR-15 Merchant Dashboard|FR-MAN-01 → FR-MAN-05 (kèm RPM và ROI)|
 |BR-16 Creator Dashboard|FR-CAN-01 → FR-CAN-04 (kèm EPC và RPM)|
-|BR-17 Admin Management|FR-ADM-01 → FR-ADM-08|
+|BR-17 Admin Management|FR-ADM-01 → FR-ADM-08, FR-VID-08, FR-VID-10|
 |BR-18 AI Quality Control|FR-QA-01 → FR-QA-07|
-|BR-19 Authenticity|FR-QA-06, FR-QA-07|
+|BR-19 Authenticity|FR-PI-02, FR-VID-03, FR-QA-06, FR-QA-07|
 |BR-20 Content Diversity|FR-QA-08|
+
+**Sprint 1 M1 — mapping User Story → Requirement:**
+
+| User Story | SRS Requirement |
+|---|---|
+| [US-01](https://github.com/PotatoMine725/AI-review-BE/issues/41) Onboarding URL | FR-PROD-01, FR-PROD-02, FR-PROD-06 |
+| [US-02](https://github.com/PotatoMine725/AI-review-BE/issues/42) Crawl nguồn public | FR-PROD-03 |
+| [US-03](https://github.com/PotatoMine725/AI-review-BE/issues/43) Trích xuất fact | FR-PI-01, FR-PI-02, FR-PI-05 |
+| [US-04](https://github.com/PotatoMine725/AI-review-BE/issues/44) Xem PKB nháp | FR-PROD-04, FR-PI-02, FR-PI-05 |
+| [US-05](https://github.com/PotatoMine725/AI-review-BE/issues/45) Sửa và gửi duyệt | FR-PROD-05, FR-PI-03, FR-PI-05 |
+| [US-06](https://github.com/PotatoMine725/AI-review-BE/issues/46) Duyệt/từ chối PKB | FR-PI-03, FR-PI-04 |
+| [US-07](https://github.com/PotatoMine725/AI-review-BE/issues/47) Cấp PKB đã duyệt | FR-PI-03, FR-PI-04, FR-CONT-01 |
 
 
 
@@ -1611,23 +1616,22 @@ Các requirement sau chưa đủ thông tin trong PRD và cần stakeholder xác
 |TBD-01|Merchant registration có cần approval không?|
 |TBD-02|Creator registration có cần Admin approval không?|
 |TBD-03|Creator join Campaign tự động hay cần Merchant approve?|
-|TBD-04|Một Campaign có hỗ trợ nhiều Product không?|
 |TBD-05|Một Creator có thể tham gia bao nhiêu Campaign cùng lúc?|
 |TBD-06|Campaign pause/terminate behaviour như thế nào?|
 |TBD-07|Commission calculation chính xác như thế nào?|
 |TBD-08|Commission có recurring không?|
 |TBD-09|Commission confirmation period bao lâu?|
 |TBD-10|MVP có thực hiện payout thật không?|
-|TBD-11|Merchant có cần approve từng video trước khi Creator publish không?|
 |TBD-12|Creator có được chỉnh sửa video không?|
 |TBD-13|Creator có được chỉnh sửa caption/script không?|
-|TBD-14|**ĐÃ CHỐT (Resolved):** Trong MVP dùng **CSV Batch Upload** do Merchant cung cấp (FR-ATTR-07). Webhook, Realtime API hoặc Pixel chuyển sang giai đoạn post-MVP.|
 |TBD-15|Views/engagement được lấy từ social platform bằng cách nào?|
 |TBD-16|Social platform ưu tiên MVP là TikTok, Shorts, Reels hay tất cả?|
 |TBD-17|Fraud detection tối thiểu của MVP là gì?|
 |TBD-18|Merchant/Creator dispute flow có tồn tại không?|
 |TBD-19|Data retention period là bao lâu?|
 |TBD-20|Numeric performance SLA là bao nhiêu?|
+
+Các mục đã chốt được đưa ra khỏi danh sách TBD: Campaign có một Product trong pilot (TBD-04, ERD v1.3.3); Platform Admin duyệt video, Merchant chỉ report (TBD-11, FR-VID-08/10); conversion dùng CSV batch trong MVP (TBD-14, FR-ATTR-07).
 
 -----
 **17. MVP System Workflow**
@@ -1643,6 +1647,14 @@ Luồng nghiệp vụ hệ thống MVP:
 ↓
 
 **Build Product Knowledge**
+
+↓
+
+**Merchant reviews, submits and approves PKB**
+
+↓
+
+**Create Campaign for the Product**
 
 ↓
 
@@ -1666,7 +1678,7 @@ Luồng nghiệp vụ hệ thống MVP:
 
 ↓
 
-**Create Campaign**
+**Platform Admin approves Video after Manual QA**
 
 ↓
 
@@ -1721,25 +1733,28 @@ Hệ thống MVP được xem là đáp ứng SRS ở mức tổng thể khi có
 
 1. Merchant đăng nhập.
 1. Merchant onboard một AI Product.
-1. Platform tạo Product Knowledge.
+1. Platform tạo Product Knowledge; Merchant review, gửi duyệt và approve PKB version hợp lệ.
+1. Merchant tạo Campaign gắn với Product.
 1. Merchant tạo Content Idea.
 1. Platform tạo Hook.
 1. Platform tạo Script.
 1. Platform tạo Video.
-1. Merchant tạo Campaign.
+1. Platform Admin Manual QA và approve Video trước khi đưa vào Content Library.
 1. Creator tham gia Campaign.
 1. Creator xem và download Content.
 1. Creator lấy Tracking Link.
 1. Creator publish content bên ngoài platform.
 1. Visitor click Tracking Link.
 1. Platform ghi nhận Click (`click_id`).
-1. Merchant upload CSV chứa Conversion event (`paid` / `signup` / `trial`) kèm `click_id` và `external_user_id`.
-1. Platform xác định Creator/Campaign/Product attribution và kiểm tra `commission_eligibility`.
+1. Merchant upload CSV chứa Conversion event (`paid` / `signup` / `trial`) kèm `event_id`, `external_user_id`; `click_id` có khi được ghi nhận.
+1. Platform xác định Creator/Campaign/Product attribution khi click hợp lệ và kiểm tra `commission_eligibility` cho paid event, kể cả khi không attribution.
 1. Platform ghi nhận Revenue.
 1. Merchant xem Performance (bao gồm RPM, ROI).
 1. Creator xem Performance/Commission (bao gồm EPC, RPM).
 
 Nếu core flow trên không thể hoàn thành từ đầu tới cuối, MVP chưa đáp ứng mục tiêu chính của SRS.
+
+Luồng kiểm thử phải bao gồm thêm một paid conversion không có `click_id`: hệ thống ghi nhận doanh thu, đánh dấu `unattributed`, không trả hoa hồng và vẫn tiêu thụ eligibility của khách hàng ở lần paid đầu tiên.
 
 -----
 **19. SRS Approval**
@@ -1782,5 +1797,4 @@ Một web platform cho phép Merchant onboard AI Product, sử dụng AI để t
 
 Core success flow:
 
-**Product → AI Content → Video → Campaign → Creator → Click → Conversion → Revenue**
-
+**Product → PKB approved → Campaign → AI Content → Video approved → Creator → Click → Conversion → Revenue**
