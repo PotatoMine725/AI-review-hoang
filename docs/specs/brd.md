@@ -1,5 +1,6 @@
 <!--
 BRD (Business Requirements Document) v0.2 ("Updated from Feedback"), do team lead (@VV6505) gửi ngày 2026-10-07 (file gốc: tempbrd.md), dựa trên bản của BA (@khanhphi27). Được @PotatoMine725 đưa vào repo ngày 2026-10-07.
+Cập nhật 2026-10-07: chuyển phần duyệt video / Manual QA của BA (@khanhphi27, file BRD.md, sửa trên bản cũ) sang bản v0.2 này.
 Nội dung giữ nguyên văn. Góp ý và câu hỏi mở: xem issue #28, #23 và docs/logs/qa-log.md. Từ bản này, mọi thay đổi đi qua PR vào docs/specs/.
 Khi mâu thuẫn với decision-log / đặc tả module / ERD đã chốt, các tài liệu đó được ưu tiên cho tới khi bản này được cập nhật.
 -->
@@ -221,6 +222,7 @@ Merchant có nhu cầu:
 - Theo dõi performance.
 
 - Theo dõi signup, conversion và revenue.
+- Report video có nội dung sai, misleading hoặc không phù hợp để Platform Admin review.
 
 Các loại sản phẩm mục tiêu bao gồm AI writing tools, AI video tools, AI coding agents, AI productivity SaaS và các AI SaaS tương tự.
 
@@ -269,6 +271,7 @@ Phạm vi quản lý bao gồm:
 
 - Creators
 - Videos
+- Manual review, approve/reject video
 
 - Affiliates
 - Traffic
@@ -355,6 +358,7 @@ Admin có khả năng quản lý:
 - Creators
 
 - Videos
+- Review / approve / reject video
 - Campaigns
 
 - Revenue
@@ -439,6 +443,10 @@ Quy trình mong muốn:
 ↓
 
 **AI generates Video Content**
+
+↓
+
+**Platform Admin performs Manual QA and approves/rejects Video**
 
 ↓
 
@@ -770,10 +778,14 @@ Admin phải có khả năng quản lý các business entities chính:
 - Campaign
 
 - Creator
-- Content
+- Content / Video
 
 - Conversion
 - Revenue.
+
+Đối với video trong MVP, **Platform Admin là actor thực hiện manual review và quyết định approve/reject video trước khi video được phép đưa vào Content Library để Creator sử dụng**.
+
+Merchant không thực hiện approve/reject từng video.
 
 **BR-18 — AI Quality Control**
 
@@ -803,6 +815,19 @@ Platform không được chủ động tạo:
 
 - Fabricated Screenshots
 - Fabricated Product Features.
+
+Ngoài automated AI Quality Control, **Platform Admin phải đóng vai trò manual reviewer đối với video trong MVP**.
+
+Admin phải có khả năng:
+
+- Review video sau bước AI Quality Control.
+- Approve video đạt yêu cầu.
+- Reject video không đạt yêu cầu.
+- Đảm bảo chỉ video đã được Admin approve mới được đưa vào Content Library cho Creator sử dụng.
+
+Merchant không phải actor approve/reject từng video.
+
+Nếu Merchant phát hiện video sai, misleading hoặc không phù hợp sau khi được tạo/approve, Merchant phải có khả năng **report video** để Platform Admin review và xử lý theo quyền quản trị.
 
 **BR-19 — Content Authenticity**
 
@@ -978,13 +1003,13 @@ AI có thể tạo thông tin sai về:
 - Limitations
 - Product Capability.
 
-**Mitigation:** Quality Control + Merchant confirmation.
+**Mitigation:** Quality Control + Merchant confirmation + Admin manual review đối với video.
 
 **R-02 — Misleading Content Risk**
 
 AI-generated content có thể tạo claim quá mức hoặc fake experience.
 
-**Mitigation:** Approved Claims, Forbidden Claims, Evidence và AI Quality Control.
+**Mitigation:** Approved Claims, Forbidden Claims, Evidence, AI Quality Control và Admin manual review đối với video.
 
 **R-03 — Social Platform Policy Risk**
 
@@ -1126,6 +1151,8 @@ Long-term direction của sản phẩm là tiến từ:
 
 **19. Open Questions for Stakeholder Confirmation**
 
+**Decision đã chốt về Video Approval / Manual QA:** Platform Admin thực hiện manual review và approve/reject từng video trong MVP. Merchant không approve/reject từng video. Merchant có thể report video sai/misleading để Admin review.
+
 Các nội dung dưới đây chưa được PRD mô tả đủ chi tiết và cần làm rõ trước khi hoàn thành SRS.
 
 | **ID** | **Question** |
@@ -1137,8 +1164,6 @@ Các nội dung dưới đây chưa được PRD mô tả đủ chi tiết và c
 | Q-05 | Commission được tính theo signup, purchase hay recurring revenue? |
 | Q-06 | Khi nào commission được xác nhận là payable? |
 | Q-07 | MVP có xử lý payout thật cho Creator hay chỉ hiển thị commission? |
-| Q-08 | Merchant có phải approve video trước khi Creator download/publish không? |
-| Q-09 | AI-generated video có cần manual QA không? |
 | Q-10 | Creator có được chỉnh sửa video/caption do AI tạo không? |
 | Q-11 | Merchant có thể pause hoặc terminate campaign không? |
 | Q-12 | Creator có thể tham gia nhiều campaign cùng lúc không? |
