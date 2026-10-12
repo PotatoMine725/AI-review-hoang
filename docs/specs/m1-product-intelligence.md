@@ -1,6 +1,6 @@
 # Module 1 — Product Intelligence: Đặc tả kỹ thuật
 
-Oct 5, 2026 · @Hoang Nguyen · **v0.3.1** (08/10/2026, issue #50) · Lịch sử: xem cuối file
+Oct 5, 2026 · @Hoang Nguyen · **v0.3.2** (12/10/2026, issue #41, #42) · Lịch sử: xem cuối file
 
 > **Nguồn chuẩn của data model:** ERD v1.3.3 ([`docs/specs/erd/`](erd/)). Đặc tả này chỉ nêu bảng và cột M1 dùng, không chép DBML. ERD đã gộp thay đổi của #23 (PR #49): `in_review`, 4 cột chi phí của `generation_jobs`; và PR #51 (decision-log #18, #19): cột review `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note`, quy tắc nullability của chi phí.
 
@@ -91,9 +91,41 @@ Ví dụ 1 phần tử của `sources`: `{ "id": "src_01", "url": "…", "page_t
 ### Quy tắc crawl
 
 1. **robots.txt (RFC 9309).** Trả 2xx: đọc luật và tuân theo. Trả 4xx trừ 429: coi như không có robots, được crawl. Trả 5xx, 429 hoặc timeout: coi như cấm toàn bộ, không crawl.
-2. **Bị WAF / challenge** (vd. header `cf-mitigated: challenge`): job `failed`, cột `generation_jobs.error` bắt đầu bằng `waf_challenge`, `result_manifest = null`. Không đổi User-Agent, không retry, không dùng proxy. Merchant được hướng dẫn upload tài liệu (FR-10). Ví dụ thật: Gamma (`spikes/m1-crawl-extract/README.md`, kết quả v0.2).
+2. **Trang chủ hoặc robots.txt bị WAF / challenge** (vd. header `cf-mitigated: challenge`, HTTP 403 hoặc 429 ở trang chủ): job `failed`, cột `generation_jobs.error` bắt đầu bằng `waf_challenge`, `result_manifest = null`. Không đổi User-Agent, không retry, không dùng proxy. Merchant được hướng dẫn upload tài liệu (FR-10). Ví dụ thật: Gamma (`spikes/m1-crawl-extract/README.md`, kết quả v0.2).
 3. **Chuyển hướng tới trang đăng nhập (`login_redirect`).** Trang con chuyển hướng tới trang đăng nhập: bỏ qua trang đó, ghi lý do, crawl tiếp, không theo link từ trang đăng nhập. Trang chủ chuyển hướng tới đăng nhập: dừng product (job `failed`). Xem PR #39.
-4. **Trang không đổi.** Bỏ qua trang có `content_hash` trùng với bản trong `product_knowledge.sources` (NFR-04).
+4. **Trang không đổi.** Bỏ qua trang có `content_hash` trùng với bản trong `product_knowledge.sources` (NFR-04). Trang vẫn nằm trong danh sách trang của kết quả (đánh dấu `unchanged`, không ghi lại markdown) để PKB giữ nguồn.
+5. **Bị chặn ở trang con** (`http_403`, `http_429`, trang challenge): dừng crawl host đó ngay, không gửi thêm request tới host đó (bị chặn ở host gốc thì dừng toàn bộ crawl; ở host phụ thì host gốc chạy tiếp). Không đổi UA, không proxy.
+   - Đã có trang chủ và ít nhất 1 trang khác dùng được: job vẫn `completed`, kết quả có `partial = true` và `warning = "blocked_mid_crawl:<lý do>"`. Trang bị chặn và các trang chưa crawl của host đó ghi lý do bỏ qua `blocked`.
+   - Chỉ có trang chủ: job `failed` với `waf_challenge`.
+
+### Mã lỗi crawl
+
+Lỗi cấp **job**: job `failed`, `generation_jobs.error` là chuỗi bắt đầu bằng mã. Module crawl chỉ báo `retryable`; retry tối đa 3 lần với exponential backoff (AC của #42) là việc của hàng đợi.
+
+| Mã | Khi nào | `retryable` |
+| --- | --- | --- |
+| `invalid_url` | URL sai dạng, scheme khác http(s), có `user:pass@`; hoặc trang chủ trả 404 / 410 (detail `http_404` / `http_410`) | không |
+| `waf_challenge` | Trang chủ hoặc robots.txt bị WAF / challenge, hoặc bị chặn ở trang con khi mới có trang chủ | không (không đổi UA, không proxy) |
+| `robots_disallow` | robots.txt cấm trang chủ | không |
+| `robots_unavailable` | robots.txt trả 5xx, 429 hoặc timeout: coi như cấm toàn bộ (RFC 9309) | có |
+| `login_redirect` | Trang chủ chuyển sang trang đăng nhập (hoặc trả 401) | không |
+| `home_unreachable` | DNS lỗi, kết nối lỗi, timeout hoặc 503 ở trang chủ, trình duyệt crawl lỗi | có |
+| `no_content` | Trang chủ render được nhưng dưới 200 ký tự, hoặc không lấy được trang chủ | không |
+
+Lý do bỏ qua cấp **trang** (job vẫn chạy tiếp). Tên theo code; cột spike là tên trong `spikes/m1-crawl-extract/crawl.py`:
+
+| Lý do | Tên trong spike | Ghi chú |
+| --- | --- | --- |
+| `robots_disallowed` | `robots_disallow` | robots.txt của host đó cấm trang, hoặc không tải được robots.txt của host phụ |
+| `login_redirect` | `blocked: login_redirect` | không theo link từ trang đăng nhập |
+| `over_limit` | `over_limit` | vượt 30 trang, 5 trang host phụ hoặc hạn mức `page_type` |
+| `duplicate` | `duplicate_of` | trùng `raw_hash` với trang đã lấy |
+| `not_english` | `locale_duplicate` | nhận biết qua tiền tố ngôn ngữ ở path (`/fr/`, `/ja-jp/`); chưa dò ngôn ngữ nội dung |
+| `non_html` | `asset` | ảnh, PDF, CSS, JSON... |
+| `fetch_error` | `not_found`, `crawl_failed`, `blocked: http_401/503` | |
+| `unchanged` | (mới) | `content_hash` không đổi; trang vẫn có trong danh sách trang |
+| `blocked` | (mới) | bị chặn giữa chừng (quy tắc 5) hoặc chưa crawl vì đã dừng |
+| `out_of_scope`, `excluded_path`, `low_score`, `redirect_out_of_scope` | giữ nguyên | host ngoài phạm vi, đường dẫn bị loại, điểm 0, chuyển hướng ra ngoài phạm vi |
 
 ### Quy tắc trích xuất giá
 
@@ -257,3 +289,4 @@ Câu hỏi còn mở:
 | v0.2 | 07/10/2026 | @PotatoMine725 (issue #5) | Thay Gemini 2.5 Flash-Lite bằng ứng viên Flash-Lite 3.x, tra lại giá 07/10/2026 trên trang chính thức, chọn model chờ ADR-002. NFR-02 ghi số đo spike (~$0.01/product, mode `batch`), link qa-log #6. Embedding ứng viên `gemini-embedding-2` 768 chiều; phạm vi RAG chờ qa-log #5. Ghi rủi ro LiteLLM. AI-1 làm toàn bộ M1 (#14). Merchant approve PKB, nội dung sau login qua FR-10, MVP tiếng Anh (#15). Thêm Quy tắc trích xuất giá từ spike #6 (tách giá niêm yết / khuyến mãi, cấm model tự tính giá, `price_unit` + `billing_cycle` bắt buộc, `usage_prices`, `default_view`, vùng IP), mode `batch` mặc định, crawl host phụ cùng domain gốc (≤ 5 trang). Thêm `identity.version`, `models[]`, logo ưu tiên SVG, FR-13 `media_sample` (Could) từ video tham khảo |
 | v0.3 | 08/10/2026 | @PotatoMine725 (issue #23, #38) | Theo ERD v1.3.1: bỏ 5 bảng riêng (`crawl_jobs`, `crawled_pages`, `product_assets`, `knowledge_chunks`, `product_inputs`), dùng `products`, `product_knowledge`, `generation_jobs`. Bỏ vector RAG: 1.8 ra khỏi MVP, FR-08 hạ xuống Later, bỏ `/knowledge/search`, hoãn embedding. `website_url` unique sau chuẩn hoá. Thêm Quy tắc crawl (robots RFC 9309, WAF `waf_challenge`). Trạng thái PKB `draft \| in_review \| approved \| rejected`, chỉ merchant approve, admin chỉ reject có lý do. Chi phí đọc từ `generation_jobs.cost_usd`. Output dẫn contract `docs/specs/pkb/`. Điểm ERD còn để mở ghi "chờ #50". Đồng bộ theo ERD đã merge (PR #49): `cost_breakdown` `'{}'` = chưa ghi chi phí, NFR-02 chỉ tính job đã ghi; admin chỉ reject (bổ sung decision-log #11) |
 | v0.3.1 | 08/10/2026 | @PotatoMine725 (issue #50) | Theo ERD v1.3.3 (PR #51, decision-log #18, #19): `approved_by` / `approved_at` đổi thành `reviewed_by` / `reviewed_at` (ghi cho cả approve và reject), thêm `reviewer_role`, `review_note` (lý do reject), quy tắc theo `status`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default; NFR-02 chỉ tính job có `cost_usd` khác null; cost của `content_scripts` không tính vào NFR-02. Bỏ các dòng "chờ #50" |
+| v0.3.2 | 12/10/2026 | @PotatoMine725 (issue #41, #42, #59) | Đưa crawl từ spike vào `services/worker`. Thêm mục "Mã lỗi crawl" (mã lỗi job + `retryable`, lý do bỏ qua trang, đối chiếu tên với spike). Quy tắc crawl: robots 401/403 coi như không có robots (RFC 9309, spike trước đây coi là cấm), trang không đổi vẫn nằm trong danh sách trang, thêm quy tắc 5 (bị chặn giữa chừng ở trang con: dừng host đó, `completed` + `partial` nếu đủ trang). Quy tắc chuẩn hoá `website_url`: `http` đổi `https`, giữ `www.` và path, bỏ tham số theo dõi, sắp query theo tên, IDN sang punycode |

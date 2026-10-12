@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   lint-typecheck:
-    name: ruff + pyright
+    name: ruff + pyright + pytest
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,3 +35,4 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pyright
+      - run: uv run pytest

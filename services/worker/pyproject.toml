@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "AI Review Content Factory — Python worker (internal FastAPI)"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "crawl4ai==0.9.4",
     "fastapi>=0.142.2",
+    "pydantic>=2",
     "uvicorn>=0.54.0",
 ]
 
@@ -15,6 +17,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pyright>=1.1.414",
+    "pytest>=9.1.1",
     "ruff>=0.16.10",
 ]
 
@@ -31,3 +34,6 @@ pythonVersion = "3.12"
 venvPath = "."
 venv = ".venv"
 typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
