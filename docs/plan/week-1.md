@@ -2,6 +2,8 @@
 
 Oct 5, 2026 · @Hoang Nguyen
 
+> **Quyết định crawl/LLM đã chốt:** ADR-001/002 đã chốt Crawl4AI và `gemini-3.5-flash-lite` qua `google-genai`/adapter mỏng, không embedding/RAG trong MVP; chỉ chạy thật trong quota miễn phí đã xác minh (decision-log #20). ADR-003/004 vẫn cần chốt. Checklist mục tiêu tuần 1 bên dưới giữ mốc kế hoạch ban đầu; không đánh dấu hoàn thành cả 4 ADR hoặc triển khai provider.
+
 Tuần 1 (05–09/10/2026) không viết tính năng: cả team hiểu PRD, chốt phạm vi MVP, dựng repo + quy trình, và giảm rủi ro công nghệ bằng nghiên cứu + spike nhỏ. Thứ Sáu chốt backlog sprint 1.
 
 ## Mục tiêu tuần 1

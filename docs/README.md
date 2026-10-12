@@ -3,6 +3,14 @@
 Nguồn sự thật cho cả 2 repo (BE và FE). Repo FE không giữ bản sao, chỉ trỏ về đây.
 Tổ chức theo **Spec-driven development**: viết spec → lập plan → làm → report → review.
 
+## Quyết định crawl và LLM hiện hành
+
+[ADR-0001](adr/0001-crawl-tool.md) và [ADR-0002](adr/0002-llm-provider.md) đã chốt: **Crawl4AI như thư viện trong worker**, **Gemini 3.5 Flash-Lite (`gemini-3.5-flash-lite`) qua SDK `google-genai` và adapter mỏng**. Mốc quyết định **08/10/2026**, người xác nhận phương án **@VV6505** (decision-log #20; liên quan issue #59, #61). Mode `batch` gom nhiều trang vào một lời gọi thông thường. Không dùng LiteLLM làm lớp gọi LLM, không có embedding/vector RAG trong MVP.
+
+Pilot chỉ chạy API thật trong quota miễn phí đã xác minh; chốt công cụ không đồng nghĩa đã hoàn thành tích hợp/QA. Xem [đặc tả M1](specs/m1-product-intelligence.md) và [decision log #20](logs/decision-log.md). ADR-003/004 về render/TTS vẫn cần chốt riêng.
+
+FastAPI là API nghiệp vụ cho Product/PKB/job và các thao tác cần backend tin cậy; API và worker chạy riêng. CRUD hồ sơ đã có tiếp tục qua Supabase dưới RLS và column privileges. Queue polling `generation_jobs` là đề xuất cần BE hoàn thiện ADR, chưa phải chức năng đã triển khai. Interface và trạng thái triển khai xem [API contract](specs/api-contract.md) và decision-log #21. Các phần còn lại của bộ tài liệu #61 sẽ được các nhóm bổ sung sau.
+
 ## Thư mục
 
 | Thư mục | Trả lời câu hỏi | Nội dung | Ai viết |

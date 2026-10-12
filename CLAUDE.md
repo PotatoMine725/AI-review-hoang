@@ -7,9 +7,10 @@ Backend của **AI Review Content Factory**, là một nửa của split repo. F
 Quy ước Git/PR/DoD nằm trong `CONTRIBUTING.md` và phải tuân theo.
 
 ## Stack
-- `services/worker/`: Python 3.12 + FastAPI + Pydantic v2, quản lý bằng **uv** (không dùng pip/poetry). Lint bằng ruff, type check bằng pyright.
+- `services/worker/`: Python 3.12 + FastAPI + Pydantic v2, quản lý bằng **uv** (không dùng pip/poetry). FastAPI là API nghiệp vụ; API và worker xử lý nền chạy thành hai tiến trình riêng. Lint bằng ruff, type check bằng pyright.
 - `supabase/`: Postgres + pgvector + Auth + Storage, dùng Supabase CLI qua `pnpm dlx supabase`.
-- **Còn mở** (ADR-001…004): crawl tool, LLM, render engine, avatar + TTS. Code gọi các provider này phải đi qua adapter
+- **Đã chốt 08/10/2026** (ADR-001/002): Crawl4AI như thư viện trong worker; `gemini-3.5-flash-lite` cho extraction/enrichment, SDK `google-genai` trực tiếp qua adapter mỏng, không dùng LiteLLM làm lớp gọi LLM. MVP không có embedding/vector RAG. Chỉ gọi API thật trong quota miễn phí đã xác minh; không tự bật billing.
+- **Còn mở** (ADR-003/004): render engine và TTS; avatar ngoài phạm vi MVP. Code gọi các provider phải đi qua adapter
   và chọn bằng config, không gọi SDK của provider rải rác (xem ADR-0005).
 - KHÔNG dùng Remotion (vướng license). Không thêm thư viện ngoài stack khi chưa hỏi.
 

@@ -1,14 +1,18 @@
 # ADR-0001: Công cụ crawl cho Module 1 (sub-module 1.2)
 
-- **Trạng thái:** Đề xuất (team chốt ở buổi review thứ Sáu 09/10/2026)
+- **Trạng thái:** Đã chốt (08/10/2026)
 - **Ngày:** 2026-10-07
+- **Ngày chốt:** 2026-10-08
 - **Người đề xuất:** @PotatoMine725 (phụ trách M1)
-- **Người quyết định:** team lead @VV6505 (decision-log #12)
-- **Liên quan:** issue #7 · spike #6 (`report/m1-spike-crawl-extract.md`, `spikes/m1-crawl-extract/README.md`, `spikes/m1-crawl-extract/output/metrics.csv`) · `specs/m1-product-intelligence.md` v0.2 · ADR-0005
+- **Người xác nhận phương án:** @VV6505.
+- **Tham chiếu:** decision-log #20; issue #59, #61. AI Dev và BE Dev phối hợp triển khai, QA kiểm chứng theo AC.
+- **Liên quan:** issue #7 · spike #6 (`report/m1-spike-crawl-extract.md`, `spikes/m1-crawl-extract/README.md`, `spikes/m1-crawl-extract/output/metrics.csv`) · [đặc tả M1](../specs/m1-product-intelligence.md) · ADR-0005
+
+> Chốt lựa chọn công cụ cho MVP. Mã crawl đã được đưa vào worker theo đặc tả M1 v0.3.2 (#41, #42); tích hợp API/queue và nghiệm thu NFR-01/NFR-03 vẫn cần thực hiện. Không xác nhận pipeline đã hoàn tất hoặc đã có biên bản review của toàn nhóm.
 
 ## Bối cảnh
 
-Sub-module 1.2 (Discover & Crawl) nhận URL product và trả về ≤ 30 trang markdown có `page_type`. Đặc tả M1 v0.2 yêu cầu:
+Sub-module 1.2 (Discover & Crawl) nhận URL product và trả về ≤ 30 trang markdown có `page_type`. Đặc tả M1 hiện hành yêu cầu:
 
 - **FR-02:** tôn trọng `robots.txt` của từng host; host phụ cùng domain gốc tối đa 5 trang, chỉ faq / pricing.
 - **FR-03:** render được trang SPA (JavaScript).
@@ -17,7 +21,7 @@ Sub-module 1.2 (Discover & Crawl) nhận URL product và trả về ≤ 30 trang
 - **Quy tắc trích xuất giá + 1.4:** trang pricing gửi **raw markdown**, trang khác gửi markdown đã lọc (fit), vì bộ lọc làm mất thẻ giá.
 - **ADR-0005:** provider nằm sau adapter, chọn bằng config. Crawl tool chạy trong `services/worker` (Python 3.12, uv).
 
-Ràng buộc chung: team nhỏ, tuần 1 chưa có thời gian viết crawler từ đầu; license phải dùng được cho SaaS thương mại; chi phí thấp (NFR-02 ≤ $0.05/product chỉ tính LLM, nên crawl phải gần như miễn phí).
+Ràng buộc chung: team nhỏ, cần tận dụng spike thay vì viết crawler từ đầu; license phải phù hợp với sản phẩm. Giai đoạn internship không có ngân sách tiền mặt: chạy thư viện trên máy/hạ tầng sẵn có, không tự bật dịch vụ crawl hoặc proxy trả phí. NFR-02 ≤ $0.05/product là tiêu chí đo chi phí LLM của M1, không phải ngân sách đã được cấp.
 
 ### Spike #6 đã đo gì (chỉ đo Crawl4AI)
 
@@ -30,6 +34,8 @@ Spike chạy `crawl4ai` 0.9.4 (Playwright 1.63.0) trên 2 product, ngày 06/10/2
 | Thời gian render trung bình | 6.4 s/trang | 5.1 s/trang (3 s là chờ cố định cho SPA) | README spike, nhận xét 6 |
 | Khoảng cách request nhỏ nhất | 1.016 s | 1.000 s | README spike, kết quả bước 1 |
 | Thời gian / product (crawl + LLM, mode `batch`) | ~3.4 phút (report ghi 1 số chung cho cả 2 product) | | report spike |
+
+**Số liệu PKB v0.2 đã lưu:** bảng trên giữ số đo lịch sử của spike ban đầu. `output/metrics.csv` hiện lưu kết quả: Claude crawl 198.23 s + extract 12.59 s; Dreamina 165.30 s + 6.58 s; ElevenLabs 218.41 s + 10.44 s. Gamma bị WAF chặn, không có PKB. Đây là kết quả đã lưu, không phải lần chạy mới khi chốt ADR; số mẫu chưa đủ nghiệm thu p95 trên golden set.
 
 Kết quả chất lượng (report và README spike):
 
@@ -46,7 +52,7 @@ Các lựa chọn B, C, D bên dưới **chưa được đo trong spike**. ADR k
 
 | Lựa chọn | Ưu | Nhược | Chi phí / License |
 |---|---|---|---|
-| **A. Crawl4AI, dùng như thư viện Python trong worker** (không chạy Docker server của nó) | Đã chạy được trong spike: render SPA, sinh raw + fit markdown, đạt NFR-01 với mẫu 2 product. Python, cài bằng uv, vào thẳng worker. Phát hành đều (0.9.2 → 0.9.4 trong ~10 tuần). Có sẵn `js_code`, `scan_full_page` cho trang có tab / lazy-load | Bộ lọc fit làm mất giá; nhận diện anti-bot báo nhầm (phải tự xử lý, như spike đã làm). Nhịp lỗ hổng bảo mật cao (xem mục Bảo mật). Ghim cứng `unclecode-litellm` và kéo `patchright` (gói nặng, thêm bề mặt tấn công). Commit tập trung ở 1–2 người. License có thêm điều khoản ghi công | Miễn phí. **Apache-2.0 kèm điều khoản ghi công bắt buộc** (xem mục License) |
+| **A. Crawl4AI, dùng như thư viện Python trong worker** (không chạy Docker server của nó) | Đã chạy được trong spike: render SPA, sinh raw + fit markdown; các mẫu crawl + extract thành công dưới 5 phút, chưa chứng minh p95. Python, cài bằng uv, vào thẳng worker. Phát hành đều (0.9.2 → 0.9.4 trong ~10 tuần). Có sẵn `js_code`, `scan_full_page` cho trang có tab / lazy-load | Bộ lọc fit làm mất giá; nhận diện anti-bot báo nhầm (phải tự xử lý, như spike đã làm). Nhịp lỗ hổng bảo mật cao (xem mục Bảo mật). Ghim cứng `unclecode-litellm` và kéo `patchright` (gói nặng, thêm bề mặt tấn công). Commit tập trung ở 1–2 người. License có thêm điều khoản ghi công | Miễn phí. **Apache-2.0 kèm điều khoản ghi công bắt buộc** (xem mục License) |
 | **B. Tự viết: Playwright for Python + thư viện HTML→markdown** | Ít dependency nhất; Playwright do Microsoft duy trì, đã có trong stack (1.3 Asset Capture dùng Playwright). Kiểm soát hoàn toàn: không có code chống phát hiện, không có fork LiteLLM. Phần lịch sự (robots, throttle, chặn) spike đã tự viết, mang sang được | Phải tự viết và bảo trì phần sinh markdown, lọc nội dung thừa, cuộn trang, chờ SPA. Chất lượng markdown **chưa đo**. Cần thêm 1 thư viện HTML→markdown, phải hỏi team trước khi thêm (quy tắc stack trong `CLAUDE.md`). Tốn công hơn ở tuần 2 | Miễn phí. Playwright: Apache-2.0. License thư viện markdown: tuỳ thư viện được chọn |
 | **C. Firecrawl tự host** | Sản phẩm hoàn chỉnh: API crawl / scrape trả markdown, có hàng đợi riêng. Cộng đồng lớn | **Server là AGPL-3.0.** Là cụm service riêng: `docker-compose.yaml` của repo có 5 service lõi (API Node/TypeScript, playwright-service, Redis, RabbitMQ, Postgres) và 2 service FoundationDB thử nghiệm. Không chạy trong worker Python, phải vận hành thêm. Có lỗ hổng nghiêm trọng gần đây (RCE, đọc file tuỳ ý). Chất lượng markdown và tốc độ **chưa đo** | Miễn phí phần mềm; tốn hạ tầng. AGPL-3.0 (SDK là MIT) |
 | **D. Firecrawl cloud (API trả phí)** | Không phải vận hành; không vướng AGPL vì không chạy code server | Request đi ra từ hạ tầng bên thứ ba. Việc kiểm soát throttle theo host, robots và User-Agent như FR-02, NFR-05 yêu cầu **chưa xác minh** trên tài liệu Firecrawl. Logic lịch sự spike đã viết không chạy được bên trong dịch vụ. Gửi URL product của merchant ra ngoài. Chưa đo | Trả phí theo lượng crawl (chưa tra giá) |
@@ -110,15 +116,16 @@ Firecrawl (repo `firecrawl/firecrawl`, tra 07/10/2026): GHSA-3p54-jg6f-68r8 (CVE
 
 ## Quyết định
 
-**Đề xuất chọn A: Crawl4AI dùng như thư viện Python trong `services/worker`**, với các điều kiện:
+**Chọn A: Crawl4AI dùng như thư viện Python trong `services/worker`**, với các điều kiện:
 
 1. **Chỉ dùng như thư viện.** Không chạy Docker API server / Playground của Crawl4AI. Không nhận `BrowserConfig` / `CrawlerRunConfig` từ request bên ngoài; config do code dự án dựng.
 2. **Ghim `crawl4ai >= 0.9.4`** trong `uv.lock`. Không bật `enable_stealth`, `magic`, `simulate_user`, `override_navigator`, proxy (giữ cấu hình của spike, đúng NFR-05). Không bật tải file nếu chưa cần (GHSA-2jq4).
 3. **Đặt sau adapter** (ADR-0005): interface của dự án dạng "render trang → raw + fit markdown + metadata". Phần lịch sự (robots theo RFC 9309, throttle theo host, dò chặn, chấm điểm link) là code của dự án, không phụ thuộc Crawl4AI. Nhờ vậy thay bằng B chỉ phải viết lại phần render + sinh markdown.
 4. **Phương án dự phòng là B** (Playwright + thư viện HTML→markdown), không phải Firecrawl.
+5. **Giữ quy tắc nguồn và lỗi của M1:** pricing dùng raw markdown; trang khác dùng fit markdown. Khi gặp WAF hoặc chuyển hướng đăng nhập, dừng crawl và trả lỗi có hướng dẫn nguồn thay thế theo FR-10; không retry như lỗi tạm thời, không vượt chặn. Việc hoàn thành upload/screenshot theo #52/#53 được theo dõi riêng.
 
 Lý do:
-- A là lựa chọn duy nhất đã có số đo: đạt FR-03 trên SPA và NFR-01 trên mẫu 2 product, và chất lượng markdown đủ cho Quy tắc trích xuất giá (raw cho pricing).
+- A là lựa chọn duy nhất đã có số đo: render được SPA và các mẫu thành công có tổng crawl + extract dưới 5 phút. Chất lượng markdown hỗ trợ Quy tắc trích xuất giá (raw cho pricing), nhưng NFR-01 p95 và NFR-03 vẫn cần QA kiểm chứng trên golden set.
 - License dùng được cho SaaS thương mại, chỉ cần ghi credit. C vướng AGPL-3.0 và phải vận hành thêm một cụm service. D tốn phí theo lượng dùng, đưa request ra hạ tầng bên thứ ba, chưa xác minh được NFR-05 và chưa có số đo.
 - Rủi ro bảo mật lớn nhất của A nằm ở Docker server mà dự án không dùng. Rủi ro còn lại (dependency gián tiếp, nhịp vá) xử lý được bằng ghim phiên bản và quét dependency.
 - B sạch hơn về dependency nhưng tốn công tuần 2 và chưa có số đo. Adapter giữ đường lui sang B với chi phí thấp.
@@ -126,7 +133,7 @@ Lý do:
 **Xem xét lại khi:**
 - Có advisory mới ảnh hưởng **chế độ thư viện** (không phải Docker server) mà sau 14 ngày chưa có bản vá.
 - Crawl4AI đổi license, hoặc điều khoản ghi công thay đổi theo hướng không chấp nhận được với sản phẩm.
-- Crawl4AI vẫn ghim cứng `unclecode-litellm` khi ADR-002 quyết định dùng LiteLLM thật (đụng tên module `litellm`), hoặc có sự cố bảo mật với fork này.
+- Có sự cố bảo mật với fork `unclecode-litellm`, hoặc sau này cần thêm LiteLLM thật gây xung đột dependency. ADR-002 hiện đã chốt không dùng LiteLLM làm lớp gọi LLM.
 - Đo trên golden set 10 product: không đạt NFR-01 (p95), hoặc lỗi giá còn lại do markdown (không phải do LLM) làm NFR-03 không đạt.
 - Repo không có release hoặc không phản hồi advisory trong 3 tháng.
 
@@ -138,12 +145,12 @@ Lý do:
   - Dùng chung Playwright với 1.3 Asset Capture (cùng engine trình duyệt).
 - **Những gì trở nên khó hơn hoặc nợ kỹ thuật:**
   - Phải theo dõi advisory của Crawl4AI và nâng phiên bản thường xuyên.
-  - Dependency gián tiếp `unclecode-litellm` chiếm tên module `litellm`: đụng nếu ADR-002 chọn LiteLLM.
+  - Dependency gián tiếp `unclecode-litellm` chiếm tên module `litellm`; vẫn cần theo dõi dù ADR-002 không dùng LiteLLM làm lớp gọi LLM.
   - `patchright` nằm trong cây dependency dù không dùng; image worker nặng hơn.
   - Không dùng được bộ lọc fit và bộ nhận diện anti-bot sẵn có cho mọi trang; phải giữ logic riêng của dự án.
   - Phải ghi credit Crawl4AI trên web app (chạm repo FE).
-- **Việc cần làm tiếp** (sau khi ADR được chốt 09/10):
-  - [ ] Sửa mục Tech stack của `specs/m1-product-intelligence.md`: ghi "Apache-2.0 + điều khoản ghi công", link ADR-0001, bỏ link blog so sánh (không phải nguồn chính thức).
+- **Việc cần làm tiếp:**
+  - [x] Đồng bộ mục Tech stack của `specs/m1-product-intelligence.md`: lựa chọn đã chốt, ghi "Apache-2.0 + điều khoản ghi công", link ADR-0001, bỏ link blog so sánh.
   - [ ] Tạo issue bên `AI-review-FE`: thêm mục Credits / About có câu ghi công của Crawl4AI.
   - [ ] Thêm quét dependency vào CI của worker (pip-audit hoặc Dependabot cho `uv.lock`) khi Crawl4AI vào `services/worker`.
   - [ ] Thiết kế interface adapter crawl khi đưa code spike vào worker (ADR-0005: viết interface khi có provider đầu tiên).

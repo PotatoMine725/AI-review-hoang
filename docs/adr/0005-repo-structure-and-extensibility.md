@@ -9,11 +9,11 @@
 > ADR-001 crawl tool, ADR-002 LLM provider, ADR-003 render engine, ADR-004 avatar + TTS.
 
 ## Bối cảnh
-- Stack lõi đã chốt: Next.js + Supabase cho web/DB, Python 3.12 + FastAPI cho worker.
-- **Các provider vẫn còn mở**, và 4 ADR kể trên sẽ chốt trong tuần 1. Một số lựa chọn kéo theo thay đổi cấu trúc:
+- Stack lõi đã chốt: Next.js cho web, Supabase cho Auth/DB/Storage, Python 3.12 + FastAPI cho API nghiệp vụ. API và worker xử lý nền chạy thành hai tiến trình riêng trong cấu trúc `services/worker/` hiện có; chưa cần thêm service chỉ để tách hai tiến trình.
+- **Quyết định crawl/LLM đã chốt:** ADR-0001/0002 đã chốt Crawl4AI như thư viện và Gemini `gemini-3.5-flash-lite` qua `google-genai`/adapter mỏng; embedding/RAG hoãn sau MVP. ADR-003/004 (render/TTS) còn mở; trạng thái của chính ADR-0005 không thay đổi. Một số lựa chọn kéo theo thay đổi cấu trúc:
   - Render engine: HyperFrames và Revideo chạy trên Node/TypeScript, còn FFmpeg/MoviePy chạy trên Python. Chọn Node thì cần **một service thứ hai, khác ngôn ngữ**.
   - LLM, avatar, TTS: chỉ là API bên ngoài, đổi provider không được làm thay đổi cấu trúc thư mục.
-- PRD §60 yêu cầu "Video Provider Adapter, không lock vào một video API". NFR-08 của Module 1 yêu cầu đổi model LLM/embedding bằng config, không sửa code.
+- PRD §60 yêu cầu "Video Provider Adapter, không lock vào một video API". NFR-08 của Module 1 yêu cầu đổi model LLM bằng config, không sửa code; MVP không có embedding.
 - Team đang dùng split repo (FE/BE), trong khi kế hoạch tuần 1 ghi monorepo. Cấu trúc phải để ngỏ khả năng gộp lại.
 
 ## Các lựa chọn
@@ -29,9 +29,9 @@ Chọn **B**, kèm 4 nguyên tắc:
 1. **Service tự chứa.** Mỗi `services/<tên>/` có trình quản lý dependency riêng (uv, pnpm, …), `.env.example`, README và
    workflow CI riêng `.github/workflows/<tên>.yml` lọc theo `services/<tên>/**`. Các service không import code của nhau.
 2. **Giao tiếp qua hợp đồng có tài liệu.** Chỉ có 3 kênh:
-   - HTTP: OpenAPI, tài liệu ở `docs/specs/api-contract.md`;
+   - HTTP: FE gọi FastAPI cho Product/PKB/job và các thao tác nghiệp vụ cần backend tin cậy; OpenAPI và tài liệu ở `docs/specs/api-contract.md`. Next.js Route Handler nếu dùng chỉ làm proxy, không có lớp nghiệp vụ thứ hai;
    - DB: schema trong `supabase/migrations/`;
-   - Queue: Supabase Queues/pgmq theo đặc tả Module 1, payload được mô tả trong `docs/`.
+   - Queue: đề xuất worker poll `generation_jobs` trong Postgres, claim nguyên tử bằng `FOR UPDATE SKIP LOCKED`, không thêm Redis/Celery/pgmq ở Sprint 1. BE hoàn thiện ADR cho payload, lease, retry và phục hồi; chưa xác nhận queue đã triển khai.
 
    Nhờ vậy đổi ngôn ngữ hay framework của một bên không làm vỡ bên kia.
 3. **Provider nằm sau adapter, chọn bằng config.** Code nghiệp vụ gọi interface của chính mình (ví dụ "sinh giọng nói", "render video"),

@@ -1,5 +1,7 @@
 # Spike M1 — Crawl → Markdown → JSON: Báo cáo
 
+> **Quyết định crawl/LLM đã chốt:** ADR-001/002 đã chốt Crawl4AI và Gemini `gemini-3.5-flash-lite` qua `google-genai`/adapter mỏng, chỉ chạy thật trong quota miễn phí đã xác minh. Bảng số liệu dưới là spike ban đầu; kết quả PKB v0.2 hiện tại đã lưu ở `spikes/m1-crawl-extract/output/metrics.csv` được đối chiếu trong ADR-0001/0002. Chưa nghiệm thu golden set hay toàn pipeline worker.
+
 - **Plan:** `plan/m1-spike-crawl-extract.md` · **Spec:** `specs/m1-spike-crawl-extract.md` (v1.1) · **Ngày:** 2026-10-07 · **Người viết:** @PotatoMine725
 - **PR:** #12 (code + số liệu), #20 (đặc tả M1 v0.2 dùng kết quả spike) · **Issue:** #6 (đã đóng)
 - **Chi tiết đầy đủ:** `spikes/m1-crawl-extract/README.md`, `spikes/m1-crawl-extract/output/metrics.csv`

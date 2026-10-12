@@ -1,7 +1,16 @@
-# API contract — Worker và Supabase CRUD
+# API contract — FastAPI nghiệp vụ và Supabase CRUD
 
-Nguồn sự thật cho API nội bộ của `services/worker/` (FastAPI), nơi web gọi các job như crawl hoặc trích xuất,
-**và** cho các bảng CRUD trực tiếp qua Supabase (RLS); schema DB nằm trong `supabase/migrations/`.
+Tài liệu interface chung cho FE–BE–AI: API nghiệp vụ FastAPI trong `services/worker/`, các RPC mà backend gọi và CRUD hồ sơ trực tiếp qua Supabase dưới RLS/column privileges. ERD là nguồn chuẩn của thiết kế data model; `supabase/migrations/` ghi schema đã triển khai.
+
+## Kiến trúc áp dụng cho Sprint 1 (#59, #61)
+
+- **FastAPI là API nghiệp vụ** cho Product/PKB/job và các thao tác cần backend tin cậy. API và worker nền chạy thành hai tiến trình riêng; API tạo job rồi trả ID, worker nhận job từ DB và ghi kết quả vào DB/Storage. FE gọi FastAPI để đọc trạng thái, không gọi worker thực thi crawl/LLM đồng bộ.
+- **Supabase Auth cấp phiên đăng nhập.** Với API nghiệp vụ cần đăng nhập, FE gửi access token qua `Authorization: Bearer <access_token>`. FastAPI phải xác minh JWT và kiểm quyền sở hữu/vai trò trước khi dùng quyền server. Các kiểm tra này là PLANNED, chưa được triển khai chỉ bằng việc cập nhật tài liệu. Khóa `service_role` chỉ nằm ở server, không cấp cho FE.
+- **CRUD hồ sơ đã triển khai giữ nguyên**: `merchants`, `creators`, `creator_accounts` được web đọc/ghi qua Supabase với phiên của người dùng, RLS và column privileges. Quyền gọi trực tiếp này không mở rộng sang Product/PKB/job hoặc các thao tác duyệt/chuyển đổi/hoa hồng.
+- **Thao tác nhiều bước cần transaction** đi qua FastAPI và có thể dùng RPC để bảo đảm nguyên tử; RPC không thay thế kiểm tra quyền. Next.js Route Handler nếu dùng chỉ làm proxy, không xây lớp nghiệp vụ thứ hai.
+- **Queue còn là đề xuất**: worker poll `generation_jobs` và claim nguyên tử bằng `FOR UPDATE SKIP LOCKED`; BE hoàn thiện ADR lease, retry, quota và phục hồi. Sprint 1 chưa thêm Redis/Celery/pgmq; chưa có queue runtime được xác nhận.
+
+Ước tính 12 nhóm/~51 operations là baseline của #61, không mặc định tương ứng 51 HTTP endpoint cần tự viết. BE sẽ bổ sung inventory và phân loại FastAPI, Supabase CRUD, RPC hoặc Server Route/proxy; mỗi operation cần request/response, quyền, nhóm phụ trách, dependency và trạng thái IMPLEMENTED/PLANNED. Các phần còn lại của #61 sẽ được các nhóm liên quan cập nhật sau.
 
 Swagger tự sinh khi chạy local: http://127.0.0.1:8000/docs. Bản máy đọc được là http://127.0.0.1:8000/openapi.json.
 
@@ -15,27 +24,26 @@ hai bên vẫn khớp nhau qua file này. Việc sinh TypeScript types tự đ�
 
 ## Endpoints
 
-### `GET /health`
+### `GET /health` (IMPLEMENTED)
 Response `200`:
 ```json
 { "status": "ok" }
 ```
 
-Các endpoint dự kiến của Module 1 (`/products`, `/jobs/{id}`, `/knowledge/search`, …) được mô tả trong
-`docs/specs/m1-product-intelligence.md`. Endpoint nào được implement thì chuyển mô tả về file này.
+Các endpoint dự kiến của Module 1 (`POST /products`, `GET /jobs/{id}`, đọc/sửa/duyệt PKB, …) được mô tả trong
+[đặc tả M1](m1-product-intelligence.md) và có trạng thái PLANNED. Không có `/knowledge/search` trong MVP vì embedding/vector RAG đã hoãn. Khi triển khai, bổ sung request/response và quyền vào file này, sau đó chuyển trạng thái endpoint sang IMPLEMENTED kèm bằng chứng code/kiểm thử. OpenAPI hiện tại chỉ phản ánh endpoint đã có trong code, không phải toàn bộ inventory dự kiến.
 
 ## Dữ liệu đọc/ghi trực tiếp qua Supabase
 
-**Scope note:** mục này mở rộng phạm vi của file để bao gồm các bảng CRUD của Supabase. Header đã được
-cập nhật tương ứng. Việc xác nhận với team được theo dõi ở Issue #23.
+**Scope note:** mục này giữ hợp đồng CRUD hồ sơ qua Supabase đã ghi ở #23. Kiến trúc FastAPI tại #59/#61 không đổi các migration, RLS hoặc column privileges hiện có.
 
-Một số dữ liệu là CRUD thông thường nên **không** đi qua worker: web gọi thẳng Supabase Data API
-và bị giới hạn bởi RLS. Schema nằm trong `supabase/migrations/`, nguồn sự thật cho cả FE lẫn BE.
+CRUD hồ sơ `merchants`, `creators`, `creator_accounts` **không** đi qua FastAPI: web gọi thẳng Supabase Data API
+và bị giới hạn bởi RLS/column privileges. Schema đã triển khai nằm trong `supabase/migrations/`, dùng chung cho FE và BE.
 
 Các bảng CRUD được mô tả bằng hai nhãn **IMPLEMENTED** và **PLANNED** ngay trong cùng file này:
 
 - **IMPLEMENTED** nghĩa là đã có trong migration/code hiện có và kiểm chứng được;
-- **PLANNED** nghĩa là thiết kế đã duyệt nhưng **chưa** triển khai — chưa gọi được.
+- **PLANNED** nghĩa là interface hoặc chức năng dự kiến **chưa** triển khai — chưa gọi được. Nhãn này không thay cho việc duyệt các ADR hoặc request/response còn mở.
 
 ### Module 5 — Merchant Network: `merchants` (IMPLEMENTED)
 

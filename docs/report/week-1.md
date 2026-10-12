@@ -1,5 +1,7 @@
 # Tuần 1 (05–09/10/2026) — Báo cáo
 
+> **Quyết định crawl/LLM đã chốt:** ADR-001/002 đã chốt, người xác nhận phương án @VV6505; xem decision-log #20 và [đặc tả M1](../specs/m1-product-intelligence.md). ADR-003/004 vẫn còn mở; đây là chốt thiết kế, chưa nghiệm thu tích hợp/QA. Nội dung báo cáo bên dưới giữ trạng thái ghi nhận tại mốc tuần 1.
+
 - **Plan:** `plan/week-1.md` · **Ngày:** 2026-10-07 (nháp, chốt ở buổi review T6 09/10 14:00) · **Người viết:** @PotatoMine725
 - **Nguồn:** chỉ những gì có trên GitHub (2 repo, issue, PR). Mục ghi "❓ chưa thấy" nghĩa là chưa có trong repo — **người phụ trách bổ sung link** (Figma, Google Sheet…) trước buổi review.
 

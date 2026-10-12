@@ -1,6 +1,6 @@
 # Module 1 — Product Intelligence: Đặc tả kỹ thuật
 
-Oct 5, 2026 · @Hoang Nguyen · **v0.3.2** (12/10/2026, issue #41, #42) · Lịch sử: xem cuối file
+Oct 5, 2026 · @Hoang Nguyen · **v0.3.3** (12/10/2026, issue #59, #61) · Lịch sử: xem cuối file
 
 > **Nguồn chuẩn của data model:** ERD v1.3.3 ([`docs/specs/erd/`](erd/)). Đặc tả này chỉ nêu bảng và cột M1 dùng, không chép DBML. ERD đã gộp thay đổi của #23 (PR #49): `in_review`, 4 cột chi phí của `generation_jobs`; và PR #51 (decision-log #18, #19): cột review `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note`, quy tắc nullability của chi phí.
 
@@ -188,29 +188,29 @@ Yêu cầu cốt lõi: không fact nào được vào PKB mà thiếu nguồn ho
 
 ## Tech stack
 
-Worker viết bằng Python vì hệ sinh thái crawl/LLM tốt nhất; frontend và DB theo stack chung của PRD (Next.js + Supabase).
+FastAPI là API nghiệp vụ cho Product/PKB/job; API và worker xử lý nền chạy thành hai tiến trình riêng trong cấu trúc `services/worker/` hiện có. Worker viết bằng Python vì hệ sinh thái crawl/LLM phù hợp; frontend và DB theo stack chung của PRD (Next.js + Supabase). FE gửi yêu cầu và đọc trạng thái qua FastAPI; API tạo job rồi trả ID, không chờ crawl/LLM hoàn tất trong HTTP request. CRUD hồ sơ merchant/creator đã có tiếp tục gọi Supabase dưới RLS và column privileges. Chi tiết interface, phiên đăng nhập và trạng thái triển khai xem [API contract](api-contract.md).
 
 | Thành phần | Chọn | Lý do / thay thế |
 | --- | --- | --- |
-| Worker runtime | Python 3.12 + FastAPI (internal API) | Thư viện crawl, LLM, Pydantic đầy đủ |
-| Queue | Supabase Queues (pgmq) | Không thêm hạ tầng; thay thế: Redis + ARQ |
-| Crawl (1.2) | [Crawl4AI](https://github.com/unclecode/crawl4ai) | Apache-2.0, chạy Playwright, xuất markdown cho LLM ([so sánh](https://crawlbase.com/blog/firecrawl-alternatives/)). Không chọn Firecrawl self-host vì AGPL-3.0 |
+| API và worker runtime | Python 3.12 + FastAPI cho API nghiệp vụ; API và worker chạy thành hai tiến trình riêng | API xác minh JWT, quyền sở hữu và vai trò; tạo job rồi trả ID. Worker xử lý nền |
+| Queue | Đề xuất worker poll bảng `generation_jobs`, nhận job nguyên tử bằng `FOR UPDATE SKIP LOCKED`; chưa thêm Redis/Celery/pgmq | BE hoàn thiện ADR queue: claim job, retry, lease và phục hồi khi worker dừng; chưa triển khai queue |
+| Crawl (1.2) | [Crawl4AI](https://github.com/unclecode/crawl4ai) như thư viện Python trong worker, qua adapter. **Đã chốt 08/10/2026 theo [ADR-0001](../adr/0001-crawl-tool.md)** | Apache-2.0 + điều khoản ghi công theo ADR-0001; ghim phiên bản/lock, không chạy Docker server của Crawl4AI, không stealth/proxy. Pricing dùng raw markdown, trang khác dùng fit |
 | Screenshot (1.3) | Playwright for Python | Kiểm soát viewport, device scale, element screenshot |
-| Extraction (1.4) | Gemini Flash-Lite 3.x, structured output theo JSON schema, mode `batch`. Ứng viên: `gemini-3.1-flash-lite` ($0.25/$1.50) và `gemini-3.5-flash-lite` ($0.30/$2.50). **Chọn model: theo [ADR-0002](../adr/0002-llm-provider.md)** (đề xuất `gemini-3.5-flash-lite`, mode `batch`; chờ team lead chốt 09/10) | Gemini 2.5 Flash-Lite bỏ vì không mở cho dự án mới (issue #5, qa-log #6). Spike: 3.1 rẻ hơn ~30 %; 3.5 đúng hơn ở chi tiết giá (chép nguyên văn, điền `currency` từng plan). Đọc được ảnh |
-| Merge + Enrichment (1.5–1.6) | Gemini Flash (model mạnh hơn 1 bậc). Tham khảo: `gemini-3.5-flash` ($1.50/$9.00). **Chờ ADR-002** | Ít lời gọi, cần suy luận tốt hơn |
-| LLM adapter | Adapter mỏng của dự án, chọn provider/model bằng config (ADR-0005). Có dùng LiteLLM hay không: **chờ ADR-002** | **Rủi ro LiteLLM:** bản 1.82.7 và 1.82.8 trên PyPI bị cài mã độc (24/03/2026). Spike gọi thẳng `google-genai` (decision-log #9). `crawl4ai` 0.9.4 kéo gián tiếp `unclecode-litellm` (bản fork, đã ghim hash trong `uv.lock`). Phương án thay model: DeepSeek V4-Flash ($0.14/$0.28, [so sánh](https://www.spheron.network/blog/llm-api-pricing-comparison-gpt-claude-gemini-deepseek-2026/)) |
+| Extraction (1.4) | **`gemini-3.5-flash-lite`**, structured output JSON schema, mode `batch` (top-k trang trong 1 lời gọi). **Đã chốt 08/10/2026 theo [ADR-0002](../adr/0002-llm-provider.md)** | Tái sử dụng spike/prompt v0.2; QA kiểm giá, evidence và độ đầy đủ trên golden set. Chỉ chạy trong quota miễn phí đã xác minh |
+| Merge + Enrichment (1.5–1.6) | Merge/chuẩn hóa ưu tiên code; phần LLM mặc định **`gemini-3.5-flash-lite`**, theo ADR-0002 | Chưa có số đo riêng cho 1.6. Không tự nâng model; fact inferred không dùng khi chưa được duyệt |
+| LLM adapter | **`google-genai` trực tiếp qua adapter mỏng**, không dùng LiteLLM làm lớp gọi LLM; model qua config, ghim dependency/hash trong `uv.lock`. **Đã chốt theo ADR-0002** | Đổi model cùng provider bằng config; đổi provider cần adapter khác. `unclecode-litellm` do Crawl4AI kéo gián tiếp vẫn phải theo dõi theo ADR-0001 |
 | Schema + validate | Pydantic v2 | Dùng chung schema cho LLM output và API |
 | DB | Supabase Postgres | 1 nơi cho data, RLS |
 | Storage | Supabase Storage | Screenshot, markdown nguồn |
 | Embedding | **Hoãn sau MVP** (qa-log #5, ERD v1.3.1, #23) | MVP không dùng vector RAG. Ứng viên cũ: xem ADR-0002, Quyết định 4 |
 | Phạm vi RAG | **Hoãn sau MVP** (qa-log #5) | M2, M4 dùng nguyên PKB approved (vài KB) làm context |
 | LLM tracing | Langfuse (self-host hoặc cloud free tier) | Theo dõi prompt, token, chi phí |
-| Review UI | Next.js + shadcn/ui + Supabase Realtime | Theo PRD; realtime để hiện tiến trình job |
+| Review UI | Next.js + shadcn/ui; Sprint 1 poll `GET /jobs/{id}` qua FastAPI | FE dùng Supabase Auth để lấy phiên/access token; không đọc trực tiếp bảng job. Realtime là mở rộng sau nếu cần |
 | Test | pytest, golden set 10 product, Playwright E2E cho UI | Tester đo NFR-03 |
 
-Giá Gemini tra lại ngày **07/10/2026** tại trang giá chính thức <https://ai.google.dev/gemini-api/docs/pricing>: gói trả phí, tier **Standard**, USD / 1M token, input text (input / output; output gồm thinking token). Khớp giá spike dùng ngày 06/10/2026 (`spikes/m1-crawl-extract/config.py`). 
+Giá Gemini tra lại ngày **07/10/2026** tại trang giá chính thức <https://ai.google.dev/gemini-api/docs/pricing>: gói trả phí, tier **Standard**, USD / 1M token, input text (input / output; output gồm thinking token). Khớp giá spike dùng ngày 06/10/2026 (`spikes/m1-crawl-extract/config.py`).
 
-"Mode `batch`" trong đặc tả này là gom nhiều trang vào 1 lời gọi, **không phải** tier Batch API của Gemini (rẻ hơn ~50 %, trả kết quả không đồng bộ). Mọi chi phí ở đây tính theo tier Standard. Giá DeepSeek tra ngày 05/10/2026 qua trang so sánh, chưa kiểm tra lại.
+"Mode `batch`" trong đặc tả này là gom nhiều trang vào 1 lời gọi, **không phải** tier Batch API của Gemini. Chi phí spike quy đổi theo tier Standard, không phải hóa đơn. Giai đoạn internship không có ngân sách tiền mặt: xác minh quota/model miễn phí và điều khoản dữ liệu trước khi chạy thật; hết quota thì báo lỗi và dừng, không tự bật billing hoặc fallback trả phí. CI/test thường xuyên dùng fixture; kết quả fixture không thay thế nghiệm thu crawl/LLM thật.
 
 ## Data model và API
 
@@ -223,6 +223,8 @@ M1 dùng 3 bảng của ERD v1.3.3 ([`docs/specs/erd/`](erd/erd.dbml), [data dic
 | `generation_jobs` | `id`, `product_id`, `job_type`, `status`, `idempotency_key`, `input_snapshot`, `result_manifest`, `error`, `attempts`, `finished_at` | M1 dùng `job_type = 'crawl'`. Cột chi phí `tokens_in`, `tokens_out`, `cost_usd` `numeric(12,6)`, `cost_breakdown` `jsonb DEFAULT '{}'`. `'{}'` = chưa ghi chi phí, khác chi phí = 0; worker ghi payload v1 đầy đủ khi job `completed` hoặc `failed`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default |
 
 `result_manifest`: job `completed` có `pkb_version`, `pages_used`, `model`. Job `failed`: `result_manifest = null`, lỗi ở cột `error` (mã ngắn đứng đầu, vd. `waf_challenge`). Markdown nguồn, screenshot, file upload nằm trong Supabase Storage (private), không có bảng riêng.
+
+Các endpoint dưới đây là **PLANNED**, chưa phải API đã triển khai. Mã crawl có trong worker không đồng nghĩa đã có endpoint hoặc queue chạy được. Interface dùng chung FE–BE–AI được quản lý tại [API contract](api-contract.md); BE bổ sung request/response, quyền, dependency và trạng thái triển khai trong cùng PR khi xây endpoint.
 
 | Method | Endpoint | Mô tả |
 | --- | --- | --- |
@@ -279,7 +281,7 @@ Câu hỏi còn mở:
 - Vùng giá → qa-log #9. Golden Facts → qa-log #11. Cả hai giữ nguyên trạng thái.
 - ~~Nơi lưu lý do reject PKB, ý nghĩa cột review khi reject, nullability của `tokens_in` / `tokens_out` / `cost_usd`~~ → đã chốt ở ERD v1.3.3 (decision-log #18, #19, issue #50).
 - NFR-02 trên golden set → chờ qa-log #6.
-- Chọn model extraction / merge (3.1 hay 3.5 Flash-Lite), có dùng LiteLLM không → chờ ADR-002 (team lead chốt 09/10).
+- Chọn crawl/LLM → **đã chốt 08/10/2026 theo ADR-0001/0002**: Crawl4AI; `gemini-3.5-flash-lite`; SDK `google-genai` qua adapter, không dùng LiteLLM làm lớp gọi LLM. Quota miễn phí, tích hợp worker và nghiệm thu golden set vẫn cần kiểm chứng khi triển khai.
 
 ## Lịch sử phiên bản
 
@@ -290,3 +292,4 @@ Câu hỏi còn mở:
 | v0.3 | 08/10/2026 | @PotatoMine725 (issue #23, #38) | Theo ERD v1.3.1: bỏ 5 bảng riêng (`crawl_jobs`, `crawled_pages`, `product_assets`, `knowledge_chunks`, `product_inputs`), dùng `products`, `product_knowledge`, `generation_jobs`. Bỏ vector RAG: 1.8 ra khỏi MVP, FR-08 hạ xuống Later, bỏ `/knowledge/search`, hoãn embedding. `website_url` unique sau chuẩn hoá. Thêm Quy tắc crawl (robots RFC 9309, WAF `waf_challenge`). Trạng thái PKB `draft \| in_review \| approved \| rejected`, chỉ merchant approve, admin chỉ reject có lý do. Chi phí đọc từ `generation_jobs.cost_usd`. Output dẫn contract `docs/specs/pkb/`. Điểm ERD còn để mở ghi "chờ #50". Đồng bộ theo ERD đã merge (PR #49): `cost_breakdown` `'{}'` = chưa ghi chi phí, NFR-02 chỉ tính job đã ghi; admin chỉ reject (bổ sung decision-log #11) |
 | v0.3.1 | 08/10/2026 | @PotatoMine725 (issue #50) | Theo ERD v1.3.3 (PR #51, decision-log #18, #19): `approved_by` / `approved_at` đổi thành `reviewed_by` / `reviewed_at` (ghi cho cả approve và reject), thêm `reviewer_role`, `review_note` (lý do reject), quy tắc theo `status`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default; NFR-02 chỉ tính job có `cost_usd` khác null; cost của `content_scripts` không tính vào NFR-02. Bỏ các dòng "chờ #50" |
 | v0.3.2 | 12/10/2026 | @PotatoMine725 (issue #41, #42, #59) | Đưa crawl từ spike vào `services/worker`. Thêm mục "Mã lỗi crawl" (mã lỗi job + `retryable`, lý do bỏ qua trang, đối chiếu tên với spike). Quy tắc crawl: robots 401/403 coi như không có robots (RFC 9309, spike trước đây coi là cấm), trang không đổi vẫn nằm trong danh sách trang, thêm quy tắc 5 (bị chặn giữa chừng ở trang con: dừng host đó, `completed` + `partial` nếu đủ trang). Quy tắc chuẩn hoá `website_url`: `http` đổi `https`, giữ `www.` và path, bỏ tham số theo dõi, sắp query theo tên, IDN sang punycode |
+| v0.3.3 | 12/10/2026 | @VV6505 (issue #59, #61) | Đồng bộ ADR-001/002: Crawl4AI, `gemini-3.5-flash-lite`, `google-genai` qua adapter, hoãn embedding. FastAPI là API nghiệp vụ; API và worker chạy riêng, FE polling trạng thái qua API. Queue polling `generation_jobs` là đề xuất chờ ADR của BE. Ghi rõ endpoint M1 là PLANNED; không đổi schema, migration hoặc application code |
