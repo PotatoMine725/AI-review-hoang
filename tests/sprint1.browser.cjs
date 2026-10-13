@@ -18,7 +18,7 @@ async function waitCards(page, count) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     const errors = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    for (const route of ['/', '/products', '/content', '/reviews']) {
+    for (const route of ['/creator/library', '/creator/campaigns', '/admin', '/reviews']) {
       assert.equal((await page.goto(base + route)).status(), 200);
       await page.locator('.workspace-footer').waitFor();
       assert.equal(await page.locator('.factory-sidebar').count(), 1);
@@ -94,22 +94,6 @@ async function waitCards(page, count) {
     assert.equal((await page.request.get(base + '/api/reviews/does-not-exist')).status(), 404);
     assert.equal((await page.request.get(base + '/search?q=' + 'a'.repeat(201))).status(), 400);
 
-    // Existing content factory flows still work with the shared layout.
-    await page.goto(base + '/products');
-    await page.getByLabel('Website URL').fill('https://demo.example');
-    await page.getByLabel('Merchant affiliate URL').fill('https://demo.example/?ref=test');
-    await page.getByRole('button', { name: 'Thêm sản phẩm', exact: true }).click();
-    await page.waitForURL('**/products/*');
-    await page.getByRole('button', { name: 'Bắt đầu job mock' }).click();
-    await page.getByRole('button', { name: 'Hoàn tất job mock' }).click();
-    await page.getByRole('button', { name: 'Gửi review' }).click();
-    page.once('dialog', dialog => dialog.accept());
-    await page.getByRole('button', { name: 'Merchant duyệt PKB' }).click();
-    await page.getByRole('link', { name: 'Mở Content Factory' }).click();
-    await page.waitForURL('**/content');
-    await page.getByRole('button', { name: 'Tạo template', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Chỉnh sửa Kịch bản' }).waitFor();
-
     for (const width of [390, 320]) {
       await page.setViewportSize({ width, height: 844 });
       await page.goto(base + '/reviews'); await waitCards(page, 3);
@@ -119,8 +103,8 @@ async function waitCards(page, count) {
       await page.keyboard.press('Escape');
       assert.ok(!(await page.locator('#workspace-navigation').isVisible()));
       await page.getByRole('button', { name: 'Mở điều hướng', exact: true }).click();
-      await page.getByRole('link', { name: 'Nội dung', exact: true }).click();
-      await page.waitForURL('**/content');
+      await page.getByRole('link', { name: 'Campaigns', exact: true }).click();
+      await page.waitForURL('**/creator/campaigns');
       assert.ok(!(await page.locator('#workspace-navigation').isVisible()));
       await page.goto(base + '/reviews'); await waitCards(page, 3);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'no mobile horizontal overflow');

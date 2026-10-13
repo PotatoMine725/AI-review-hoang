@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Download, Flag, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +25,6 @@ import {
   angles,
   checks,
   decideVideo,
-  flagVideo,
   displayVideoStatus,
   videoLabels,
   type VideoAsset,
@@ -42,11 +41,10 @@ function Status({ asset }: { asset: VideoAsset }) {
 }
 export function VideoList({
   admin = false,
-  creator = false,
 }: {
   admin?: boolean;
-  creator?: boolean;
 }) {
+  const creator = !admin;
   const { assets, ready, error } = useVideos();
   const [query, setQuery] = useState(""),
     [product, setProduct] = useState("all"),
@@ -80,21 +78,13 @@ export function VideoList({
                   !!a.flaggedAt
                 : a.status === actualFilter)),
   );
-  const base = admin
-    ? "/admin/videos"
-    : creator
-      ? "/creator/library"
-      : "/merchant/library";
+  const base = admin ? "/admin/videos" : "/creator/library";
   return (
     <>
       <div className="page-heading">
         <div>
           <p className="eyebrow">
-            {admin
-              ? "ADMIN · VIDEO QA"
-              : creator
-                ? "CREATOR · CONTENT LIBRARY"
-                : "MERCHANT · CONTENT LIBRARY"}
+            {admin ? "ADMIN · VIDEO QA" : "CREATOR · CONTENT LIBRARY"}
           </p>
           <h1>{admin ? "QA Video" : "Thư viện nội dung"}</h1>
           <p>
@@ -103,12 +93,7 @@ export function VideoList({
               : "Video dọc 9:16, preview scene, captions và audio."}
           </p>
         </div>
-        {!admin && !creator && (
-          <Link className="portal-primary" href="/merchant/content">
-            Tạo video mới
-            <ArrowRight size={16} />
-          </Link>
-        )}
+
       </div>
       <DemoNotice />
       <div className="portal-filters library-filters">
@@ -349,7 +334,7 @@ export function VideoList({
             <DialogDescription>
               Video mẫu local có TTS; scene và caption dùng để kiểm tra UI.
             </DialogDescription>
-            {preview && <VideoDetail id={preview} creator={creator} embedded />}
+            {preview && <VideoDetail id={preview} embedded />}
           </DialogContent>
         </Dialog>
       )}
@@ -359,22 +344,16 @@ export function VideoList({
 export function VideoDetail({
   id,
   admin = false,
-  creator = false,
   embedded = false,
 }: {
   id: string;
   admin?: boolean;
-  creator?: boolean;
   embedded?: boolean;
 }) {
   const { assets, ready, error } = useVideos();
   const [safeZone, setSafeZone] = useState(false);
   const asset = assets.find((a) => a.review.id === id),
-    base = admin
-      ? "/admin/videos"
-      : creator
-        ? "/creator/library"
-        : "/merchant/library";
+    base = admin ? "/admin/videos" : "/creator/library";
   if (!ready) return <p role="status">Đang tải video…</p>;
   if (!asset)
     return (
@@ -427,8 +406,7 @@ export function VideoDetail({
         <div>
           {processing ? (
             <p className="report-box">
-              {asset.render?.step} · Chưa có video sẵn sàng QA. Điều khiển job
-              tại Dashboard Merchant.
+              {asset.render?.step} · Chưa có video sẵn sàng QA. Chờ job render hoàn tất.
             </p>
           ) : (
             asset.review.videoUrl && (
@@ -445,10 +423,9 @@ export function VideoDetail({
         </div>
         <div className={admin ? "inspection-actions" : undefined}>
           <VideoActions
-            key={`${id}-${admin}-${creator}-${asset.updatedAt}`}
+            key={`${id}-${admin}-${asset.updatedAt}`}
             asset={asset}
             admin={admin}
-            creator={creator}
           />
         </div>
       </div>
@@ -458,11 +435,9 @@ export function VideoDetail({
 function VideoActions({
   asset,
   admin,
-  creator,
 }: {
   asset: VideoAsset;
   admin: boolean;
-  creator: boolean;
 }) {
   const { updateVideo } = useVideos();
   const { projects } = useWorkspace();
@@ -474,7 +449,6 @@ function VideoActions({
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
   const [failure, setFailure] = useState("");
-  const [reportOpen, setReportOpen] = useState(false);
   useUnsavedChanges(reason.trim().length > 0);
   async function copy(text: string) {
     try {
@@ -495,7 +469,6 @@ function VideoActions({
       setFailure("");
       setMessage(success);
       setReason("");
-      setReportOpen(false);
     } catch (cause) {
       setMessage("");
       setFailure(
@@ -551,14 +524,10 @@ function VideoActions({
             </div>
           )}
         </dl>
-        {project && (
+        {admin && project && (
           <Link
             className="asset-link"
-            href={
-              admin
-                ? `/admin/pkb/${project.id}`
-                : `/merchant/products/${project.id}`
-            }
+            href={`/admin/pkb/${project.id}`}
           >
             Đối chiếu PKB
             <ArrowRight size={14} />
@@ -625,16 +594,12 @@ function VideoActions({
       </section>
       <section className="portal-panel">
         <h2>
-          {admin
-            ? "Quyết định QA"
-            : creator
-              ? "Tracking cá nhân"
-              : "Báo sai nội dung"}
+          {admin ? "Quyết định QA" : "Tracking cá nhân"}
         </h2>
         <p className="panel-description">
           {admin
             ? "Kiểm tra từng mục trước khi duyệt. Từ chối cần lý do để Merchant biết phần cần sửa."
-            : "Merchant chỉ báo sai; Admin kiểm tra và lưu trữ video đã duyệt nếu cần thu hồi."}
+            : "Tham gia campaign và dùng link tracking mẫu để thử luồng phân phối."}
         </p>
         {admin ? (
           <>
@@ -732,7 +697,7 @@ function VideoActions({
               </p>
             )}
           </>
-        ) : creator ? (
+        ) : (
           <>
             <p>
               Creator demo · Link chia sẻ dùng slug; click_id sẽ do backend cấp
@@ -768,58 +733,6 @@ function VideoActions({
               </p>
             )}
           </>
-        ) : asset.status === "approved" && !asset.flaggedAt ? (
-          <>
-            <Button variant="outline" onClick={() => setReportOpen(true)}>
-              Báo sai video
-            </Button>
-            <Dialog open={reportOpen} onOpenChange={setReportOpen}>
-              <DialogContent>
-                <DialogTitle>Báo sai nội dung</DialogTitle>
-                <DialogDescription>
-                  Nhập phần cần kiểm tra. Admin sẽ giữ duyệt hoặc lưu trữ bản đã
-                  duyệt.
-                </DialogDescription>
-                <label className="portal-label" htmlFor="flag-reason">
-                  Nội dung cần kiểm tra
-                </label>
-                <Textarea
-                  id="flag-reason"
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  placeholder="Ví dụ: giá hoặc tính năng trong video không đúng…"
-                />
-                <Button
-                  className="portal-spacing"
-                  variant="outline"
-                  disabled={!reason.trim()}
-                  onClick={() =>
-                    run(
-                      () =>
-                        updateVideo(asset.review.id, (current) =>
-                          flagVideo(current, reason),
-                        ),
-                      "Đã gửi báo sai demo tới hàng đợi Admin.",
-                    )
-                  }
-                >
-                  <Flag size={14} />
-                  Gửi báo sai
-                </Button>
-                {failure && (
-                  <p role="alert" className="form-error">
-                    {failure}
-                  </p>
-                )}
-              </DialogContent>
-            </Dialog>
-          </>
-        ) : (
-          <p className="panel-description">
-            {asset.flaggedAt
-              ? "Báo sai đã gửi; đang chờ Admin xử lý."
-              : "Chỉ có thể báo sai video đã được duyệt."}
-          </p>
         )}
         {failure && (
           <p className="form-error" role="alert">

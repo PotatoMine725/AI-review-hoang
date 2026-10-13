@@ -1,2 +1,2 @@
-import { VideoList } from "@/features/video-qa/screens";
-export default function Page() { return <VideoList creator />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/creator/history"); }

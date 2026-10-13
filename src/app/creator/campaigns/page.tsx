@@ -1,2 +1,2 @@
-import { Campaigns } from "@/features/portals/campaigns";
-export default function Page() { return <Campaigns creator />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/creator/create"); }

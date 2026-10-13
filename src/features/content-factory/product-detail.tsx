@@ -19,7 +19,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IntakeStepper } from "./intake-stepper";
 import { openUpload } from "./uploads";
 import { useWorkspace } from "./workspace-provider";
 import {
@@ -50,17 +49,10 @@ const statusLabels = {
 
 export function ProductDetail({
   id,
-  actor,
 }: {
   id: string;
-  actor?: "merchant" | "admin";
 }) {
-  const productPath =
-    actor === "admin"
-      ? "/admin/pkb"
-      : actor === "merchant"
-        ? "/merchant/products"
-        : "/products";
+  const productPath = "/admin/pkb";
   const { projects, ready, storageError } = useWorkspace();
   const project = projects.find((p) => p.id === id);
   if (!ready) return <p role="status">Đang khôi phục sản phẩm…</p>;
@@ -79,9 +71,7 @@ export function ProductDetail({
       <div className="page-heading">
         <div>
           <p className="eyebrow">
-            {actor === "admin"
-              ? "ADMIN · KIỂM TRA CHÍNH SÁCH"
-              : "MERCHANT · REVIEW PKB"}
+            ADMIN · KIỂM TRA CHÍNH SÁCH
           </p>
           <div className="product-title">
             <Image
@@ -110,10 +100,7 @@ export function ProductDetail({
           {storageError}
         </p>
       )}
-      {actor === "merchant" && (
-        <IntakeStepper current={project.knowledge.length ? 3 : 2} />
-      )}
-      <ProductWorkspace key={id} project={project} actor={actor} />
+      <ProductWorkspace key={id} project={project} actor="admin" />
     </>
   );
 }
@@ -291,7 +278,6 @@ function KnowledgeEditor({
     role: demoRole,
     setRole,
     updateProject,
-    setSelectedId,
   } = useWorkspace();
   const role = actor ?? demoRole;
   const [data, setData] = useState<KnowledgeData>(() =>
@@ -1096,26 +1082,7 @@ function KnowledgeEditor({
               Tạo draft mới
             </Button>
           )}
-        {role !== "admin" && (
-          <Link
-            href={actor ? "/merchant/content" : "/content"}
-            className="inline-action"
-            onClick={(event) => {
-              try {
-                setSelectedId(project.id);
-              } catch (cause) {
-                event.preventDefault();
-                setError(
-                  cause instanceof Error
-                    ? cause.message
-                    : "Không thể chọn sản phẩm.",
-                );
-              }
-            }}
-          >
-            Mở Content Factory ↗
-          </Link>
-        )}
+
       </div>
       {error && (
         <p role="alert" className="form-error">

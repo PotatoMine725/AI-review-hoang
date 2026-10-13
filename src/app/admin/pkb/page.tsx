@@ -1,2 +1,2 @@
-import { AdminPkbList } from "@/features/portals/dashboards";
-export default function Page() { return <AdminPkbList />; }
+import { AdminPkb } from "@/features/studio/admin";
+export default function Page() { return <AdminPkb />; }

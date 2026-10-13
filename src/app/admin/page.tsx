@@ -1,2 +1,2 @@
-import { AdminDashboard } from "@/features/portals/dashboards";
-export default function Page() { return <AdminDashboard />; }
+import { redirect } from "next/navigation";
+export default function Page() { redirect("/admin/users"); }

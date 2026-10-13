@@ -1,82 +1,97 @@
 "use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FileText, Globe, LayoutDashboard, Menu, PlaySquare, X, ShieldCheck, Plus, Library, ArrowLeftRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useWorkspace } from "@/features/content-factory/workspace-provider";
-
-const legacyNavigation = [
-  { label: "Tổng quan", icon: LayoutDashboard, href: "/" },
-  { label: "Sản phẩm", icon: Globe, href: "/products" },
-  { label: "Nội dung", icon: FileText, href: "/content" },
-  { label: "Review video", icon: PlaySquare, href: "/reviews" },
-];
-const merchantNavigation = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/merchant" },
-  { label: "Onboarding", icon: Plus, href: "/merchant/onboarding" },
-  { label: "Sản phẩm & PKB", icon: Globe, href: "/merchant/products" },
-  { label: "Thư viện nội dung", icon: Library, href: "/merchant/library" },
-  { label: "Biên tập nội dung", icon: FileText, href: "/merchant/content" },
-];
-const adminNavigation = [
-  { label: "Tổng quan QA", icon: LayoutDashboard, href: "/admin" },
-  { label: "QA Video", icon: ShieldCheck, href: "/admin/videos" },
-  { label: "Kiểm tra PKB", icon: Globe, href: "/admin/pkb" },
-];
+import { Search, PanelLeftClose, PanelLeftOpen, LayoutGrid, List } from "lucide-react";
+import { usePreferences } from "@/features/studio/preferences";
+import { useStudio } from "@/features/studio/provider";
+import { emptyDraft } from "@/features/studio/model";
+import { projectHistory, requestDraft } from "@/features/studio/projects";
+import { Modal } from "@/features/studio/common";
 
 export function Header() {
   const pathname = usePathname();
-  const { projects } = useWorkspace();
+  const router = useRouter();
   const admin = pathname.startsWith("/admin");
-  const creator = pathname.startsWith("/creator");
-  const legacy = !creator && !admin && pathname !== "/" && !pathname.startsWith("/merchant");
-  const navigation = creator ? [{ label: "Thư viện nội dung", icon: Library, href: "/creator/library" }, { label: "Campaigns", icon: Globe, href: "/creator/campaigns" }] : admin ? adminNavigation : legacy ? legacyNavigation : merchantNavigation;
-  const home = creator ? "/creator/library" : admin ? "/admin" : "/merchant";
-  const area = creator ? "Creator" : admin ? "Admin" : "Merchant";
-  const [menuOpen, setMenuOpen] = useState(false);
-  const toggle = useRef<HTMLButtonElement>(null);
-  const active = [...navigation].reverse().find(({ href }) => href === pathname || (pathname === "/" && href === "/merchant") ||
-    (href !== home && pathname.startsWith(href + "/")) ||
-    (href === "/products" && pathname.startsWith("/products/")) ||
-    (href === "/reviews" && pathname.startsWith("/review/")));
-
+  const { t, number, date, language, theme, setLanguage, setTheme, sidebarCollapsed, setSidebarCollapsed, videoView, setVideoView } = usePreferences();
+  const { users, requests, ready, commit, draft } = useStudio();
+  const user = users.find(item => item.id === "demo")!;
+  const [settings, setSettings] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
+  const [mobile, setMobile] = useState(false);
+  const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState("");
   useEffect(() => {
-    if (!menuOpen) return;
-    function close(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-        toggle.current?.focus();
-      }
-    }
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
-  }, [menuOpen]);
-
-  return (
-    <>
-      <a className="skip-link" href="#main-content">Đến nội dung chính</a>
-      <header className="factory-header workspace-header">
-        <Link href={home} className="mobile-brand" onClick={() => setMenuOpen(false)}>reviewlab<span>.</span></Link>
-        <div className="breadcrumb">{area} <span>/</span><strong>{active?.label ?? "Dashboard"}</strong></div>
-        <span className="area-badge">{area} · Demo</span>
-        <Button ref={toggle} className="menu-toggle" variant="outline" size="icon" aria-label={menuOpen ? "Đóng điều hướng" : "Mở điều hướng"} aria-controls="workspace-navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </Button>
-      </header>
-      <aside id="workspace-navigation" className={`factory-sidebar workspace-sidebar ${menuOpen ? "menu-open" : ""}`}>
-        <Link href={home} className="brand" onClick={() => setMenuOpen(false)}>reviewlab<span className="brand-dot">.</span></Link>
-        <p className="nav-label">{creator ? "CREATOR WORKSPACE" : admin ? "KIỂM DUYỆT NỀN TẢNG" : "MERCHANT WORKSPACE"}</p>
-        <nav aria-label="Điều hướng chính">
-          {navigation.map(({ label, icon: Icon, href }) => (
-            <Link key={href} href={href} className={`nav-item ${active?.href === href ? "active" : ""}`} aria-current={active?.href === href ? "page" : undefined} onClick={() => setMenuOpen(false)}>
-              <Icon size={19} />{label}{href.endsWith("/products") && <span className="nav-count">{projects.length}</span>}
-            </Link>
-          ))}
+    const media = window.matchMedia("(max-width: 640px)");
+    let alive = true;
+    queueMicrotask(() => { if (alive) setMobile(media.matches); });
+    const resize = () => setMobile(media.matches);
+    media.addEventListener("change", resize);
+    const outside = (event: PointerEvent) => { if (!searchRef.current?.contains(event.target as Node)) setSearchFocused(false); };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") { setSidebar(false); setSearchFocused(false); } };
+    document.addEventListener("pointerdown", outside); document.addEventListener("keydown", escape);
+    return () => { alive = false; media.removeEventListener("change", resize); document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
+  }, []);
+  const navigation = [
+    { label: t("Người dùng", "Users"), href: "/admin/users" },
+    { label: "Token", href: "/admin/tokens" },
+    { label: t("Gói đăng ký", "Plans"), href: "/admin/plans" },
+    { label: "PKB", href: "/admin/pkb" },
+  ];
+  const projects = projectHistory(requests);
+  const needle = query.trim().toLocaleLowerCase();
+  const matching = projects.filter(project => requests.some(request => (request.projectId ?? request.id) === project.id && `${project.title} ${request.sourceUrl} ${request.notes} ${request.prompt} ${request.references.map(file => file.name).join(" ")}`.toLocaleLowerCase().includes(needle)));
+  const current = projects.find(p => pathname === `/creator/project/${p.id}` || (pathname === "/creator/create" && draft.projectId === p.id));
+  const pageName = admin ? navigation.find(item => pathname.startsWith(item.href))?.label : current?.title ?? t("Dự án mới", "New project");
+  const displayName = admin ? "Admin" : user.name;
+  const initials = displayName.split(" ").map(part => part[0]).slice(-2).join("").toUpperCase();
+  const expanded = mobile ? sidebar : !sidebarCollapsed;
+  function newProject() {
+    try { commit(s => ({ ...s, draft: { ...emptyDraft } })); setError(""); setSidebar(false); router.push("/creator/create"); }
+    catch { setError(t("Chưa mở được dự án mới. Hãy tải lại trang.", "Could not open a new project. Reload and retry.")); }
+  }
+  function openProject(id: string) {
+    const project = projects.find(p => p.id === id);
+    if (!project) return;
+    try { commit(s => s.draft.projectId === id ? s : ({ ...s, draft: requestDraft(project.latest) })); setError(""); setSidebar(false); setSearchFocused(false); setQuery(""); router.push(`/creator/project/${id}`); }
+    catch { setError(t("Chưa mở được dự án. Hãy tải lại trang.", "Could not open the project. Reload and retry.")); }
+  }
+  return <>
+    <a className="studio-skip" href="#main-content">{t("Đến nội dung", "Skip to content")}</a>
+    <aside id="workspace-sidebar" className={`studio-sidebar ${!admin ? "project-sidebar" : ""} ${sidebar ? "sidebar-open" : ""}`}>
+      <Link className="studio-brand" href={admin ? "/admin/users" : "/creator/create"}>reviewlab<span>.</span></Link>
+      {admin ? <nav aria-label={t("Điều hướng", "Navigation")}>{navigation.map(item => <Link key={item.href} href={item.href} className={pathname.startsWith(item.href) ? "active" : ""} aria-current={pathname.startsWith(item.href) ? "page" : undefined} onClick={() => setSidebar(false)}>{item.label}</Link>)}</nav> : <>
+        <button className="new-project-button" type="button" disabled={!ready} onClick={newProject}>{t("Tạo dự án mới", "New project")}<span aria-hidden="true">+</span></button>
+        <div className="project-list-label">{t("Dự án của bạn", "Your projects")}</div>
+        <nav className="project-list" aria-label={t("Dự án", "Projects")}>
+          {projects.map(project => <button key={project.id} className={current?.id === project.id ? "active" : ""} type="button" aria-current={current?.id === project.id ? "page" : undefined} disabled={!ready} onClick={() => openProject(project.id)}><strong>{project.title}</strong><small>{date(project.latest.createdAt)} · {project.count} {t("lần tạo", "generations")}</small></button>)}
+          {!projects.length && <p className="project-empty">{t("Các dự án sẽ xuất hiện ở đây.", "Your projects will appear here.")}</p>}
         </nav>
-        <div className="sidebar-bottom role-switch"><span>{area} workspace</span><small>Dữ liệu mẫu · chưa đăng nhập</small><Link href={admin ? "/merchant" : "/admin"} onClick={() => setMenuOpen(false)}><ArrowLeftRight size={14} />{admin ? "Chuyển sang Merchant" : "Chuyển sang Admin"}</Link>{!creator && <Link href="/creator/library" onClick={() => setMenuOpen(false)}>Chuyển sang Creator</Link>}{creator && <Link href="/merchant" onClick={() => setMenuOpen(false)}>Chuyển sang Merchant</Link>}</div>
-      </aside>
-    </>
-  );
+      </>}
+      {error && <p role="alert" className="studio-error">{error}</p>}
+      <div className="sidebar-account"><span className="demo-label">{t("Dữ liệu mẫu", "Sample data")}</span></div>
+    </aside>
+    <button type="button" className="sidebar-collapse-button" aria-label={expanded ? t("Ẩn menu bên trái", "Hide sidebar") : t("Hiện menu bên trái", "Show sidebar")} title={expanded ? t("Ẩn menu bên trái", "Hide sidebar") : t("Hiện menu bên trái", "Show sidebar")} aria-controls="workspace-sidebar" aria-expanded={expanded} onClick={() => mobile ? setSidebar(!sidebar) : setSidebarCollapsed(!sidebarCollapsed)}>{expanded ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}</button>
+    <header className="studio-topbar">
+      <div className="topbar-start"><span className="current-page">{pageName}</span></div>
+      <div className="navigation-search" ref={searchRef}>
+        <Search size={15} aria-hidden="true" />
+        <input type="search" aria-label={t("Tìm dự án và video", "Search projects and videos")} placeholder={t("Tìm dự án, video…", "Search projects, videos…")} value={query} onFocus={() => setSearchFocused(true)} onChange={e => { setQuery(e.target.value); setSearchFocused(true); }} onKeyDown={e => { if (e.key === "Enter" && needle && matching[0]) { e.preventDefault(); openProject(matching[0].id); } }} />
+        {searchFocused && needle && <div className="navigation-search-results" role="region" aria-label={t("Kết quả tìm kiếm", "Search results")}>{matching.map(project => <button type="button" key={project.id} onClick={() => openProject(project.id)}><strong>{project.title}</strong><small>{project.count} {t("lần tạo", "generations")} · {project.latest.notes || project.latest.sourceUrl}</small></button>)}{!matching.length && <p>{t("Không tìm thấy dự án hoặc video.", "No matching projects or videos.")}</p>}</div>}
+      </div>
+      <div className="topbar-user">
+        {!admin && <span className="header-tokens">{number(user.tokens)} token</span>}
+        <button type="button" className="preference-shortcut" aria-label={t("Cài đặt", "Settings")} onClick={() => setSettings(true)}>{language.toUpperCase()} · {theme === "light" ? t("Sáng", "Light") : t("Tối", "Dark")}</button>
+        <button type="button" className="account-menu-button" aria-label={t("Cài đặt tài khoản", "Account settings")} onClick={() => setSettings(true)}><span className="avatar">{initials}</span><span className="header-user-name">{displayName}</span></button>
+      </div>
+    </header>
+    {settings && <Modal title={t("Cài đặt", "Settings")} close={() => setSettings(false)}>
+      <div className="settings-row"><div><strong>{t("Ngôn ngữ", "Language")}</strong><p>{t("Ngôn ngữ hiển thị giao diện", "Interface language")}</p></div><div className="segmented"><button type="button" aria-pressed={language === "vi"} onClick={() => setLanguage("vi")}>Tiếng Việt</button><button type="button" aria-pressed={language === "en"} onClick={() => setLanguage("en")}>English</button></div></div>
+      <div className="settings-row"><div><strong>{t("Giao diện", "Appearance")}</strong><p>{t("Chọn chế độ hiển thị", "Choose a color theme")}</p></div><div className="segmented"><button type="button" aria-pressed={theme === "light"} onClick={() => setTheme("light")}>{t("Sáng", "Light")}</button><button type="button" aria-pressed={theme === "dark"} onClick={() => setTheme("dark")}>{t("Tối", "Dark")}</button></div></div>
+      <div className="settings-row"><div><strong>{t("Kiểu xem video", "Video layout")}</strong><p>{t("Cách sắp xếp video trong dự án", "Arrange videos in your project")}</p></div><div className="segmented"><button type="button" aria-pressed={videoView === "grid"} onClick={() => setVideoView("grid")}><LayoutGrid size={14} />{t("Lưới", "Grid")}</button><button type="button" aria-pressed={videoView === "list"} onClick={() => setVideoView("list")}><List size={14} />{t("Liệt kê", "List")}</button></div></div>
+      <div className="settings-footer"><Link className="text-button" onClick={() => setSettings(false)} href={admin ? "/creator/create" : "/admin/users"}>{admin ? t("Mở Creator", "Open Creator") : t("Mở Admin", "Open Admin")}</Link></div>
+    </Modal>}
+  </>;
 }

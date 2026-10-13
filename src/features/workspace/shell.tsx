@@ -1,15 +1,11 @@
+"use client";
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Header } from "./header";
-import { Footer } from "./footer";
-
+import { StorageNotice } from "@/features/studio/common";
+import { usePreferences } from "@/features/studio/preferences";
 export function WorkspaceShell({ children }: { children: ReactNode }) {
-  return (
-    <div className="factory-app">
-      <Header />
-      <div className="factory-main workspace-main">
-        <main id="main-content" className="factory-content workspace-content" tabIndex={-1}>{children}</main>
-        <Footer />
-      </div>
-    </div>
-  );
+  const creator = usePathname().startsWith("/creator");
+  const { sidebarCollapsed } = usePreferences();
+  return <div className={`studio-app ${creator ? "creator-app" : "admin-app"} ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}><Header /><main id="main-content" className="studio-main" tabIndex={-1}><StorageNotice />{children}</main></div>;
 }

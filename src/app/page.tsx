@@ -1,5 +1,5 @@
-import { MerchantDashboard } from "@/features/portals/dashboards";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <MerchantDashboard />;
+  redirect("/creator/create");
 }

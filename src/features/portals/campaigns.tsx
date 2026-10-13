@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useWorkspace } from "../content-factory/workspace-provider";
 import { approvedKnowledge } from "../content-factory/model";
 import { DemoNotice } from "./dashboards";
-export function Campaigns({ creator = false }: { creator?: boolean }) {
+export function Campaigns() {
   const { projects, updateProject, ready } = useWorkspace();
   const [error, setError] = useState("");
   return (
@@ -14,9 +14,7 @@ export function Campaigns({ creator = false }: { creator?: boolean }) {
         <div>
           <h1>Campaigns</h1>
           <p>
-            {creator
-              ? "Tham gia campaign để dùng nội dung và link tracking mẫu."
-              : "Mở / đóng campaign cho sản phẩm có PKB đã duyệt."}
+            Tham gia campaign để dùng nội dung và link tracking mẫu.
           </p>
         </div>
       </div>
@@ -26,7 +24,7 @@ export function Campaigns({ creator = false }: { creator?: boolean }) {
       ) : (
         <section className="portal-panel">
           {projects
-            .filter((p) => (creator ? p.campaign?.active : true))
+            .filter((p) => p.campaign?.active)
             .map((project) => (
               <article className="task-row" key={project.id}>
                 <div>
@@ -41,7 +39,7 @@ export function Campaigns({ creator = false }: { creator?: boolean }) {
                 <Button
                   disabled={
                     !approvedKnowledge(project) ||
-                    (creator && project.campaign?.joined)
+                    project.campaign?.joined
                   }
                   onClick={() => {
                     try {
@@ -50,10 +48,9 @@ export function Campaigns({ creator = false }: { creator?: boolean }) {
                         campaign: {
                           views: 0,
                           clicks: 0,
-                          joined: false,
                           ...p.campaign,
-                          active: creator ? true : !p.campaign?.active,
-                          ...(creator ? { joined: true } : {}),
+                          active: true,
+                          joined: true,
                         },
                       }));
                       setError("");
@@ -66,17 +63,11 @@ export function Campaigns({ creator = false }: { creator?: boolean }) {
                     }
                   }}
                 >
-                  {creator
-                    ? project.campaign?.joined
-                      ? "Đã tham gia"
-                      : "Tham gia campaign"
-                    : project.campaign?.active
-                      ? "Đóng campaign"
-                      : "Mở campaign mock"}
+                  {project.campaign?.joined ? "Đã tham gia" : "Tham gia campaign"}
                 </Button>
               </article>
             ))}
-          {creator && !projects.some((p) => p.campaign?.active) && (
+          {!projects.some((p) => p.campaign?.active) && (
             <p>Chưa có campaign đang mở.</p>
           )}
         </section>
@@ -88,9 +79,9 @@ export function Campaigns({ creator = false }: { creator?: boolean }) {
       )}
       <Link
         className="inline-action"
-        href={creator ? "/creator/library" : "/merchant"}
+        href="/creator/library"
       >
-        Về {creator ? "thư viện" : "dashboard"} ↗
+        Về thư viện ↗
       </Link>
     </>
   );
