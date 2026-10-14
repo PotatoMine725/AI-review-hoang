@@ -6,7 +6,8 @@ import { initialWorkspace, parseWorkspace, WORKSPACE_KEY, type DemoRole, type Pr
 type Workspace = WorkspaceState & { ready: boolean; storageError: string; setSelectedId: (id: string) => void; setRole: (role: DemoRole) => void; addProject: (project: Project) => void; updateProject: (id: string, update: (project: Project) => Project) => void; saveIntake: (draft: IntakeDraft | null) => void };
 const WorkspaceContext = createContext<Workspace | null>(null);
 
-export function WorkspaceProvider({ children }: { children: ReactNode }) {
+export function WorkspaceProvider({ children, storageScope }: { children: ReactNode; storageScope?: string }) {
+  const storageKey = storageScope && !["demo", "admin-demo"].includes(storageScope) ? `${WORKSPACE_KEY}.${storageScope}` : WORKSPACE_KEY;
   const [state, setState] = useState<WorkspaceState>(initialWorkspace);
   const current = useRef(state);
   const [ready, setReady] = useState(false);
@@ -16,21 +17,21 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     Promise.resolve().then(() => {
       if (cancelled) return;
       try {
-        const raw = localStorage.getItem(WORKSPACE_KEY);
+        const raw = localStorage.getItem(storageKey);
         const restored = raw ? parseWorkspace(raw) : initialWorkspace;
         current.current = restored; setState(restored);
       } catch { setStorageError("Không đọc được dữ liệu mock đã lưu. Dữ liệu cũ được giữ nguyên; hãy kiểm tra bộ nhớ trình duyệt."); }
       setReady(true);
     });
     return () => { cancelled = true; };
-  }, []);
+  }, [storageKey]);
   function commit(update: (value: WorkspaceState) => WorkspaceState) {
     if (!ready) throw new Error("Đang khôi phục workspace.");
     try {
-      const raw = localStorage.getItem(WORKSPACE_KEY);
+      const raw = localStorage.getItem(storageKey);
       if (raw && parseWorkspace(raw).revision !== current.current.revision) throw new Error("Workspace đã đổi ở tab khác. Tải lại trang trước khi lưu.");
       const next = { ...update(current.current), revision: current.current.revision + 1 };
-      localStorage.setItem(WORKSPACE_KEY, JSON.stringify(next));
+      localStorage.setItem(storageKey, JSON.stringify(next));
       current.current = next; setState(next); setStorageError("");
     } catch (error) {
       const message = error instanceof Error && error.message.includes("tab khác") ? error.message : "Không thể lưu mock vào trình duyệt. Thay đổi chưa được lưu; hãy kiểm tra bộ nhớ và thử lại.";

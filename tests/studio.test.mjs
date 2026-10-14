@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { emptyDraft, initialStudio, parseStudio, estimateTokens } from '../src/features/studio/model.ts';
+import { emptyDraft, initialStudio, parseStudio, estimateTokens, productIsConfirmed } from '../src/features/studio/model.ts';
 
 test('existing history migrates into individual projects without losing settings or balances', () => {
   const state = structuredClone(initialStudio);
@@ -9,6 +9,7 @@ test('existing history migrates into individual projects without losing settings
   delete draft.projectId;
   delete draft.model;
   delete draft.references;
+  delete draft.productReview;
   state.draft = draft;
   state.requests = [{ ...draft, id: 'saved-history', createdAt: '2026-10-12T03:00:00.000Z', estimatedTokens: 225, status: 'completed' }];
   const restored = parseStudio(JSON.stringify(state));
@@ -16,10 +17,23 @@ test('existing history migrates into individual projects without losing settings
   assert.equal(restored.requests[0].notes, '');
   assert.equal(restored.requests[0].model, 'veo');
   assert.deepEqual(restored.requests[0].references, []);
+  assert.equal(restored.requests[0].productReview, null);
   assert.equal(restored.requests[0].prompt, 'Saved prompt');
   assert.equal(restored.requests[0].ratio, '4:5');
   assert.deepEqual(restored.users, state.users);
   assert.deepEqual(restored.plans, state.plans);
+});
+
+test('product confirmation survives saving and is tied to the exact product link', () => {
+  const state = structuredClone(initialStudio);
+  state.draft.sourceUrl = 'https://shop.example.com/item/one';
+  state.draft.productReview = { sourceUrl: state.draft.sourceUrl, name: 'Product one', description: 'Reviewed description', features: 'Reviewed features', pricing: '', variant: '', sources: state.draft.sourceUrl, confirmedAt: '2026-10-13T00:00:00.000Z' };
+  const restored = parseStudio(JSON.stringify(state));
+  assert.ok(productIsConfirmed(restored.draft));
+  assert.equal(restored.draft.productReview.description, 'Reviewed description');
+  assert.equal(productIsConfirmed({ ...restored.draft, sourceUrl: 'https://shop.example.com/item/two' }), false);
+  assert.equal(productIsConfirmed({ ...restored.draft, productReview: { ...restored.draft.productReview, confirmedAt: null } }), false);
+  assert.equal(productIsConfirmed({ ...restored.draft, productReview: { ...restored.draft.productReview, sources: 'javascript:alert(1)' } }), false);
 });
 
 test('project notes and video settings survive saving while invalid source snapshots are rejected', () => {

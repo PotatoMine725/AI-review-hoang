@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { WorkspaceProvider } from "@/features/content-factory/workspace-provider";
 import { WorkspaceShell } from "@/features/workspace/shell";
 import { ErrorBoundary } from "@/features/workspace/error-boundary";
-import { StudioProvider } from "@/features/studio/provider";
+import { MockAuthProvider } from "@/features/auth/provider";
 import { PreferencesProvider } from "@/features/studio/preferences";
 import "./studio.css";
+import "@/features/auth/auth.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ErrorBoundary>
-          <PreferencesProvider><StudioProvider><WorkspaceProvider><WorkspaceShell>{children}</WorkspaceShell></WorkspaceProvider></StudioProvider></PreferencesProvider>
+          <PreferencesProvider><MockAuthProvider><WorkspaceShell>{children}</WorkspaceShell></MockAuthProvider></PreferencesProvider>
         </ErrorBoundary>
       </body>
     </html>

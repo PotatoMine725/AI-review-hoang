@@ -1,6 +1,6 @@
 import type { Draft, Request } from "./model";
 export function requestDraft(request: Request): Draft {
-  return { sourceUrl: request.sourceUrl, preparedUrl: request.preparedUrl, prompt: request.prompt, opening: request.opening, notes: request.notes, projectId: request.projectId ?? request.id, model: request.model, references: request.references.map(file => ({ ...file })), count: request.count, ratio: request.ratio, resolution: request.resolution, style: request.style, duration: request.duration, outputLanguage: request.outputLanguage, camera: request.camera, negativePrompt: request.negativePrompt };
+  return { sourceUrl: request.sourceUrl, preparedUrl: request.preparedUrl, prompt: request.prompt, opening: request.opening, notes: request.notes, projectId: request.projectId ?? request.id, model: request.model, references: request.references.map(file => ({ ...file })), productReview: request.productReview ? { ...request.productReview } : null, count: request.count, ratio: request.ratio, resolution: request.resolution, style: request.style, duration: request.duration, outputLanguage: request.outputLanguage, camera: request.camera, negativePrompt: request.negativePrompt };
 }
 export function projectHistory(requests: Request[]) {
   const projects = new Map<string, Request>();

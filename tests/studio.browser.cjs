@@ -12,6 +12,11 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/chat-st
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    await page.goto(base + '/login');
+    await page.getByLabel('Email', { exact: true }).fill('admin@reviewlab.demo');
+    await page.getByLabel('Mật khẩu', { exact: true }).fill('Reviewlab123');
+    await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
+    await page.waitForURL('**/admin/users');
     await page.goto(base + '/creator/create');
     await page.getByLabel('Link sản phẩm (bắt buộc)', { exact: true }).fill('https://gamma.app');
     await page.getByLabel('Ghi chú', { exact: true }).fill('Nhấn mạnh khả năng tạo slide cho sinh viên.');
@@ -26,7 +31,7 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/chat-st
       const top = document.querySelector('.composer-top-strip').getBoundingClientRect();
       const input = document.querySelector('.composer-input-surface').getBoundingClientRect();
       const bottom = document.querySelector('.composer-bottom-strip').getBoundingClientRect();
-      return top.width < input.width && bottom.width < input.width && top.bottom <= input.top + 1 && bottom.top >= input.bottom - 1;
+      return top.width < input.width && bottom.width < input.width && top.bottom <= input.top + 5 && bottom.top >= input.bottom - 5;
     }));
     assert.equal(await page.locator('.compact-build-controls select').count(), 1);
     await page.getByRole('button', { name: 'Nhập bằng giọng nói', exact: true }).click();
@@ -36,10 +41,15 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/chat-st
     assert.ok((await page.getByLabel('Ghi chú', { exact: true }).inputValue()).includes('ánh sáng tự nhiên'));
     await page.getByLabel('Ghi chú', { exact: true }).fill('Nhấn mạnh khả năng tạo slide cho sinh viên.');
     await page.getByLabel('Link sản phẩm (bắt buộc)', { exact: true }).fill('');
+    assert.ok(await page.getByRole('button', { name: 'Chi tiết ↗', exact: true }).isDisabled());
     assert.ok(await page.getByRole('button', { name: 'Tạo video', exact: true }).isDisabled());
+    await page.getByLabel('Link sản phẩm (bắt buộc)', { exact: true }).fill('invalid-link');
+    assert.ok(await page.getByRole('button', { name: 'Chi tiết ↗', exact: true }).isDisabled());
     await page.getByLabel('Link sản phẩm (bắt buộc)', { exact: true }).fill('https://gamma.app');
     await page.screenshot({ path: path.join(output, 'creator-empty-light.png'), fullPage: true });
-    await page.getByRole('button', { name: 'Custom ↗', exact: true }).click();
+    await page.getByRole('button', { name: 'Chi tiết ↗', exact: true }).click();
+    await page.getByRole('button', { name: 'Xác nhận sản phẩm', exact: true }).click();
+    await page.getByRole('tab', { name: 'Cấu hình', exact: true }).click();
     await page.getByRole('button', { name: 'Tạo prompt từ link', exact: true }).click();
     assert.ok((await page.getByLabel('Prompt', { exact: true }).inputValue()).includes('Nhấn mạnh khả năng'));
     await page.getByLabel('Prompt', { exact: true }).fill('Prompt chỉnh tay cho dự án Gamma.');

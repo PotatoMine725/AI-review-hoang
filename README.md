@@ -36,6 +36,18 @@ pnpm dev                      # http://localhost:3000
 
 ## Mô tả giao diện
 
+Đăng nhập tại `/login`, đăng ký tại `/signup`. Đây là **mock phía trình duyệt**, chưa có xác thực server hoặc kết nối BE. Dùng mật khẩu mẫu, không nhập mật khẩu đang dùng ở dịch vụ khác.
+
+- Creator: `creator@reviewlab.demo`
+- Admin: `admin@reviewlab.demo`
+- Mật khẩu chung: `Reviewlab123`
+
+Tài khoản đăng ký được lưu trên trình duyệt; mỗi tài khoản mới có dữ liệu dự án và tệp tham khảo riêng. Đăng xuất trong phần Cài đặt tài khoản. Hai tài khoản mẫu dùng chung workspace demo hiện có.
+
+Trong màn tạo video, nhập link rồi mở **Chi tiết** để xem tiến trình mô phỏng thu thập nguồn → chuẩn hóa thông tin → review sản phẩm. Kiểm tra/sửa thông tin và xác nhận trước khi tạo video mẫu. Đóng hộp thoại sẽ hủy tiến trình đang chạy; tiến trình không truy cập website hoặc gọi AI.
+
+Kiểm tra: `corepack pnpm test`, `corepack pnpm lint`, `corepack pnpm exec tsc --noEmit`. Khi dev server đang chạy, dùng `node tests/auth-product.browser.cjs` và `node tests/studio.browser.cjs` để kiểm tra các luồng mock trên trình duyệt.
+
 [Mô tả giao diện mock Creator và Admin](https://github.com/PotatoMine725/AI-review-BE/blob/dev/docs/specs/web-creator-admin-mock.md) nằm ở repo BE.
 
 ## Tài liệu

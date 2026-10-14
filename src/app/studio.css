@@ -145,6 +145,30 @@
 .segmented button { padding:8px 12px; font-size:12px!important; border-radius:2px; color:var(--s-muted); }
 .segmented button[aria-pressed=true] { background:var(--s-panel); color:var(--s-fg); }
 .settings-footer { padding-top:20px; border-top:1px solid var(--s-line); text-align:right; }
+.settings-account { padding:11px 14px; border:1px solid var(--s-line); border-radius:6px; background:var(--s-soft); }
+.settings-account-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:9px; }
+.settings-account-heading strong { font-size:13px; font-weight:500; }
+.settings-account-heading > span { font-size:10px; color:var(--s-muted); }
+.settings-account-values { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.settings-account-values > div { display:flex; flex-direction:column; gap:2px; }
+.settings-account-values > div + div { border-left:1px solid var(--s-line); padding-left:18px; }
+.settings-account-values span { font-size:11px; color:var(--s-muted); }
+.settings-account-values strong { font-size:13px; line-height:1.6; font-weight:550; }
+.settings-account-values small { font-size:11px; color:var(--s-muted); font-weight:400; }
+.project-details-tabs { display:flex; gap:18px; border-bottom:1px solid var(--s-line); margin-bottom:18px; }
+.project-details-tabs button { font-size:13px!important; color:var(--s-muted); padding:0 2px 10px; border-bottom:2px solid transparent; }
+.project-details-tabs button[aria-selected=true] { color:var(--s-fg); border-bottom-color:var(--s-accent); }
+.product-review-notice { margin-bottom:18px; font-size:12px; color:var(--s-muted); }
+.product-review-source { display:flex; flex-direction:column; gap:3px; font-size:12px; padding:12px; border:1px solid var(--s-line); background:var(--s-soft); border-radius:4px; }
+.product-review-source > span { font-size:10px; color:var(--s-muted); }
+.product-review-source a { overflow-wrap:anywhere; }
+.product-review-media > strong { font-size:13px; font-weight:500; }
+.product-review-confirmation { display:flex; justify-content:space-between; align-items:center; gap:14px; border-top:1px solid var(--s-line); padding-top:18px; }
+.review-confirmed { font-size:12px; color:var(--s-positive); }
+.review-pending { font-size:12px; color:var(--s-muted); }
+.product-review-empty { padding:24px 0; display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+.product-review-empty > p { font-size:13px; color:var(--s-muted); }
+@media(max-width:640px) { .product-review-form .config-grid { grid-template-columns:1fr; } .product-review-confirmation { flex-direction:column; align-items:stretch; } }
 .editor-form { display:flex; flex-direction:column; gap:18px; }
 .dialog-description { font-size:13px; color:var(--s-muted); margin-bottom:20px; }
 .dialog-actions { display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--s-line); padding-top:20px; margin-top:6px; }
@@ -249,19 +273,25 @@
 /* Compact composer with attached configuration strips. */
 .chat-dock { max-width:900px; padding-inline:28px; }
 .chat-composer { border:0; border-radius:12px; background:transparent; box-shadow:none; }
-.composer-input-surface { position:relative; z-index:1; border:1px solid var(--s-line); border-radius:12px; background:var(--s-panel); box-shadow:0 4px 18px rgb(26 26 50 / .025); }
+.chat-composer fieldset { isolation:isolate; }
+.composer-input-surface { position:relative; z-index:2; border:1px solid var(--s-line); border-radius:12px; background:var(--s-panel); box-shadow:0 8px 24px rgb(26 26 50 / .055),0 2px 5px rgb(26 26 50 / .035); }
 .composer-input-surface:focus-within { border-color:color-mix(in srgb,var(--s-accent) 40%,var(--s-line)); }
-.composer-top-strip,.composer-bottom-strip { display:flex; align-items:center; gap:16px; padding:3px 13px; min-height:30px; background:var(--s-soft); border:1px solid var(--s-line); }
-.composer-top-strip { width:fit-content; max-width:calc(100% - 28px); margin:0 14px -1px; border-bottom:0; border-radius:8px 8px 0 0; }
-.composer-bottom-strip { width:calc(100% - 28px); margin:-1px auto 0; gap:24px; padding:4px 13px; border-top:0; border-radius:0 0 8px 8px; }
+.composer-top-strip,.composer-bottom-strip { position:relative; display:flex; align-items:center; gap:16px; min-height:33px; border:1px solid var(--s-line); background:linear-gradient(160deg,color-mix(in srgb,var(--s-panel) 80%,var(--s-soft)),var(--s-soft)); }
+.composer-top-strip { z-index:1; width:fit-content; max-width:calc(100% - 28px); margin:0 14px -5px; padding:4px 13px 8px; border-radius:9px 9px 0 0; box-shadow:inset 0 1px 0 color-mix(in srgb,var(--s-panel) 80%,transparent),0 -3px 10px rgb(26 26 50 / .025); }
+.composer-bottom-strip { z-index:1; width:calc(100% - 28px); margin:-5px auto 0; gap:16px; padding:9px 13px 5px; border-radius:0 0 9px 9px; box-shadow:0 6px 14px rgb(26 26 50 / .055),inset 0 -1px 0 color-mix(in srgb,var(--s-panel) 60%,transparent); }
+.composer-bottom-strip > label + label { padding-left:16px; border-left:1px solid var(--s-line); }
+.dark .composer-input-surface { box-shadow:0 8px 24px rgb(0 0 0 / .2),0 2px 5px rgb(0 0 0 / .12); }
+.dark .composer-bottom-strip { box-shadow:0 6px 16px rgb(0 0 0 / .2),inset 0 -1px 0 rgb(255 255 255 / .025); }
 .studio-app .composer-strip-control { display:flex; align-items:center; gap:7px; min-width:0; font-weight:400; }
 .composer-strip-control > span { font-size:11px; color:var(--s-muted); white-space:nowrap; }
 .studio-app .composer-strip-control select { width:auto; height:25px; min-height:25px; margin:0; padding:0 2px; border:0; background:transparent; font-size:12px; cursor:pointer; }
+.studio-app .composer-strip-control select:hover { background:color-mix(in srgb,var(--s-panel) 70%,transparent); border-radius:4px; }
 .studio-app .composer-count-control input { width:51px; min-height:25px; height:25px; margin:0; padding:0 4px; border:1px solid var(--s-line); background:var(--s-panel); border-radius:4px; font-size:12px; font-variant-numeric:tabular-nums; }
 .composer-strip-cost { padding-left:14px; border-left:1px solid var(--s-line); font-size:12px; font-variant-numeric:tabular-nums; white-space:nowrap; }
 .composer-strip-cost > span { color:var(--s-muted); font-size:11px; }
 .composer-custom-button { font-size:11px!important; color:var(--s-muted); padding:4px; white-space:nowrap; }
 .composer-custom-button:hover { color:var(--s-fg); }
+.composer-custom-button:disabled:hover { color:var(--s-muted); }
 .chat-input-area { padding:15px 19px 1px; }
 .studio-app .chat-input-area input { min-height:25px; height:25px; font-size:14px; }
 .studio-app .chat-input-area textarea { min-height:32px; height:32px; max-height:120px; margin-top:7px; font-size:14px; }
@@ -342,6 +372,7 @@
   .compact-model-control { width:59px; }
   .studio-app .compact-model-control select { font-size:12px; }
   .composer-top-strip,.composer-bottom-strip { padding-inline:11px; gap:10px; }
+  .composer-bottom-strip > label + label { padding-left:9px; }
   .composer-bottom-strip { display:grid; grid-template-columns:.8fr 1.2fr .7fr; align-items:start; }
   .studio-app .composer-bottom-strip .composer-strip-control { display:block; }
   .studio-app .composer-bottom-strip .composer-count-control { display:grid; grid-template-columns:auto 1fr; gap:0 4px; }

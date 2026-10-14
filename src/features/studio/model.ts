@@ -3,11 +3,16 @@ export type Theme = "light" | "dark";
 export const aspectRatios = ["16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3", "4:5", "5:4", "21:9", "9:21"] as const;
 export const videoModels = [{ id: "veo", name: "Veo" }, { id: "kling", name: "Kling" }, { id: "sora", name: "Sora" }] as const;
 export type ReferenceFile = { id: string; name: string; type: string; size: number };
+export type ProductReview = {
+  sourceUrl: string; name: string; description: string; features: string;
+  pricing: string; variant: string; sources: string; confirmedAt: string | null;
+};
 export type Draft = {
   sourceUrl: string; preparedUrl: string; prompt: string; opening: string;
   notes: string; projectId: string | null;
   model: typeof videoModels[number]["id"];
   references: ReferenceFile[];
+  productReview: ProductReview | null;
   count: number; ratio: typeof aspectRatios[number]; resolution: "720p" | "1080p";
   style: "cinematic" | "animation" | "realistic" | "minimal";
   duration: number; outputLanguage: Language; camera: "auto" | "static" | "pan";
@@ -19,7 +24,7 @@ export type Plan = { id: string; name: string; price: number; tokens: number; ac
 export type Transaction = { id: string; userId: string; amount: number; reason: string; createdAt: string };
 export type StudioState = { schema: 1; revision: number; draft: Draft; requests: Request[]; users: User[]; plans: Plan[]; transactions: Transaction[] };
 export const STUDIO_KEY = "reviewlab.studio.v1";
-export const emptyDraft: Draft = { sourceUrl: "", preparedUrl: "", prompt: "", opening: "", notes: "", projectId: null, model: "veo", references: [], count: 1, ratio: "9:16", resolution: "1080p", style: "cinematic", duration: 15, outputLanguage: "vi", camera: "auto", negativePrompt: "" };
+export const emptyDraft: Draft = { sourceUrl: "", preparedUrl: "", prompt: "", opening: "", notes: "", projectId: null, model: "veo", references: [], productReview: null, count: 1, ratio: "9:16", resolution: "1080p", style: "cinematic", duration: 15, outputLanguage: "vi", camera: "auto", negativePrompt: "" };
 export const initialStudio: StudioState = {
   schema: 1, revision: 0, draft: emptyDraft, requests: [], transactions: [],
   plans: [{ id: "free", name: "Free", price: 0, tokens: 500, active: true }, { id: "creator", name: "Creator", price: 299000, tokens: 5000, active: true }, { id: "pro", name: "Pro", price: 799000, tokens: 15000, active: true }],
@@ -40,15 +45,26 @@ export function validDraft(value: Draft): boolean {
   if (value?.preparedUrl) { try { normalizeSource(value.preparedUrl); } catch { return false; } }
   return !!value && ["sourceUrl", "preparedUrl", "prompt", "opening", "negativePrompt", "notes"].every(key => typeof value[key as keyof Draft] === "string") && (value.projectId === null || typeof value.projectId === "string") &&
     Array.isArray(value.references) && value.references.length <= 6 && value.references.every(file => file && typeof file.id === "string" && typeof file.name === "string" && typeof file.type === "string" && Number.isSafeInteger(file.size) && file.size > 0 && file.size <= 10 * 1024 * 1024) &&
+    (value.productReview === null || validProductReview(value.productReview)) &&
     videoModels.some(model => model.id === value.model) && Number.isSafeInteger(value.count) && value.count > 0 && aspectRatios.includes(value.ratio) && ["720p", "1080p"].includes(value.resolution) &&
     ["cinematic", "animation", "realistic", "minimal"].includes(value.style) && [5, 10, 15, 30, 60].includes(value.duration) &&
     ["vi", "en"].includes(value.outputLanguage) && ["auto", "static", "pan"].includes(value.camera);
 }
+function validProductReview(value: ProductReview): boolean {
+  if (!value || !["sourceUrl", "name", "description", "features", "pricing", "variant", "sources"].every(key => typeof value[key as keyof ProductReview] === "string")) return false;
+  try { normalizeSource(value.sourceUrl); } catch { return false; }
+  return value.confirmedAt === null || (typeof value.confirmedAt === "string" && Number.isFinite(Date.parse(value.confirmedAt)));
+}
+export function productIsConfirmed(draft: Draft): boolean {
+  const review = draft.productReview;
+  if (!review?.confirmedAt || !Number.isFinite(Date.parse(review.confirmedAt)) || !review.name.trim() || !review.description.trim() || !review.sources.trim()) return false;
+  try { return review.sourceUrl === normalizeSource(draft.sourceUrl) && review.sources.split("\n").filter(line => line.trim()).every(line => !!normalizeSource(line)); } catch { return false; }
+}
 export function parseStudio(raw: string): StudioState {
   const state = JSON.parse(raw) as StudioState;
   // Preserve drafts and history saved before projects and notes were added.
-  if (state?.draft) { state.draft.notes ??= ""; state.draft.projectId ??= null; state.draft.model ??= "veo"; state.draft.references ??= []; }
-  if (Array.isArray(state?.requests)) for (const request of state.requests) { if (request) { request.notes ??= ""; request.projectId ??= request.id; request.model ??= "veo"; request.references ??= []; } }
+  if (state?.draft) { state.draft.notes ??= ""; state.draft.projectId ??= null; state.draft.model ??= "veo"; state.draft.references ??= []; state.draft.productReview ??= null; }
+  if (Array.isArray(state?.requests)) for (const request of state.requests) { if (request) { request.notes ??= ""; request.projectId ??= request.id; request.model ??= "veo"; request.references ??= []; request.productReview ??= null; } }
   if (!state || state.schema !== 1 || !Number.isSafeInteger(state.revision) || state.revision < 0 || !validDraft(state.draft) || !Array.isArray(state.requests) || !Array.isArray(state.users) || !Array.isArray(state.plans) || !Array.isArray(state.transactions)) throw new Error("storage");
   if (!state.plans.length || state.plans.some(p => !p || typeof p.id !== "string" || typeof p.name !== "string" || !p.name.trim() || !Number.isSafeInteger(p.price) || p.price < 0 || !Number.isSafeInteger(p.tokens) || p.tokens < 0 || typeof p.active !== "boolean")) throw new Error("plans");
   if (!state.users.some(u => u.id === "demo") || state.users.some(u => !u || typeof u.id !== "string" || typeof u.name !== "string" || typeof u.email !== "string" || !state.plans.some(p => p.id === u.planId) || !Number.isSafeInteger(u.tokens) || u.tokens < 0 || typeof u.active !== "boolean")) throw new Error("users");
