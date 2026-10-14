@@ -503,6 +503,8 @@ Hệ thống phải hỗ trợ Screen Recording như một video workflow cốt 
 
 Screen Recording phải sử dụng giao diện hoặc output thực tế của Product (chụp ảnh màn hình các section tính năng, workflow thực thi) làm evidence cho nội dung review.
 
+Chỉ đưa ảnh/screenshot vào Storage và video khi đã xác nhận quyền sử dụng cho mục đích đó. Việc video chỉ dùng nội bộ hoặc ghi nguồn không thay thế quyền sử dụng. Nếu thiếu asset hợp lệ, hệ thống báo thiếu để Merchant cung cấp ảnh có quyền sử dụng theo #53; không dựng ảnh giả làm screenshot sản phẩm (quyết định BA tại #67, AC của #52).
+
 Định dạng này vừa tạo độ tin cậy tối đa cho người mua (thấy tool chạy thật), vừa giúp hệ thống tiết kiệm 100% chi phí thuê API avatar đắt tiền trong giai đoạn zero-budget.
 
 Khi applicable, Screen Recording phải được liên kết với Product/Product Knowledge và evidence tương ứng.
