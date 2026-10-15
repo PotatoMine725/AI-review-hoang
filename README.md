@@ -36,6 +36,8 @@ pnpm dev                      # http://localhost:3000
 
 ## Mô tả giao diện
 
+Trang `/` giới thiệu Reviewlab, quy trình tạo video và bản minh họa đổi khung hình/preset; `/credits` ghi công Crawl4AI. Cả hai trang xem được khi chưa đăng nhập. Hình minh họa trên landing không gọi AI hoặc tạo video.
+
 Đăng nhập tại `/login`, đăng ký tại `/signup`. Đây là **mock phía trình duyệt**, chưa có xác thực server hoặc kết nối BE. Dùng mật khẩu mẫu, không nhập mật khẩu đang dùng ở dịch vụ khác.
 
 - Creator: `creator@reviewlab.demo`

@@ -14,9 +14,11 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
   const { account, ready } = useAuth();
   const { t } = usePreferences();
   const authPage = pathname === "/login" || pathname === "/signup";
+  const publicPage = pathname === "/" || pathname === "/credits";
   useEffect(() => {
-    if (ready && !account && !authPage) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
-  }, [account, ready, authPage, pathname, router]);
+    if (ready && !account && !authPage && !publicPage) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+  }, [account, ready, authPage, publicPage, pathname, router]);
+  if (publicPage) return <div className="studio-app public-app">{children}</div>;
   if (authPage) return <div className="studio-app auth-app">{children}</div>;
   if (!ready || !account) return <div className="studio-app auth-app"><p role="status" className="auth-loading">{t("Đang mở không gian làm việc…", "Opening your workspace…")}</p></div>;
   if (pathname.startsWith("/admin") && account.role !== "admin") return <div className="studio-app auth-app"><main className="auth-card"><h1>{t("Dành cho Admin", "Admin workspace")}</h1><p>{t("Tài khoản mẫu này là Creator.", "This demo account is a Creator.")}</p><Link className="secondary-button" href="/creator/create">{t("Về dự án", "Back to workspace")}</Link></main></div>;

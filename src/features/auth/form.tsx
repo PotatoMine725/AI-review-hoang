@@ -45,7 +45,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
   return <main className="auth-page">
     <aside className="auth-story" aria-label={t("Giới thiệu Reviewlab", "About Reviewlab")}>
-      <Link className="auth-story-brand" href="/login">reviewlab<span>.</span></Link>
+      <Link className="auth-story-brand" href="/">reviewlab<span>.</span></Link>
       <div className="auth-story-copy">
         <p className="auth-eyebrow">{t("TỪ Ý TƯỞNG ĐẾN KHUNG HÌNH", "FROM IDEA TO FRAME")}</p>
         <h2>{t("Mỗi sản phẩm,", "Every product,")}<br /><span>{t("một câu chuyện.", "a story to tell.")}</span></h2>
@@ -64,7 +64,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <div className="auth-story-footer"><span>01 — {t("Thông tin", "Information")}</span><span>02 — {t("Ý tưởng", "Ideas")}</span><span>03 — Video</span></div>
     </aside>
     <section className="auth-card" aria-labelledby="auth-title">
-      <Link className="auth-brand" href="/login">reviewlab<span>.</span></Link>
+      <Link className="auth-brand" href="/">reviewlab<span>.</span></Link>
       <span className="auth-preview-label">{t("Bản xem thử", "Preview")}</span>
       <div className="auth-heading">
         <p className="auth-eyebrow">{t("KHÔNG GIAN LÀM VIỆC", "YOUR WORKSPACE")}</p>
