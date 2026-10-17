@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { demoAccounts, DEMO_PASSWORD, loginDestination, normalizeEmail, passwordHash, publicAccount, readAccounts, validateRegistration } from '../src/features/auth/model.ts';
+import { demoAccounts, DEMO_PASSWORD, findLoginAccount, loginDestination, normalizeEmail, passwordHash, publicAccount, readAccounts, updateDemoAccounts, validateRegistration } from '../src/features/auth/model.ts';
 
 test('mock accounts verify passwords without persisting plaintext credentials', async () => {
   const accounts = await demoAccounts();
@@ -12,6 +12,20 @@ test('mock accounts verify passwords without persisting plaintext credentials', 
   assert.deepEqual(Object.keys(publicAccount(accounts[0])), ['id', 'name', 'email', 'role']);
   assert.throws(() => readAccounts(JSON.stringify([...accounts, accounts[0]])));
   assert.throws(() => readAccounts('{broken'));
+});
+
+test('demo credentials migrate without removing registered accounts and support username login', async () => {
+  const seeds = await demoAccounts();
+  const oldDemo = { ...seeds[0], name: 'Minh Anh', passwordHash: await passwordHash('Reviewlab123', seeds[0].salt) };
+  const registered = { ...seeds[0], id: 'registered', name: 'Test User', email: 'user@example.com' };
+  const migrated = updateDemoAccounts([oldDemo, seeds[1], registered], seeds);
+  assert.equal(DEMO_PASSWORD, '123456');
+  assert.equal(findLoginAccount(migrated, ' CREATOR ').id, 'demo');
+  assert.equal(findLoginAccount(migrated, 'admin').id, 'admin-demo');
+  assert.equal(findLoginAccount(migrated, 'USER@example.com'), registered);
+  assert.equal(findLoginAccount(migrated, 'unknown'), undefined);
+  assert.notEqual(migrated[0].passwordHash, oldDemo.passwordHash);
+  assert.deepEqual(updateDemoAccounts(migrated, seeds), migrated);
 });
 
 test('registration validates identity and confirmation; login return paths remain internal and role-aware', () => {

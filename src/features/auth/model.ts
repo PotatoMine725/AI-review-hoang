@@ -2,7 +2,7 @@ export type Account = { id: string; name: string; email: string; role: "creator"
 export type MockAccount = Account & { salt: string; passwordHash: string };
 export const ACCOUNTS_KEY = "reviewlab.mock-accounts.v1";
 export const SESSION_KEY = "reviewlab.mock-session.v1";
-export const DEMO_PASSWORD = "Reviewlab123";
+export const DEMO_PASSWORD = "123456";
 
 export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -25,10 +25,21 @@ export async function passwordHash(password: string, salt: string) {
 
 export async function demoAccounts(): Promise<MockAccount[]> {
   const accounts: Account[] = [
-    { id: "demo", name: "Minh Anh", email: "creator@reviewlab.demo", role: "creator" },
+    { id: "demo", name: "Creator", email: "creator@reviewlab.demo", role: "creator" },
     { id: "admin-demo", name: "Admin", email: "admin@reviewlab.demo", role: "admin" },
   ];
   return Promise.all(accounts.map(async account => ({ ...account, salt: account.id, passwordHash: await passwordHash(DEMO_PASSWORD, account.id) })));
+}
+
+export function updateDemoAccounts(accounts: MockAccount[], seeds: MockAccount[]) {
+  const seedIds = new Set(seeds.map(account => account.id));
+  return [...seeds, ...accounts.filter(account => !seedIds.has(account.id))];
+}
+
+export function findLoginAccount(accounts: MockAccount[], identifier: string) {
+  const login = normalizeEmail(identifier);
+  const demoId = login === "creator" ? "demo" : login === "admin" ? "admin-demo" : null;
+  return accounts.find(account => demoId ? account.id === demoId : account.email === login);
 }
 
 export function readAccounts(raw: string): MockAccount[] {

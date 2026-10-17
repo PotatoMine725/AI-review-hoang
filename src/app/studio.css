@@ -1,5 +1,7 @@
 .studio-app,.studio-dialog { --s-bg:#f7f7f9; --s-panel:#fff; --s-fg:#22232b; --s-muted:#747580; --s-line:#e1e1e7; --s-soft:#f0f0f4; --s-accent:#5759d6; --s-positive:#287353; font-family:var(--font-geist-sans),Arial,sans-serif; font-size:15px; line-height:1.6; color:var(--s-fg); }
 .dark .studio-app,.dark .studio-dialog { --s-bg:#121215; --s-panel:#1a1a1f; --s-fg:#f0f0f3; --s-muted:#9c9ca9; --s-line:#303038; --s-soft:#222228; --s-accent:#a6a6ff; --s-positive:#88c7a7; }
+.studio-app,.studio-dialog { color-scheme:light; }
+.dark .studio-app,.dark .studio-dialog { color-scheme:dark; }
 .studio-app { min-height:100dvh; background:var(--s-bg); }
 .studio-app *, .studio-dialog * { box-sizing:border-box; }
 .studio-app :is(button,input,textarea,select),.studio-dialog :is(button,input,textarea,select) { font:inherit; }
@@ -11,6 +13,7 @@
 .studio-app h3,.studio-dialog h3 { font-size:14px; font-weight:550; }
 .studio-app label,.studio-dialog label { display:block; font-size:13px; font-weight:500; }
 .studio-app :is(input,textarea,select),.studio-dialog :is(input,textarea,select) { width:100%; min-height:42px; border:1px solid var(--s-line); border-radius:4px; padding:10px 12px; background:var(--s-panel); color:var(--s-fg); font-size:14px; }
+.studio-app :is(option,optgroup),.studio-dialog :is(option,optgroup) { background:var(--s-panel); color:var(--s-fg); }
 .studio-app label :is(input,textarea,select),.studio-dialog label :is(input,textarea,select) { display:block; margin-top:7px; }
 .studio-app :is(input,textarea)::placeholder,.studio-dialog :is(input,textarea)::placeholder { color:var(--s-muted); font-weight:400; }
 .studio-app textarea,.studio-dialog textarea { resize:vertical; line-height:1.7; }
@@ -329,11 +332,14 @@
 /* Search is centered in the navigation, independently of the account area. */
 .studio-topbar { display:grid; grid-template-columns:minmax(90px,.7fr) minmax(180px,1fr) minmax(150px,.8fr); gap:20px; }
 .topbar-user { justify-content:flex-end; gap:16px; min-width:0; }
-.navigation-search { position:relative; width:100%; max-width:400px; justify-self:center; }
+.navigation-search { position:relative; width:100%; max-width:400px; justify-self:center; color-scheme:light; }
+.dark .navigation-search { color-scheme:dark; }
 .navigation-search > svg { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--s-muted); pointer-events:none; }
 .studio-app .navigation-search input { min-height:33px; height:33px; padding:6px 12px 6px 34px; background:var(--s-soft); border-color:transparent; border-radius:5px; font-size:12px; font-weight:400; }
-.navigation-search-results { position:absolute; top:42px; left:0; width:100%; min-width:240px; max-height:350px; overflow:auto; background:var(--s-panel); border:1px solid var(--s-line); border-radius:6px; box-shadow:0 8px 30px rgb(0 0 0 / .12); z-index:40; }
-.navigation-search-results > button { display:block; width:100%; text-align:left; padding:12px 14px; border-bottom:1px solid var(--s-line); }
+/* Chrome autofill uses its own background even after the pointer leaves. */
+.studio-app .navigation-search input:is(:autofill,:-webkit-autofill) { box-shadow:0 0 0 1000px var(--s-soft) inset; -webkit-text-fill-color:var(--s-fg); caret-color:var(--s-fg); }
+.navigation-search-results { position:absolute; top:42px; left:0; width:100%; min-width:240px; max-height:350px; overflow:auto; background:var(--s-panel); color:var(--s-fg); border:1px solid var(--s-line); border-radius:6px; box-shadow:0 8px 30px rgb(0 0 0 / .12); z-index:40; }
+.navigation-search-results > button { display:block; width:100%; text-align:left; padding:12px 14px; border-bottom:1px solid var(--s-line); background:var(--s-panel); color:var(--s-fg); }
 .navigation-search-results > button:last-child { border-bottom:0; }
 .navigation-search-results > button:hover { background:var(--s-soft); }
 .navigation-search-results strong { display:block; font-size:13px; font-weight:500; }

@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Keep Next.js development overlays out of the product preview.
+   Diagnostics remain available in the browser console and terminal. */
+nextjs-portal {
+  display: none !important;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

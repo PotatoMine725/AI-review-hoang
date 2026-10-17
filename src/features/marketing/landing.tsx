@@ -1,82 +1,93 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, ArrowUpRight, Check, CheckCheck, FileCheck2, Film, Link2, Mic2, SlidersHorizontal, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, FileCheck2, Film, Link2, Pause, Play } from "lucide-react";
 import { usePreferences } from "@/features/studio/preferences";
-import { initialStudio } from "@/features/studio/model";
 import { PublicLayout } from "./public-layout";
+import { PricingCards } from "./pricing";
 
-function StudioPreview() {
+function CreativeShowcase() {
   const { t } = usePreferences();
-  const [ratio, setRatio] = useState("9:16");
-  const [preset, setPreset] = useState(0);
-  const presets = [t("Hoạt hình đồ họa", "Motion graphics"), t("Điện ảnh tối giản", "Minimal cinema"), t("Cổ điển", "Vintage")];
-  return <figure className="landing-preview" aria-label={t("Minh họa tùy chọn video", "Video options illustration")}>
-    <div className="preview-topline"><span><Sparkles size={13} aria-hidden="true" /> REVIEWLAB STUDIO</span><span>{t("Minh họa", "Illustration")}</span></div>
-    <div className="preview-stage" data-preset={preset}>
-      <div className="preview-orbit" aria-hidden="true" />
-      <div className={`preview-film ${ratio === "16:9" ? "is-landscape" : ""}`}>
-        <div className="preview-film-header"><span>DAILY OBJECTS / 01</span><span>{ratio}</span></div>
-        <div className="preview-product" aria-hidden="true"><div className="preview-plinth" /><div className="preview-bottle"><span>daily.</span></div><div className="preview-bottle second"><span>daily.</span></div></div>
-        <div className="preview-caption"><small>{t("MỘT CHÚT CẢM HỨNG MỖI NGÀY", "A LITTLE EVERYDAY INSPIRATION")}</small><strong>{t("Mang theo", "Take a little")}<br />{t("điều bạn thích.", "of what you love.")}</strong></div>
-        <div className="preview-subtitle">{t("Một người bạn cho mọi hành trình.", "A companion for every journey.")}</div>
-        <div className="preview-film-footer"><span>REVIEWLAB</span><span>00:18</span></div>
+  const [ratio, setRatio] = useState("16:9");
+  const [style, setStyle] = useState("minimal");
+  const [playing, setPlaying] = useState(false);
+
+  return <section className="creative-showcase" data-style={style} aria-labelledby="hero-title">
+    <div className="showcase-stage">
+      <h1 id="hero-title" className="showcase-title">{t("Creative — Sáng tạo video cùng AI", "Creative — Create videos with AI")}</h1>
+      <div className={`showcase-film${ratio === "9:16" ? " is-portrait" : ""}${playing ? " is-playing" : ""}`} onContextMenu={event => event.preventDefault()}>
+        <Image src="/images/creative-ai-transparent.png" alt={t("Chữ Creative bằng bạc và trắng, biểu tượng phát video cùng dải phim uốn lượn thể hiện sáng tạo với AI", "Pearl-white Creative lettering, a silver play symbol and a flowing filmstrip representing AI creativity")} fill sizes="(max-width: 760px) 80vw, 928px" loading="eager" className="showcase-product" draggable={false} onDragStart={event => event.preventDefault()} />
       </div>
-      <div className="preview-floating"><CheckCheck size={16} aria-hidden="true" /><div><strong>{t("Câu chuyện của bạn", "Your own story")}</strong><span>{t("Từ thông tin sản phẩm", "From product information")}</span></div></div>
     </div>
-    <div className="preview-controls">
-      <div className="preview-ratio"><span>{t("Khung hình", "Format")}</span><div role="group" aria-label={t("Chọn khung hình minh họa", "Illustration format")}>{["9:16", "16:9"].map(value => <button key={value} type="button" aria-pressed={ratio === value} onClick={() => setRatio(value)}>{value}</button>)}</div></div>
-      <div className="preview-presets" role="group" aria-label={t("Chọn phong cách minh họa", "Illustration style")}>{presets.map((name, index) => <button type="button" key={name} aria-pressed={preset === index} onClick={() => setPreset(index)}>{name}</button>)}</div>
+
+    <div className="showcase-copy">
+      <h2>{t("Sản phẩm của bạn. Sáng tạo cùng AI.", "Your product. Reimagined with AI.")}</h2>
+      <p>{t("Từ một đường link đến ý tưởng video giới thiệu sản phẩm. Chọn góc nhìn, phong cách và để câu chuyện mang dấu ấn của bạn.", "Turn a product link into a video idea. Choose an angle, set the style, and make the story your own.")}</p>
     </div>
-    <figcaption>{t("Thử đổi khung hình và phong cách. Đây là hình minh họa, không phải video đã tạo.", "Try a format and style. This is an illustration, not a generated video.")}</figcaption>
-  </figure>;
+
+    <div className="showcase-controls">
+      <label className="showcase-choice"><span>{t("Phong cách", "Style")}</span><select aria-label={t("Phong cách minh họa", "Illustration style")} value={style} onChange={event => setStyle(event.target.value)}><option value="minimal">{t("Tối giản", "Minimal")}</option><option value="cinema">{t("Điện ảnh", "Cinema")}</option><option value="editorial">{t("Tạp chí", "Editorial")}</option></select></label>
+      <label className="showcase-choice"><span>{t("Khung hình", "Format")}</span><select aria-label={t("Khung hình minh họa", "Illustration format")} value={ratio} onChange={event => setRatio(event.target.value)}><option value="16:9">16:9</option><option value="9:16">9:16</option></select></label>
+      <button className="showcase-preview-button" type="button" aria-pressed={playing} aria-label={t(playing ? "Dừng chuyển động minh họa" : "Xem chuyển động minh họa", playing ? "Pause illustration animation" : "Play illustration animation")} onClick={() => setPlaying(!playing)}>{playing ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}<span>{t(playing ? "Tạm dừng" : "Xem minh họa", playing ? "Pause" : "Preview")}</span></button>
+      <Link className="showcase-start" href="/signup">{t("Bắt đầu sáng tạo", "Start creating")}<ArrowUpRight size={15} aria-hidden="true" /></Link>
+    </div>
+    <p className="showcase-caption">{t("Minh họa video sản phẩm", "Product video illustration")}</p>
+  </section>;
 }
 
 export function LandingPage() {
-  const { t, number } = usePreferences();
+  const { t } = usePreferences();
   const steps = [
-    { icon: Link2, title: t("Bắt đầu bằng một link", "Start with a link"), text: t("Dán link website hoặc trang bán sản phẩm bạn muốn giới thiệu.", "Paste a website or product page you want to introduce.") },
-    { icon: FileCheck2, title: t("Kiểm tra thông tin", "Check the details"), text: t("Xem nguồn, chỉnh sửa nội dung và xác nhận thông tin trước khi sáng tạo.", "Review sources, edit the content and confirm product details before creating.") },
-    { icon: Film, title: t("Tạo câu chuyện bằng video", "Tell your story in video"), text: t("Chọn phong cách, khung hình rồi tạo, xem và tải video trong dự án.", "Choose a style and format, then create, watch and download videos in your project.") },
+    { icon: Link2, title: t("Thêm sản phẩm", "Add your product"), text: t("Dán link website hoặc trang sản phẩm để bắt đầu dự án video.", "Paste a website or product link to start your video project.") },
+    { icon: FileCheck2, title: t("Kiểm tra thông tin", "Review the details"), text: t("Xem lại nguồn và chỉnh sửa thông tin. Một video tốt bắt đầu từ việc hiểu đúng sản phẩm.", "Review sources and edit the details. A good video starts with knowing the product.") },
+    { icon: Film, title: t("Sáng tạo cùng AI", "Create with AI"), text: t("Phát triển ý tưởng, chọn phong cách và khung hình cho video giới thiệu sản phẩm.", "Develop your idea, then choose a style and format for your product video.") },
   ];
-  return <PublicLayout landing>
+
+  return <PublicLayout>
     <main id="main-content" tabIndex={-1}>
-      <section className="landing-hero public-container" aria-labelledby="hero-title">
-        <div className="hero-copy">
-          <span className="landing-eyebrow"><span className="landing-dot" />{t("KHÔNG GIAN SÁNG TẠO VIDEO", "YOUR VIDEO WORKSPACE")}</span>
-          <h1 id="hero-title">{t("Một đường link.", "One product link.")}<br /><span>{t("Nhiều cách", "More ways")} <br />{t("kể chuyện.", "to tell its story.")}</span></h1>
-          <p>{t("Biến thông tin sản phẩm thành ý tưởng video review. Kiểm tra nội dung, chọn phong cách và kể câu chuyện theo cách của bạn với Reviewlab.", "Turn product information into ideas for review videos. Check the content, choose a style and tell the story your way with Reviewlab.")}</p>
-          <div className="hero-actions"><Link className="primary-button" href="/signup">{t("Bắt đầu sáng tạo", "Start creating")}<ArrowUpRight size={17} aria-hidden="true" /></Link><a className="hero-process-link" href="#quy-trinh">{t("Khám phá quy trình", "See how it works")}<ArrowRight size={16} aria-hidden="true" /></a></div>
-          <p className="hero-preview-note"><span>{t("BẢN XEM THỬ", "PREVIEW")}</span>{t("Khám phá giao diện với dữ liệu mẫu.", "Explore the interface with sample data.")}</p>
-        </div>
-        <StudioPreview />
-      </section>
-      <div className="landing-capabilities public-container" aria-label={t("Khả năng được giới thiệu", "Capabilities overview")}>
-        <span><Link2 size={16} aria-hidden="true" />{t("Từ link sản phẩm", "From a product link")}</span><span><Mic2 size={16} aria-hidden="true" />{t("Nội dung tiếng Việt", "Vietnamese content")}</span><span><SlidersHorizontal size={16} aria-hidden="true" />{t("Phong cách của bạn", "Your own style")}</span><span><Film size={16} aria-hidden="true" />{t("Khung dọc & ngang", "Portrait & landscape")}</span>
-      </div>
+      <CreativeShowcase />
+
       <section id="quy-trinh" className="landing-process public-container" aria-labelledby="process-title">
-        <div className="landing-section-heading"><div><p className="landing-eyebrow">{t("TỪ THÔNG TIN ĐẾN KHUNG HÌNH", "FROM INFORMATION TO FRAME")}</p><h2 id="process-title">{t("Một quy trình rõ ràng.", "A clear creative process.")}<br />{t("Để bạn tập trung sáng tạo.", "More room for your ideas.")}</h2></div><p>{t("Bạn giữ quyền quyết định nội dung. Reviewlab kết nối các bước trong cùng một không gian.", "You stay in control of the content. Reviewlab brings each step into one workspace.")}</p></div>
-        <ol className="landing-steps">{steps.map(({ icon: Icon, title, text }, index) => <li key={title}><div className="step-top"><span className="step-icon"><Icon size={21} strokeWidth={1.5} aria-hidden="true" /></span><span className="step-number">0{index + 1}</span></div><h3>{title}</h3><p>{text}</p></li>)}</ol>
+        <div className="landing-section-heading"><div><h2 id="process-title">{t("Từ sản phẩm", "From your product")}<br /><span>{t("đến ý tưởng video.", "to a video idea.")}</span></h2></div><p>{t("Một quy trình để tìm thông tin, phát triển nội dung và thử cách thể hiện mới cho sản phẩm của bạn.", "One workflow to gather details, develop a story and explore a fresh perspective on your product.")}</p></div>
+        <ol className="landing-steps">{steps.map(({ icon: Icon, title, text }, index) => <li key={index}>
+          <div className={`step-visual step-visual-${index + 1}`} aria-hidden="true">
+            {index === 0 && <div className="step-link-preview"><span className="step-mini-product"><Image src="/images/creative-headphones.png" alt="" width={74} height={74} /></span><div className="step-link-field"><Link2 size={14} /><span>your-product.com</span><ArrowUpRight size={13} /></div></div>}
+            {index === 1 && <div className="step-details-preview"><div className="step-detail-heading"><FileCheck2 size={17} /><span>{t("Thông tin sản phẩm", "Product details")}</span></div>{[0, 1, 2].map(line => <div className="step-detail-line" key={line}><span /><Check size={12} /></div>)}</div>}
+            {index === 2 && <div className="step-video-preview"><div className="step-video-frame"><Image src="/images/creative-headphones.png" alt="" width={82} height={82} /><span><Play size={13} fill="currentColor" /></span></div><div className="step-video-timeline">{[16, 26, 12, 32, 20, 14, 28, 18, 24, 12, 22, 16].map((height, bar) => <i key={bar} style={{ height }} />)}</div></div>}
+          </div>
+          <div className="step-top"><span className="step-icon"><Icon size={17} strokeWidth={1.6} aria-hidden="true" /></span><span className="step-number">0{index + 1}</span></div><h3>{title}</h3><p>{text}</p>
+        </li>)}</ol>
       </section>
-      <section id="tinh-nang" className="landing-features public-container" aria-labelledby="features-title">
+
+      <section id="about" className="landing-features public-container" aria-labelledby="features-title">
+        <span id="tinh-nang" className="section-anchor" aria-hidden="true" />
+        <div className="landing-feature-copy"><h2 id="features-title">{t("Ý tưởng của bạn.", "Your imagination.")}<br /><span>{t("AI giúp thể hiện.", "A new way to create.")}</span></h2><p>{t("Reviewlab kết nối thông tin sản phẩm, ý tưởng và những lựa chọn video trong một không gian. Bạn chọn điều cần kể, AI hỗ trợ cách thể hiện.", "Reviewlab brings product details, ideas and video choices into one space. You choose the story; AI helps you explore how to tell it.")}</p><div className="feature-notes"><span><Check size={15} aria-hidden="true" />{t("Nội dung từ thông tin đã kiểm tra", "Content grounded in reviewed details")}</span><span><Check size={15} aria-hidden="true" />{t("Phong cách và khung hình do bạn chọn", "Your choice of style and format")}</span><span><Check size={15} aria-hidden="true" />{t("Ý tưởng và kết quả nằm trong từng dự án", "Ideas and results organized by project")}</span></div><Link className="feature-link" href="/signup">{t("Mở không gian sáng tạo", "Open your creative space")}<ArrowUpRight size={16} aria-hidden="true" /></Link></div>
         <div className="landing-source-preview">
-          <div className="source-sheet"><div className="source-sheet-heading"><span><FileCheck2 size={16} aria-hidden="true" />{t("Thông tin sản phẩm", "Product information")}</span><span className="source-demo-label">{t("Dữ liệu mẫu", "Sample data")}</span></div><div className="source-product-row"><div className="source-product-icon" aria-hidden="true"><div /></div><div><strong>Daily Bottle</strong><span>{t("Bình giữ nhiệt · Sản phẩm minh họa", "Insulated bottle · Sample product")}</span></div></div><dl><div><dt>{t("Mô tả", "Description")}</dt><dd>{t("Nhỏ gọn, đồng hành mỗi ngày.", "A compact everyday companion.")}</dd></div><div><dt>{t("Nguồn", "Source")}</dt><dd><Link2 size={12} aria-hidden="true" />example.com/daily-bottle</dd></div></dl><div className="source-confirmation"><Check size={14} aria-hidden="true" />{t("Bạn kiểm tra trước khi xác nhận", "You review before confirming")}</div></div>
-          <p>{t("Thông tin rõ ràng. Câu chuyện có cơ sở.", "Clear information. A story with a foundation.")}</p>
+          <div className="source-preview-orbit" aria-hidden="true" />
+          <div className="source-sheet">
+            <div className="source-sheet-heading"><span>{t("Thông tin sản phẩm", "Product details")}</span><Check size={15} aria-label={t("Đã xác nhận", "Confirmed")} /></div>
+            <div className="source-product-row"><div className="source-product-photo"><Image src="/images/creative-headphones.png" alt="" width={72} height={72} /></div><div><strong>Studio Headphones</strong><span>{t("Tai nghe chụp tai", "Over-ear headphones")}</span></div></div>
+            <p className="source-description">{t("Một thiết kế. Nhiều góc nhìn để kể.", "One design. More than one way to tell its story.")}</p>
+            <div className="source-reference"><Link2 size={12} aria-hidden="true" /><span>example.com/studio-headphones</span></div>
+          </div>
+          <div className="source-video-card" aria-label={t("Minh họa ý tưởng video sản phẩm", "Product video idea illustration")}>
+            <div className="source-video-top"><span>REVIEWLAB</span><span>9:16</span></div>
+            <Image src="/images/creative-headphones.png" alt="" width={138} height={138} />
+            <div className="source-video-copy"><small>{t("MỘT GÓC NHÌN MỚI", "A FRESH PERSPECTIVE")}</small><strong>{t("Âm thanh.", "Sound.")}<br />{t("Theo cách bạn thích.", "Your way.")}</strong></div>
+            <span className="source-video-play" aria-hidden="true"><Play size={14} /></span>
+          </div>
+          <span className="source-preview-caption">{t("Một sản phẩm. Nhiều cách thể hiện.", "One product. New possibilities.")}</span>
         </div>
-        <div className="landing-feature-copy"><p className="landing-eyebrow">{t("SÁNG TẠO CÓ CHỦ ĐÍCH", "CREATE WITH INTENTION")}</p><h2 id="features-title">{t("Sản phẩm là điểm bắt đầu.", "The product comes first.")}<br /><span>{t("Góc nhìn là của bạn.", "The perspective is yours.")}</span></h2><ul>
-          <li><span>01</span><div><h3>{t("Hiểu sản phẩm trước khi kể", "Know the product before the story")}</h3><p>{t("Xem lại thông tin và nguồn tham khảo, chỉnh sửa những chi tiết cần thiết trước khi tạo nội dung.", "Check product details and references, and make your edits before creating content.")}</p></div></li>
-          <li><span>02</span><div><h3>{t("Một sản phẩm, nhiều cách thể hiện", "One product, different expressions")}</h3><p>{t("Khám phá ba preset và hai khung hình 9:16, 16:9 để chọn cách kể phù hợp.", "Explore three presets and 9:16 or 16:9 formats to find the right expression.")}</p></div></li>
-          <li><span>03</span><div><h3>{t("Giữ mọi thứ trong dự án", "Keep it together in a project")}</h3><p>{t("Sắp xếp thông tin, lựa chọn sáng tạo và kết quả video trong cùng không gian làm việc.", "Organize information, creative choices and video results in one workspace.")}</p></div></li>
-        </ul></div>
       </section>
+
       <section id="price" className="landing-pricing public-container" aria-labelledby="price-title">
-        <div className="landing-section-heading"><div><p className="landing-eyebrow">{t("BẢNG GIÁ · MINH HỌA", "PRICING · PREVIEW")}</p><h2 id="price-title">{t("Một không gian cho mỗi ý tưởng.", "Room for every idea.")}</h2></div><p>{t("Các gói và token dưới đây là dữ liệu mẫu. Giá chính thức và thanh toán chưa được triển khai.", "Plans and tokens below are sample data. Official pricing and payments are not available yet.")}</p></div>
-        <div className="landing-price-grid">{initialStudio.plans.map(plan => <article className={`landing-price-card${plan.id === "creator" ? " is-featured" : ""}`} key={plan.id}><div className="landing-price-heading"><h3>{plan.name}</h3><span>{t("Gói mẫu", "Sample plan")}</span></div><p className="landing-price-amount">{number(plan.price)}<span>VND</span></p><p>{number(plan.tokens)} {t("token mẫu", "sample tokens")}</p><Link className={plan.id === "creator" ? "primary-button" : "landing-price-link"} href="/signup">{t("Khám phá bản xem thử", "Explore the preview")}<ArrowUpRight size={15} aria-hidden="true" /></Link></article>)}</div>
+        <div className="landing-section-heading"><div><h2 id="price-title">{t("Một không gian.", "One creative space.")}<br /><span>{t("Cho từng nhịp sáng tạo.", "For every creative pace.")}</span></h2></div><p>{t("Các gói dưới đây là dữ liệu minh họa. Giá chính thức và thanh toán chưa được triển khai.", "These are sample plans. Official pricing and payments are not available yet.")}</p></div>
+        <PricingCards />
       </section>
-      <section id="about" className="landing-about public-container" aria-labelledby="about-title"><div><p className="landing-eyebrow">ABOUT REVIEWLAB</p><h2 id="about-title">{t("Hiểu sản phẩm.", "Know the product.")}<br /><span>{t("Kể theo cách của bạn.", "Tell it your way.")}</span></h2></div><div><p>{t("Reviewlab là không gian hỗ trợ sáng tạo video review từ thông tin sản phẩm. Chúng tôi kết nối bước nhập link, kiểm tra nguồn và xác nhận nội dung với các lựa chọn sáng tạo trong cùng một quy trình.", "Reviewlab helps you create review videos from product information. We bring product links, source review, content confirmation and creative choices into one workflow.")}</p><p>{t("Bạn giữ quyền kiểm tra và chỉnh sửa thông tin trước khi tạo. Bản xem thử hiện tại giúp khám phá trải nghiệm bằng dữ liệu mẫu.", "You stay in control of reviewing and editing information before creating. The current preview lets you explore the experience with sample data.")}</p><Link href="/#quy-trinh">{t("Tìm hiểu quy trình", "Explore the workflow")}<ArrowRight size={15} aria-hidden="true" /></Link></div></section>
-      <section className="landing-cta public-container" aria-labelledby="cta-title"><div><p className="landing-eyebrow">{t("CÂU CHUYỆN TIẾP THEO LÀ CỦA BẠN", "YOUR NEXT STORY STARTS HERE")}</p><h2 id="cta-title">{t("Bắt đầu với sản phẩm của bạn.", "Start with your product.")}</h2><p>{t("Trải nghiệm bản xem thử Reviewlab và khám phá luồng sáng tạo.", "Explore the Reviewlab preview and discover the creative workflow.")}</p></div><Link className="primary-button" href="/signup">{t("Tạo tài khoản xem thử", "Create a preview account")}<ArrowUpRight size={17} aria-hidden="true" /></Link></section>
-      <p className="landing-disclosure public-container">{t("Phiên bản hiện tại mô phỏng luồng xử lý và kết quả bằng dữ liệu mẫu. Tài khoản lưu trên trình duyệt; chức năng tạo video bằng AI đang được phát triển.", "This preview simulates processing and results with sample data. Accounts are stored in your browser; AI video generation is in development.")}</p>
+
+      <section className="landing-cta public-container" aria-labelledby="cta-title"><div><h2 id="cta-title">{t("Đưa sản phẩm", "Bring your product")}<br /><span>{t("lên khung hình.", "into the picture.")}</span></h2><p>{t("Bắt đầu câu chuyện đầu tiên cùng Reviewlab.", "Start your first story with Reviewlab.")}</p></div><div className="cta-actions"><Link className="primary-button" href="/signup">{t("Bắt đầu sáng tạo", "Start creating")}<ArrowUpRight size={17} aria-hidden="true" /></Link><Link href="/login">{t("Đã có tài khoản? Đăng nhập", "Already a member? Sign in")}<ArrowRight size={14} aria-hidden="true" /></Link></div></section>
     </main>
   </PublicLayout>;
 }

@@ -13,8 +13,8 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/chat-st
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(base + '/login');
-    await page.getByLabel('Email', { exact: true }).fill('admin@reviewlab.demo');
-    await page.getByLabel('Mật khẩu', { exact: true }).fill('Reviewlab123');
+    await page.getByLabel('Tài khoản', { exact: true }).fill('admin');
+    await page.getByLabel('Mật khẩu', { exact: true }).fill('123456');
     await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await page.waitForURL('**/admin/users');
     await page.goto(base + '/creator/create');
@@ -84,6 +84,23 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/chat-st
     await page.getByRole('button', { name: 'Dark', exact: true }).click();
     await page.getByRole('button', { name: 'List', exact: true }).click();
     await page.getByRole('button', { name: 'Close', exact: true }).click();
+    // Native select menus must not pair a light OS popup with inherited light text.
+    const dropdownColors = await page.locator('.chat-composer select').evaluateAll(selects => selects.map(select => {
+      const style = getComputedStyle(select);
+      return { label: select.getAttribute('aria-label'), scheme: style.colorScheme, options: [...select.options].map(option => ({ background: getComputedStyle(option).backgroundColor, color: getComputedStyle(option).color })) };
+    }));
+    assert.equal(dropdownColors.length, 4);
+    for (const dropdown of dropdownColors) {
+      assert.equal(dropdown.scheme, 'dark', `${dropdown.label}: native popup follows dark mode`);
+      for (const option of dropdown.options) {
+        assert.notEqual(option.background, 'rgba(0, 0, 0, 0)', `${dropdown.label}: option has an explicit background`);
+        assert.notEqual(option.background, option.color, `${dropdown.label}: option text is visible`);
+      }
+    }
+    await page.getByRole('combobox', { name: 'Aspect ratio', exact: true }).click();
+    await page.mouse.move(1400, 850);
+    await page.screenshot({ path: path.join(output, 'creator-ratio-dropdown-dark.png') });
+    await page.keyboard.press('Escape');
     await page.locator('.video-view-list').first().waitFor();
     await page.getByRole('button', { name: 'Hide sidebar', exact: true }).click();
     await page.reload();
@@ -91,7 +108,43 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/chat-st
     await page.locator('.video-view-list').first().waitFor();
     await page.getByRole('button', { name: 'Show sidebar', exact: true }).click();
     await page.getByRole('searchbox', { name: 'Search projects and videos', exact: true }).fill('gamma');
-    await page.getByRole('region', { name: 'Search results', exact: true }).getByRole('button', { name: /^gamma\.app/ }).click();
+    const searchResult = page.getByRole('region', { name: 'Search results', exact: true }).getByRole('button', { name: /^gamma\.app/ });
+    await searchResult.waitFor();
+    const assertDarkSearch = async phase => {
+      const colors = await page.locator('.navigation-search').evaluate(search => {
+        const input = search.querySelector('input');
+        const row = search.querySelector('.navigation-search-results > button');
+        const fieldStyle = getComputedStyle(input);
+        const rowStyle = getComputedStyle(row);
+        // An inset shadow covers Chrome's native autofill background.
+        const fieldBackground = fieldStyle.boxShadow.includes('inset') ? fieldStyle.boxShadow.match(/rgba?\([^)]+\)/)?.[0] : fieldStyle.backgroundColor;
+        const brightness = color => {
+          const channels = color.match(/[\d.]+/g).slice(0, 3).map(Number);
+          return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2];
+        };
+        return { fieldBackground: brightness(fieldBackground), fieldText: brightness(fieldStyle.webkitTextFillColor), rowBackground: brightness(rowStyle.backgroundColor), rowText: brightness(getComputedStyle(row.querySelector('strong')).color) };
+      });
+      assert.ok(colors.fieldBackground < 80 && colors.rowBackground < 80, `Search retains dark backgrounds: ${phase}`);
+      assert.ok(colors.fieldText > 200 && colors.rowText > 200, `Search text stays visible: ${phase}`);
+    };
+    await searchResult.hover();
+    await assertDarkSearch('hover');
+    await page.mouse.move(1400, 850);
+    await assertDarkSearch('pointer outside');
+    const searchSession = await context.newCDPSession(page);
+    await searchSession.send('DOM.enable');
+    await searchSession.send('CSS.enable');
+    const { root: searchDocument } = await searchSession.send('DOM.getDocument');
+    const { nodeId: searchInputId } = await searchSession.send('DOM.querySelector', { nodeId: searchDocument.nodeId, selector: '.navigation-search input' });
+    await searchSession.send('CSS.forcePseudoState', { nodeId: searchInputId, forcedPseudoClasses: ['autofill'] });
+    await searchResult.hover();
+    await assertDarkSearch('Chrome autofill with pointer inside');
+    await page.mouse.move(1400, 850);
+    await assertDarkSearch('Chrome autofill with pointer outside');
+    await page.screenshot({ path: path.join(output, 'creator-search-dark-autofill.png') });
+    await searchSession.send('CSS.forcePseudoState', { nodeId: searchInputId, forcedPseudoClasses: [] });
+    await searchSession.detach();
+    await searchResult.click();
     assert.equal(page.url(), projectUrl);
     await page.screenshot({ path: path.join(output, 'creator-project-dark-en.png'), fullPage: true });
     await page.goto(base + '/admin/pkb');

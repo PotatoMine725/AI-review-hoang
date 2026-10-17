@@ -17,10 +17,10 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/auth-pr
     await page.waitForURL('**/login?**');
     assert.equal(await page.locator('.studio-sidebar').count(), 0);
     await page.screenshot({ path: path.join(output, 'login-desktop.png'), fullPage: true });
-    await page.getByLabel('Email', { exact: true }).fill('creator@reviewlab.demo');
+    await page.getByLabel('Tài khoản', { exact: true }).fill('creator');
     await page.getByLabel('Mật khẩu', { exact: true }).fill('WrongPassword');
     await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
-    await page.getByRole('alert').filter({ hasText: 'Email hoặc mật khẩu chưa đúng' }).waitFor();
+    await page.getByRole('alert').filter({ hasText: 'Tài khoản hoặc mật khẩu chưa đúng' }).waitFor();
 
     await page.getByRole('link', { name: 'Đăng ký', exact: true }).click();
     await page.getByLabel('Họ và tên', { exact: true }).fill('Nguyễn Minh');
@@ -86,10 +86,10 @@ const output = process.env.TEST_OUTPUT_DIR || path.resolve('test-results/auth-pr
     await page.getByLabel('Xác nhận mật khẩu', { exact: true }).fill('DemoPass123');
     await page.getByRole('button', { name: 'Tạo tài khoản', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Email này đã có tài khoản' }).waitFor();
-    await page.getByRole('link', { name: 'Đăng nhập', exact: true }).click();
+    await page.locator('.auth-switch').getByRole('link', { name: 'Đăng nhập', exact: true }).click();
     await page.getByRole('heading', { name: 'Chào mừng trở lại', exact: true }).waitFor();
-    await page.getByLabel('Email', { exact: true }).fill('creator@reviewlab.demo');
-    await page.getByLabel('Mật khẩu', { exact: true }).fill('Reviewlab123');
+    await page.getByLabel('Tài khoản', { exact: true }).fill('creator');
+    await page.getByLabel('Mật khẩu', { exact: true }).fill('123456');
     await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await page.waitForURL('**/creator/create');
     assert.equal(await page.getByLabel('Link sản phẩm (bắt buộc)', { exact: true }).inputValue(), '');

@@ -1,11 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { ACCOUNTS_KEY, SESSION_KEY, demoAccounts, normalizeEmail, passwordHash, publicAccount, readAccounts, validateRegistration, type Account } from "./model";
+import { ACCOUNTS_KEY, SESSION_KEY, demoAccounts, findLoginAccount, normalizeEmail, passwordHash, publicAccount, readAccounts, updateDemoAccounts, validateRegistration, type Account } from "./model";
 
 type Auth = {
   account: Account | null; ready: boolean; error: boolean;
-  signIn: (email: string, password: string) => Promise<Account>;
+  signIn: (identifier: string, password: string) => Promise<Account>;
   signUp: (name: string, email: string, password: string, confirmation: string) => Promise<Account>;
   signOut: () => void;
 };
@@ -24,13 +24,15 @@ export function MockAuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let alive = true;
+    const seeds = demoAccounts();
     async function restore() {
       try {
-        if (!localStorage.getItem(ACCOUNTS_KEY)) {
-          const seeds = await demoAccounts();
-          if (!alive) return;
-          if (!localStorage.getItem(ACCOUNTS_KEY)) localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(seeds));
-        }
+        const demo = await seeds;
+        if (!alive) return;
+        const raw = localStorage.getItem(ACCOUNTS_KEY);
+        const accounts = updateDemoAccounts(raw ? readAccounts(raw) : [], demo);
+        const next = JSON.stringify(accounts);
+        if (raw !== next) localStorage.setItem(ACCOUNTS_KEY, next);
         const id = localStorage.getItem(SESSION_KEY);
         const saved = savedAccounts().find(item => item.id === id);
         if (alive) { setAccount(saved ? publicAccount(saved) : null); setError(false); }
@@ -50,9 +52,9 @@ export function MockAuthProvider({ children }: { children: ReactNode }) {
     setAccount(next);
     return next;
   }
-  async function signIn(email: string, password: string) {
+  async function signIn(identifier: string, password: string) {
     if (!ready || error) throw new Error("storage");
-    const found = savedAccounts().find(item => item.email === normalizeEmail(email));
+    const found = findLoginAccount(savedAccounts(), identifier);
     if (!found || found.passwordHash !== await passwordHash(password, found.salt)) throw new Error("credentials");
     return startSession(publicAccount(found));
   }
