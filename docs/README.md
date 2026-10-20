@@ -28,10 +28,6 @@ FastAPI là API nghiệp vụ cho Product/PKB/job và các thao tác cần backe
 
 Template ADR nằm ở `adr/0000-template.md`.
 
-## Bản nháp đang review
-
-[Dữ liệu cho template FE](specs/web-template-data-mapping.md) — bản nháp cho FE #15 / BE #80, gồm mapping M2, JSON mẫu và bước làm bản thử. Đang chờ team review.
-
 ## Quy ước đặt tên
 
 - Cùng một việc dùng **chung slug** ở mọi thư mục: `specs/m1-product-intelligence.md` → `plan/m1-product-intelligence.md` → `report/m1-…` → `review/m1-…`.
