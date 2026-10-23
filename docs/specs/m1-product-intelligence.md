@@ -1,18 +1,20 @@
 # Module 1 — Product Intelligence: Đặc tả kỹ thuật
 
-Oct 5, 2026 · @Hoang Nguyen · **v0.3.3** (12/10/2026, issue #59, #61) · Lịch sử: xem cuối file
+Oct 5, 2026 · @Hoang Nguyen · **v0.4.0** (13/10/2026, issue #67) · Lịch sử: xem cuối file
 
 > **Nguồn chuẩn của data model:** ERD v1.3.3 ([`docs/specs/erd/`](erd/)). Đặc tả này chỉ nêu bảng và cột M1 dùng, không chép DBML. ERD đã gộp thay đổi của #23 (PR #49): `in_review`, 4 cột chi phí của `generation_jobs`; và PR #51 (decision-log #18, #19): cột review `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note`, quy tắc nullability của chi phí.
 
+> **P1 (v0.4.0, 13/10/2026):** M1 nhận thêm **link sản phẩm vật lý trên shop** (xem [Sản phẩm vật lý (P1)](#sản-phẩm-vật-lý-p1)). P1 bỏ merchant, campaign, creator, tracking, attribution, affiliate; **1 chủ sở hữu (owner) xác nhận PKB** ở bước 2 của workspace. Trong đặc tả này, "merchant" ở các mục chưa sửa nghĩa là owner. ERD v1.3.3, data dictionary và tên cột DB (`merchant_id`, `affiliate_url`, `reviewer_role = 'merchant'`) **chưa đổi** (PR này không sửa ERD / migration); phần BE cần làm nằm ở [Danh sách thay đổi cho BE](#danh-sách-thay-đổi-cho-be). PKB JSON dùng `owner` ngay từ contract v0.3.
+
 ## Tổng quan
 
-Module 1 nhận URL (và form tùy chọn) của merchant, trả về **Product Knowledge Base (PKB)** đã chuẩn hóa, mọi fact đều có nguồn và được người duyệt. PKB là đầu vào duy nhất cho Module 2 (Content Strategy), Module 3 (screenshot cho video) và Module 4 (fact-check).
+Module 1 nhận URL website / công cụ AI **hoặc link sản phẩm trên shop** (và form tùy chọn) của owner, trả về **Product Knowledge Base (PKB)** đã chuẩn hóa, mọi fact đều có nguồn và được người duyệt. PKB là đầu vào duy nhất cho Module 2 (Content Strategy), Module 3 (screenshot / ảnh sản phẩm cho video) và Module 4 (fact-check).
 
-**Trong phạm vi MVP:** crawl tối đa 30 trang public/product; trích xuất structured có trích nguồn; chụp screenshot desktop + mobile làm bằng chứng; merchant review và approve theo version (qa-log #1). Không có vector RAG trong MVP: M2, M4 dùng nguyên PKB approved (JSON) làm input (qa-log #5, ERD v1.3.1, #23).
+**Trong phạm vi MVP:** crawl tối đa 30 trang public/product; trích xuất structured có trích nguồn; chụp screenshot desktop + mobile làm bằng chứng; owner (trước P1 gọi là merchant) review và approve theo version (qa-log #1). Không có vector RAG trong MVP: M2, M4 dùng nguyên PKB approved (JSON) làm input (qa-log #5, ERD v1.3.1, #23). **Từ P1:** sản phẩm vật lý (`product_kind = physical`) crawl theo mode `shop_item` (1 trang sản phẩm + tối đa 4 trang cùng host), giá / biến thể / ảnh bóc bằng code từ dữ liệu có cấu trúc.
 
 **Ngôn ngữ MVP (qa-log #3, #8, issue #15):** tiếng Anh cho site nguồn, PKB và video. Crawl ưu tiên và giới hạn ở trang tiếng Anh; bỏ qua trang bản dịch (`/fr/…`, `/ja-jp/…`).
 
-**Ngoài phạm vi MVP:** tự đăng nhập để crawl sau login (nội dung sau login do merchant upload ảnh/PDF qua FR-10, qa-log #2), crawl sâu đối thủ (chỉ lưu tên + URL), re-crawl tự động theo lịch, đa ngôn ngữ (tiếng Việt và ngôn ngữ khác xét ở phase sau), Trend Engine.
+**Ngoài phạm vi MVP:** tự đăng nhập để crawl sau login (nội dung sau login do merchant upload ảnh/PDF qua FR-10, qa-log #2), crawl sâu đối thủ (chỉ lưu tên + URL), re-crawl tự động theo lịch, đa ngôn ngữ (tiếng Việt và ngôn ngữ khác xét ở phase sau), Trend Engine. **Ngoài phạm vi P1:** Shopee và TikTok Shop (chưa kiểm chứng, hoãn tới sau luồng P1 chính), crawl nhiều sản phẩm / cả cửa hàng, theo dõi giá theo thời gian, affiliate / tracking / campaign.
 
 ## Kiến trúc & luồng xử lý
 
@@ -27,29 +29,29 @@ Module 1 gồm 7 sub-module trong MVP, chạy tuần tự trong một job; 1.3 v
 | Sub-module | Trách nhiệm | Input → Output |
 | --- | --- | --- |
 | 1.1 Intake | Validate URL/form; `website_url` phải unique sau khi chuẩn hoá URL (ERD gate 2, không unique theo domain); tạo `products` + `generation_jobs` (`job_type = 'crawl'`), đẩy vào queue | Form → `product_id`, `job_id` |
-| 1.2 Discover & Crawl | Đọc `robots.txt` + `sitemap.xml`, chấm điểm link (pricing, features, docs, FAQ, changelog, compare), render JS, lưu markdown + `content_hash` (trang không đổi thì bỏ qua, NFR-04). Ghi vùng IP / locale lúc crawl (giá có thể theo vùng). Host phụ cùng domain gốc: xem FR-02. Quy tắc robots và WAF: xem [Quy tắc crawl](#quy-tắc-crawl) | URL → ≤ 30 trang markdown có `page_type` |
+| 1.2 Discover & Crawl | Đọc `robots.txt` + `sitemap.xml`, chấm điểm link (pricing, features, docs, FAQ, changelog, compare), render JS, lưu markdown + `content_hash` (trang không đổi thì bỏ qua, NFR-04). Ghi vùng IP / locale lúc crawl (giá có thể theo vùng). Host phụ cùng domain gốc: xem FR-02. Quy tắc robots và WAF: xem [Quy tắc crawl](#quy-tắc-crawl). **Sản phẩm vật lý:** mode `shop_item`, xem [Crawl mode `shop_item`](#crawl-mode-shop_item) | URL → ≤ 30 trang markdown có `page_type` (`shop_item`: ≤ 5 trang) |
 | 1.3 Asset Capture | Chụp full-page, viewport desktop 1440×900 và mobile 430×932 @3x, chụp theo element từng section tính năng; lấy logo (ưu tiên SVG, kèm wordmark), màu thương hiệu. Product tạo ảnh/video: lấy kết quả mẫu từ gallery/showcase công khai (`media_sample`, FR-13) | Trang → file ảnh trong Storage; metadata ở `product_knowledge.sources` (`image_paths`) |
-| 1.4 Structured Extraction | LLM trích xuất theo JSON schema; mỗi fact kèm `source_id` + đoạn trích ngắn. **Mode mặc định `batch`:** gom top-k trang theo điểm (spike: k = 10) vào 1 lời gọi. Trang pricing gửi raw markdown, trang khác gửi fit markdown. Giá theo [Quy tắc trích xuất giá](#quy-tắc-trích-xuất-giá) | Markdown → fact |
-| 1.5 Normalize & Merge | Gộp fact nhiều trang, khử trùng tính năng, chuẩn hóa giá (tiền tệ, chu kỳ) bằng code và ghi nguồn, áp thứ tự ưu tiên merchant > crawl > inferred, đánh dấu xung đột | Fact rời → PKB draft |
+| 1.4 Structured Extraction | LLM trích xuất theo JSON schema; mỗi fact kèm `source_id` + đoạn trích ngắn. **Mode mặc định `batch`:** gom top-k trang theo điểm (spike: k = 10) vào 1 lời gọi. Trang pricing gửi raw markdown, trang khác gửi fit markdown. Giá theo [Quy tắc trích xuất giá](#quy-tắc-trích-xuất-giá). **Sản phẩm vật lý:** giá, biến thể, ảnh, thông số bóc bằng code từ dữ liệu có cấu trúc, LLM chỉ làm lợi ích / use case / đối tượng / điểm khác biệt, xem [Trích xuất cho `physical`](#trích-xuất-cho-physical) | Markdown → fact |
+| 1.5 Normalize & Merge | Gộp fact nhiều trang, khử trùng tính năng, chuẩn hóa giá (tiền tệ, chu kỳ) bằng code và ghi nguồn, áp thứ tự ưu tiên owner > crawl > inferred (trước P1: merchant), đánh dấu xung đột | Fact rời → PKB draft |
 | 1.6 Enrichment | Suy ra audience, JTBD, use case, USP, đối thủ gợi ý; gắn nhãn `origin: inferred` | PKB draft → PKB draft đầy đủ |
 | 1.7 Validation & Review | Validate schema, tính `completeness`, hiện xung đột; merchant sửa và gửi duyệt (`draft → in_review`), **chỉ merchant sở hữu product approve** → version mới (qa-log #1). Admin chỉ reject bản `in_review` khi vi phạm chính sách, bắt buộc lý do; admin không sửa, không approve. Đây là bổ sung cho decision-log #11 (đã chốt ở #23). Reject: `review_note` bắt buộc; quy tắc 4 cột review xem FR-07 | PKB draft → PKB approved vN |
 | ~~1.8 Knowledge Indexing~~ | **Bỏ khỏi MVP** (FR-08 hạ xuống Later). Không có chunk, embedding, pgvector. M2, M4 dùng nguyên PKB approved (JSON). Nguồn: ERD v1.3.1, qa-log #5, #23 | — |
 
 ## Input
 
-Chỉ 2 trường bắt buộc: **Website URL** và **Affiliate link**. Mọi trường khác tùy chọn; nếu merchant nhập thì giá trị đó ghi đè kết quả crawl.
+**Từ P1 chỉ 1 trường bắt buộc: URL** (website / công cụ AI, hoặc link sản phẩm trên shop). Mọi trường khác tùy chọn; nếu owner nhập thì giá trị đó ghi đè kết quả crawl. Affiliate link không còn là input (deprecated). Trước P1 có 2 trường bắt buộc: Website URL và Affiliate link.
 
 | Trường | Bắt buộc | Nguồn nếu bỏ trống | Ghi chú |
 | --- | --- | --- | --- |
-| Website URL | Có | — | Host của URL giới hạn phạm vi crawl; host phụ cùng domain gốc theo FR-02 |
-| Affiliate link / program URL | Có | — | Module 6 dùng làm đích redirect |
+| URL (website hoặc link sản phẩm shop) | Có | — | Host của URL giới hạn phạm vi crawl; host phụ cùng domain gốc theo FR-02 (chỉ `software`). Loại sản phẩm: `classify_input_url`, owner sửa được ở bước 2 |
+| ~~Affiliate link / program URL~~ | ~~Có~~ **Deprecated (P1)** | — | ~~Module 6 dùng làm đích redirect~~. P1 bỏ affiliate / tracking. Không còn bắt buộc, không còn là input |
 | Product name, description | Không | Crawl (title, meta, hero) |  |
 | Pricing, free plan, trial, paid plans | Không | Crawl trang pricing | Sai giá là lỗi nghiêm trọng nhất |
 | Main features, use cases | Không | Crawl features/docs |  |
 | Target audience, USP | Không | 1.6 suy ra (inferred) | Cần merchant xác nhận |
 | Competitors | Không | 1.6 gợi ý | Chỉ lưu tên + URL |
 | Limitations | Không | Crawl FAQ/docs |  |
-| Commission | Không | — | Hiển thị cho creator |
+| ~~Commission~~ | **Deprecated (P1)** | — | ~~Hiển thị cho creator~~. P1 bỏ creator và affiliate |
 | Brand guidelines (logo, màu, tone) | Không | 1.3 trích từ trang |  |
 | Forbidden / approved claims | Không | — | Module 4 dùng để chặn nội dung |
 | Tài liệu upload (PDF, ảnh sau login) | Không | — | Thay cho crawl sau login. Merchant pilot sẽ cung cấp (qa-log #2) |
@@ -58,7 +60,7 @@ Nguồn cấu hình hệ thống: giới hạn 30 trang/job (tính cả trang ho
 
 ## Output
 
-Output chính là một PKB JSON; mỗi fact mang `source_id` (crawl) hoặc `origin: merchant`, fact `inferred` phải được duyệt trước khi Module 2 dùng. Hợp đồng đầy đủ: [`docs/specs/pkb/`](pkb/README.md) (schema máy đọc được ở đó, không chép lại ở đây).
+Output chính là một PKB JSON; mỗi fact mang `source_id` (crawl) hoặc `origin: owner` (trước P1: `merchant`, đã đổi tên), fact `inferred` phải được duyệt trước khi Module 2 dùng. Hợp đồng đầy đủ: [`docs/specs/pkb/`](pkb/README.md) (schema máy đọc được ở đó, không chép lại ở đây). **Contract hiện hành là PKB v0.3** (superset của v0.2: thêm `identity.product_kind`, `offers[]`, `variants[]`, `specs[]`, `media.images[]`; `affiliate` deprecated; `merchant` → `owner`).
 
 PKB nằm trong cột `product_knowledge.data`. `product_id`, `version`, `status`, `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note` là **cột của bảng**, không nằm trong JSON. JSON chỉ có `schema_version`. Danh sách trang nguồn nằm ở cột `product_knowledge.sources`.
 
@@ -66,8 +68,9 @@ Ví dụ rút gọn của `data`:
 
 ```json
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "identity": {
+    "product_kind": "software",
     "name": { "value": "Claude", "origin": "crawled", "source_id": "src_01", "evidence": "…" },
     "website": "https://claude.com"
   },
@@ -84,7 +87,9 @@ Ví dụ rút gọn của `data`:
 }
 ```
 
-Ví dụ 1 phần tử của `sources`: `{ "id": "src_01", "url": "…", "page_type": "features", "variant": "fit", "fetched_at": "…", "content_hash": "…", "region": "VN", "locale": "en-US", "markdown_path": "…", "image_paths": ["…"] }`. Đường dẫn là Supabase Storage (private).
+Ví dụ rút gọn trên là `software`. Ví dụ `physical` (có `offers[]`, `variants[]`, `media.images[]`) nằm trong README PKB và [`docs/specs/pkb/examples/`](pkb/examples/).
+
+Ví dụ 1 phần tử của `sources`: `{ "id": "src_01", "url": "…", "page_type": "features", "variant": "fit", "fetched_at": "…", "content_hash": "…", "region": "VN", "locale": "en-US", "markdown_path": "…", "image_paths": ["…"] }`. Từ v0.3 thêm `structured_path` tuỳ chọn (bản chụp JSON-LD / meta của trang). Đường dẫn là Supabase Storage (private).
 
 `identity.version` và `models[]` là fact như mọi fact khác (bắt buộc `source_id`): với product AI, phiên bản model (vd. "Seedance 2.5") là thông tin video hay dùng (`references/ref-videos-2026-10-06.md`).
 
@@ -111,6 +116,9 @@ Lỗi cấp **job**: job `failed`, `generation_jobs.error` là chuỗi bắt đ�
 | `login_redirect` | Trang chủ chuyển sang trang đăng nhập (hoặc trả 401) | không |
 | `home_unreachable` | DNS lỗi, kết nối lỗi, timeout hoặc 503 ở trang chủ, trình duyệt crawl lỗi | có |
 | `no_content` | Trang chủ render được nhưng dưới 200 ký tự, hoặc không lấy được trang chủ | không |
+| `no_product_data` | **Mới (P1, đề xuất).** Chỉ mode `shop_item`: trang sản phẩm render được nhưng không bóc được tên sản phẩm hoặc offer nào (không JSON-LD, microdata, `og:price`, JSON nhúng). Không tạo PKB; owner nhập tay hoặc upload (FR-10) | không |
+
+Trong mode `shop_item`, "trang chủ" ở các mã trên là **trang sản phẩm** của URL nhập (không tải trang chủ của shop).
 
 Lý do bỏ qua cấp **trang** (job vẫn chạy tiếp). Tên theo code; cột spike là tên trong `spikes/m1-crawl-extract/crawl.py`:
 
@@ -151,6 +159,142 @@ Output phụ và module sử dụng:
 | Markdown trang nguồn, file merchant upload | Supabase Storage; đường dẫn trong `product_knowledge.sources` (`markdown_path`) | Debug, M4 |
 | Báo cáo job (trạng thái, lỗi, chi phí token) | `generation_jobs` (`status`, `error`, `result_manifest`, cột chi phí) | Admin, tester |
 
+## Sản phẩm vật lý (P1)
+
+Nguồn: yêu cầu P1 của lead (v1.1, 13/10/2026), issue #67, khảo sát [`docs/report/p1-shop-url-survey.md`](../report/p1-shop-url-survey.md). Mục này **chỉ là đặc tả**; code extract cho `physical` trong `services/worker` làm ở PR sau.
+
+### Phạm vi và quyết định
+
+- Input là URL website / công cụ AI (như trước) **hoặc link sản phẩm trên shop**. Người dùng xác nhận thông tin sản phẩm ở bước 2 ("Xác nhận sản phẩm") trước khi cấu hình video. 1 chủ sở hữu xác nhận; không còn merchant, campaign, creator, tracking, affiliate.
+- **URL demo.** Website / công cụ AI = `https://elevenlabs.io` (đã chốt; lead đồng ý). Sản phẩm vật lý: **Lock&Lock Riga Tumbler 897ml là ứng viên, chưa chốt** (`https://www.locknlock.vn/vi-vn/binh-giu-nhiet-locknlock-riga-tumbler-phien-ban-viet-nam-897ml/B80015105.html`). Website bán hàng chính hãng **được tính là link shop** (không bắt buộc là sàn); điều kiện còn thiếu là **quyền sử dụng dữ liệu và asset**. Robots cho phép và HTTP 200 chỉ chứng minh truy cập được về kỹ thuật; [điều khoản của site](https://www.locknlock.vn/vi-vn/account-register) còn hạn chế khai thác dữ liệu và sao chép / lưu nội dung (BA, #67). Cần xác nhận quyền, hoặc thay bằng URL khác. Trong lúc chờ, đừng dùng URL này làm nguồn crawl hay ảnh; dữ liệu khảo sát chỉ là bằng chứng trong báo cáo.
+- **Ví dụ / fixture dùng chung là dữ liệu giả** (thương hiệu giả, `example.com`), gồm ca `out_of_stock`. Không cần tìm sản phẩm Tiki còn hàng. Nếu Lock&Lock được dùng: demo **một biến thể đã đối chiếu đủ** giá, thông tin, ảnh (xem quy tắc 4 và 5 ở mục Trích xuất).
+- **Shopee và TikTok Shop: chưa kiểm chứng, hoãn tới sau luồng P1 chính.** Không kết luận hỗ trợ hay bị chặn. Khi mở lại cần URL sản phẩm thật, điều kiện sử dụng phù hợp, vẫn tuân thủ robots / WAF (không vượt chặn).
+- Giữ nguyên [Quy tắc crawl](#quy-tắc-crawl): robots RFC 9309, `waf_challenge`, `login_redirect`, bị chặn thì dừng. Không stealth, không đổi User-Agent, không proxy, không gọi API nội bộ của sàn.
+- Số đo (7 trang sản phẩm, 1 mẫu mỗi nền tảng nên chỉ là xu hướng): robots cho phép và không WAF ở 7/7; JSON-LD `Product` 6/7; giá đọc được từ JSON-LD 5/7; giá có trong HTML tĩnh 7/7; GET tĩnh cho cùng dữ liệu cấu trúc như render JS 7/7; biến thể có trong JSON-LD 0/7; ảnh tải được 7/7.
+
+### Hợp đồng dữ liệu
+
+Contract là [PKB v0.3](pkb/README.md), không chép lại ở đây. Tóm tắt:
+
+| Mục | Quy tắc |
+|---|---|
+| `identity.product_kind` | `software` \| `physical`. Bắt buộc ở v0.3. PKB v0.2 = `software` |
+| `physical` | Bắt buộc `offers[]` (≥ 1). `pricing.plans` không bắt buộc. `variants[]`, `specs[]`, `media.images[]` tuỳ chọn |
+| `software` | Như v0.2: bắt buộc `pricing`; không có `offers` / `variants` / `specs` |
+| `offers[]` | `price_text`, `amount`, `currency` (ISO 4217 lấy từ trang, không mặc định VND, không quy đổi), `original_amount`, `availability`, `seller`, `platform`, `variant_ref` |
+| `variants[]` | `id`, `name`, `attributes[]`, `sku`, `selected`. **Không chứa giá**; giá ở `offers[]` liên kết bằng `variant_ref` |
+| `media.images[]` | `url`, `storage_path`, `alt`, `role` (`hero` \| `gallery`), `variant_ref`, `generic` |
+| Mục có nguồn | `origin` = `crawled` (bắt buộc `source_id` + `evidence`) hoặc `owner` |
+| Owner nhập / sửa | **Mọi** mục `origin: owner` bắt buộc `edited_by` (UUID) + `edited_at` (ISO 8601 UTC); cấm với `crawled`. Owner sửa `identity.name`, `description`, `category`, `brand_name`, `sku`, `gtin` ở bản nháp: giữ giá trị đã crawl ở `previous` (1 giá trị, luôn là giá trị crawl, không đổi khi sửa lại). `origin: owner` = chưa kiểm chứng, không có cờ `verified` |
+| Evidence của dữ liệu có cấu trúc | `evidence` = chuỗi giá trị gốc nguyên văn (vd. `"price":"520000"`), `source_id` = trang chứa chuỗi đó |
+| `affiliate`, `origin: merchant` | Deprecated; cấm trong dữ liệu 0.3. `merchant` → `owner` |
+
+### Phân loại input: `classify_input_url`
+
+Đề xuất heuristic (chưa code). Trả `product_kind` + `confidence`; không chắc thì mặc định `software` (hành vi cũ). Owner sửa được ở bước 2; sửa loại thì tạo job crawl mới.
+
+| Bước | Tín hiệu | Kết luận |
+|---|---|---|
+| 1. Chỉ dựa trên URL (chưa tốn request) | Host thuộc danh sách sàn đã biết (`tiki.vn`, `lazada.vn`, `shopee.vn`, `tiktok.com/shop`…), hoặc path khớp mẫu: `/products/<handle>` (Shopify, Haravan), `/product/`, `/san-pham/`, đuôi `-p<số>.html` (Tiki), `-i<số>.html` (Lazada) | `physical`, `confidence = medium` |
+| 2. Sau khi render trang đầu (đã có HTML) | JSON-LD có `Product` / `ProductGroup` kèm `Offer` / `AggregateOffer`; hoặc `og:type = product`; hoặc có `product:price:*` / `og:price:*` | `physical`, `confidence = high` |
+| 3. Loại trừ | JSON-LD `SoftwareApplication` / `WebApplication`, hoặc URL là gốc domain (`/`) mà không có Offer | `software` |
+| 4. Không khớp | | `software`, `confidence = low`, hỏi owner ở bước 2 |
+
+Rủi ro: trang pricing của SaaS đôi khi có JSON-LD `Product`; bước 3 và việc owner sửa ở bước 2 xử lý. Tham số `product_kind` ở API cho phép ép loại ngay từ đầu.
+
+### Crawl mode `shop_item`
+
+Dùng khi `product_kind = physical`. Khác mode mặc định (`site`, ≤ 30 trang):
+
+| Mục | `shop_item` (đề xuất) |
+|---|---|
+| Điểm bắt đầu | Chính URL sản phẩm đã chuẩn hoá (`normalize_product_url`). Không tải trang chủ, không đọc sitemap |
+| Trang cùng host | Tối đa **4** trang, chọn từ link nội bộ của trang sản phẩm theo từ khoá path: chính sách đổi trả / vận chuyển / bảo hành (`policies`, `chinh-sach`, `doi-tra`, `van-chuyen`, `bao-hanh`), thông số / hướng dẫn size (`thong-so`, `size`), `faq`. `page_type`: `policy`, `specs`, `faq` |
+| Tổng trang | **≤ 5** (1 sản phẩm + ≤ 4). Không host phụ |
+| Request | `robots.txt` của host, 5 trang tối đa, ≥ 1 giây giữa 2 request cùng host. Ảnh tải sau, mỗi ảnh kiểm robots của host ảnh |
+| HTML | Dùng HTML của **chính lần render** Crawl4AI (`FetchResult.html`, không thêm request). Khảo sát: GET tĩnh cho cùng dữ liệu cấu trúc như render ở 7/7 trang, nên render chỉ là phương án an toàn cho trang cần JS |
+| Lưu | Markdown như cũ; thêm `structured.json` mỗi trang (JSON-LD, meta `og:*` / `product:*`, microdata Product, JSON nhúng của nền tảng đã lọc) → `sources[].structured_path`. **Không lưu HTML thô** |
+| Bị chặn / lỗi | Giữ nguyên quy tắc 1–5. Thêm mã `no_product_data` khi không bóc được tên hoặc offer nào |
+| Chi phí | 1 lời gọi LLM nhỏ (lợi ích / use case / đối tượng / điểm khác biệt). Chưa đo; ước tính thấp hơn `site` vì ≤ 5 trang. Đo khi worker có |
+
+Giới hạn là đề xuất, chỉnh theo số đo thật khi làm worker.
+
+### Trích xuất cho `physical`
+
+**Nguyên tắc: dữ liệu có cấu trúc trước, bằng code, không LLM.** LLM (`gemini-3.5-flash-lite`, giữ ADR-0002) chỉ dùng cho phần cần đọc hiểu và vẫn bắt buộc evidence.
+
+| Trường | Thứ tự nguồn (dừng khi có) | Ai làm |
+|---|---|---|
+| `identity.name` | JSON-LD `name` → `og:title` (bỏ hậu tố sàn như "\| Lazada Việt Nam") → `<h1>` | code |
+| `identity.brand_name`, `sku`, `gtin` | JSON-LD `brand.name`, `sku` / `mpn`, `gtin*` → microdata → JSON nhúng (`vendor`) | code |
+| `offers[]` | JSON-LD `Offer` / `AggregateOffer` (kể cả `offers[].priceSpecification[].price`) → microdata → `product:price:*` / `og:price:*` → JSON nhúng của nền tảng (Haravan `meta`, Lazada `__moduleData__`) → DOM | code |
+| `variants[]` | JSON-LD `hasVariant` (hiếm) → JSON nhúng → DOM (swatch / `<select>`) | code |
+| `specs[]` | JSON-LD `additionalProperty`, `model` → microdata → bảng thông số trong DOM. Không có thì để trống | code |
+| `media.images[]` | JSON-LD `image` → gallery DOM (`img[itemprop=image]`) → microdata → `og:image` | code |
+| `features[]` (lợi ích), `use_cases[]`, `audiences[]`, `usp[]` (điểm khác biệt) | Markdown trang sản phẩm + trang chính sách / thông số | LLM |
+
+Quy tắc:
+
+1. **LLM không sinh hay sửa** `offers`, `variants`, `specs`, `media`, `sku`, `gtin`, `brand_name`, giá. Schema gửi cho LLM không có các trường đó.
+2. Mỗi mục LLM kèm `evidence` ≤ 200 ký tự trích nguyên văn markdown. Có câu trích trực tiếp: `origin: crawled`; suy ra: `inferred` (phải duyệt trước khi M2 dùng, FR-05).
+3. **Chuẩn hoá giá bằng code.** Định dạng đã gặp: `"520000"`, `26.25` (USD), `"690,000₫"`, `"7.800.000"`, `"210.000 ₫"`, `69000000.0` (Haravan, ×100).
+   - Bỏ ký hiệu tiền và khoảng trắng; với VND (không có phần thập phân) thì `.` và `,` là dấu nghìn; với USD thì `.` là dấu thập phân.
+   - `currency` lấy từ `priceCurrency` / `og:price:currency` / `product:price:currency`. Chỉ suy từ ký hiệu khi không nhập nhằng (`₫` → `VND`; `$` thì không). Thiếu `currency` thì `amount = null`, giữ chuỗi gốc ở `price_text`, owner nhập.
+   - ÷100 chỉ áp cho giá lấy từ JSON nhúng của Haravan (nhận dạng bằng `HaravanAnalytics` / `hstatic.net`) và ghi `extracted_via: embedded`. Ưu tiên `og:price` / JSON-LD nếu có.
+   - `AggregateOffer` có `lowPrice` ≠ `highPrice`: `amount = null`, khoảng giá ở `price_text`.
+   - Không quy đổi tiền tệ.
+4. **Biến thể, giá và ảnh gắn đúng `variant_ref`.** Giá JSON-LD chỉ của biến thể đang chọn (`selected`).
+   - Mỗi `offers[]` và mỗi `media.images[]` của sản phẩm nhiều biến thể phải mang `variant_ref` của đúng biến thể mà giá / ảnh đó thuộc về.
+   - **Không suy ra** giá hoặc ảnh cho biến thể chưa kiểm: không sao chép giá của biến thể này sang biến thể khác, không dùng ảnh của màu khác thay thế, không coi giá của biến thể đang chọn là giá chung. Biến thể chưa có giá thì **không có offer** cho nó; chưa có ảnh thì không có ảnh cho nó.
+   - Demo: chỉ cần một biến thể đã đối chiếu đủ giá, thông tin và ảnh. Biến thể còn lại bổ sung sau khi đối chiếu.
+5. **Ảnh:** lọc gallery theo mã sản phẩm / `variant_ref` (trên trang khảo sát, ảnh số 3 thuộc màu khác: không gắn vào biến thể đang chọn). `og:image` không chứa mã sản phẩm trong khi gallery có ảnh khác thì đánh `generic: true` (banner site), không tải và không dùng làm cảnh video. Tối đa 8 ảnh (đề xuất). 1 ảnh `hero`. Việc **được phép lưu và dùng** ảnh là điều kiện riêng, xem mục "Ảnh sản phẩm: quyền sử dụng".
+6. **Kiểm sau trích xuất (code):** chuỗi `evidence` của mục có cấu trúc phải tìm thấy nguyên văn trong `structured.json` hoặc HTML của trang `source_id`. Không thấy thì bỏ mục đó và ghi cảnh báo, không giữ giá trị không có bằng chứng.
+7. Làm sạch mô tả: `description` trong JSON-LD có thể là HTML kèm `iframe` (gặp ở trang khảo sát); bỏ thẻ trước khi đưa vào LLM.
+
+### Ảnh sản phẩm: quyền sử dụng
+
+Quy tắc của #52 (BA, #67), áp dụng cho ảnh sản phẩm **và screenshot** (kể cả screenshot trang public của website):
+
+- Ảnh và mô tả trên trang shop thuộc người bán hoặc thương hiệu. **Chỉ lưu và dùng ảnh / screenshot (M3, video) khi có quyền sử dụng.** Dùng nội bộ và ghi nguồn **không thay thế** điều kiện này.
+- Chưa có quyền thì **báo thiếu asset** (không tải, không đưa vào `assets`) và lấy nguồn được phép: ảnh do merchant / chủ sản phẩm cung cấp kèm xác nhận quyền (#53), asset có license, media kit hoặc press kit chính thức, hoặc xin đồng ý của chủ ảnh.
+- Cách ly kỹ thuật khi đã có quyền: lưu ở Storage private; giữ `media.images[].url` và `sources[].url` làm nguồn; không bật bucket công khai; chỉ tải ảnh khi robots của host ảnh cho phép. Đây là biện pháp phụ, không phải điều kiện thay quyền.
+- Trong lúc chờ xác nhận, fixture và spike dùng asset tự tạo hoặc dữ liệu giả có ghi rõ.
+- PKB chỉ lưu evidence ≤ 200 ký tự, không lưu nguyên văn mô tả dài của shop.
+
+### Danh sách thay đổi cho BE
+
+PR này **không sửa ERD, migration, API hay worker**. Mục dưới là việc BE tự làm ở PR riêng. Khi làm, theo quy tắc repo: đổi schema DB thì thêm migration, đổi API thì cập nhật `docs/specs/api-contract.md`, thay đổi ảnh hưởng web thì tạo issue bên `AI-review-FE`.
+
+| # | Hạng mục | Thay đổi đề xuất | Ghi chú |
+|---|---|---|---|
+| 1 | DB `products` | Thêm `product_kind` (`software` \| `physical`, mặc định `software`) làm bản sao để lọc / hiển thị; nguồn chuẩn vẫn là `product_knowledge.data.identity.product_kind` | Cần migration + cập nhật ERD / data dictionary |
+| 2 | DB `products.affiliate_url` | Bỏ NOT NULL (hoặc xoá). Dữ liệu cũ giữ | P1 bỏ affiliate |
+| 3 | DB `products.website_url` | Dùng cho cả link sản phẩm shop. Chuẩn hoá bằng `normalize_product_url`; tham số không phải theo dõi được giữ (vd. `?variant=`) nên 2 biến thể là 2 product | Quyết định có chấp nhận hay bỏ tham số biến thể |
+| 4 | DB: chủ sở hữu Product | **Không đổi tên cột / role trong PR này** (`merchant_id`, `reviewer_role`). **Yêu cầu:** Product thuộc về tài khoản đăng nhập thường, không bắt buộc đăng ký Merchant. Giữ `merchant_id` trỏ tới `merchants` và chỉ đổi tên hiển thị thành "owner" **không đáp ứng** yêu cầu này. BE đề xuất: (a) quan hệ sở hữu Product với tài khoản đăng nhập; (b) ánh xạ metadata review (`reviewer_role`, người sửa / thời điểm); (c) cách giữ tương thích dữ liệu cũ. BA–AI–FE cùng review trước khi cập nhật ERD / migration. Các bảng hồ sơ merchant hiện có giữ cho phạm vi cũ | Lead (#67). Việc của BE; ERD / migration làm ở PR riêng sau khi thống nhất |
+| 5 | DB `product_knowledge` | Không đổi cột. `data` chứa PKB `schema_version` `0.2` hoặc `0.3`. Có thể thêm chỉ mục trên `data->'identity'->>'product_kind'` | Code đọc phải kiểm `schema_version` |
+| 6 | DB `generation_jobs` | `input_snapshot` thêm `product_kind`, `crawl_mode` (`site` \| `shop_item`); `result_manifest` (job `completed`) thêm `product_kind`, `crawl_mode` | README PKB, mục `result_manifest` |
+| 7 | Storage | Bucket private cho ảnh sản phẩm và `structured.json`: `products/<product_id>/v<version>/…` | RLS như NFR-06 |
+| 8 | API `POST /products` | Body: `website_url` (URL hoặc link sản phẩm), bỏ `affiliate_url`, thêm `product_kind?` (ép loại). Response thêm `product_kind` | Cập nhật `api-contract.md` |
+| 9 | API `PATCH /products/{id}` | Cho owner đổi `product_kind` ở bước 2 → tạo job crawl mới | |
+| 10 | API `GET /products/{id}/knowledge` | Trả `schema_version`; PKB 0.2 đọc được, chuyển lên 0.3 khi mở sửa (`merchant` → `owner`, bỏ `affiliate`) | |
+| 11 | API `PATCH /products/{id}/knowledge` | Sửa theo trường cho `identity.*` (`name`, `description`, `category`, `brand_name`, `sku`, `gtin`), `offers[i].amount` / `currency`, thêm / xoá ảnh (upload → Storage), chọn biến thể. Mọi giá trị sửa ghi `origin: owner`. **Server** ghi `edited_by` (từ phiên đăng nhập) và `edited_at`, bỏ giá trị client gửi; lần sửa đầu của fact `crawled` đặt `previous` = giá trị crawl, các lần sau giữ nguyên `previous`. Chỉ sửa bản `draft` | README PKB, mục "Mục do owner nhập hoặc sửa" |
+| 11a | DB / API: lịch sử sửa | Lưu lịch sử sửa đầy đủ (ai, lúc nào, giá trị cũ → mới); PKB chỉ giữ `previous`. Bản `approved` không sửa trực tiếp: sửa thì tạo bản nháp / version mới | Cần migration nếu chưa có bảng lịch sử. BE đề xuất |
+| 11b | Dữ liệu v0.2 cũ | `origin: merchant` không có `edited_by` / `edited_at`. Khi chuyển lên 0.3 BE điền (đề xuất: user id chủ sản phẩm, thời điểm lưu bản v0.2) | **Chờ BE xác nhận** |
+| 12 | API `POST …/knowledge/approve` | Kiểm thêm điều kiện duyệt của `physical` (README PKB): ≥ 1 offer có `amount` + `currency`, ≥ 1 ảnh không `generic`, mọi `source_id` / `variant_ref` hợp lệ | |
+| 13 | API `GET /products/{id}/assets` | Thêm ảnh sản phẩm từ `media.images[].storage_path` | M3 dùng |
+| 14 | Worker | `classify_input_url`; mode `shop_item`; parser dữ liệu có cấu trúc (chỉ `json` + parser HTML đã có, không thêm thư viện); lưu `structured.json`; mã lỗi `no_product_data`; tải ảnh có kiểm robots; prompt extract cho `physical` | PR "T3 làm lại theo v0.3" |
+| 15 | Worker | Chuyển model Pydantic v0.3 từ `spikes/m1-crawl-extract/schema_v03.py` vào `services/worker` làm nguồn contract; giữ test sinh lại schema trùng file đã commit | |
+| 16 | FE (issue bên `AI-review-FE`) | Form 1 trường URL; bước 2 hiển thị / sửa `offers`, `variants`, ảnh và loại sản phẩm; bỏ ô affiliate / commission | |
+| 17 | QA | Golden Facts cho sản phẩm vật lý cạnh `docs/qa/T12*`, chỉ sau khi URL sản phẩm vật lý được xác nhận quyền sử dụng (ứng viên: Lock&Lock). Fixture dùng chung: dữ liệu giả ở `pkb/examples/`, gồm ca `out_of_stock` | |
+
+### Câu hỏi mở (P1)
+
+- Quyền dùng dữ liệu và asset của Lock&Lock: ai xác nhận, hoặc thay URL sản phẩm vật lý khác (AI–BA, trước mốc 18/10).
+- Dữ liệu v0.2 cũ có `origin: merchant`: BE điền `edited_by` / `edited_at` thế nào khi chuyển lên 0.3 (mục 11b ở bảng trên).
+- Ai được sửa, lịch sử sửa lưu ở đâu (mục 11a): phụ thuộc quan hệ sở hữu Product (mục 4); BE đề xuất, BA–AI–FE review.
+- Quan hệ sở hữu Product với tài khoản đăng nhập thường và cách giữ tương thích dữ liệu cũ (BE đề xuất, mục 4 ở bảng trên).
+- Shopee / TikTok Shop: hoãn tới sau luồng P1 chính; khi mở lại cần URL sản phẩm thật và điều kiện sử dụng phù hợp.
+
 ## Requirements
 
 Yêu cầu cốt lõi: không fact nào được vào PKB mà thiếu nguồn hoặc thiếu xác nhận của người duyệt.
@@ -159,7 +303,7 @@ Yêu cầu cốt lõi: không fact nào được vào PKB mà thiếu nguồn ho
 
 | ID | Yêu cầu | Ưu tiên |
 | --- | --- | --- |
-| FR-01 | Tạo product chỉ với Website URL + affiliate link | Must |
+| FR-01 | Tạo product chỉ với 1 URL (website / công cụ AI, hoặc link sản phẩm trên shop). ~~Website URL + affiliate link~~ (affiliate link deprecated từ P1) | Must |
 | FR-02 | Tự chọn trang quan trọng (pricing, features, docs, FAQ, changelog), tối đa 30 trang, tôn trọng `robots.txt` của từng host. Crawl được host phụ cùng domain gốc (vd. `support.claude.com` cho `claude.com`): tối đa 5 trang, chỉ `page_type` faq / pricing, tính vào giới hạn 30. Bật theo từng product, không tự bật: domain gốc có thể là sản phẩm khác (`dreamina.capcut.com` → `capcut.com`) | Must |
 | FR-03 | Render được trang SPA (JavaScript) | Must |
 | FR-04 | Trích xuất theo JSON schema; mỗi fact có `source_id` + evidence; giá theo [Quy tắc trích xuất giá](#quy-tắc-trích-xuất-giá) | Must |
@@ -172,6 +316,10 @@ Yêu cầu cốt lõi: không fact nào được vào PKB mà thiếu nguồn ho
 | FR-11 | Re-crawl thủ công + diff với version trước | Should |
 | FR-12 | Hiển thị tiến trình job theo bước (queued → crawling → extracting → review) | Should |
 | FR-13 | Product tạo ảnh/video: lấy kết quả mẫu từ gallery/showcase công khai làm bằng chứng (ảnh lưu Storage, metadata `kind: media_sample` trong `product_knowledge.sources`) | Could |
+| FR-14 | Phân loại input `software` \| `physical` bằng `classify_input_url`; owner sửa được ở bước 2 ([Phân loại input](#phân-loại-input-classify_input_url)) | Must (P1) |
+| FR-15 | Crawl mode `shop_item` cho `physical`: 1 trang sản phẩm + ≤ 4 trang cùng host, giữ quy tắc robots / WAF ([Crawl mode `shop_item`](#crawl-mode-shop_item)) | Must (P1) |
+| FR-16 | Trích `offers`, `variants`, `specs`, `media.images`, `brand_name`, `sku` bằng code từ dữ liệu có cấu trúc; evidence là chuỗi giá trị gốc ([Trích xuất cho `physical`](#trích-xuất-cho-physical)) | Must (P1) |
+| FR-17 | Owner nhập / sửa giá, ảnh, biến thể của `physical` ở bước 2 (`origin: owner`); không duyệt được khi chưa có offer có giá | Must (P1) |
 
 ### Non-functional
 
@@ -218,7 +366,7 @@ M1 dùng 3 bảng của ERD v1.3.3 ([`docs/specs/erd/`](erd/erd.dbml), [data dic
 
 | Bảng | Cột M1 dùng | Ghi chú |
 | --- | --- | --- |
-| `products` | `id`, `merchant_id`, `website_url`, `affiliate_url`, `name`, `merchant_input`, `current_knowledge_version`, `status` | `website_url` unique sau khi chuẩn hoá URL, không unique theo domain. Form merchant nhập nằm ở `merchant_input` |
+| `products` | `id`, `merchant_id`, `website_url`, ~~`affiliate_url`~~ (deprecated, P1), `name`, `merchant_input`, `current_knowledge_version`, `status` | `website_url` unique sau khi chuẩn hoá URL, không unique theo domain; từ P1 cũng chứa link sản phẩm shop. Form merchant (owner) nhập nằm ở `merchant_input`. Cột theo ERD v1.3.3, chưa đổi tên; thay đổi đề xuất: [Danh sách thay đổi cho BE](#danh-sách-thay-đổi-cho-be) |
 | `product_knowledge` | `product_id`, `version`, `status`, `data`, `sources`, `reviewed_by`, `reviewed_at`, `reviewer_role`, `review_note` | PK `(product_id, version)`. `data` = PKB JSON, `sources` = trang nguồn + đường dẫn Storage (theo [`docs/specs/pkb/`](pkb/README.md)). `status`: `draft \| in_review \| approved \| rejected` Lý do reject ở `review_note` (≤ 1000 ký tự). Quy tắc 4 cột review theo `status`: xem FR-07 |
 | `generation_jobs` | `id`, `product_id`, `job_type`, `status`, `idempotency_key`, `input_snapshot`, `result_manifest`, `error`, `attempts`, `finished_at` | M1 dùng `job_type = 'crawl'`. Cột chi phí `tokens_in`, `tokens_out`, `cost_usd` `numeric(12,6)`, `cost_breakdown` `jsonb DEFAULT '{}'`. `'{}'` = chưa ghi chi phí, khác chi phí = 0; worker ghi payload v1 đầy đủ khi job `completed` hoặc `failed`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default |
 
@@ -228,7 +376,7 @@ Các endpoint dưới đây là **PLANNED**, chưa phải API đã triển khai.
 
 | Method | Endpoint | Mô tả |
 | --- | --- | --- |
-| POST | `/products` | Body: website\_url, affiliate\_url, form? → product\_id, job\_id |
+| POST | `/products` | Body: website\_url (URL website hoặc link sản phẩm shop), ~~affiliate\_url~~ (deprecated), product\_kind?, form? → product\_id, job\_id, product\_kind |
 | GET | `/jobs/{id}` | Trạng thái, bước hiện tại, lỗi, chi phí |
 | POST | `/products/{id}/uploads` | Upload PDF/ảnh bổ sung |
 | POST | `/products/{id}/recrawl` | Tạo job mới, trả diff khi xong |
@@ -257,9 +405,11 @@ Kế hoạch:
 
 Acceptance criteria (tester kiểm):
 
-- [ ] Chỉ nhập URL + affiliate link → có PKB draft trong ≤ 5 phút cho ≥ 8/10 product golden set
+- [ ] Chỉ nhập URL (~~+ affiliate link~~, deprecated từ P1) → có PKB draft trong ≤ 5 phút cho ≥ 8/10 product golden set
+- [ ] (P1) URL sản phẩm vật lý đã được xác nhận quyền sử dụng → PKB `physical` hợp lệ schema v0.3 với `offers[0]` có `amount` + `currency` khớp con số in trên trang, `variant_ref` đúng biến thể đã đối chiếu; ≥ 1 ảnh không `generic` và được phép dùng; 0 lời gọi LLM cho giá, biến thể, ảnh
+- [ ] (P1) Trang không có giá chuẩn (kiểu Lazada) → offer `amount = null`, không duyệt được cho tới khi owner nhập giá
 - [ ] Giá và tên plan đúng ≥ 95% so với đáp án trước khi review
-- [ ] 0 fact thiếu `source_id` mà không phải `origin: merchant`
+- [ ] 0 fact thiếu `source_id` mà không phải `origin: owner` (trước P1: `merchant`)
 - [ ] Mỗi tính năng chính có ≥ 1 screenshot; có ảnh mobile 1290×2796 cho trang chủ và pricing
 - [ ] Approve tạo version mới; bản cũ vẫn đọc được qua `?version=`
 - [ ] Site chặn bằng WAF → job `failed`, `error` bắt đầu bằng `waf_challenge`, không retry
@@ -275,7 +425,7 @@ Câu hỏi đã trả lời (BA, issue #15):
 Câu hỏi còn mở:
 
 - ~~Phạm vi RAG của 1.8~~ → đã đóng: không có vector RAG trong MVP (qa-log #5, ERD v1.3.1, #23).
-- `pricing.default_view` đang trộn tab chu kỳ (Monthly / Yearly) với tab đối tượng (Individual / Team). Đề xuất tách ở contract PKB v0.3. Chưa đổi schema trong PR này.
+- `pricing.default_view` đang trộn tab chu kỳ (Monthly / Yearly) với tab đối tượng (Individual / Team). Đề xuất tách ở contract PKB v0.3 nhưng v0.3 (P1) chỉ thêm `physical`, chưa tách; vẫn mở cho phiên bản sau.
 - ~~`evidence_in_source` của Dreamina giảm (0.92 → 0.81)~~ → đã điều tra (PR #39): 4 fact lệch do LLM gán sai `source_id` (evidence nằm ở `src_01`, ghi `src_02`); `check_evidence` không lỗi. Đề xuất cho contract / pipeline sau: code tìm evidence trên mọi trang rồi tự sửa `source_id`.
 - Sản phẩm chính sprint 1 thay Gamma (bị WAF): M1 đề xuất ElevenLabs, chờ QA chốt (#38).
 - Vùng giá → qa-log #9. Golden Facts → qa-log #11. Cả hai giữ nguyên trạng thái.
@@ -293,3 +443,4 @@ Câu hỏi còn mở:
 | v0.3.1 | 08/10/2026 | @PotatoMine725 (issue #50) | Theo ERD v1.3.3 (PR #51, decision-log #18, #19): `approved_by` / `approved_at` đổi thành `reviewed_by` / `reviewed_at` (ghi cho cả approve và reject), thêm `reviewer_role`, `review_note` (lý do reject), quy tắc theo `status`. `tokens_in`, `tokens_out`, `cost_usd` nullable, không default; NFR-02 chỉ tính job có `cost_usd` khác null; cost của `content_scripts` không tính vào NFR-02. Bỏ các dòng "chờ #50" |
 | v0.3.2 | 12/10/2026 | @PotatoMine725 (issue #41, #42, #59) | Đưa crawl từ spike vào `services/worker`. Thêm mục "Mã lỗi crawl" (mã lỗi job + `retryable`, lý do bỏ qua trang, đối chiếu tên với spike). Quy tắc crawl: robots 401/403 coi như không có robots (RFC 9309, spike trước đây coi là cấm), trang không đổi vẫn nằm trong danh sách trang, thêm quy tắc 5 (bị chặn giữa chừng ở trang con: dừng host đó, `completed` + `partial` nếu đủ trang). Quy tắc chuẩn hoá `website_url`: `http` đổi `https`, giữ `www.` và path, bỏ tham số theo dõi, sắp query theo tên, IDN sang punycode |
 | v0.3.3 | 12/10/2026 | @VV6505 (issue #59, #61) | Đồng bộ ADR-001/002: Crawl4AI, `gemini-3.5-flash-lite`, `google-genai` qua adapter, hoãn embedding. FastAPI là API nghiệp vụ; API và worker chạy riêng, FE polling trạng thái qua API. Queue polling `generation_jobs` là đề xuất chờ ADR của BE. Ghi rõ endpoint M1 là PLANNED; không đổi schema, migration hoặc application code |
+| v0.4.0 | 13/10/2026 | @PotatoMine725 (issue #67) | Đổi scope theo P1: thêm sản phẩm vật lý từ link shop. Mục mới "Sản phẩm vật lý (P1)": phạm vi và URL demo (ElevenLabs chốt; Lock&Lock chỉ là ứng viên chờ xác nhận quyền dùng dữ liệu / asset), `classify_input_url`, crawl mode `shop_item`, quy tắc trích xuất `physical` (dữ liệu có cấu trúc bằng code, LLM chỉ cho lợi ích / use case / đối tượng / điểm khác biệt), quy tắc quyền sử dụng ảnh / screenshot (#52: chỉ lưu và dùng khi có quyền; dùng nội bộ và ghi nguồn không đủ), quy tắc biến thể (không suy giá / ảnh cho biến thể chưa kiểm), owner nhập / sửa `identity.*` (`edited_by`, `edited_at`, `previous`; 14/10/2026), danh sách thay đổi cho BE (chủ sở hữu Product là tài khoản đăng nhập thường, chưa đổi tên cột DB). Output dẫn PKB v0.3 (superset v0.2: `product_kind`, `offers`, `variants`, `specs`, `media.images`, `sources[].structured_path`). Deprecated: affiliate link và commission (Input, FR-01, `POST /products`, `products.affiliate_url`), `affiliate` trong PKB; `origin: merchant` đổi thành `owner`. Thêm mã lỗi `no_product_data` (đề xuất), FR-14 đến FR-17, 2 acceptance criteria P1. Shopee và TikTok Shop ghi là chưa kiểm chứng, hoãn tới sau luồng P1 chính (không kết luận hỗ trợ hay bị chặn). Không đổi ERD, migration, API hay application code |

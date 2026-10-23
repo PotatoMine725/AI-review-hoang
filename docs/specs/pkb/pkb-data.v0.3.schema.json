@@ -1,0 +1,3088 @@
+{
+  "$defs": {
+    "Affiliate": {
+      "description": "DEPRECATED (P1 bỏ affiliate). Chỉ để đọc dữ liệu v0.2, dữ liệu 0.3 không được có.",
+      "else": {
+        "properties": {
+          "edited_at": {
+            "type": "null"
+          },
+          "edited_by": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "owner"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "properties": {
+        "commission": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commission"
+        },
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner",
+            "inferred",
+            "merchant"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "origin"
+      ],
+      "then": {
+        "properties": {
+          "edited_at": {
+            "type": "string"
+          },
+          "edited_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "edited_by",
+          "edited_at"
+        ]
+      },
+      "title": "Affiliate",
+      "type": "object"
+    },
+    "Audience": {
+      "else": {
+        "properties": {
+          "edited_at": {
+            "type": "null"
+          },
+          "edited_by": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "owner"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "properties": {
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "jtbd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Jtbd"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner",
+            "inferred",
+            "merchant"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "segment": {
+          "title": "Segment",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "origin",
+        "segment"
+      ],
+      "then": {
+        "properties": {
+          "edited_at": {
+            "type": "string"
+          },
+          "edited_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "edited_by",
+          "edited_at"
+        ]
+      },
+      "title": "Audience",
+      "type": "object"
+    },
+    "BoolFact": {
+      "properties": {
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "value"
+      ],
+      "title": "BoolFact",
+      "type": "object"
+    },
+    "Brand": {
+      "else": {
+        "properties": {
+          "edited_at": {
+            "type": "null"
+          },
+          "edited_by": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "owner"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "properties": {
+        "colors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Colors",
+          "type": "array"
+        },
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "logo_asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Logo Asset Id"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner",
+            "inferred",
+            "merchant"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tone"
+        }
+      },
+      "required": [
+        "origin"
+      ],
+      "then": {
+        "properties": {
+          "edited_at": {
+            "type": "string"
+          },
+          "edited_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "edited_by",
+          "edited_at"
+        ]
+      },
+      "title": "Brand",
+      "type": "object"
+    },
+    "Competitor": {
+      "else": {
+        "properties": {
+          "edited_at": {
+            "type": "null"
+          },
+          "edited_by": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "owner"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "properties": {
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner",
+            "inferred",
+            "merchant"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "origin",
+        "name"
+      ],
+      "then": {
+        "properties": {
+          "edited_at": {
+            "type": "string"
+          },
+          "edited_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "edited_by",
+          "edited_at"
+        ]
+      },
+      "title": "Competitor",
+      "type": "object"
+    },
+    "Compliance": {
+      "else": {
+        "properties": {
+          "edited_at": {
+            "type": "null"
+          },
+          "edited_by": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "owner"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "properties": {
+        "approved_claims": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Approved Claims",
+          "type": "array"
+        },
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "forbidden_claims": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Forbidden Claims",
+          "type": "array"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner",
+            "inferred",
+            "merchant"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "origin"
+      ],
+      "then": {
+        "properties": {
+          "edited_at": {
+            "type": "string"
+          },
+          "edited_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "edited_by",
+          "edited_at"
+        ]
+      },
+      "title": "Compliance",
+      "type": "object"
+    },
+    "Conflict": {
+      "properties": {
+        "field": {
+          "description": "Đường dẫn trường, vd. 'pricing.plans[0].list_price'.",
+          "title": "Field",
+          "type": "string"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "values": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "field",
+        "values",
+        "source_ids"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "Feature": {
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Code điền (f1, f2…). LLM để null.",
+          "title": "Id"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "screenshot_ids": {
+          "description": "Code điền ở 1.3. LLM để rỗng.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Screenshot Ids",
+          "type": "array"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "name"
+      ],
+      "title": "Feature",
+      "type": "object"
+    },
+    "Identity": {
+      "properties": {
+        "brand_name": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentityFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thương hiệu (khác `company`), vd. 'Acme Demo'."
+        },
+        "category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentityFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Loại product, vd. 'AI assistant', 'Bình giữ nhiệt'."
+        },
+        "company": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "description": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentityFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gtin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentityFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GTIN / mã vạch (EAN, UPC) nếu trang ghi."
+        },
+        "models": {
+          "description": "Các model AI product đang cung cấp.",
+          "items": {
+            "$ref": "#/$defs/ModelVersion"
+          },
+          "title": "Models",
+          "type": "array"
+        },
+        "name": {
+          "$ref": "#/$defs/IdentityFact"
+        },
+        "product_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "software",
+                "physical"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "software | physical. Bắt buộc khi schema_version 0.3; v0.2 không có = software.",
+          "title": "Product Kind"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentityFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mã sản phẩm / model của sản phẩm vật lý."
+        },
+        "tagline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "version": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phiên bản product nếu trang ghi rõ."
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Code điền từ URL gốc. LLM để null.",
+          "title": "Website"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Identity",
+      "type": "object"
+    },
+    "IdentityFact": {
+      "allOf": [
+        {
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "crawled"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "evidence": {
+                    "type": "string"
+                  },
+                  "source_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_id",
+                  "evidence"
+                ]
+              }
+            },
+            {
+              "else": {
+                "properties": {
+                  "edited_at": {
+                    "type": "null"
+                  },
+                  "edited_by": {
+                    "type": "null"
+                  }
+                }
+              },
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "owner"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "edited_at": {
+                    "type": "string"
+                  },
+                  "edited_by": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "edited_by",
+                  "edited_at"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "else": {
+            "properties": {
+              "previous": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "owner"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          }
+        }
+      ],
+      "description": "Fact văn bản của `identity` mà owner được sửa ở bản nháp. Dữ liệu v0.2 (`TextFact`) đọc được như `crawled`.\n\n`origin: owner` nghĩa là chưa kiểm chứng (kể cả sku / gtin do owner nhập): không có cờ `verified`.",
+      "properties": {
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "extracted_via": {
+          "anyOf": [
+            {
+              "enum": [
+                "jsonld",
+                "microdata",
+                "og",
+                "embedded",
+                "dom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cách code lấy ra. Null nếu `owner`.",
+          "title": "Extracted Via"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "previous": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PreviousValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá trị đã crawl bị ghi đè. Chỉ khi origin owner và đã có giá trị crawl."
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "value"
+      ],
+      "title": "IdentityFact",
+      "type": "object"
+    },
+    "Image": {
+      "allOf": [
+        {
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "crawled"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "evidence": {
+                    "type": "string"
+                  },
+                  "source_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_id",
+                  "evidence"
+                ]
+              }
+            },
+            {
+              "else": {
+                "properties": {
+                  "edited_at": {
+                    "type": "null"
+                  },
+                  "edited_by": {
+                    "type": "null"
+                  }
+                }
+              },
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "owner"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "edited_at": {
+                    "type": "string"
+                  },
+                  "edited_by": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "edited_by",
+                  "edited_at"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "anyOf": [
+            {
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "properties": {
+                "storage_path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "storage_path"
+              ]
+            }
+          ]
+        }
+      ],
+      "description": "Ảnh sản phẩm. `source_id` là TRANG chứa URL ảnh, không phải host CDN.",
+      "properties": {
+        "alt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt"
+        },
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "extracted_via": {
+          "anyOf": [
+            {
+              "enum": [
+                "jsonld",
+                "microdata",
+                "og",
+                "embedded",
+                "dom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cách code lấy ra. Null nếu `owner`.",
+          "title": "Extracted Via"
+        },
+        "generic": {
+          "default": false,
+          "description": "Ảnh chung của site (banner `og:image`), không phải ảnh sản phẩm.",
+          "title": "Generic",
+          "type": "boolean"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "hero",
+            "gallery"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "storage_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Đường dẫn Storage (private) của ảnh đã tải.",
+          "title": "Storage Path"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL ảnh gốc. Chỉ để ghi nguồn; ảnh dùng cho video lấy từ Storage.",
+          "title": "Url"
+        },
+        "variant_ref": {
+          "anyOf": [
+            {
+              "pattern": "^v\\d{1,3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ảnh của biến thể nào. Null = chung cho cả sản phẩm.",
+          "title": "Variant Ref"
+        }
+      },
+      "required": [
+        "origin",
+        "role"
+      ],
+      "title": "Image",
+      "type": "object"
+    },
+    "IntFact": {
+      "properties": {
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "value"
+      ],
+      "title": "IntFact",
+      "type": "object"
+    },
+    "Limitation": {
+      "properties": {
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "text"
+      ],
+      "title": "Limitation",
+      "type": "object"
+    },
+    "Media": {
+      "properties": {
+        "images": {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "hero"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "items": {
+            "$ref": "#/$defs/Image"
+          },
+          "maxContains": 1,
+          "minContains": 0,
+          "title": "Images",
+          "type": "array"
+        }
+      },
+      "title": "Media",
+      "type": "object"
+    },
+    "ModelVersion": {
+      "properties": {
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "name": {
+          "description": "Tên model / phiên bản product, vd. 'Claude Opus 5.5', 'Seedance 2.0'.",
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "name"
+      ],
+      "title": "ModelVersion",
+      "type": "object"
+    },
+    "Offer": {
+      "allOf": [
+        {
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "crawled"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "evidence": {
+                    "type": "string"
+                  },
+                  "source_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_id",
+                  "evidence"
+                ]
+              }
+            },
+            {
+              "else": {
+                "properties": {
+                  "edited_at": {
+                    "type": "null"
+                  },
+                  "edited_by": {
+                    "type": "null"
+                  }
+                }
+              },
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "owner"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "edited_at": {
+                    "type": "string"
+                  },
+                  "edited_by": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "edited_by",
+                  "edited_at"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "amount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "amount"
+            ]
+          },
+          "then": {
+            "properties": {
+              "currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "currency"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "original_amount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "original_amount"
+            ]
+          },
+          "then": {
+            "properties": {
+              "currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "currency"
+            ]
+          }
+        }
+      ],
+      "description": "1 mức giá của sản phẩm. Giá số là con số in trên trang, không tự quy đổi tiền tệ.",
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá đã chuẩn hoá thành số. Null nếu trang không có giá hoặc chỉ có khoảng giá.",
+          "title": "Amount"
+        },
+        "availability": {
+          "default": "unknown",
+          "enum": [
+            "in_stock",
+            "out_of_stock",
+            "preorder",
+            "unknown"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 4217 lấy từ trang. Bắt buộc khi có amount.",
+          "title": "Currency"
+        },
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "extracted_via": {
+          "anyOf": [
+            {
+              "enum": [
+                "jsonld",
+                "microdata",
+                "og",
+                "embedded",
+                "dom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cách code lấy ra. Null nếu `owner`.",
+          "title": "Extracted Via"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "original_amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá gốc (trước giảm) nếu trang ghi.",
+          "title": "Original Amount"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nền tảng hoặc host, vd. 'shop.example.com', 'shopify'.",
+          "title": "Platform"
+        },
+        "price_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá nguyên văn, vd. '690,000₫'.",
+          "title": "Price Text"
+        },
+        "seller": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Người bán / shop, vd. tên shop.",
+          "title": "Seller"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "variant_ref": {
+          "anyOf": [
+            {
+              "pattern": "^v\\d{1,3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id của variants[] mà giá này áp dụng.",
+          "title": "Variant Ref"
+        }
+      },
+      "required": [
+        "origin"
+      ],
+      "title": "Offer",
+      "type": "object"
+    },
+    "Plan": {
+      "description": "1 dòng = 1 plan × 1 chu kỳ trả. Giá số là con số in trên trang, không tự tính.",
+      "if": {
+        "properties": {
+          "list_price": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "list_price"
+        ]
+      },
+      "properties": {
+        "audience": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Đối tượng, vd. 'individuals', 'teams'.",
+          "title": "Audience"
+        },
+        "billing_cycle": {
+          "anyOf": [
+            {
+              "enum": [
+                "monthly",
+                "quarterly",
+                "yearly",
+                "one_time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cách trả tiền. Bắt buộc khi có list_price.",
+          "title": "Billing Cycle"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tiền tệ in trên trang, mã ISO 4217, vd. USD, VND.",
+          "title": "Currency"
+        },
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "limits": {
+          "description": "Giới hạn của plan, nguyên văn từ trang.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Limits",
+          "type": "array"
+        },
+        "list_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá niêm yết (giá thường) in trên trang; 0 nếu Free; null nếu 'Contact sales'.",
+          "title": "List Price"
+        },
+        "name": {
+          "description": "Tên plan đúng như trên trang, vd. 'Pro'.",
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "price_text": {
+          "description": "Giá nguyên văn, vd. '$17/month billed annually'.",
+          "title": "Price Text",
+          "type": "string"
+        },
+        "price_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "month",
+                "year",
+                "seat_month",
+                "seat_year",
+                "one_time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá tính cho đơn vị nào. Bắt buộc khi có list_price.",
+          "title": "Price Unit"
+        },
+        "promo_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Giá khuyến mãi in trên trang; null nếu không có.",
+          "title": "Promo Price"
+        },
+        "promo_terms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Điều kiện của giá khuyến mãi, vd. 'tháng đầu'.",
+          "title": "Promo Terms"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "name",
+        "price_text"
+      ],
+      "then": {
+        "properties": {
+          "billing_cycle": {
+            "not": {
+              "type": "null"
+            }
+          },
+          "price_unit": {
+            "not": {
+              "type": "null"
+            }
+          }
+        },
+        "required": [
+          "price_unit",
+          "billing_cycle"
+        ]
+      },
+      "title": "Plan",
+      "type": "object"
+    },
+    "PreviousValue": {
+      "description": "Giá trị ĐÃ CRAWL bị owner ghi đè, giữ lại để đối chiếu. Luôn là giá trị crawl, không bao giờ là\ngiá trị owner nhập trước đó: owner sửa nhiều lần thì `previous` không đổi (lịch sử sửa do BE lưu).",
+      "properties": {
+        "evidence": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Trang nguồn của giá trị đã crawl.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "source_id",
+        "evidence"
+      ],
+      "title": "PreviousValue",
+      "type": "object"
+    },
+    "Pricing": {
+      "properties": {
+        "currency": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tiền tệ chính trên trang giá (ISO 4217)."
+        },
+        "default_view": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tab / chu kỳ trang giá hiển thị mặc định, vd. 'monthly'.",
+          "title": "Default View"
+        },
+        "free_plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoolFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Locale lúc crawl. Code điền. LLM để null.",
+          "title": "Locale"
+        },
+        "other_views": {
+          "description": "Các tab khác có trên trang giá mà nội dung chưa lấy được.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Other Views",
+          "type": "array"
+        },
+        "plans": {
+          "items": {
+            "$ref": "#/$defs/Plan"
+          },
+          "title": "Plans",
+          "type": "array"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vùng IP lúc crawl. Code điền. LLM để null.",
+          "title": "Region"
+        },
+        "trial_days": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IntFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "usage_prices": {
+          "items": {
+            "$ref": "#/$defs/UsagePrice"
+          },
+          "title": "Usage Prices",
+          "type": "array"
+        }
+      },
+      "title": "Pricing",
+      "type": "object"
+    },
+    "Quality": {
+      "properties": {
+        "completeness": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completeness"
+        },
+        "conflicts": {
+          "items": {
+            "$ref": "#/$defs/Conflict"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        }
+      },
+      "title": "Quality",
+      "type": "object"
+    },
+    "Spec": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "crawled"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "type": "string"
+              },
+              "source_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source_id",
+              "evidence"
+            ]
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "edited_at": {
+                "type": "null"
+              },
+              "edited_by": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "owner"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "edited_at": {
+                "type": "string"
+              },
+              "edited_by": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "edited_by",
+              "edited_at"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "extracted_via": {
+          "anyOf": [
+            {
+              "enum": [
+                "jsonld",
+                "microdata",
+                "og",
+                "embedded",
+                "dom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cách code lấy ra. Null nếu `owner`.",
+          "title": "Extracted Via"
+        },
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "key",
+        "value"
+      ],
+      "title": "Spec",
+      "type": "object"
+    },
+    "TextFact": {
+      "properties": {
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "value"
+      ],
+      "title": "TextFact",
+      "type": "object"
+    },
+    "UsagePrice": {
+      "description": "Giá theo đơn vị dùng (token, giây video, credit). Không phải plan đăng ký.",
+      "properties": {
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mã ISO 4217.",
+          "title": "Currency"
+        },
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "name": {
+          "description": "vd. 'API input'.",
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "price": {
+          "title": "Price",
+          "type": "number"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "unit": {
+          "description": "vd. '1M tokens', 'second of video'.",
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "name",
+        "unit",
+        "price"
+      ],
+      "title": "UsagePrice",
+      "type": "object"
+    },
+    "UseCase": {
+      "properties": {
+        "evidence": {
+          "description": "Câu trích NGUYÊN VĂN từ trang nguồn chứng minh fact, ≤ 200 ký tự.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "origin": {
+          "const": "crawled",
+          "description": "Luôn là \"crawled\".",
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Id trang nguồn, vd. src_02.",
+          "pattern": "^src_\\d{2}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "source_id",
+        "evidence",
+        "title"
+      ],
+      "title": "UseCase",
+      "type": "object"
+    },
+    "Usp": {
+      "else": {
+        "properties": {
+          "edited_at": {
+            "type": "null"
+          },
+          "edited_by": {
+            "type": "null"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "origin": {
+            "const": "owner"
+          }
+        },
+        "required": [
+          "origin"
+        ]
+      },
+      "properties": {
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner",
+            "inferred",
+            "merchant"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "text"
+      ],
+      "then": {
+        "properties": {
+          "edited_at": {
+            "type": "string"
+          },
+          "edited_by": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "edited_by",
+          "edited_at"
+        ]
+      },
+      "title": "Usp",
+      "type": "object"
+    },
+    "Variant": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "crawled"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "type": "string"
+              },
+              "source_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source_id",
+              "evidence"
+            ]
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "edited_at": {
+                "type": "null"
+              },
+              "edited_by": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "owner"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "edited_at": {
+                "type": "string"
+              },
+              "edited_by": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "edited_by",
+              "edited_at"
+            ]
+          }
+        }
+      ],
+      "description": "Biến thể. KHÔNG chứa giá: giá nằm ở `offers[]`, liên kết bằng `variant_ref`.",
+      "properties": {
+        "attributes": {
+          "items": {
+            "$ref": "#/$defs/VariantAttribute"
+          },
+          "title": "Attributes",
+          "type": "array"
+        },
+        "edited_at": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|\\+00:00)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thời điểm sửa, ISO 8601 UTC. Bắt buộc khi origin owner.",
+          "title": "Edited At"
+        },
+        "edited_by": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User id (UUID) của người sửa. Bắt buộc khi origin owner.",
+          "title": "Edited By"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence"
+        },
+        "extracted_via": {
+          "anyOf": [
+            {
+              "enum": [
+                "jsonld",
+                "microdata",
+                "og",
+                "embedded",
+                "dom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cách code lấy ra. Null nếu `owner`.",
+          "title": "Extracted Via"
+        },
+        "id": {
+          "description": "Code điền (v1, v2…). Duy nhất trong PKB.",
+          "pattern": "^v\\d{1,3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "crawled",
+            "owner"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "selected": {
+          "default": false,
+          "description": "Biến thể đang được chọn khi crawl. Tối đa 1.",
+          "title": "Selected",
+          "type": "boolean"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "pattern": "^src_\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "origin",
+        "id",
+        "name"
+      ],
+      "title": "Variant",
+      "type": "object"
+    },
+    "VariantAttribute": {
+      "properties": {
+        "key": {
+          "description": "vd. 'Màu', 'Size', 'Dung tích'.",
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "VariantAttribute",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "offers": {
+            "maxItems": 0
+          },
+          "pricing": {
+            "type": "object"
+          },
+          "specs": {
+            "maxItems": 0
+          },
+          "variants": {
+            "maxItems": 0
+          }
+        },
+        "required": [
+          "pricing"
+        ]
+      },
+      "if": {
+        "properties": {
+          "identity": {
+            "properties": {
+              "product_kind": {
+                "const": "physical"
+              }
+            },
+            "required": [
+              "product_kind"
+            ]
+          }
+        },
+        "required": [
+          "identity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "offers": {
+            "minItems": 1
+          }
+        },
+        "required": [
+          "offers"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "0.3"
+          }
+        },
+        "required": [
+          "schema_version"
+        ]
+      },
+      "then": {
+        "properties": {
+          "affiliate": {
+            "type": "null"
+          },
+          "audiences": {
+            "items": {
+              "properties": {
+                "origin": {
+                  "not": {
+                    "const": "merchant"
+                  }
+                }
+              }
+            }
+          },
+          "brand": {
+            "properties": {
+              "origin": {
+                "not": {
+                  "const": "merchant"
+                }
+              }
+            }
+          },
+          "competitors": {
+            "items": {
+              "properties": {
+                "origin": {
+                  "not": {
+                    "const": "merchant"
+                  }
+                }
+              }
+            }
+          },
+          "compliance": {
+            "properties": {
+              "origin": {
+                "not": {
+                  "const": "merchant"
+                }
+              }
+            }
+          },
+          "identity": {
+            "properties": {
+              "product_kind": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_kind"
+            ]
+          },
+          "usp": {
+            "items": {
+              "properties": {
+                "origin": {
+                  "not": {
+                    "const": "merchant"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "description": "PKB schema v0.3: product_knowledge.data.",
+  "properties": {
+    "affiliate": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Affiliate"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "deprecated": true,
+      "description": "DEPRECATED. Chỉ có trong dữ liệu v0.2."
+    },
+    "audiences": {
+      "items": {
+        "$ref": "#/$defs/Audience"
+      },
+      "title": "Audiences",
+      "type": "array"
+    },
+    "brand": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Brand"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "competitors": {
+      "items": {
+        "$ref": "#/$defs/Competitor"
+      },
+      "title": "Competitors",
+      "type": "array"
+    },
+    "compliance": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Compliance"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "features": {
+      "description": "Physical: lợi ích / điểm bán (LLM, có evidence).",
+      "items": {
+        "$ref": "#/$defs/Feature"
+      },
+      "title": "Features",
+      "type": "array"
+    },
+    "identity": {
+      "$ref": "#/$defs/Identity"
+    },
+    "limitations": {
+      "items": {
+        "$ref": "#/$defs/Limitation"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "media": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Media"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "offers": {
+      "description": "Chỉ physical. Cần ≥ 1.",
+      "items": {
+        "$ref": "#/$defs/Offer"
+      },
+      "title": "Offers",
+      "type": "array"
+    },
+    "pricing": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Pricing"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Bắt buộc khi software. Với physical thì không cần."
+    },
+    "quality": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Quality"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "description": "Version của contract. Bắt buộc: '0.3' (đọc được cả '0.2').",
+      "enum": [
+        "0.2",
+        "0.3"
+      ],
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "specs": {
+      "items": {
+        "$ref": "#/$defs/Spec"
+      },
+      "title": "Specs",
+      "type": "array"
+    },
+    "use_cases": {
+      "items": {
+        "$ref": "#/$defs/UseCase"
+      },
+      "title": "Use Cases",
+      "type": "array"
+    },
+    "usp": {
+      "items": {
+        "$ref": "#/$defs/Usp"
+      },
+      "title": "Usp",
+      "type": "array"
+    },
+    "variants": {
+      "contains": {
+        "properties": {
+          "selected": {
+            "const": true
+          }
+        },
+        "required": [
+          "selected"
+        ]
+      },
+      "items": {
+        "$ref": "#/$defs/Variant"
+      },
+      "maxContains": 1,
+      "minContains": 0,
+      "title": "Variants",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "identity"
+  ],
+  "title": "PKBData",
+  "type": "object"
+}
