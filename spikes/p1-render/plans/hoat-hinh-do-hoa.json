@@ -1,0 +1,85 @@
+{
+  "title": "Fixture Hoạt hình đồ họa",
+  "preset": "hoat-hinh-do-hoa",
+  "language": "vi",
+  "scenes": [
+    {
+      "role": "hook",
+      "kind": "text_card",
+      "caption": "Bạn còn mất cả buổi để làm một video review?",
+      "voice": "../assets/voice/s1.m4a",
+      "min_duration_s": 2.5
+    },
+    {
+      "role": "problem",
+      "kind": "image",
+      "asset": "../assets/img/problem-landscape.jpg",
+      "caption": "Chụp màn hình, viết lời, lồng tiếng, cắt ghép — việc nào cũng tốn thời gian.",
+      "voice": "../assets/voice/s2.m4a",
+      "source": "fixture: ảnh tự vẽ bằng ffmpeg (make_fixtures.py)"
+    },
+    {
+      "role": "demo",
+      "kind": "image",
+      "asset": "../assets/img/product-square.jpg",
+      "caption": "Dán link sản phẩm, AI dựng sẵn kịch bản và cảnh quay.",
+      "voice": "../assets/voice/s3.m4a",
+      "source": "fixture: ảnh sản phẩm tự vẽ, vuông 1:1 như ảnh FLUX"
+    },
+    {
+      "role": "demo",
+      "kind": "image",
+      "asset": "../assets/img/result-portrait.jpg",
+      "caption": "Chọn một trong ba phong cách dựng có sẵn.",
+      "voice": "../assets/voice/s4.m4a",
+      "source": "fixture: ảnh tự vẽ bằng ffmpeg"
+    },
+    {
+      "role": "demo",
+      "kind": "image",
+      "asset": "../assets/img/product-square.jpg",
+      "caption": "Xem trước video ở cả khổ dọc lẫn khổ ngang.",
+      "voice": "../assets/voice/s5.m4a",
+      "source": "fixture: ảnh sản phẩm tự vẽ, vuông 1:1 như ảnh FLUX"
+    },
+    {
+      "role": "result",
+      "kind": "image",
+      "asset": "../assets/img/result-portrait.jpg",
+      "caption": "Mỗi video chỉ mất vài phút thay vì cả buổi.",
+      "voice": "../assets/voice/s6.m4a",
+      "source": "fixture: ảnh tự vẽ bằng ffmpeg"
+    },
+    {
+      "role": "result",
+      "kind": "image",
+      "asset": "../assets/img/problem-landscape.jpg",
+      "caption": "Phụ đề tiếng Việt đủ dấu, dễ đọc trên điện thoại.",
+      "voice": "../assets/voice/s7.m4a",
+      "source": "fixture: ảnh tự vẽ bằng ffmpeg (make_fixtures.py)"
+    },
+    {
+      "role": "proof",
+      "kind": "image",
+      "asset": "../assets/img/product-square.jpg",
+      "caption": "Tải về định dạng MP4, sẵn sàng để đăng.",
+      "voice": "../assets/voice/s8.m4a",
+      "source": "fixture: ảnh sản phẩm tự vẽ, vuông 1:1 như ảnh FLUX"
+    },
+    {
+      "role": "result",
+      "kind": "image",
+      "asset": "../assets/img/result-portrait.jpg",
+      "caption": "Tiết kiệm 390.000đ — dùng thử miễn phí ngay hôm nay!",
+      "voice": "../assets/voice/s9.m4a",
+      "source": "fixture: ảnh tự vẽ bằng ffmpeg"
+    },
+    {
+      "role": "cta",
+      "kind": "text_card",
+      "caption": "Bấm vào link để nhận ưu đãi!",
+      "voice": "../assets/voice/s10.m4a",
+      "min_duration_s": 2.0
+    }
+  ]
+}
