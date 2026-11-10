@@ -52,6 +52,7 @@ export function LandingFooter() {
         <nav aria-label={t("Tài nguyên", "Resources")}>
           <h2>{t("Kết nối", "Connect")}</h2>
           <a href="https://github.com/PotatoMine725/AI-review-FE" target="_blank" rel="noopener noreferrer">GitHub<ArrowUpRight size={12} aria-hidden="true" /></a>
+          <a href="https://github.com/PotatoMine725/AI-review-BE/tree/dev/docs" target="_blank" rel="noopener noreferrer">{t("Tài liệu", "Documentation")}<ArrowUpRight size={12} aria-hidden="true" /></a>
           <a href="https://github.com/PotatoMine725/AI-review-FE/issues" target="_blank" rel="noopener noreferrer">{t("Gửi góp ý", "Share feedback")}<ArrowUpRight size={12} aria-hidden="true" /></a>
           <Link href="/credits">{t("Ghi công nguồn mở", "Open source credits")}</Link>
         </nav>
