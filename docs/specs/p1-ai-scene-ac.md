@@ -8,6 +8,7 @@
 - Bộ demo P1 có ít nhất **một video cho mỗi sản phẩm** kết hợp tư liệu sản phẩm thật có quyền sử dụng với ít nhất một cảnh minh họa AI. Zoom/pan ảnh sản phẩm có sẵn chỉ là hiệu ứng dựng, không được tính là cảnh AI.
 - Ba preset dùng tên: **hoạt hình đồ họa**, **điện ảnh tối giản**, **cổ điển**.
 - Không tự bật dịch vụ trả phí khi chưa được cấp ngân sách hoặc credit.
+- Mỗi video MP4 P1 hoàn chỉnh dài **40–45 giây**, thay mốc 15–25 giây trước đây. Đo trên MP4 cuối, gồm hook, nội dung, CTA, khoảng nghỉ và chuyển cảnh; không chỉ tính audio TTS. Ghi nhận tại [#67](https://github.com/PotatoMine725/AI-review-BE/issues/67), đồng bộ từ #80.
 
 ## Nội dung AC-P1-05 cập nhật cho P1 v1.2
 
@@ -19,4 +20,4 @@
 
 ## Mốc 18/10 và P1 nghiệm thu
 
-Spike 18/10 có thể dùng fixture được ghi rõ để chứng minh renderer, TTS và adapter. Báo cáo tách kết quả kỹ thuật khỏi kết quả trên sản phẩm thật; fixture không chứng minh AC-P1-05 đã đạt. Bộ demo P1 nghiệm thu vẫn theo phạm vi đã nêu ở #67: tối thiểu hai sản phẩm, mỗi sản phẩm ba video khác nội dung, tiếng Việt, dài 15–25 giây. AC-P1-05 quy định mức tối thiểu về cảnh AI **trên mỗi sản phẩm**, không yêu cầu cả ba video của sản phẩm đều có cảnh AI.
+Spike 18/10 có thể dùng fixture được ghi rõ để chứng minh renderer, TTS và adapter. Báo cáo tách kết quả kỹ thuật khỏi kết quả trên sản phẩm thật; fixture không chứng minh AC-P1-05 đã đạt. Bộ demo P1 nghiệm thu vẫn theo phạm vi đã nêu ở #67: tối thiểu hai sản phẩm, mỗi sản phẩm ba video khác nội dung, tiếng Việt, dài 40–45 giây. AC-P1-05 quy định mức tối thiểu về cảnh AI **trên mỗi sản phẩm**, không yêu cầu cả ba video của sản phẩm đều có cảnh AI.
