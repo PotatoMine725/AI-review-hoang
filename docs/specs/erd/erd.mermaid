@@ -1,6 +1,7 @@
 %% Nguồn: @tranquangthong03, 2026-10-07 (file gốc: erd_v0.mermaid). Bản vẽ của erd.dbml (v1.3.3). Chờ @VV6505 duyệt.
 %%
 %% Bổ sung cho issue #23 (xem erd.dbml và data-dictionary.md — 2 file đó giữ chi tiết đầy đủ):
+%%   v1.3.4 (P1 pilot, PR #100): thêm script_revisions (chuyển tiếp, thay content_scripts cho P1), generation_jobs.pkb_version/script_revision/render_profile/n8n_execution_id, products.affiliate_url nullable.
 %%   generation_jobs: tokens_in, tokens_out, cost_usd, cost_breakdown (contract cost_breakdown v1).
 %%     Worker chỉ ghi cost_breakdown; DB tự tính 3 cột còn lại. Aggregation/validation/write
 %%     restriction là PLANNED, chưa implement trong task này.
@@ -77,7 +78,10 @@ erDiagram
     %% ============================================
     %% SECTION 4 — CONTENT & VIDEO
     %% ============================================
-    content_scripts ||--o{ generation_jobs : "processed by N jobs"
+    script_revisions ||--o{ generation_jobs : "P1: video jobs use approved revision"
+    product_knowledge ||--o{ generation_jobs : "P1: jobs record pkb_version"
+    products ||--o{ script_revisions : "P1: has N script revisions"
+    product_knowledge ||--o{ script_revisions : "P1: revision built from approved PKB"
     content_scripts ||--o{ videos : "rendered into N videos"
 
     generation_jobs ||--|| videos : "produces 1 video"
@@ -156,7 +160,7 @@ erDiagram
         uuid id PK
         uuid merchant_id FK
         text website_url UK
-        text affiliate_url
+        text affiliate_url "NULL in P1 pilot (v1.3.4); http(s) URL when set"
         text name "nullable until activation"
         text description
         text category
@@ -234,13 +238,31 @@ erDiagram
         timestamptz created_at
     }
 
+    script_revisions {
+        uuid product_id PK,FK
+        int revision PK "allocated per product"
+        int knowledge_version FK "approved PKB only"
+        int parent_revision FK "NULL for first"
+        text status "draft|in_review|approved|rejected"
+        jsonb content "M2 script"
+        jsonb report "validator/critic/usage"
+        jsonb cost_breakdown "DEFAULT {}"
+        text idempotency_key "UK with product_id"
+        uuid reviewed_by FK
+        timestamptz reviewed_at
+        text review_note
+        timestamptz created_at
+    }
     generation_jobs {
         uuid id PK
         uuid product_id FK
-        uuid content_script_id FK "NULL for crawl"
+        int pkb_version FK "(product_id,pkb_version); required for video"
+        int script_revision FK "(product_id,script_revision); video only; replaces content_script_id in P1"
+        text render_profile "NULL = default; free text, optional"
+        text n8n_execution_id "trace only; not source of truth"
         text job_type "crawl|video"
         text status "queued|running|completed|failed"
-        text idempotency_key UK
+        text idempotency_key "UK with product_id (v1.3.4)"
         jsonb input_snapshot
         jsonb result_manifest
         text error

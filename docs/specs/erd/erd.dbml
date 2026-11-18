@@ -3,6 +3,11 @@
 // File này là nguồn chuẩn của ERD; erd.mermaid và data-dictionary.md diễn giải từ file này.
 // v1.3.3 (2026-10-08, Issue #23 follow-up, decision-log #18): PKB review metadata (review_note,
 // reviewer_role; rename approved_by/approved_at -> reviewed_by/reviewed_at); content_scripts cost columns.
+// v1.3.4-pilot (2026-11-17, #99, PR #100, decision-log #24; lead đồng ý 18/11): migration 20261117020000 triển khai
+// products, product_knowledge, generation_jobs và thêm script_revisions. Các bảng bên dưới đã cập nhật theo cấu trúc thực tế:
+// (1) script_revisions là giải pháp CHUYỂN TIẾP cho P1, thay content_scripts (cần campaigns) cho tới khi có campaigns;
+// (2) generation_jobs: thêm pkb_version, script_revision, render_profile, n8n_execution_id, bỏ content_script_id, idempotency_key
+//     duy nhất theo product; (3) products.affiliate_url nullable. Hợp đồng DB cho FastAPI/n8n: docs/specs/p1-pipeline-db-contract.md.
 
 Project ai_review_mvp_v1_3_3 {
   database_type: 'PostgreSQL'
@@ -83,7 +88,7 @@ Table products {
   id uuid [pk, default: `gen_random_uuid()`]
   merchant_id uuid [not null, ref: > merchants.id]
   website_url text [not null, unique]
-  affiliate_url text [not null, note: 'Validated redirect destination, not program information page.']
+  affiliate_url text [note: 'P1 pilot (v1.3.4): nullable. Khi có giá trị phải là URL http(s) hợp lệ (CHECK ^https?://); khi NULL luồng crawl/PKB/script/video vẫn chạy. ERD gốc: NOT NULL, validated redirect destination, not program information page.']
   name text [note: 'May be null during URL-only intake; required before activation.']
   description text
   category text
@@ -192,6 +197,7 @@ Table creator_campaigns {
 // ============================================================================
 
 // 08. Idea + hook + script in one table. Backend-only writes.
+// v1.3.4: CHƯA triển khai (cần campaigns). Trong P1, script_revisions (08b) đóng vai trò tạm; ánh xạ khi có campaigns ở docs/specs/p1-pipeline-db-contract.md mục 6.
 Table content_scripts {
   id uuid [pk, default: `gen_random_uuid()`]
   campaign_id uuid [not null]
@@ -217,31 +223,76 @@ COST SCOPE NOTE (Issue #23): the cost_breakdown and cost_usd columns on content_
 Ref: content_scripts.(campaign_id, product_id) > campaigns.(id, product_id)
 Ref: content_scripts.(product_id, knowledge_version) > product_knowledge.(product_id, version)
 
-// 09. Shared job status for crawl or video generation.
+// 08b. P1 pilot (v1.3.4): kịch bản M2 theo revision. GIẢI PHÁP CHUYỂN TIẾP, thay content_scripts cho P1 vì content_scripts cần campaigns.
+// Ánh xạ sang content_scripts khi có campaigns: docs/specs/p1-pipeline-db-contract.md mục 6.
+Table script_revisions {
+  product_id uuid [not null, ref: > products.id]
+  revision int [not null, check: `revision > 0`, note: 'Cấp tuần tự theo product bằng RPC create_script_revision (khoá dòng product).']
+  knowledge_version int [not null, note: 'PKB version nguồn; trigger chỉ cho tạo khi PKB đó status = approved.']
+  parent_revision int [note: 'Revision cha (sửa từ bản nào); phải nhỏ hơn revision.']
+  status text [not null, default: 'draft', check: `status IN ('draft','in_review','approved','rejected')`]
+  content jsonb [not null, note: 'Script M2 (p1-ac-03-script-vi.v1). Worker kiểm schema; DB chỉ kiểm là object.']
+  report jsonb [not null, default: `'{}'::jsonb`, note: 'Báo cáo phụ (validator, critic, usage) gắn revision; không nằm trong content.']
+  cost_breakdown jsonb [not null, default: `'{}'::jsonb`, note: 'cost_breakdown v1; {} = chưa ghi chi phí.']
+  idempotency_key text [not null, note: 'Duy nhất theo (product_id, idempotency_key).']
+  reviewed_by uuid [ref: > auth.users.id]
+  reviewed_at timestamptz
+  review_note text [note: 'Tối đa 1000 ký tự; bắt buộc khi rejected.']
+  created_at timestamptz [not null, default: `now()`]
+  indexes {
+    (product_id, revision) [pk]
+    (product_id, idempotency_key) [unique]
+  }
+  checks {
+    `parent_revision IS NULL OR parent_revision < revision`
+    `review consistency: draft/in_review -> reviewed_by, reviewed_at, review_note NULL; approved -> reviewed_by, reviewed_at NOT NULL; rejected -> thêm review_note không rỗng`
+  }
+  Note: 'IMPLEMENTED (migration 20261117020000). Chỉ sinh từ PKB approved. Bản approved bất biến; sửa tạo revision mới. Vòng đời draft -> in_review -> approved | rejected (draft -> rejected cũng được). Chỉ merchant sở hữu product duyệt (RPC review_script_revision). Ghi qua service_role; owner chỉ SELECT (RLS).'
+}
+Ref: script_revisions.(product_id, knowledge_version) > product_knowledge.(product_id, version)
+Ref: script_revisions.(product_id, parent_revision) > script_revisions.(product_id, revision)
+
+// 09. Shared job status for crawl or video generation. (v1.3.4: cấu trúc P1 đã triển khai.)
 Table generation_jobs {
   id uuid [pk, default: `gen_random_uuid()`]
   product_id uuid [not null, ref: > products.id]
-  content_script_id uuid [ref: > content_scripts.id]
   job_type text [not null, check: `job_type IN ('crawl','video')`]
   status text [not null, default: 'queued', check: `status IN ('queued','running','completed','failed')`]
-  idempotency_key text [not null, unique]
+  idempotency_key text [not null, note: 'v1.3.4: duy nhất theo (product_id, idempotency_key) (ERD gốc: unique toàn bảng). Retry cùng key trả job cũ (RPC create_generation_job).']
   input_snapshot jsonb [not null]
+  pkb_version int [note: 'PKB version: crawl điền khi tạo xong PKB; video bắt buộc.']
+  script_revision int [note: 'Script revision đã duyệt; video bắt buộc, crawl phải NULL. Thay content_script_id trong P1.']
+  render_profile text [note: 'Tuỳ chọn, text tự do 1-100 ký tự (vd. 16:9, 9:16, preset). NULL = mặc định. Cho phép nhiều video job cho cùng revision khác profile mà không đổi index. Cách chia job render chưa quyết.']
+  n8n_execution_id text [note: 'ID lần chạy workflow n8n, chỉ để liên kết/tra log. 1-100 ký tự. Không phải nguồn dữ liệu chuẩn.']
   result_manifest jsonb [note: 'PKB version or video IDs + Storage paths; NOT a second source of truth.']
-  error text
+  error text [note: 'Bắt buộc khi status = failed; tối đa 2000 ký tự.']
   attempts int [not null, default: 0, check: `attempts >= 0`]
   tokens_in int [note: 'Derived from cost_breakdown by the database; worker never writes it. Nullable: nullability is not stated by authoritative inputs — see the cost note below.']
   tokens_out int [note: 'Derived from cost_breakdown by the database; worker never writes it. Nullable: nullability is not stated by authoritative inputs — see the cost note below.']
   cost_usd numeric(12,6) [note: 'Derived from cost_breakdown by the database; worker never writes it. 6 decimals; no 4-decimal rounding. Nullable: nullability is not stated by authoritative inputs — see the cost note below.']
-  cost_breakdown jsonb [default: `'{}'::jsonb`, note: 'cost_breakdown v1 contract (docs/specs/contracts/). Worker writes only this column. Empty object means cost not yet recorded; it is NOT a valid v1 payload and does NOT mean the job cost is zero. Estimated items stay distinguishable via per-item cost_status.']
+  cost_breakdown jsonb [not null, default: `'{}'::jsonb`, note: 'cost_breakdown v1 contract (docs/specs/contracts/). Worker writes only this column. Empty object means cost not yet recorded; it is NOT a valid v1 payload and does NOT mean the job cost is zero. Estimated items stay distinguishable via per-item cost_status.']
   created_at timestamptz [not null, default: `now()`]
   finished_at timestamptz
-  checks {
-    `(job_type = 'crawl' AND content_script_id IS NULL) OR (job_type = 'video' AND content_script_id IS NOT NULL)`
+  indexes {
+    (product_id, idempotency_key) [unique]
+    (product_id, created_at)
+    status
+    n8n_execution_id
+    (product_id) [unique, note: 'partial: job_type = crawl AND status IN (queued, running): tối đa 1 crawl đang chạy mỗi product']
+    (product_id, script_revision, `coalesce(render_profile, '')`) [unique, note: 'partial: job_type = video AND status <> failed']
   }
-  Note: 'SQL REQUIRED: script belongs to product. Worker-only writes. Claim jobs atomically, bounded retry, idempotent output persistence. One job per generated output; deliberate rerun uses new key. Background queue is implementation concern.
+  checks {
+    `(job_type = 'crawl' AND script_revision IS NULL) OR (job_type = 'video' AND pkb_version IS NOT NULL AND script_revision IS NOT NULL)`
+    `status <> 'failed' OR error IS NOT NULL`
+    `(status IN ('completed','failed')) = (finished_at IS NOT NULL)`
+  }
+  Note: 'IMPLEMENTED ở tầng DB (migration 20261117020000): video chỉ tạo với script approved cùng pkb_version; job completed/failed bất biến; product_id, job_type, idempotency_key, input_snapshot, render_profile bất biến. Cost derivation vẫn PLANNED. SQL REQUIRED (gốc): script belongs to product. Worker-only writes. Claim jobs atomically, bounded retry, idempotent output persistence. One job per generated output; deliberate rerun uses new key. Background queue is implementation concern.
 COST / TOKEN (PLANNED — issue #23, contract cost_breakdown v1): worker writes cost_breakdown only; the database derives tokens_in, tokens_out and cost_usd from it. Aggregation, derivation, validation, write restrictions, budget limits and alerts are NOT implemented in this task (no trigger, generated column or RPC added). Retry calls are extra items and are included in the totals per the merged contract; failed jobs still retain cost already incurred; cost_usd is numeric(12,6) with no 4-decimal rounding. Cache behaviour, token accounting and cost_status follow cost_breakdown v1 exactly. Backend validation is additionally planned to check (a) call_id is unique within items and (b) tokens_in_cached <= tokens_in for each applicable item.
 COST NULLABILITY (resolved, Issue #23): the 3 total columns are nullable by design to distinguish three states: cost_breakdown = ''{}'' -> 3 columns NULL (cost not yet recorded); cost_breakdown = valid v1 payload with items[].cost_usd = 0 -> 3 columns = 0 (job genuinely cost $0, e.g. full cache hit); cost_breakdown = normal v1 payload -> 3 columns > 0. Assigning default 0 or NOT NULL would lose the distinction between "not yet measured" and "measured as zero", producing incorrect NFR-02 cost/product dashboards. No schema change in this task.'
 }
+
+Ref: generation_jobs.(product_id, pkb_version) > product_knowledge.(product_id, version)
+Ref: generation_jobs.(product_id, script_revision) > script_revisions.(product_id, revision)
 
 // 10. Video output + distribution text + manual QA.
 Table videos {

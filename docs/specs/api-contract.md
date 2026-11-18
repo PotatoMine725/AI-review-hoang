@@ -33,6 +33,30 @@ Response `200`:
 Các endpoint dự kiến của Module 1 (`POST /products`, `GET /jobs/{id}`, đọc/sửa/duyệt PKB, …) được mô tả trong
 [đặc tả M1](m1-product-intelligence.md) và có trạng thái PLANNED. Không có `/knowledge/search` trong MVP vì embedding/vector RAG đã hoãn. Khi triển khai, bổ sung request/response và quyền vào file này, sau đó chuyển trạng thái endpoint sang IMPLEMENTED kèm bằng chứng code/kiểm thử. OpenAPI hiện tại chỉ phản ánh endpoint đã có trong code, không phải toàn bộ inventory dự kiến.
 
+## P1 pilot (#99): lưu Product / PKB / script / job qua RPC (đề xuất)
+
+Migration `supabase/migrations/20261117020000_p1_pipeline_persistence.sql` (**IMPLEMENTED** ở tầng DB, có test `supabase/tests/`). Năm RPC chỉ cấp cho `service_role`; FastAPI xác minh JWT rồi truyền `p_actor`. Endpoint HTTP bên dưới là **PLANNED**, chưa có code; tên và hình dạng là đề xuất, cần FE/n8n xác nhận trước khi viết.
+
+| RPC (IMPLEMENTED) | Việc | Lỗi |
+|---|---|---|
+| `create_pkb_version(p_product_id, p_data, p_sources) → int` | Cấp PKB version kế tiếp, trạng thái `draft` | `foreign_key_violation` nếu không có product |
+| `review_pkb(p_product_id, p_version, p_actor, p_decision, p_note)` | `submit` / `approve` / `reject`; approve đặt `products.current_knowledge_version` | `insufficient_privilege` nếu actor không sở hữu product; `restrict_violation` nếu chuyển trạng thái sai |
+| `create_script_revision(p_product_id, p_knowledge_version, p_content, p_idempotency_key, p_parent_revision, p_report, p_cost_breakdown) → int` | Cấp revision kế tiếp; cùng `idempotency_key` trả lại revision cũ | `check_violation` nếu PKB chưa `approved` |
+| `review_script_revision(p_product_id, p_revision, p_actor, p_decision, p_note)` | như `review_pkb` | như trên |
+| `create_generation_job(p_product_id, p_job_type, p_idempotency_key, p_input_snapshot, p_pkb_version, p_script_revision, p_n8n_execution_id, p_render_profile) → uuid` | Tạo job; cùng `(product_id, idempotency_key)` trả job cũ | `check_violation` nếu video thiếu script `approved` |
+
+| Endpoint (PLANNED) | Việc | Quyền |
+|---|---|---|
+| `POST /products` | Tạo product từ URL; trả `product_id` | owner đăng nhập |
+| `POST /products/{id}/crawl` | Tạo job `crawl` (body: `idempotency_key`, `n8n_execution_id`); trả `job_id` | owner hoặc n8n (service) |
+| `GET /jobs/{job_id}` | `status`, `error`, `pkb_version`, `script_revision`, `n8n_execution_id`, `result_manifest` | owner |
+| `GET/PATCH /products/{id}/pkb/{version}`, `POST …/approve` | đọc, sửa, duyệt PKB đúng version | owner |
+| `POST /products/{id}/scripts` | Tạo script revision từ `knowledge_version` đã duyệt | n8n (service) |
+| `POST /products/{id}/scripts/{revision}/approve` | Duyệt đúng revision | owner |
+| `POST /products/{id}/videos` | Tạo job `video` với `pkb_version` + `script_revision` đã duyệt; trả `job_id` | n8n (service) |
+
+n8n chỉ gọi các endpoint service theo Job ID và ghi `n8n_execution_id`; không giữ dữ liệu chuẩn, không nhận secret từ FE. Hợp đồng DB đầy đủ (vòng đời, mã lỗi, idempotency, truy vết): [`p1-pipeline-db-contract.md`](p1-pipeline-db-contract.md). Dữ liệu pilot: [`p1-pilot-pdfcraft.md`](p1-pilot-pdfcraft.md) mục 6.
+
 ## Dữ liệu đọc/ghi trực tiếp qua Supabase
 
 **Scope note:** mục này giữ hợp đồng CRUD hồ sơ qua Supabase đã ghi ở #23. Kiến trúc FastAPI tại #59/#61 không đổi các migration, RLS hoặc column privileges hiện có.

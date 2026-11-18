@@ -768,6 +768,20 @@ Không bật paid ingest khi thiếu các cấu hình bắt buộc. URL unique �
 
 DBML hợp lệ về cú pháp không đồng nghĩa SQL migration đã đầy đủ hoặc race condition đã được kiểm thử. Các Note SQL REQUIRED là acceptance criteria của task backend.
 
+## 10a. Triển khai P1 pilot (#99, 17–18/11/2026) — lệch ERD v1.3.3
+
+Migration `supabase/migrations/20261117020000_p1_pipeline_persistence.sql` đã triển khai `products`, `product_knowledge`, `generation_jobs` theo mục 3, kèm các lệch sau. Lead đồng ý cho pilot P1 (PR #100, 18/11/2026; decision-log #24). Cấu trúc đầy đủ ở `erd.dbml`; hợp đồng DB cho FastAPI/n8n ở [`p1-pipeline-db-contract.md`](p1-pipeline-db-contract.md).
+
+| Bảng | Lệch so với mục 3 | Lý do |
+|---|---|---|
+| `script_revisions` (mới) | Khoá `(product_id, revision)`; FK `(product_id, knowledge_version)` → `product_knowledge` (chỉ PKB `approved`); `parent_revision` tự tham chiếu; `content` (script M2), `report`, `cost_breakdown`, `idempotency_key` (unique theo product), review metadata | **Giải pháp chuyển tiếp** cho P1, thay `content_scripts` vì `content_scripts` cần `campaigns` chưa có migration; chưa mặc định thay vĩnh viễn. Hướng ánh xạ khi có campaigns: hợp đồng DB mục 6. Bản `approved` bất biến |
+| `generation_jobs` | Thêm `pkb_version`, `script_revision` (FK composite tới PKB và `script_revisions`), `render_profile`, `n8n_execution_id`; bỏ `content_script_id`; `idempotency_key` unique theo `(product_id, idempotency_key)` thay vì toàn bảng; thêm chỉ mục chống chạy trùng | n8n gọi API theo Job ID; truy vết Product → PKB → script → n8n → job; retry không trùng mà product khác không xung đột key; `render_profile` để mở rộng 16:9/9:16 mà không đổi chỉ mục |
+| `products` | `affiliate_url` cho phép NULL (có giá trị thì phải là URL http(s)) | Pilot PDFCraft không có link affiliate; luồng P1 không cần trường này |
+
+`n8n_execution_id` chỉ để liên kết/tra log; Product, PKB, script revision và trạng thái job lưu chính thức ở database.
+
+Đã thực thi ở DB: vòng đời PKB/script một chiều và bất biến khi `approved`, `current_knowledge_version` chỉ trỏ PKB `approved`, job `completed`/`failed` bất biến, `failed` bắt buộc có `error`, video chỉ chạy với script `approved` cùng `pkb_version`. Chưa thực thi: derive `tokens_*`/`cost_usd` từ `cost_breakdown`, admin reject, queue claim, schema đầy đủ của `data`/`content` (worker kiểm).
+
 ## 11. Thứ tự triển khai gợi ý
 
 1. Kiểm tra/sửa UNIQUE Creator và bổ sung index hỗ trợ FK cho ba bảng profile hiện có.
