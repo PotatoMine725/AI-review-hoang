@@ -38,8 +38,13 @@ class ScriptGenerationError(Exception):
 
 
 class ScriptGenerator(Protocol):
-    async def __call__(self, m2_input: dict[str, Any]) -> GeneratedScript:
-        """`m2_input` theo `p1-ac-03-input.v1`. Lỗi thì raise `ScriptGenerationError`."""
+    async def __call__(
+        self, m2_input: dict[str, Any], qa_feedback: list[dict[str, Any]] | None = None
+    ) -> GeneratedScript:
+        """`m2_input` theo `p1-ac-03-input.v1`; `qa_feedback` là góp ý QA cho lượt sửa.
+
+        Lỗi thì raise `ScriptGenerationError`.
+        """
         ...
 
 
@@ -49,12 +54,14 @@ class GeminiScriptGenerator:
     (422); lỗi provider (429, 5xx, timeout) là 502 kèm `retryable`.
     """
 
-    async def __call__(self, m2_input: dict[str, Any]) -> GeneratedScript:
+    async def __call__(
+        self, m2_input: dict[str, Any], qa_feedback: list[dict[str, Any]] | None = None
+    ) -> GeneratedScript:
         try:
             llm = make_llm()
         except ValueError as e:  # cấu hình LLM sai: không retry
             raise ScriptGenerationError(f"cấu hình LLM không hợp lệ: {e}") from e
-        res = await generate_script(m2_input, llm)
+        res = await generate_script(m2_input, llm, qa_feedback=qa_feedback)
         if res.status == "completed" and res.data is not None:
             return GeneratedScript(
                 content=res.data,

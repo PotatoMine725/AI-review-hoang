@@ -15,8 +15,12 @@ def run() -> Any:
     return asyncio.run(GeminiScriptGenerator()({"x": 1}))
 
 
+seen: list[Any] = []
+
+
 def patch(monkeypatch: pytest.MonkeyPatch, result: ScriptResult) -> None:
-    async def fake(inp: dict[str, Any], llm: object) -> ScriptResult:
+    async def fake(inp: dict[str, Any], llm: object, *, qa_feedback: Any = None) -> ScriptResult:
+        seen.append(qa_feedback)
         return result
 
     monkeypatch.setattr(gen_mod, "make_llm", lambda: object())
@@ -90,3 +94,14 @@ def test_dependency_needs_key(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_dependency_fixture_provider_needs_no_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("LLM_PROVIDER", "fixture")
     assert isinstance(get_script_generator(Settings()), GeminiScriptGenerator)
+
+
+def test_qa_feedback_reaches_generate_script(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen.clear()
+    patch(
+        monkeypatch,
+        ScriptResult(status="completed", data={"scenes": []}, cost_breakdown={}),
+    )
+    qa = [{"message": "lỗi lời–hình", "scene_id": "s02"}]
+    asyncio.run(GeminiScriptGenerator()({"x": 1}, qa))
+    assert seen == [qa]

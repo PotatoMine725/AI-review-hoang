@@ -75,6 +75,15 @@ class ScriptCreate(Strict):
     cost_breakdown: dict[str, Any] = {}
 
 
+class QaFeedback(Strict):
+    """Một góp ý QA cụ thể cho lượt sửa (vd. lỗi lời–hình). Chỉ người/QA gửi, không tự sinh."""
+
+    message: str = Field(min_length=1, max_length=1000, pattern=r"\S")
+    scene_id: str | None = Field(default=None, max_length=50)
+    segment_id: str | None = Field(default=None, max_length=50)
+    path: str | None = Field(default=None, max_length=200)
+
+
 class ScriptGenerate(Strict):
     """Yêu cầu sinh script từ PKB đã duyệt. Tư liệu (`permitted_assets`) do BE/n8n truyền vào."""
 
@@ -86,6 +95,9 @@ class ScriptGenerate(Strict):
     permitted_assets: list[dict[str, Any]] = []
     # Tuỳ chọn: video_description, platform, intent, audience, approved/forbidden_claims, cta.
     content_context: dict[str, Any] | None = None
+    # Góp ý QA cho lượt sinh này (kèm `parent_revision` khi sửa từ revision trước). Có góp ý thì
+    # M2 dùng đúng một lượt sửa theo các góp ý đó.
+    qa_feedback: list[QaFeedback] = Field(default=[], max_length=20)
 
 
 class RevisionCreated(BaseModel):

@@ -266,7 +266,8 @@ async def generate_script(
     if body.content_context is not None:
         m2_input["content_context"] = body.content_context
     try:
-        script = await generator(m2_input)
+        qa = [f.model_dump(exclude_none=True) for f in body.qa_feedback]
+        script = await generator(m2_input, qa or None)
     except ScriptGenerationError as e:
         status = 422 if e.invalid else 502
         suffix = " (có thể thử lại)" if e.retryable else ""

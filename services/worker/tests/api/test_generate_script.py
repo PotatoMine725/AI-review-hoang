@@ -24,9 +24,13 @@ class FakeGenerator:
             content={"scenes": []}, report={"ok": True}, cost_breakdown={"items": []}
         )
         self.inputs: list[dict[str, Any]] = []
+        self.qa: list[list[dict[str, Any]] | None] = []
 
-    async def __call__(self, m2_input: dict[str, Any]) -> GeneratedScript:
+    async def __call__(
+        self, m2_input: dict[str, Any], qa_feedback: list[dict[str, Any]] | None = None
+    ) -> GeneratedScript:
         self.inputs.append(m2_input)
+        self.qa.append(qa_feedback)
         if isinstance(self.result, Exception):
             raise self.result
         return self.result
@@ -125,4 +129,29 @@ def test_requires_service_token(client: TestClient, gen: FakeGenerator) -> None:
 
 def test_rejects_unknown_fields(client: TestClient, gen: FakeGenerator) -> None:
     r = client.post(URL, json={**BODY, "approved_pkb": {}}, headers=SERVICE)
+    assert r.status_code == 422
+
+
+def test_qa_feedback_is_passed_to_generator(
+    client: TestClient, db: FakeDb, gen: FakeGenerator
+) -> None:
+    db.tables["product_knowledge"] = [PKB]
+    db.rpc_results["create_script_revision"] = 4
+    qa = [{"message": "Cảnh s03 nói Word nhưng hình là đánh số trang", "scene_id": "s03"}]
+    r = client.post(URL, json={**BODY, "parent_revision": 3, "qa_feedback": qa}, headers=SERVICE)
+    assert r.status_code == 201
+    assert gen.qa == [qa]
+    assert "qa_feedback" not in gen.inputs[0]  # không lẫn vào input M2
+
+
+def test_no_qa_feedback_passes_none(client: TestClient, db: FakeDb, gen: FakeGenerator) -> None:
+    db.tables["product_knowledge"] = [PKB]
+    db.rpc_results["create_script_revision"] = 1
+    client.post(URL, json=BODY, headers=SERVICE)
+    assert gen.qa == [None]
+
+
+@pytest.mark.parametrize("bad", [[{"message": ""}], [{"message": "x", "source": "qa"}], [{}]])
+def test_invalid_qa_feedback_is_422(client: TestClient, gen: FakeGenerator, bad: list) -> None:
+    r = client.post(URL, json={**BODY, "qa_feedback": bad}, headers=SERVICE)
     assert r.status_code == 422
