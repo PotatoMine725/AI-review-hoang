@@ -34,6 +34,8 @@ class PageRecord(BaseModel):
     raw_chars: int = 0
     fit_chars: int = 0
     unchanged: bool = False
+    title: str | None = None  # <title>, đã làm sạch như trong header markdown
+    site_name: str | None = None  # og:site_name
 
 
 class SkippedPage(BaseModel):

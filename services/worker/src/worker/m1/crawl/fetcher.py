@@ -25,6 +25,7 @@ class FetchResult:
     redirected_url: str | None = None
     html: str = ""
     title: str = ""
+    site_name: str = ""  # og:site_name
     raw_markdown: str = ""
     fit_markdown: str = ""
     internal_links: list[tuple[str, str]] = field(default_factory=list)  # (href, anchor text)
@@ -92,6 +93,7 @@ class Crawl4AIFetcher:
             redirected_url=getattr(result, "redirected_url", None),
             html=result.html or "",
             title=str((result.metadata or {}).get("title") or ""),
+            site_name=str((result.metadata or {}).get("og:site_name") or ""),
             raw_markdown=(markdown.raw_markdown if markdown else "") or "",
             fit_markdown=(markdown.fit_markdown if markdown else "") or "",
             internal_links=[(link.get("href", ""), link.get("text", "")) for link in links],

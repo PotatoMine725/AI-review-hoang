@@ -60,6 +60,15 @@ def test_crawl_thanh_cong_tra_du_truong_sources() -> None:
     assert fetcher.calls[0] == HOME  # trang chủ luôn crawl đầu tiên
 
 
+def test_luu_title_va_og_site_name_de_extract_tim_ten() -> None:
+    pages = site(["/pricing"], title="Acme | Home\n-->", site_name="Acme")
+    result, _, store, _ = run_crawl(ROOT, pages)
+    home = result.pages[0]
+    assert home.title == "Acme Home" and home.site_name == "Acme"  # đã làm sạch cho header
+    assert store.saved[HOME]["title"] == "Acme | Home\n-->"  # store tự làm sạch khi ghi
+    assert store.saved[HOME]["site_name"] == "Acme"
+
+
 def test_khoang_cach_request_cung_host_it_nhat_1_giay() -> None:
     result, _, _, _ = run_crawl(ROOT, site(["/pricing", "/features", "/docs", "/faq"]))
     gap = result.min_observed_interval_s["example.com"]
@@ -145,14 +154,14 @@ def test_host_phu_khong_duoc_crawl_khi_chua_bat() -> None:
     )  # cũng không tải robots của host đó
 
 
-def test_bo_qua_trang_khong_phai_tieng_anh_va_file_khong_phai_html() -> None:
+def test_bo_qua_trang_ngon_ngu_khong_cho_phep_va_file_khong_phai_html() -> None:
     pages = site(["/pricing"])
     pages[HOME] = page(
         HOME,
         [f"{ROOT}/pricing", f"{ROOT}/fr/pricing", f"{ROOT}/ja-jp/features", f"{ROOT}/logo.png"],
     )
     result, fetcher, _, _ = run_crawl(ROOT, pages)
-    assert result.skipped_counts[SkipReason.NOT_ENGLISH.value] == 2
+    assert result.skipped_counts[SkipReason.LANGUAGE_NOT_ALLOWED.value] == 2
     assert result.skipped_counts[SkipReason.NON_HTML.value] == 1
     assert fetcher.calls == [HOME, f"{ROOT}/pricing"]
 

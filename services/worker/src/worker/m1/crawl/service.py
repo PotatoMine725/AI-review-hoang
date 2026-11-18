@@ -22,7 +22,7 @@ from worker.m1.crawl.errors import CrawlError, CrawlErrorCode, SkipReason
 from worker.m1.crawl.fetcher import FetchResult, PageFetcher
 from worker.m1.crawl.http import HttpClient, UrllibHttpClient
 from worker.m1.crawl.robots import Robots, fetch_robots
-from worker.m1.crawl.store import PageStore
+from worker.m1.crawl.store import PageStore, header_value
 from worker.m1.crawl.throttle import Throttle
 from worker.m1.models import CrawlResult, PageRecord, SkippedPage
 from worker.m1.url import InvalidUrlError, normalize_page_url, normalize_product_url
@@ -221,6 +221,8 @@ class _Crawl:
                     fetched_at=log.fetched_at,
                     raw_md=raw_md,
                     fit_md=fit_md,
+                    title=result.title,
+                    site_name=result.site_name,
                 )
                 fit_path, raw_path = stored.fit_path, stored.raw_path
             self.pages.append(
@@ -246,6 +248,8 @@ class _Crawl:
                     raw_chars=len(raw_md),
                     fit_chars=len(fit_md),
                     unchanged=unchanged,
+                    title=header_value(result.title) or None,
+                    site_name=header_value(result.site_name) or None,
                 )
             )
             used_by_type[cand.page_type] += 1

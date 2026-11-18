@@ -1,0 +1,187 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "models": [],
+      "name": {
+        "value": "AI So Easy",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "AI So Easy\n  * Product\n  * Individuals\n  * Jobs\n  * Learning Paths\n  * For AI Brands\n  * Pricing\n  * Content"
+      },
+      "tagline": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "The workforce upskilling platform for SMEs",
+        "value": "The workforce upskilling platform for SMEs"
+      },
+      "description": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "AI So Easy helps small and mid-sized businesses upskill their teams with AI skills, business skills, and real-world productivity.",
+        "value": "AI So Easy helps small and mid-sized businesses upskill their teams with AI skills, business skills, and real-world productivity."
+      },
+      "category": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Workforce Upskill Platform by AI",
+        "value": "Workforce Upskill Platform by AI"
+      },
+      "company": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "© 2026 ECOMDY GLOBAL LLC — AI So Easy. All rights reserved.",
+        "value": "ECOMDY GLOBAL LLC"
+      },
+      "website": "https://aisoeasy.co",
+      "product_kind": "software"
+    },
+    "pricing": {
+      "plans": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "### Individual Free\nFree learning, core content only\nFree\nno credit card required",
+          "name": "Individual Free",
+          "currency": null,
+          "list_price": 0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "Free",
+          "limits": [],
+          "audience": "individuals"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "### Individual Pro\nFor individuals who want results and opportunities\n$9$18\n/ month — 50% off, limited spots",
+          "name": "Individual Pro",
+          "currency": "USD",
+          "list_price": 18,
+          "promo_price": 9,
+          "promo_terms": "50% off, limited spots",
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "$9$18\n/ month — 50% off, limited spots",
+          "limits": [],
+          "audience": "individuals"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "### Business / Team\nRoll out to your entire workforce\nContact sales\npriced case by case",
+          "name": "Business / Team",
+          "currency": null,
+          "list_price": null,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": null,
+          "billing_cycle": null,
+          "price_text": "Contact sales",
+          "limits": [],
+          "audience": "teams"
+        }
+      ],
+      "usage_prices": [],
+      "other_views": [],
+      "currency": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### Individual Pro\nFor individuals who want results and opportunities\n$9$18\n/ month — 50% off, limited spots",
+        "value": "USD"
+      },
+      "default_view": "monthly",
+      "free_plan": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Membership\n## Learn for free — or unlock every opportunity with Pro",
+        "value": true
+      },
+      "region": "VN",
+      "locale": "en-US"
+    },
+    "features": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### AI Learning Hub\nA shared bank of AI lessons, continuously updated by industry.",
+        "name": "AI Learning Hub",
+        "description": "A shared bank of AI lessons, continuously updated by industry.",
+        "id": "f1"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### Skill Upgrade Programs\nSkill upgrade programs tailored to each department.",
+        "name": "Skill Upgrade Programs",
+        "description": "Skill upgrade programs tailored to each department.",
+        "id": "f2"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### AI Tool Intelligence\nA map of AI tools reviewed and recommended for real-world situations.",
+        "name": "AI Tool Intelligence",
+        "description": "A map of AI tools reviewed and recommended for real-world situations.",
+        "id": "f3"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### Workforce Dashboard\nA real-time view of team capability for HR and leadership.",
+        "name": "Workforce Dashboard",
+        "description": "A real-time view of team capability for HR and leadership.",
+        "id": "f4"
+      }
+    ],
+    "use_cases": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Sales\n### Close deals faster with AI",
+        "title": "Close deals faster with AI"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Marketing\n### Create more content in less time",
+        "title": "Create more content in less time"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Finance\n### Automate reports and analysis",
+        "title": "Automate reports and analysis"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "HR\n### Hire and manage smarter",
+        "title": "Hire and manage smarter"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Operations\n### Improve productivity with AI workflows",
+        "title": "Improve productivity with AI workflows"
+      }
+    ],
+    "limitations": []
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://aisoeasy.co/",
+      "page_type": "other",
+      "fetched_at": "2026-10-29T07:51:45.203+00:00",
+      "content_hash": "sha256:b8c3833cf0ff70cb589aea0c772f5588fd2fa95e0770b21cc24e1d1a3984219a",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "raw",
+      "markdown_path": "pages/src_01-other-home.raw.md",
+      "image_paths": []
+    }
+  ]
+}

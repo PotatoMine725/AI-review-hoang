@@ -49,7 +49,9 @@ class SkipReason(StrEnum):
     LOGIN_REDIRECT = "login_redirect"
     OVER_LIMIT = "over_limit"
     DUPLICATE = "duplicate"  # spike: duplicate_of
-    NOT_ENGLISH = "not_english"  # spike: locale_duplicate
+    # Thay `not_english` (không giữ alias). Ngôn ngữ dò theo tiền tố path, xem discover.py.
+    LANGUAGE_NOT_ALLOWED = "language_not_allowed"  # ngôn ngữ ngoài M1_CRAWL_LANGUAGES
+    TRANSLATION_DUPLICATE = "translation_duplicate"  # spike: locale_duplicate
     NON_HTML = "non_html"  # spike: asset
     FETCH_ERROR = "fetch_error"  # spike: not_found, crawl_failed
     UNCHANGED = "unchanged"  # NFR-04: content_hash không đổi

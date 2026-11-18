@@ -279,6 +279,7 @@ Biến thể `v2` không có offer: giá chưa kiểm thì không suy từ `v1`.
 |---|---|---|---|
 | `valid-v02-software.json` | `software` 0.2 | pass (schema 0.2 và 0.3) | Dữ liệu cũ, có `origin: merchant` |
 | `valid-v03-software.json` | `software` 0.3 | pass | `origin: owner`, có `product_kind` |
+| `valid-v03-software-free-only.json` | `software` 0.3 | pass | Sản phẩm chỉ miễn phí, không có bảng giá: 1 plan "Free" giá 0, evidence là câu khẳng định miễn phí, `free_plan` true (dữ liệu giả) |
 | `valid-v03-physical-jsonld-variants.json` | `physical` | pass | Dữ liệu giả. JSON-LD, 3 biến thể (chỉ biến thể đang chọn có offer), ảnh gắn `variant_ref`, ảnh `og:image` chung (`generic`) |
 | `valid-v03-physical-no-jsonld.json` | `physical` | pass | Dữ liệu giả. Không JSON-LD: giá từ `og:price`, biến thể từ JSON nhúng |
 | `valid-v03-physical-price-missing.json` | `physical` | pass | Dữ liệu giả. Trang không có giá: `amount = null`, chờ owner nhập |

@@ -67,12 +67,29 @@ SKIP_PATH = re.compile(
 ASSET_EXT = re.compile(
     r"\.(png|jpe?g|gif|svg|webp|ico|pdf|zip|mp4|webm|mp3|css|js|json|xml|txt|gz)$", re.IGNORECASE
 )
-# Tiền tố ngôn ngữ khác tiếng Anh, ví dụ /fr/, /ja-jp/ → bỏ để không tốn slot cho bản dịch.
+# Tiền tố ngôn ngữ ở đầu path, ví dụ /vi/, /en-us/, /ja-jp/. Nhóm 1 là mã ngôn ngữ.
+# Chỉ dò theo path, chưa dò ngôn ngữ nội dung.
 LOCALE_SEG = re.compile(
-    r"^(fr|de|es|it|pt|ja|ko|zh|ru|id|vi|th|tr|nl|pl|ar|hi|sv|da|fi|no|nb|cs|uk|he|ms|fil|ro|hu|el)"
-    r"([-_][a-z]{2,4})?$",
+    r"^(en|fr|de|es|it|pt|ja|ko|zh|ru|id|vi|th|tr|nl|pl|ar|hi|sv|da|fi|no|nb|cs|uk|he|ms|fil|ro|"
+    r"hu|el)([-_][a-z]{2,4})?$",
     re.IGNORECASE,
 )
+# Path không có tiền tố ngôn ngữ được coi là tiếng Anh (bản mặc định của đa số site).
+UNPREFIXED_LANGUAGE = "en"
+
+
+def split_language(url: str) -> tuple[str | None, str]:
+    """Trả (mã ngôn ngữ ở tiền tố path hoặc None, URL đã bỏ tiền tố đó)."""
+    p = urlsplit(url)
+    segments = p.path.split("/")
+    first = next((i for i, s in enumerate(segments) if s), None)
+    if first is None:
+        return None, url
+    m = LOCALE_SEG.match(segments[first])
+    if not m:
+        return None, url
+    rest = "/".join(segments[:first] + segments[first + 1 :]) or "/"
+    return m.group(1).lower(), p._replace(path=rest).geturl()
 
 
 def classify(url: str, text: str = "", root_host: str = "") -> tuple[str, int]:
@@ -122,6 +139,35 @@ class Frontier:
         self._settings = settings
         self.candidates: dict[str, Candidate] = {}
         self.skipped: dict[str, Candidate] = {}
+        # URL đã bỏ tiền tố ngôn ngữ → (thứ hạng ngôn ngữ, URL đang giữ). Chống trùng bản dịch.
+        self._translations: dict[str, tuple[int, str]] = {}
+        self._picked: set[str] = set()  # đã trả ra ở pick_next (đã hoặc sắp crawl)
+
+    def _language_rank(self, lang: str | None) -> int | None:
+        """Thứ hạng theo `languages` (0 = ưu tiên nhất); None = ngôn ngữ không được phép.
+
+        Path không tiền tố coi là `UNPREFIXED_LANGUAGE`; nếu ngôn ngữ đó không có trong danh sách
+        thì xếp cuối, không bỏ (trang chủ và phần lớn trang không có tiền tố).
+        """
+        langs = self._settings.languages
+        if lang is None:
+            return langs.index(UNPREFIXED_LANGUAGE) if UNPREFIXED_LANGUAGE in langs else len(langs)
+        return langs.index(lang) if lang in langs else None
+
+    def _keep_translation(self, cand: Candidate, base: str, rank: int) -> bool:
+        """Chỉ giữ 1 bản dịch cho mỗi trang: bản ngôn ngữ ưu tiên hơn. Trả False nếu bỏ `cand`."""
+        held = self._translations.get(base)
+        if held is not None:
+            held_rank, held_url = held
+            held_cand = self.candidates.get(held_url)
+            if held_rank <= rank or held_cand is None or held_url in self._picked:
+                cand.skip_reason = SkipReason.TRANSLATION_DUPLICATE
+                cand.skip_detail = held_url
+                return False
+            # Bản mới ưu tiên hơn và bản cũ chưa crawl: đổi chỗ
+            self.skip(held_cand, SkipReason.TRANSLATION_DUPLICATE, cand.url)
+        self._translations[base] = (rank, cand.url)
+        return True
 
     def add(self, raw_url: str, source: str, text: str = "") -> None:
         if not raw_url or raw_url.startswith(("mailto:", "tel:", "javascript:")):
@@ -136,19 +182,26 @@ class Frontier:
             return
         cand = Candidate(url, source, (text or "").strip()[:80])
         p = urlsplit(url)
-        first_seg = next((s for s in p.path.split("/") if s), "")
+        lang, base = split_language(url)
+        rank = self._language_rank(lang)
         if p.scheme not in ("http", "https") or not self._host_ok(p.netloc):
             cand.skip_reason = SkipReason.OUT_OF_SCOPE
         elif ASSET_EXT.search(p.path):
             cand.skip_reason = SkipReason.NON_HTML
-        elif LOCALE_SEG.match(first_seg):
-            cand.skip_reason = SkipReason.NOT_ENGLISH
+        elif rank is None:
+            cand.skip_reason = SkipReason.LANGUAGE_NOT_ALLOWED
+            cand.skip_detail = lang or ""
         elif SKIP_PATH.search(p.path):
             cand.skip_reason = SkipReason.EXCLUDED_PATH
+        elif not self._keep_translation(cand, base, rank):
+            pass  # _keep_translation đã ghi lý do
         if cand.skip_reason:
             self.skipped[url] = cand
             return
-        cand.page_type, cand.score = classify(url, cand.text, self.root_host)
+        # Chấm điểm trên path đã bỏ tiền tố ngôn ngữ (/vi/pricing không bị phạt độ sâu).
+        # Riêng trang gốc của bản dịch (/vi) giữ nguyên, để không được điểm trang chủ.
+        scored = base if urlsplit(base).path not in ("", "/") else url
+        cand.page_type, cand.score = classify(scored, cand.text, self.root_host)
         if source == "home":
             # Trang chủ luôn crawl đầu tiên, kể cả khi product nằm ở path (vd. /features/copilot)
             cand.score = 1000
@@ -182,6 +235,7 @@ class Frontier:
         in_quota = [c for c in todo if used_by_type[c.page_type] < s.type_quota.get(c.page_type, 0)]
         todo = in_quota or todo
         todo.sort(key=lambda c: (-c.score, len(c.url)))
+        self._picked.add(todo[0].url)
         return todo[0]
 
 

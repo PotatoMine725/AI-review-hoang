@@ -1,7 +1,8 @@
 """Cấu hình crawl M1 (một chỗ duy nhất). Mặc định bằng spike `spikes/m1-crawl-extract/crawl.py`.
 
 Đè giá trị bằng biến môi trường `M1_CRAWL_<TÊN_HOA>`, ví dụ `M1_CRAWL_MAX_PAGES=20`.
-Trường kiểu tuple/dict (`type_quota`, `extra_host_types`) truyền dạng JSON.
+Trường kiểu dict (`type_quota`) truyền dạng JSON. Trường tuple (`languages`, `extra_host_types`)
+nhận danh sách cách nhau bằng dấu phẩy (`en,vi`) hoặc JSON.
 """
 
 from __future__ import annotations
@@ -44,6 +45,9 @@ class CrawlSettings(BaseModel):
         "compare": 3,
         "changelog": 2,
     }
+    # Ngôn ngữ trang được crawl, theo thứ tự ưu tiên. Cùng 1 trang có nhiều bản dịch thì chỉ giữ
+    # bản ngôn ngữ đứng trước. Env: M1_CRAWL_LANGUAGES=en,vi
+    languages: tuple[str, ...] = ("en", "vi")
     # Vùng IP và locale lúc crawl (quy tắc giá số 6). Đặt tay như spike, chưa đo.
     region: str = "VN"
     locale: str = "en-US"
@@ -61,8 +65,12 @@ class CrawlSettings(BaseModel):
             raw = env.get(ENV_PREFIX + name.upper())
             if raw is None:
                 continue
-            is_scalar = field.annotation in (str, int, float)
-            values[name] = raw if is_scalar else json.loads(raw)
+            if field.annotation in (str, int, float):
+                values[name] = raw
+            elif field.annotation == tuple[str, ...] and not raw.lstrip().startswith("["):
+                values[name] = [v.strip().lower() for v in raw.split(",") if v.strip()]
+            else:
+                values[name] = json.loads(raw)
         return cls(**values)
 
 

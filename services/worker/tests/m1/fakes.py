@@ -81,8 +81,16 @@ class MemoryStore:
         fetched_at: str,
         raw_md: str,
         fit_md: str,
+        title: str = "",
+        site_name: str = "",
     ) -> StoredPaths:
-        self.saved[url] = {"source_id": source_id, "raw": raw_md, "fit": fit_md}
+        self.saved[url] = {
+            "source_id": source_id,
+            "raw": raw_md,
+            "fit": fit_md,
+            "title": title,
+            "site_name": site_name,
+        }
         return StoredPaths(fit_path=f"pages/{source_id}.md", raw_path=f"pages/{source_id}.raw.md")
 
 
@@ -97,15 +105,15 @@ def page(
     """Trang render được. Mặc định mỗi URL có nội dung riêng (để không bị coi là trùng)."""
     body = body if body is not None else fixture("page.md") + f"\nSource page: {url}\n"
     link_pairs = [(link, "") if isinstance(link, str) else link for link in links]
+    fields: dict[str, object] = {"title": "Example", **kwargs}
     return FetchResult(
         url=url,
         status_code=status,
         html="<html></html>",
-        title="Example",
         raw_markdown=body,
         fit_markdown=body,
         internal_links=link_pairs,
-        **kwargs,  # type: ignore[arg-type]
+        **fields,  # type: ignore[arg-type]
     )
 
 

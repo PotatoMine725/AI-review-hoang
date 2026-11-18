@@ -38,7 +38,44 @@ Ghi `pages/*.md` và `crawl.json` vào thư mục `--out`. Không commit output.
 - Kéo theo `unclecode-litellm` (fork của litellm, đụng tên module `litellm`) và `patchright`; đã kiểm tra ở ADR-0001.
 - License: Apache-2.0 **kèm điều khoản ghi công**; web app phải ghi credit (xem ADR-0001, mục License Crawl4AI).
 
+### Ngôn ngữ trang
+
+`M1_CRAWL_LANGUAGES=en,vi` (mặc định) là các ngôn ngữ được crawl, theo thứ tự ưu tiên. Ngôn ngữ dò theo tiền tố path
+(`/vi/`, `/en-us/`); path không có tiền tố coi là `en`. Trang ngôn ngữ khác: `language_not_allowed`. Bản dịch của trang
+đã giữ ở ngôn ngữ ưu tiên hơn: `translation_duplicate`.
+
+## M1 — extract 1.4 (`src/worker/m1/extract/`, `llm/`, `pkb/`)
+
+Điểm vào: `await extract_product(crawl_result, page_store, llm)` trả `ExtractResult(data, sources, cost_breakdown,
+warnings)`: PKB v0.3 `software` đã validate, `cost_breakdown` v1. Lỗi: `ExtractError` có `code`, `retryable`,
+`retry_after` (hết quota ngày) và `cost_breakdown`. Mã lỗi, warning, cách nhận diện 429: đặc tả M1, mục
+"Extract 1.4 trong worker".
+
+| File | Việc |
+|---|---|
+| `llm/client.py` | `LLM.generate_json`: retry 429 RPM / 500 / 503 (5 → 10 → 20 → 40 → 60 s), 429 RPD → `llm_quota_daily`, 1 item chi phí mỗi lần gọi |
+| `llm/gemini.py` | nơi duy nhất import `google-genai`; SDK không tự retry |
+| `llm/fixture.py` | `LLM_PROVIDER=fixture`: đọc response đã lưu (`LLM_FIXTURE_PATH`), không gọi mạng |
+| `llm/quota.py`, `cost.py` | nhận diện RPM / RPD, giờ reset 0h giờ Thái Bình Dương (`tzdata`); `CostItem` theo contract v1 |
+| `pkb/models.py`, `validate.py` | model PKB v0.3 port từ spike; kiểm `source_id` có trong `sources` |
+| `extract/service.py` | chọn top-k trang, gọi LLM, kiểm evidence, gộp, conflicts, nâng lên v0.3 |
+
+```bash
+# Cần GEMINI_API_KEY trong .env. Mỗi lần chạy = 1 lời gọi generate, tính vào 500 RPD của project.
+uv run python -m worker.m1.extract <thư mục crawl> --out <thư mục tạm ngoài repo>
+```
+
+Ghi `pkb.json` ({data, sources}), `cost_breakdown.json`, `extract.json` (warnings hoặc lỗi). Không commit output.
+
+**Thời gian xấu nhất của 1 lần extract** (đặt timeout job BE theo số này): `LLM_TIMEOUT_S × (1 + số bước của
+LLM_RETRY_DELAYS_S) + tổng thời gian chờ`. Với mặc định: 180 s × 6 lần = 1080 s, cộng 135 s chờ (5 + 10 + 20 + 40 +
+60) = **1215 s (~20 phút)**. Khi 429 RPM kèm `RetryInfo` ≥ 60 s ở mọi lần, mỗi lần chờ là 60 s: 1080 + 300 =
+**1380 s (~23 phút)**. 429 RPD không retry nên kết thúc ngay. Chạy thật 21/10: mỗi lần 1 lời gọi, không retry.
+Model PKB là bản port: sửa luật ở `spikes/m1-crawl-extract/schema_v03.py` thì sửa cả `pkb/models.py`
+(`tests/m1/test_pkb.py` chạy model trên `docs/specs/pkb/examples/`).
+
 ### Test
 
 `uv run pytest` chạy không cần mạng và không cần trình duyệt: `PageFetcher`, HTTP (robots, sitemap) và đồng hồ throttle
-được thay bằng fake trong `tests/m1/fakes.py`; fixture ở `tests/m1/fixtures/`.
+được thay bằng fake trong `tests/m1/fakes.py`; LLM dùng `FixtureTransport`; fixture ở `tests/m1/fixtures/`. Fixture 429
+(`fixtures/llm/error-429-*.json`) là dữ liệu synthetic: chưa có response 429 thật.
