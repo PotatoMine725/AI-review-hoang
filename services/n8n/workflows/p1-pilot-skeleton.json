@@ -68,14 +68,14 @@
     },
     {
       "parameters": {},
-      "name": "TODO: run crawl + extract",
+      "name": "Runner crawl + extract (python -m worker.runner)",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
         660,
         300
       ],
-      "notes": "TODO: worker chưa có bộ nhận job (claim) chạy M1 crawl/extract và gọi POST /pkb. Hiện job dừng ở queued.",
+      "notes": "Bộ chạy job (python -m worker.runner) tự nhận job queued, chạy crawl + extract rồi tạo PKB. Node này chỉ là chỗ giữ.",
       "notesInFlow": true
     },
     {
@@ -441,7 +441,7 @@
       "main": [
         [
           {
-            "node": "TODO: run crawl + extract",
+            "node": "Runner crawl + extract (python -m worker.runner)",
             "type": "main",
             "index": 0
           }
@@ -506,7 +506,7 @@
         ]
       ]
     },
-    "TODO: run crawl + extract": {
+    "Runner crawl + extract (python -m worker.runner)": {
       "main": [
         [
           {

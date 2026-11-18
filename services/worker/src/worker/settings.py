@@ -24,6 +24,7 @@ from pydantic import BaseModel, SecretStr
 STEP_REQUIREMENTS: dict[str, tuple[str, ...]] = {
     "api": ("SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"),
     "api_service": ("N8N_SERVICE_TOKEN",),
+    "runner": ("SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"),
     "extract": ("GEMINI_API_KEY",),
     "script": ("GEMINI_API_KEY",),
     "ai_scene": ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN"),
@@ -64,6 +65,12 @@ class Settings(BaseModel):
     # `failed` với lỗi rõ.
     job_cost_limit_usd: float | None = None
     http_timeout_s: float = 15.0
+    # Bộ chạy job (`python -m worker.runner`): thư mục lưu markdown trang crawl, chu kỳ hỏi hàng
+    # đợi, số lần chạy tối đa mỗi job (kể cả lần đầu), thời gian chờ cơ sở giữa các lần retry.
+    page_store_dir: str = "./data/pages"
+    runner_poll_interval_s: float = 5.0
+    runner_max_attempts: int = 3
+    runner_retry_backoff_s: float = 30.0
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> Settings:
@@ -80,6 +87,10 @@ class Settings(BaseModel):
             cloudflare_api_token=SecretStr(env.get("CLOUDFLARE_API_TOKEN", "").strip()),
             job_cost_limit_usd=float(limit) if limit else None,
             http_timeout_s=float(env.get("WORKER_HTTP_TIMEOUT_S", "15") or 15),
+            page_store_dir=env.get("WORKER_PAGE_STORE_DIR", "").strip() or "./data/pages",
+            runner_poll_interval_s=float(env.get("RUNNER_POLL_INTERVAL_S", "5") or 5),
+            runner_max_attempts=int(env.get("RUNNER_MAX_ATTEMPTS", "3") or 3),
+            runner_retry_backoff_s=float(env.get("RUNNER_RETRY_BACKOFF_S", "30") or 30),
         )
 
     def _value(self, env_name: str) -> str:

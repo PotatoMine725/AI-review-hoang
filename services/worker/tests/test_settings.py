@@ -55,3 +55,17 @@ def test_cost_limit() -> None:
     s.check_cost(0.1)
     with pytest.raises(CostLimitExceededError):
         s.check_cost(0.11)
+
+
+def test_runner_settings_defaults_and_override() -> None:
+    d = Settings.from_env({})
+    assert (d.page_store_dir, d.runner_max_attempts, d.runner_poll_interval_s) == (
+        "./data/pages",
+        3,
+        5.0,
+    )
+    s = Settings.from_env({"WORKER_PAGE_STORE_DIR": "D:/tmp/p", "RUNNER_MAX_ATTEMPTS": "5"})
+    assert s.page_store_dir == "D:/tmp/p" and s.runner_max_attempts == 5
+    assert Settings.from_env({"SUPABASE_URL": "http://x"}).missing("runner") == [
+        "SUPABASE_SERVICE_ROLE_KEY"
+    ]

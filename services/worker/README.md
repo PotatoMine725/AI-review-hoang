@@ -79,3 +79,11 @@ Model PKB là bản port: sửa luật ở `spikes/m1-crawl-extract/schema_v03.p
 `uv run pytest` chạy không cần mạng và không cần trình duyệt: `PageFetcher`, HTTP (robots, sitemap) và đồng hồ throttle
 được thay bằng fake trong `tests/m1/fakes.py`; LLM dùng `FixtureTransport`; fixture ở `tests/m1/fixtures/`. Fixture 429
 (`fixtures/llm/error-429-*.json`) là dữ liệu synthetic: chưa có response 429 thật.
+
+## Bộ chạy job (`src/worker/runner/`)
+
+Tiến trình riêng, tách khỏi API: `uv run python -m worker.runner` (`--once` để xử lý hết job rồi thoát). Cần `.env` có `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY` (hoặc `LLM_PROVIDER=fixture`) và `uv run playwright install chromium`.
+
+Nhận job `crawl` ở trạng thái `queued` (cũ nhất trước), claim bằng `UPDATE ... WHERE status='queued'` (nguyên tử, không cần migration), chạy M1 crawl, rồi extract (M1, Gemini, 1 lời gọi/job) → `create_pkb_version` → ghi `pkb_version` và `result_manifest` → `completed`. Lỗi `retryable` được xếp lại `queued` (tối đa `RUNNER_MAX_ATTEMPTS`, chờ lũy thừa 2 từ `RUNNER_RETRY_BACKOFF_S`), còn lại `failed` kèm `error`. Markdown trang lưu ở `WORKER_PAGE_STORE_DIR/<job_id>/pages/` (đặt ngoài repo).
+
+Bước nặng nằm sau Protocol `CrawlStep`/`ExtractStep` (`runner/steps.py`); test dùng fake, không cần trình duyệt hay LLM. **Chưa có:** timeout cho cả job (extract xấu nhất ~20 phút, xem mục extract), dọn job kẹt `running` khi runner chết (bảng chưa có `updated_at`), job `video`, `previous_hashes` giữa các lần crawl.

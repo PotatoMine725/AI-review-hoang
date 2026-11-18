@@ -21,6 +21,7 @@
 | `GEMINI_API_KEY` | Extract PKB (M1), sinh script (M2) | `extract`, `script` | Thông giao |
 | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Ảnh AI (cảnh AI, AC-P1-05) | `ai_scene` | Thông giao (chờ xác nhận provider) |
 | `FAL_KEY` | Provider ảnh dự phòng (nếu Thông chọn) | chưa gắn bước | chờ Thông |
+| `WORKER_PAGE_STORE_DIR`, `RUNNER_POLL_INTERVAL_S`, `RUNNER_MAX_ATTEMPTS`, `RUNNER_RETRY_BACKOFF_S` | Bộ chạy job (không phải khoá) | `runner` | Hoàng |
 | `JOB_COST_LIMIT_USD` | Ngưỡng chi phí một job (tuỳ chọn) | `Settings.check_cost` | Hoàng |
 
 `STEP_REQUIREMENTS` trong `settings.py` là nguồn duy nhất cho "bước nào cần biến nào"; thêm provider thì thêm vào đó và vào bảng này. Provider chỉ được gọi qua adapter, chọn bằng config (ADR-0005).
