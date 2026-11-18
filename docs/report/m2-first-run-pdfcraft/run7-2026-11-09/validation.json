@@ -1,0 +1,14 @@
+{
+  "status": "completed",
+  "model": "gemini-3.5-flash-lite",
+  "error_code": null,
+  "error_message": null,
+  "retryable": false,
+  "retry_after": null,
+  "errors": [],
+  "warnings": [
+    "estimated_duration_s_is_estimate:127 âm tiết / 3.75 âm tiết/s; không phải duration TTS hay MP4",
+    "estimate_outside_target:33.9s ngoài 40–45s"
+  ],
+  "script_is_raw_output": false
+}

@@ -80,6 +80,38 @@ Model PKB là bản port: sửa luật ở `spikes/m1-crawl-extract/schema_v03.p
 được thay bằng fake trong `tests/m1/fakes.py`; LLM dùng `FixtureTransport`; fixture ở `tests/m1/fixtures/`. Fixture 429
 (`fixtures/llm/error-429-*.json`) là dữ liệu synthetic: chưa có response 429 thật.
 
+## M2 — sinh kịch bản P1-AC-03 (`src/worker/m2/`)
+
+Điểm vào: `await generate_script(input, llm, settings=None)` trả `ScriptResult(status, data, cost_breakdown,
+warnings, error_code, error_message, retryable, retry_after, errors, raw_output)`. Lỗi trả trong kết quả, không
+raise. `input` theo `p1-ac-03-input.v1`; `llm` là `LLM` của M1 (dùng chung retry / quota / cost).
+
+| File | Việc |
+|---|---|
+| `contract/` | prompt, schema, ví dụ của Định, **chép nguyên byte** từ commit `8008cbf` (#83). Không sửa tại đây (`SOURCE.md`) |
+| `validate.py` | port luật M2 của `spikes/m1-crawl-extract/validate_contracts.py`, trả mọi lỗi; `validate_input` chạy cả `validate_pkb` của M1 |
+| `schema.py` | schema output → dạng Gemini nhận: chỉ giữ từ khoá đã chạy thật, `const` → `enum`, bỏ `estimated_duration_s` |
+| `prompt.py` | system prompt = khối ```text của Định, điền 3 placeholder; `product_id`, `knowledge_version` đi ở tin nhắn user |
+| `kind.py` | chuẩn bị `visual_plan.kind` từ allowlist (chỉ `kind`, audit cũ → mới + hash allowlist, ID lạ / sai Product / trùng thì báo lỗi, không đoán) |
+| `repair.py` | template sửa của Định + feedback (`schema`, `content_validator`, `qa`, `syllable_advisory`) |
+| `generate.py` | `generate_script` (sinh → chuẩn bị kind → validator → tối đa 1 lượt sửa) + CLI |
+
+Mã lỗi: `m2_input_invalid` (input sai hoặc allowlist trùng ID, không gọi LLM), các mã `llm_*` của M1. Output sai
+schema / refs / asset / CTA: `llm_invalid_output` kèm `errors` và `raw_output`. Worker không vá nội dung; ngoài
+`kind` (điền theo allowlist) thì chỉ có **tối đa 1 lời gọi sửa** (`generate_script_repair`) khi còn lỗi validator,
+lỗi QA cụ thể (`qa_feedback`) hoặc số âm tiết ngoài 150–170 (khuyến nghị, không phải lỗi). Sau lượt sửa còn lỗi
+thì dừng. Mọi tầng nằm trong `ScriptResult.stages` (thô → sau chuẩn bị kind → feedback → bản sửa → kết quả
+kiểm); mỗi lời gọi một item trong `cost_breakdown`. `estimated_duration_s` do worker tính:
+tổng âm tiết lời thoại ÷ `M2_SYLLABLES_PER_S` (mặc định 3.75). Đây là **ước tính**, không phải duration TTS hay MP4.
+
+```bash
+# Cần GEMINI_API_KEY trong .env. Mỗi lần chạy = 1 lời gọi sinh + tối đa 1 lời gọi sửa (--no-repair để tắt).
+uv run python -m worker.m2.generate <input.json> --out <thư mục>
+```
+
+Ghi `script.json` (kịch bản, hoặc output thô nếu không hợp lệ), `validation.json`, `cost.json`, `stages.json`, `feedback.json`, `initial|repair.{raw,prepared,kind_audit}.json`. Khoá `_note` trong
+file input (ghi chú cho người đọc) được bỏ trước khi kiểm. Lần chạy đầu: `docs/report/m2-first-run-pdfcraft.md`.
+
 ## Bộ chạy job (`src/worker/runner/`)
 
 Tiến trình riêng, tách khỏi API: `uv run python -m worker.runner` (`--once` để xử lý hết job rồi thoát). Cần `.env` có `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY` (hoặc `LLM_PROVIDER=fixture`) và `uv run playwright install chromium`.

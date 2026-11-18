@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "model": "gemini-3.5-flash-lite",
+  "error_code": "llm_invalid_output",
+  "error_message": "output không qua validator (2 lỗi)",
+  "retryable": false,
+  "retry_after": null,
+  "errors": [
+    "hook: fact_ref 'tagline.value' không tồn tại: 'tagline'",
+    "claim: fact_ref 'tagline.value' không tồn tại: 'tagline'"
+  ],
+  "warnings": [],
+  "script_is_raw_output": true
+}

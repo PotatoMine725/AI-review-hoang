@@ -1,0 +1,23 @@
+[
+  {
+    "scene_id": "s01",
+    "asset_id": "pdfcraft-merge",
+    "old_kind": "product_asset",
+    "new_kind": "screen_recording",
+    "status": "replaced"
+  },
+  {
+    "scene_id": "s02",
+    "asset_id": "pdfcraft-merge",
+    "old_kind": "screen_recording",
+    "new_kind": "screen_recording",
+    "status": "unchanged"
+  },
+  {
+    "scene_id": "s03",
+    "asset_id": "pdfcraft-pagenum",
+    "old_kind": "screen_recording",
+    "new_kind": "screen_recording",
+    "status": "unchanged"
+  }
+]

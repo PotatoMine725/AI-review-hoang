@@ -1,0 +1,221 @@
+{
+  "schema_version": "p1-ac-03.v1-draft",
+  "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+  "pkb_schema_version": "0.3",
+  "knowledge_version": 1,
+  "language": "vi",
+  "platform": "tiktok",
+  "audience": "người xem phổ thông",
+  "context_defaults_applied": [
+    "platform",
+    "intent",
+    "audience",
+    "cta"
+  ],
+  "intent": "awareness",
+  "target_duration_s": 42,
+  "concept": {
+    "title": "Xử lý PDF riêng tư và mạnh mẽ với PDFCraft",
+    "angle": "demo"
+  },
+  "hook": {
+    "text": "Bạn cần gộp tệp PDF hoặc đánh số trang mà không muốn tải tệp lên máy chủ lạ?",
+    "type": "curiosity"
+  },
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "narration_segments": [
+        {
+          "segment_id": "s01-u01",
+          "text": "Bạn cần gộp tệp PDF hoặc đánh số trang mà không muốn tải tệp lên máy chủ lạ?"
+        },
+        {
+          "segment_id": "s01-u02",
+          "text": "Theo PDFCraft công bố, mọi xử lý diễn ra ngay trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị."
+        }
+      ],
+      "subtitle_text": "Xử lý PDF riêng tư ngay trong trình duyệt",
+      "visual_plan": {
+        "kind": "text_card",
+        "source_type": "generated_text",
+        "text": "Xử lý PDF riêng tư, không rời khỏi thiết bị",
+        "purpose": "Giới thiệu khả năng xử lý cục bộ của công cụ."
+      },
+      "claims": [
+        {
+          "text": "Mọi xử lý diễn ra trong trình duyệt. Tệp của bạn không bao giờ rời khỏi thiết bị.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[2].description"
+            }
+          ],
+          "segment_ids": [
+            "s01-u01",
+            "s01-u02"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s02-u01",
+          "text": "Với tính năng hợp nhất PDF, bạn có thể kết hợp nhiều tệp PDF thành một tài liệu."
+        },
+        {
+          "segment_id": "s02-u02",
+          "text": "Mỗi lượt ghép tối đa một trăm tệp với tổng dung lượng lên đến năm trăm mê-ga-byte."
+        }
+      ],
+      "subtitle_text": "Ghép tối đa 100 tệp PDF, dung lượng 500MB",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-merge",
+        "purpose": "Minh họa thao tác kết hợp tệp PDF."
+      },
+      "claims": [
+        {
+          "text": "Kết hợp nhiều tệp PDF thành một tài liệu.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[0].description"
+            }
+          ],
+          "segment_ids": [
+            "s02-u01"
+          ]
+        },
+        {
+          "text": "You can merge up to 100 files at once, with a total combined size of up to 500MB.",
+          "type": "limitation",
+          "fact_refs": [
+            {
+              "source_id": "src_10",
+              "field_path": "limitations[0].text"
+            }
+          ],
+          "segment_ids": [
+            "s02-u02"
+          ],
+          "stat_display": {
+            "value": "100",
+            "label": "Tệp tối đa mỗi lượt",
+            "unit": "tệp",
+            "scope": "Tổng dung lượng tối đa 500MB"
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s03-u01",
+          "text": "Bạn cũng có thể thêm số trang vào tài liệu PDF và tùy chỉnh vị trí, định dạng cùng số bắt đầu."
+        },
+        {
+          "segment_id": "s03-u02",
+          "text": "Công cụ này còn hỗ trợ chuyển đổi tệp PDF sang tài liệu Word có thể chỉnh sửa."
+        }
+      ],
+      "subtitle_text": "Đánh số trang và chuyển đổi sang Word",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-pagenum",
+        "purpose": "Minh họa tính năng đánh số trang PDF."
+      },
+      "claims": [
+        {
+          "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_02",
+              "field_path": "features[3].description"
+            }
+          ],
+          "segment_ids": [
+            "s03-u01"
+          ]
+        },
+        {
+          "text": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_02",
+              "field_path": "features[4].description"
+            }
+          ],
+          "segment_ids": [
+            "s03-u02"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s04",
+      "role": "cta",
+      "narration_segments": [
+        {
+          "segment_id": "s04-u01",
+          "text": "Sử dụng ngay hoàn toàn miễn phí, không cần đăng ký tài khoản hay lo lắng về chi phí ẩn."
+        },
+        {
+          "segment_id": "s04-u02",
+          "text": "Xem thêm thông tin chi tiết."
+        }
+      ],
+      "subtitle_text": "Hoàn toàn miễn phí, không cần đăng ký",
+      "visual_plan": {
+        "kind": "screenshot",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-word-result",
+        "purpose": "Hiển thị giao diện hoàn tất và kêu gọi hành động."
+      },
+      "claims": [
+        {
+          "text": "Hoàn toàn Miễn phí",
+          "type": "pricing",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "pricing.free_plan.value"
+            }
+          ],
+          "segment_ids": [
+            "s04-u01"
+          ]
+        },
+        {
+          "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[1].description"
+            }
+          ],
+          "segment_ids": [
+            "s04-u01"
+          ]
+        }
+      ]
+    }
+  ],
+  "cta": {
+    "text": "Xem thêm thông tin.",
+    "destination": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "model": "gemini-3.5-flash-lite",
+  "error_code": "llm_invalid_output",
+  "error_message": "output không qua validator (1 lỗi)",
+  "retryable": false,
+  "retry_after": null,
+  "errors": [
+    "schema_version: 'p1-ac-03.v1-draft' was expected"
+  ],
+  "warnings": [],
+  "script_is_raw_output": true
+}

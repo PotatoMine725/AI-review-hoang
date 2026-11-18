@@ -5,3 +5,5 @@
 *.png binary
 *.jpg binary
 *.ico binary
+# Contract M2 chép nguyên byte từ #83 (test so blob SHA): không cho git đổi xuống dòng.
+services/worker/src/worker/m2/contract/** -text

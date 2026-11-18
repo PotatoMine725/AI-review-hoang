@@ -1,0 +1,8 @@
+{
+  "validator": "worker.m2.validate @ contract 29f868a",
+  "script": "script.json (raw, không sửa)",
+  "result": "fail",
+  "errors": [
+    "cảnh 's01': asset_id 'pdfcraft-merge' phải dùng visual_plan.kind 'screen_recording'"
+  ]
+}

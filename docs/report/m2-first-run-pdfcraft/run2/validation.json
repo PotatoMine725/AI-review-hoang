@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "model": "gemini-3.5-flash-lite",
+  "error_code": "llm_invalid_output",
+  "error_message": "output không qua validator (1 lỗi)",
+  "retryable": false,
+  "retry_after": null,
+  "errors": [
+    "cta.destination phải null khi người dùng không cung cấp đích"
+  ],
+  "warnings": [],
+  "script_is_raw_output": true
+}

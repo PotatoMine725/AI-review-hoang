@@ -1,0 +1,160 @@
+{
+  "schema_version": "p1-ac-03.v1-draft",
+  "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+  "pkb_schema_version": "0.3",
+  "knowledge_version": 1,
+  "language": "vi",
+  "platform": "tiktok",
+  "audience": "người xem phổ thông",
+  "context_defaults_applied": [
+    "platform",
+    "intent",
+    "audience",
+    "cta"
+  ],
+  "intent": "awareness",
+  "target_duration_s": 42,
+  "concept": {
+    "title": "Xử lý tài liệu PDF trực tiếp trong trình duyệt",
+    "angle": "demo"
+  },
+  "hook": {
+    "text": "Bạn có cần xử lý tài liệu PDF ngay trong trình duyệt không?",
+    "type": "curiosity",
+    "fact_refs": [
+      {
+        "source_id": "src_01",
+        "field_path": "features[2].description"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "narration_segments": [
+        {
+          "segment_id": "s01-u01",
+          "text": "Bạn có cần xử lý tài liệu PDF ngay trong trình duyệt không?"
+        },
+        {
+          "segment_id": "s01-u02",
+          "text": "Khám phá ngay PDFCraft với khả năng xử lý miễn phí."
+        }
+      ],
+      "subtitle_text": "Xử lý PDF ngay trong trình duyệt cùng PDFCraft",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-merge",
+        "purpose": "Hiển thị giao diện tổng quan và thao tác cơ bản"
+      },
+      "claims": [
+        {
+          "text": "Xử lý trong trình duyệt và miễn phí",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[0].description"
+            },
+            {
+              "source_id": "src_01",
+              "field_path": "features[2].description"
+            }
+          ],
+          "segment_ids": [
+            "s01-u01",
+            "s01-u02"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s02-u01",
+          "text": "Bạn có thể gộp nhiều tệp thành một tài liệu."
+        },
+        {
+          "segment_id": "s02-u02",
+          "text": "Thêm số trang hoặc chuyển đổi tài liệu sang định dạng Word dễ dàng."
+        }
+      ],
+      "subtitle_text": "Hợp nhất, đánh số trang và chuyển đổi sang Word",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-pagenum",
+        "purpose": "Minh họa tính năng đánh số trang và xử lý tài liệu"
+      },
+      "claims": [
+        {
+          "text": "Hợp nhất tệp PDF và đánh số trang",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[0].description"
+            },
+            {
+              "source_id": "src_02",
+              "field_path": "features[3].description"
+            }
+          ],
+          "segment_ids": [
+            "s02-u01",
+            "s02-u02"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s03",
+      "role": "cta",
+      "narration_segments": [
+        {
+          "segment_id": "s03-u01",
+          "text": "Công cụ hoàn toàn miễn phí và không cần đăng ký."
+        },
+        {
+          "segment_id": "s03-u02",
+          "text": "Xem thêm thông tin."
+        }
+      ],
+      "subtitle_text": "Xem thêm thông tin tại PDFCraft",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-word-export",
+        "purpose": "Hiển thị thao tác xuất file và kết quả cuối"
+      },
+      "claims": [
+        {
+          "text": "Dùng không cần đăng ký và miễn phí",
+          "type": "pricing",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "free_plan.value"
+            },
+            {
+              "source_id": "src_01",
+              "field_path": "features[1].description"
+            }
+          ],
+          "segment_ids": [
+            "s03-u01",
+            "s03-u02"
+          ]
+        }
+      ]
+    }
+  ],
+  "cta": {
+    "text": "Xem thêm thông tin.",
+    "destination": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "model": "gemini-3.5-flash-lite",
+  "error_code": "llm_invalid_output",
+  "error_message": "output không qua validator (1 lỗi)",
+  "retryable": false,
+  "retry_after": null,
+  "errors": [
+    "cảnh 's05': asset_id 'pdfcraft-word-result' phải dùng visual_plan.kind 'screen_recording'"
+  ],
+  "warnings": [],
+  "script_is_raw_output": true
+}

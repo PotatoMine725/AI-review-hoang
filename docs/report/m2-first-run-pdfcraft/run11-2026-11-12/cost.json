@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "currency": "USD",
+  "items": [
+    {
+      "call_id": "8b82d4a2-6097-4969-afb3-9bae7d06d905",
+      "category": "llm",
+      "step": "generate_script",
+      "provider": "google",
+      "model": "gemini-3.5-flash-lite",
+      "attempt": 1,
+      "cache_hit": false,
+      "tokens_in": 5349,
+      "tokens_out": 1973,
+      "unit_price_in_per_1m": 0.3,
+      "unit_price_out_per_1m": 2.5,
+      "prices_checked_at": "2026-10-06",
+      "cost_usd": 0.006537,
+      "cost_status": "exact"
+    },
+    {
+      "call_id": "873cfdf7-08af-4afb-bd34-4ed07383a929",
+      "category": "llm",
+      "step": "generate_script_repair",
+      "provider": "google",
+      "model": "gemini-3.5-flash-lite",
+      "attempt": 1,
+      "cache_hit": false,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "unit_price_in_per_1m": 0.3,
+      "unit_price_out_per_1m": 2.5,
+      "prices_checked_at": "2026-10-06",
+      "cost_usd": 0.0,
+      "cost_status": "estimated"
+    },
+    {
+      "call_id": "88eca5a9-666a-4d0a-a1fb-6ea22bc46f9b",
+      "category": "llm",
+      "step": "generate_script_repair",
+      "provider": "google",
+      "model": "gemini-3.5-flash-lite",
+      "attempt": 2,
+      "cache_hit": false,
+      "tokens_in": 10051,
+      "tokens_out": 1553,
+      "unit_price_in_per_1m": 0.3,
+      "unit_price_out_per_1m": 2.5,
+      "prices_checked_at": "2026-10-06",
+      "cost_usd": 0.006898,
+      "cost_status": "exact"
+    }
+  ]
+}

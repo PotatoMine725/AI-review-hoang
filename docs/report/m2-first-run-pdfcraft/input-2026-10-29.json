@@ -1,0 +1,213 @@
+{
+  "_note": "PKB lang-p4 + fact bổ sung mô phỏng bước xác nhận PKB, evidence nguyên văn, chờ BA xác nhận. Nguồn: D:/tmp/extract-pdfcraft-lang-p4/pkb.json (sha256:76986e11a4ec9322d16101385c01b78418fe30246908ecc6b0e70f7cb8a31c7f), crawl D:/tmp/crawl-pdfcraft-lang. Người duyệt mô phỏng 00000000-0000-4000-8000-0000000000b1 lúc 2026-10-29T08:30:00Z: giữ name, tagline (F1), free_plan, features[0] (F6), limitations[0] (F8); bỏ identity.description, identity.category, pricing.plans[0], features[1..7], use_cases; bỏ conflict 'features' (số công cụ 67/132+, BA không dùng) = giải quyết thủ công, chờ BA. Fact bổ sung (origin crawled vì v0.3 không cho owner ở features): F2→features[1], F3→features[2], F4→features[3], F5→features[4], F7→features[5], F9→features[6]. Không tìm thấy nguyên văn: không có. product_id giả lập.",
+  "schema_version": "p1-ac-03-input.v1-draft",
+  "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+  "knowledge_version": 1,
+  "approved_pkb": {
+    "status": "approved",
+    "schema_version": "0.3",
+    "data": {
+      "schema_version": "0.3",
+      "identity": {
+        "name": {
+          "value": "PDFCraft",
+          "origin": "crawled",
+          "source_id": "src_03",
+          "evidence": "Find answers to common questions about PDFCraft"
+        },
+        "website": "https://pdfcraft.devtoolcafe.com",
+        "tagline": {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+          "value": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt"
+        },
+        "product_kind": "software"
+      },
+      "pricing": {
+        "plans": [],
+        "free_plan": {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Hoàn toàn Miễn phí",
+          "value": true
+        }
+      },
+      "features": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Hợp nhất PDF Kết hợp nhiều tệp PDF thành một tài liệu. Công cụ hợp nhất PDF trực tuyến miễn phí với kéo và thả để sắp xếp lại.",
+          "id": "f1",
+          "name": "Hợp nhất PDF",
+          "description": "Kết hợp nhiều tệp PDF thành một tài liệu. Công cụ hợp nhất PDF trực tuyến miễn phí với kéo và thả để sắp xếp lại.",
+          "screenshot_ids": []
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Không đăng ký, không giới hạn, không chi phí ẩn.",
+          "id": "f2",
+          "name": "Không đăng ký, không chi phí ẩn",
+          "description": "Dùng không cần đăng ký, không có chi phí ẩn.",
+          "screenshot_ids": []
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Mọi xử lý diễn ra trong trình duyệt. Tệp của bạn không bao giờ rời khỏi thiết bị.",
+          "id": "f3",
+          "name": "Xử lý ngay trong trình duyệt",
+          "description": "Mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+          "screenshot_ids": []
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Add page numbers to PDF documents. Customize position, format, and starting number.",
+          "id": "f4",
+          "name": "Đánh số trang",
+          "description": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+          "screenshot_ids": []
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Convert PDF to editable Word (DOCX) documents.",
+          "id": "f5",
+          "name": "Chuyển PDF sang Word",
+          "description": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+          "screenshot_ids": []
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_10",
+          "evidence": "All conversions and merging happen locally in your browser sandbox, ensuring complete privacy for your sensitive documents without uploading to remote servers.",
+          "id": "f6",
+          "name": "Ghép PDF chạy cục bộ",
+          "description": "Việc chuyển đổi và ghép diễn ra trong trình duyệt, không tải lên máy chủ.",
+          "screenshot_ids": []
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_10",
+          "evidence": "Click the Merge button to automatically convert and combine all files into a single PDF, then download your result.",
+          "id": "f7",
+          "name": "Cách ghép",
+          "description": "Bấm Merge để gộp tất cả tệp thành một PDF rồi tải về.",
+          "screenshot_ids": []
+        }
+      ],
+      "limitations": [
+        {
+          "origin": "crawled",
+          "source_id": "src_10",
+          "evidence": "You can merge up to 100 files at once, with a total combined size of up to 500MB.",
+          "text": "You can merge up to 100 files at once, with a total combined size of up to 500MB."
+        }
+      ],
+      "quality": {
+        "conflicts": []
+      }
+    },
+    "sources": [
+      {
+        "id": "src_01",
+        "url": "https://pdfcraft.devtoolcafe.com/",
+        "page_type": "other",
+        "fetched_at": "2026-10-21T01:01:13.228+00:00",
+        "content_hash": "sha256:50a0b073ed4c89e4a664175f0ac7772003f64cf241c8dcaa608794af5a63a744",
+        "region": "VN",
+        "locale": "en-US",
+        "variant": "fit",
+        "markdown_path": "pages/src_01-other-home.md",
+        "image_paths": []
+      },
+      {
+        "id": "src_02",
+        "url": "https://pdfcraft.devtoolcafe.com/en/tools",
+        "page_type": "features",
+        "fetched_at": "2026-10-21T01:01:25.337+00:00",
+        "content_hash": "sha256:3e9123c64354124e4a1c95eba2ceb5da4e237e3968636a0f2184a3ae8ed1954b",
+        "region": "VN",
+        "locale": "en-US",
+        "variant": "fit",
+        "markdown_path": "pages/src_02-features-en-tools.md",
+        "image_paths": []
+      },
+      {
+        "id": "src_03",
+        "url": "https://pdfcraft.devtoolcafe.com/en/faq",
+        "page_type": "faq",
+        "fetched_at": "2026-10-21T01:01:32.689+00:00",
+        "content_hash": "sha256:212eeb6d08438834fa4034d7ac0a2436c301bf6e4281414e952eea784013bd02",
+        "region": "VN",
+        "locale": "en-US",
+        "variant": "fit",
+        "markdown_path": "pages/src_03-faq-en-faq.md",
+        "image_paths": []
+      },
+      {
+        "id": "src_10",
+        "url": "https://pdfcraft.devtoolcafe.com/en/tools/merge-pdf",
+        "page_type": "features",
+        "fetched_at": "2026-10-21T01:02:13.242+00:00",
+        "content_hash": "sha256:bb0f578df40b970dbc1963a57b7bba627ccb59eaa4456f7bb731d384988e8607",
+        "region": "VN",
+        "locale": "en-US",
+        "variant": "fit",
+        "markdown_path": "pages/src_10-features-en-tools-merge-pdf.md",
+        "image_paths": []
+      }
+    ]
+  },
+  "permitted_assets": [
+    {
+      "asset_id": "pdfcraft-pagenum",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "kind": "screen_recording",
+      "source_id": null,
+      "allowed_use": [
+        "internal_demo"
+      ],
+      "rights_basis": "Clip tự quay: mở Page Numbers, chọn vị trí, Apply, hiện số trang. Nhóm tự quay giao diện PDFCraft cho demo nội bộ P1 (#52)."
+    },
+    {
+      "asset_id": "pdfcraft-word-export",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "kind": "screen_recording",
+      "source_id": null,
+      "allowed_use": [
+        "internal_demo"
+      ],
+      "rights_basis": "Clip tự quay: menu Save & Export → Export as Word (.docx). Nhóm tự quay giao diện PDFCraft cho demo nội bộ P1 (#52)."
+    },
+    {
+      "asset_id": "pdfcraft-word-result",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "kind": "screen_recording",
+      "source_id": null,
+      "allowed_use": [
+        "internal_demo"
+      ],
+      "rights_basis": "Clip tự quay: file Word sau khi xuất. Nhóm tự quay giao diện PDFCraft cho demo nội bộ P1 (#52)."
+    },
+    {
+      "asset_id": "pdfcraft-merge",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "kind": "screen_recording",
+      "source_id": null,
+      "allowed_use": [
+        "internal_demo"
+      ],
+      "rights_basis": "Clip tự quay: Combine Files & Merge PDF, thêm tài liệu thứ hai, Append. Nhóm tự quay giao diện PDFCraft cho demo nội bộ P1 (#52)."
+    }
+  ],
+  "content_context": {
+    "forbidden_claims": [
+      "Số lượng công cụ (nguồn ghi 67 và 132+, không thống nhất).",
+      "Giá, đánh giá, số người dùng, so sánh với sản phẩm khác (nguồn không có).",
+      "Chuyển PDF sang Word giữ nguyên định dạng (thử thực tế mất một số nền màu)."
+    ]
+  }
+}
