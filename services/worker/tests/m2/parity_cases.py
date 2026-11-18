@@ -1,8 +1,8 @@
-"""Các ca parity, dựng từ `validate_contracts.py` của Định tại commit 29f868a.
+"""Ca parity, dựng từ `validate_contracts.py` của Định ở e33827c (ca của 29f868a giữ nguyên).
 
 Dùng ở hai nơi:
 - `test_validate.py`: chạy validator của worker trên các ca này.
-- Script ghi kỳ vọng (`fixtures/parity-29f868a.json`): chạy hàm của Định trên cùng các ca.
+- Script ghi kỳ vọng (`fixtures/parity-e33827c.json`): chạy hàm của Định trên cùng các ca.
   Cách tạo lại: xem docstring của `test_validate.py`.
 
 Không import gì của worker để script của Định cũng import được file này.
@@ -306,6 +306,27 @@ def build_cases() -> list[Case]:
     cases.append(
         Case("m2/script-without-campaign-context.json", "script", standalone_ctx, standalone)
     )
+
+    # Run12 (e33827c): CTA trung tính không phải claim sản phẩm; claim sản phẩm trong cảnh CTA vẫn
+    # cần fact_refs. Hai ca này khớp hai dòng `m2/neutral-cta-empty-claims` và
+    # `m2/cta-product-claim-still-needs-refs` trong `main()` của Định.
+    for add_claim in (False, True):
+        neutral = deepcopy(standalone)
+        last = neutral["scenes"][-1]
+        last["subtitle_text"] = neutral["cta"]["text"]
+        last["visual_plan"]["text"] = neutral["cta"]["text"]
+        last["claims"] = []
+        if add_claim:
+            last["claims"].append(
+                {
+                    "text": "Sản phẩm miễn phí.",
+                    "type": "pricing",
+                    "segment_ids": [last["narration_segments"][0]["segment_id"]],
+                    "fact_refs": [],
+                }
+            )
+        name = "cta-product-claim-still-needs-refs" if add_claim else "neutral-cta-empty-claims"
+        cases.append(Case(f"m2/{name}", "script", standalone_ctx, neutral))
 
     # Hook/CTA phải được đọc (73f4df9): 4 ca `m2/{hook-mismatch,...}` của Định.
     for label in ("hook-mismatch", "missing-cta-scene", "cta-not-spoken", "speech-whitespace"):

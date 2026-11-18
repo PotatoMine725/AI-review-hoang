@@ -88,7 +88,7 @@ raise. `input` theo `p1-ac-03-input.v1`; `llm` là `LLM` của M1 (dùng chung r
 
 | File | Việc |
 |---|---|
-| `contract/` | prompt, schema, ví dụ của Định, **chép nguyên byte** từ commit `8008cbf` (#83). Không sửa tại đây (`SOURCE.md`) |
+| `contract/` | prompt, schema, ví dụ của Định, **chép nguyên byte** từ commit `e33827c` (#83). Không sửa tại đây (`SOURCE.md`) |
 | `validate.py` | port luật M2 của `spikes/m1-crawl-extract/validate_contracts.py`, trả mọi lỗi; `validate_input` chạy cả `validate_pkb` của M1 |
 | `schema.py` | schema output → dạng Gemini nhận: chỉ giữ từ khoá đã chạy thật, `const` → `enum`, bỏ `estimated_duration_s` |
 | `prompt.py` | system prompt = khối ```text của Định, điền 3 placeholder; `product_id`, `knowledge_version` đi ở tin nhắn user |
