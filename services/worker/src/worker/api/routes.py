@@ -11,11 +11,21 @@ from __future__ import annotations
 from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
+from starlette.concurrency import run_in_threadpool
 
 from worker.api.db import Database, Row
-from worker.api.deps import Owner, Service, current_owner, get_db, owner_or_service, require_service
+from worker.api.deps import (
+    Owner,
+    Service,
+    current_owner,
+    get_db,
+    get_script_generator,
+    owner_or_service,
+    require_service,
+)
 from worker.api.errors import ApiError, DatabaseError
+from worker.api.generator import ScriptGenerationError, ScriptGenerator
 from worker.api.schemas import (
     CrawlRequest,
     JobCreated,
@@ -27,6 +37,7 @@ from worker.api.schemas import (
     ReviewOut,
     RevisionCreated,
     ScriptCreate,
+    ScriptGenerate,
     VersionCreated,
     VideoRequest,
 )
@@ -197,6 +208,82 @@ def create_script(product_id: UUID, body: ScriptCreate, _: ServiceDep, db: Db) -
             "p_parent_revision": body.parent_revision,
             "p_report": body.report,
             "p_cost_breakdown": body.cost_breakdown,
+        },
+    )
+    return {"revision": revision}
+
+
+M2_INPUT_VERSION = "p1-ac-03-input.v1-draft"
+
+
+@router.post(
+    "/products/{product_id}/scripts/generate", response_model=RevisionCreated, status_code=201
+)
+async def generate_script(
+    product_id: UUID,
+    body: ScriptGenerate,
+    response: Response,
+    _: ServiceDep,
+    db: Db,
+    generator: Annotated[ScriptGenerator | None, Depends(get_script_generator)],
+) -> Any:
+    """Sinh script (M2) từ PKB `approved` rồi lưu thành revision `draft`. Chạy đồng bộ (LLM)."""
+    pid = str(product_id)
+    # Cùng key trả revision cũ, không gọi LLM lần nữa (idempotent, tiết kiệm quota).
+    prior = await run_in_threadpool(
+        _db_call,
+        db.select,
+        "script_revisions",
+        {"product_id": f"eq.{pid}", "idempotency_key": f"eq.{body.idempotency_key}"},
+    )
+    if prior:
+        response.status_code = 200
+        return {"revision": prior[0]["revision"]}
+    if generator is None:
+        raise ApiError(503, "bộ sinh script (M2) chưa được cấu hình")
+
+    rows = await run_in_threadpool(
+        _db_call,
+        db.select,
+        "product_knowledge",
+        {"product_id": f"eq.{pid}", "version": f"eq.{body.knowledge_version}"},
+    )
+    pkb = _one(rows, "PKB version")
+    if pkb["status"] != "approved":
+        raise ApiError(422, f"PKB version {body.knowledge_version} chưa được duyệt")
+    m2_input: dict[str, Any] = {
+        "schema_version": M2_INPUT_VERSION,
+        "product_id": pid,
+        "knowledge_version": body.knowledge_version,
+        "approved_pkb": {
+            "status": "approved",
+            "schema_version": pkb["data"]["schema_version"],
+            "data": pkb["data"],
+            "sources": pkb["sources"],
+        },
+        "permitted_assets": body.permitted_assets,
+    }
+    if body.content_context is not None:
+        m2_input["content_context"] = body.content_context
+    try:
+        script = await generator(m2_input)
+    except ScriptGenerationError as e:
+        status = 422 if e.invalid else 502
+        suffix = " (có thể thử lại)" if e.retryable else ""
+        raise ApiError(status, f"sinh script thất bại: {e.message}{suffix}") from e
+
+    revision = await run_in_threadpool(
+        _db_call,
+        db.rpc,
+        "create_script_revision",
+        {
+            "p_product_id": pid,
+            "p_knowledge_version": body.knowledge_version,
+            "p_content": script.content,
+            "p_idempotency_key": body.idempotency_key,
+            "p_parent_revision": body.parent_revision,
+            "p_report": script.report,
+            "p_cost_breakdown": script.cost_breakdown,
         },
     )
     return {"revision": revision}

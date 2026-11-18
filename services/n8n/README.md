@@ -13,7 +13,7 @@ n8n **không** giữ dữ liệu chuẩn và không đọc/ghi DB: chỉ gọi A
 
 ## Luồng
 
-`Create crawl job` → (runner crawl + extract) → chờ job `completed` → **điểm duyệt 1** (poll PKB tới `approved`) → (TODO sinh script M2) → `Create script revision` → **điểm duyệt 2** (poll script tới `approved`) → `Create video job` với đúng `pkb_version`/`script_revision` đã duyệt → (TODO render).
+`Create crawl job` → (runner crawl + extract) → chờ job `completed` → **điểm duyệt 1** (poll PKB tới `approved`) → `Generate script (M2)` (`POST /scripts/generate`, đồng bộ) → **điểm duyệt 2** (poll script tới `approved`) → `Create video job` với đúng `pkb_version`/`script_revision` đã duyệt → (TODO render).
 
 - Idempotency key: `<execution_id>:<bước>`; n8n retry cùng execution không tạo trùng.
 - `rejected` ở hai điểm duyệt thì workflow dừng bằng lỗi.
@@ -21,4 +21,4 @@ n8n **không** giữ dữ liệu chuẩn và không đọc/ghi DB: chỉ gọi A
 
 ## Chưa có
 
-Giới hạn thời gian cho cả job crawl+extract (extract xấu nhất ~20 phút), sinh script M2 (#92), render/TTS/ảnh AI (ADR-003/004), giới hạn số lần poll, workflow chạy thử trên n8n thật.
+Giới hạn thời gian cho cả job crawl+extract (extract xấu nhất ~20 phút), render/TTS/ảnh AI (ADR-003/004), giới hạn số lần poll, workflow chạy thử trên n8n thật.

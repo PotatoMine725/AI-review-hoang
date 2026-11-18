@@ -11,6 +11,7 @@ nếu chưa đặt token.
 from __future__ import annotations
 
 import hmac
+import os
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Annotated
@@ -19,6 +20,7 @@ from fastapi import Depends, Header
 
 from worker.api.db import Database, PostgrestDatabase
 from worker.api.errors import ApiError
+from worker.api.generator import GeminiScriptGenerator, ScriptGenerator
 from worker.settings import MissingConfigError, Settings
 
 
@@ -32,6 +34,15 @@ def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Database:
         return PostgrestDatabase(settings)
     except MissingConfigError as e:
         raise ApiError(503, str(e)) from e
+
+
+def get_script_generator(
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> ScriptGenerator | None:
+    """Bộ sinh script M2. None nếu thiếu `GEMINI_API_KEY` (trừ `LLM_PROVIDER=fixture`)."""
+    if os.environ.get("LLM_PROVIDER", "gemini") != "fixture" and settings.missing("script"):
+        return None
+    return GeminiScriptGenerator()
 
 
 @dataclass(frozen=True)

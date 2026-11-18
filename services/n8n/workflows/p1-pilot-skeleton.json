@@ -251,29 +251,19 @@
       ]
     },
     {
-      "parameters": {},
-      "name": "TODO: M2 script",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        2680,
-        300
-      ],
-      "notes": "TODO: sinh script (M2, #92) từ PKB đã duyệt; đưa kết quả vào trường 'content' của node kế.",
-      "notesInFlow": true
-    },
-    {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/scripts",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/scripts/generate",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "options": {},
+        "options": {
+          "timeout": 900000
+        },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={ \"knowledge_version\": {{ $(\"Get PKB gate\").first().json.version }}, \"content\": {{ JSON.stringify($json.content ?? {}) }}, \"idempotency_key\": \"{{ $execution.id }}:script\" }"
+        "jsonBody": "={ \"knowledge_version\": {{ $(\"Get PKB gate\").first().json.version }}, \"idempotency_key\": \"{{ $execution.id }}:script\", \"permitted_assets\": [], \"content_context\": {} }"
       },
-      "name": "Create script revision",
+      "name": "Generate script (M2)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
@@ -285,12 +275,14 @@
           "id": "REPLACE_IN_N8N",
           "name": "AI Review Worker (X-Service-Token)"
         }
-      }
+      },
+      "notes": "Sinh script M2 đồng bộ (LLM, có thể vài phút) nên timeout 15 phút. permitted_assets: điền asset đã có quyền (bảng assets chưa có). Thiếu GEMINI_API_KEY thì API trả 503.",
+      "notesInFlow": true
     },
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/scripts/{{ $('Create script revision').first().json.revision }}",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/scripts/{{ $('Generate script (M2)').first().json.revision }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
@@ -532,7 +524,7 @@
       "main": [
         [
           {
-            "node": "TODO: M2 script",
+            "node": "Generate script (M2)",
             "type": "main",
             "index": 0
           }
@@ -569,28 +561,6 @@
         [
           {
             "node": "Get PKB gate",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "TODO: M2 script": {
-      "main": [
-        [
-          {
-            "node": "Create script revision",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Create script revision": {
-      "main": [
-        [
-          {
-            "node": "Get script gate",
             "type": "main",
             "index": 0
           }
@@ -660,6 +630,17 @@
         [
           {
             "node": "TODO: render (FFmpeg/TTS/ảnh AI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate script (M2)": {
+      "main": [
+        [
+          {
+            "node": "Get script gate",
             "type": "main",
             "index": 0
           }

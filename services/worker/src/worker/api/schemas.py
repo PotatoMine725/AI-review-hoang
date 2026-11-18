@@ -75,6 +75,19 @@ class ScriptCreate(Strict):
     cost_breakdown: dict[str, Any] = {}
 
 
+class ScriptGenerate(Strict):
+    """Yêu cầu sinh script từ PKB đã duyệt. Tư liệu (`permitted_assets`) do BE/n8n truyền vào."""
+
+    knowledge_version: int = Field(gt=0)
+    idempotency_key: str = IdempotencyKey
+    parent_revision: int | None = Field(default=None, gt=0)
+    # Tư liệu có quyền dùng (asset_id, product_id, kind, allowed_use, rights_basis). Bảng assets
+    # chưa có, nên tạm truyền trong request; M2 chỉ được trả về asset_id có trong danh sách này.
+    permitted_assets: list[dict[str, Any]] = []
+    # Tuỳ chọn: video_description, platform, intent, audience, approved/forbidden_claims, cta.
+    content_context: dict[str, Any] | None = None
+
+
 class RevisionCreated(BaseModel):
     revision: int
 
