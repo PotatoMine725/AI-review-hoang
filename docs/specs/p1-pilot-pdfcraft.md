@@ -15,7 +15,7 @@
 
 | Trường | Giá trị |
 |---|---|
-| `website_url` | `https://pdfcraft.devtoolcafe.com/` (chuẩn hoá bằng `normalize_product_url`) |
+| `website_url` | `https://pdfcraft.devtoolcafe.com` (chuẩn hoá bằng `normalize_product_url`, không có dấu `/` cuối) |
 | Owner | 1 merchant thử (tài khoản nhóm); `products.affiliate_url = NULL` |
 | Brief | Giới thiệu PDFCraft cho người dùng Việt cần xử lý PDF nhanh, không cài phần mềm. Không có ưu đãi, không có link theo dõi. CTA đọc "Xem thêm thông tin." |
 | Ngôn ngữ video | Tiếng Việt (giọng VieNeu), phụ đề tiếng Việt |
@@ -88,11 +88,11 @@ Hai điểm owner duyệt = `review_pkb` và `review_script_revision`; chỉ mer
 
 Khác ERD v1.3.3 (decision-log #24, lead đồng ý 18/11): `script_revisions` là giải pháp chuyển tiếp thay `content_scripts` (cần `campaigns`, chưa có); `generation_jobs` thêm `pkb_version`, `script_revision`, `render_profile`, `n8n_execution_id` và thay `content_script_id`; `products.affiliate_url` cho phép NULL. Hợp đồng DB đầy đủ: [`p1-pipeline-db-contract.md`](p1-pipeline-db-contract.md).
 
-Chưa làm (cần quyết hoặc PR sau): endpoint FastAPI (xem [api-contract](api-contract.md), mục P1), cột `tokens_*`/`cost_usd` tự suy từ `cost_breakdown`, hàng đợi claim job, bảng `videos`, Storage bucket.
+Endpoint FastAPI (xem [api-contract](api-contract.md), mục P1) và khung workflow n8n (`services/n8n/`) đã có ở PR riêng. Chưa làm (cần quyết hoặc PR sau): cột `tokens_*`/`cost_usd` tự suy từ `cost_breakdown`, hàng đợi claim job, bảng `videos`, Storage bucket.
 
 ## 7. Việc còn lại để chạy pilot thật
 
 1. ~~Crawl lại PDFCraft~~ Đã chạy 17/11 (30 trang, extract 12 fact); PKB nháp dựng từ kết quả này. Còn phải đối chiếu evidence `f8`, `f9` với trang `/en/tools` mới (hash đổi).
 2. Đối chiếu `f8`, `f9`, rồi merchant duyệt thật bằng `review_pkb` (BA đã chốt số công cụ, xem mục 4).
 3. Thông gửi mẫu explorer để kiểm bảng mục 5.
-4. Viết endpoint FastAPI và workflow n8n dùng các RPC trên.
+4. ~~Viết endpoint FastAPI và khung workflow n8n~~ Xong ở PR riêng; còn nối các bước crawl/extract/script/render thật và chạy thử trên n8n.

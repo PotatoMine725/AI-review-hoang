@@ -35,7 +35,7 @@ Các endpoint dự kiến của Module 1 (`POST /products`, `GET /jobs/{id}`, đ
 
 ## P1 pilot (#99): lưu Product / PKB / script / job qua RPC (đề xuất)
 
-Migration `supabase/migrations/20261117020000_p1_pipeline_persistence.sql` (**IMPLEMENTED** ở tầng DB, có test `supabase/tests/`). Năm RPC chỉ cấp cho `service_role`; FastAPI xác minh JWT rồi truyền `p_actor`. Endpoint HTTP bên dưới là **PLANNED**, chưa có code; tên và hình dạng là đề xuất, cần FE/n8n xác nhận trước khi viết.
+Migration `supabase/migrations/20261117020000_p1_pipeline_persistence.sql` (**IMPLEMENTED** ở tầng DB, có test `supabase/tests/`). Năm RPC chỉ cấp cho `service_role`; FastAPI xác minh JWT rồi truyền `p_actor`. Endpoint HTTP bên dưới là **IMPLEMENTED** ở `services/worker` (chưa chạy với Supabase thật; FE/n8n cần xác nhận hình dạng).
 
 | RPC (IMPLEMENTED) | Việc | Lỗi |
 |---|---|---|
@@ -45,15 +45,22 @@ Migration `supabase/migrations/20261117020000_p1_pipeline_persistence.sql` (**IM
 | `review_script_revision(p_product_id, p_revision, p_actor, p_decision, p_note)` | như `review_pkb` | như trên |
 | `create_generation_job(p_product_id, p_job_type, p_idempotency_key, p_input_snapshot, p_pkb_version, p_script_revision, p_n8n_execution_id, p_render_profile) → uuid` | Tạo job; cùng `(product_id, idempotency_key)` trả job cũ | `check_violation` nếu video thiếu script `approved` |
 
-| Endpoint (PLANNED) | Việc | Quyền |
+| Endpoint (IMPLEMENTED, `worker.api.routes`) | Việc | Quyền |
 |---|---|---|
-| `POST /products` | Tạo product từ URL; trả `product_id` | owner đăng nhập |
-| `POST /products/{id}/crawl` | Tạo job `crawl` (body: `idempotency_key`, `n8n_execution_id`); trả `job_id` | owner hoặc n8n (service) |
-| `GET /jobs/{job_id}` | `status`, `error`, `pkb_version`, `script_revision`, `n8n_execution_id`, `result_manifest` | owner |
-| `GET/PATCH /products/{id}/pkb/{version}`, `POST …/approve` | đọc, sửa, duyệt PKB đúng version | owner |
-| `POST /products/{id}/scripts` | Tạo script revision từ `knowledge_version` đã duyệt | n8n (service) |
-| `POST /products/{id}/scripts/{revision}/approve` | Duyệt đúng revision | owner |
-| `POST /products/{id}/videos` | Tạo job `video` với `pkb_version` + `script_revision` đã duyệt; trả `job_id` | n8n (service) |
+| `POST /products` (`website_url`, `name?`) → 201 `{id, website_url, name, status}` | Tạo product; URL chuẩn hoá bằng `normalize_product_url`; `409` nếu URL đã có | owner (JWT) |
+| `GET /products/{id}` | Đọc product | owner (RLS) hoặc service |
+| `POST /products/{id}/crawl` (`idempotency_key`, `n8n_execution_id?`) → 202 `{job_id}` | Tạo job `crawl` | owner hoặc service |
+| `POST /products/{id}/videos` (`pkb_version`, `script_revision`, `idempotency_key`, `render_profile?`, `options?`, `n8n_execution_id?`) → 202 `{job_id}` | Tạo job `video`; `422` nếu script chưa `approved` | service |
+| `GET /jobs/{id}` | `status`, `error`, `pkb_version`, `script_revision`, `n8n_execution_id`, `result_manifest`, chi phí | owner (RLS) hoặc service |
+| `PATCH /jobs/{id}` (`status`, `error`, `attempts`, `pkb_version`, `result_manifest`, `n8n_execution_id`, `cost_breakdown`) | Worker/n8n cập nhật job; chuyển trạng thái sai → `409` | service |
+| `POST /products/{id}/pkb` (`data`, `sources`) → 201 `{version}` | Tạo PKB `draft` | service |
+| `GET /products/{id}/pkb/{version}` | Đọc PKB | owner (RLS) hoặc service |
+| `POST /products/{id}/pkb/{version}/review` (`decision` `submit`\|`approve`\|`reject`, `note?`) → `{status}` | Duyệt điểm 1 | owner (JWT) |
+| `POST /products/{id}/scripts` (`knowledge_version`, `content`, `idempotency_key`, `parent_revision?`, `report?`, `cost_breakdown?`) → 201 `{revision}` | Tạo script revision từ PKB đã duyệt | service |
+| `GET /products/{id}/scripts/{revision}` | Đọc script | owner (RLS) hoặc service |
+| `POST /products/{id}/scripts/{revision}/review` | Duyệt điểm 2 | owner (JWT) |
+
+Xác thực: owner gửi `Authorization: Bearer <access_token>`, API hỏi Supabase Auth (`/auth/v1/user`) để lấy `auth.users.id` rồi truyền làm `p_actor`; đọc thay mặt owner dùng khoá anon + token nên RLS giới hạn dữ liệu. Service (n8n) gửi `X-Service-Token` (so sánh hằng thời gian với `N8N_SERVICE_TOKEN`; chưa đặt biến thì endpoint service trả `503`). Lỗi trả `{"detail": "..."}`; SQLSTATE → HTTP: `42501`→403, `23503`/`P0002`→404, `23505`/`23001`→409, `23514`/`22P02`→422, thiếu cấu hình→503. Kiểm thử: `services/worker/tests/api/` (DB giả). **Chưa có**: endpoint sinh script (chờ M2 #92), kiểm schema PKB trong API (chờ #90; hiện DB chỉ kiểm dạng). Khoá API và hạn mức: [`p1-secrets-and-quota.md`](p1-secrets-and-quota.md).
 
 n8n chỉ gọi các endpoint service theo Job ID và ghi `n8n_execution_id`; không giữ dữ liệu chuẩn, không nhận secret từ FE. Hợp đồng DB đầy đủ (vòng đời, mã lỗi, idempotency, truy vết): [`p1-pipeline-db-contract.md`](p1-pipeline-db-contract.md). Dữ liệu pilot: [`p1-pilot-pdfcraft.md`](p1-pilot-pdfcraft.md) mục 6.
 

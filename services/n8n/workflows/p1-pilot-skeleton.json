@@ -1,0 +1,678 @@
+{
+  "name": "P1 pilot: crawl -> PKB -> script -> video (khung)",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "baseUrl",
+              "value": "http://localhost:8000",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "productId",
+              "value": "REPLACE_WITH_PRODUCT_UUID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "Không đặt khoá ở đây. Token nằm trong credential 'AI Review Worker'. Product do owner tạo qua FE/API.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/crawl",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"idempotency_key\": \"{{ $execution.id }}:crawl\", \"n8n_execution_id\": \"{{ $execution.id }}\" }"
+      },
+      "name": "Create crawl job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_IN_N8N",
+          "name": "AI Review Worker (X-Service-Token)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "name": "TODO: run crawl + extract",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "TODO: worker chưa có bộ nhận job (claim) chạy M1 crawl/extract và gọi POST /pkb. Hiện job dừng ở queued.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "name": "Crawl: Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.baseUrl }}/jobs/{{ $('Create crawl job').first().json.job_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Get crawl job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_IN_N8N",
+          "name": "AI Review Worker (X-Service-Token)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.status === 'completed' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Crawl: Done?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.status === 'failed' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Crawl: Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Crawl: bị từ chối hoặc thất bại (xem Job/PKB/script trong DB)"
+      },
+      "name": "Crawl: Stop",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/pkb/{{ $('Crawl: Done?').first().json.pkb_version }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Get PKB gate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_IN_N8N",
+          "name": "AI Review Worker (X-Service-Token)"
+        }
+      },
+      "notes": "Điểm duyệt 1: owner bấm duyệt ở FE (POST .../pkb/{v}/review).",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.status === 'approved' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "PKB approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.status === 'rejected' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "PKB rejected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2420,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "PKB bị từ chối"
+      },
+      "name": "PKB: Stop",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "name": "PKB: Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2420,
+        620
+      ]
+    },
+    {
+      "parameters": {},
+      "name": "TODO: M2 script",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        300
+      ],
+      "notes": "TODO: sinh script (M2, #92) từ PKB đã duyệt; đưa kết quả vào trường 'content' của node kế.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/scripts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"knowledge_version\": {{ $(\"Get PKB gate\").first().json.version }}, \"content\": {{ JSON.stringify($json.content ?? {}) }}, \"idempotency_key\": \"{{ $execution.id }}:script\" }"
+      },
+      "name": "Create script revision",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2900,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_IN_N8N",
+          "name": "AI Review Worker (X-Service-Token)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/scripts/{{ $('Create script revision').first().json.revision }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Get script gate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_IN_N8N",
+          "name": "AI Review Worker (X-Service-Token)"
+        }
+      },
+      "notes": "Điểm duyệt 2: owner duyệt đúng revision ở FE.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.status === 'approved' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Script approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        3340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.status === 'rejected' }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Script rejected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        3560,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "Script bị từ chối"
+      },
+      "name": "Script: Stop",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        3780,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "name": "Script: Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3560,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.baseUrl }}/products/{{ $('Config').first().json.productId }}/videos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"pkb_version\": {{ $(\"Get PKB gate\").first().json.version }}, \"script_revision\": {{ $(\"Get script gate\").first().json.revision }}, \"idempotency_key\": \"{{ $execution.id }}:video\", \"render_profile\": \"16x9\", \"n8n_execution_id\": \"{{ $execution.id }}\" }"
+      },
+      "name": "Create video job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3820,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_IN_N8N",
+          "name": "AI Review Worker (X-Service-Token)"
+        }
+      },
+      "notes": "Dùng đúng pkb_version và script_revision đã duyệt. render_profile chưa chốt (xem db-contract mục 7).",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {},
+      "name": "TODO: render (FFmpeg/TTS/ảnh AI)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4040,
+        300
+      ],
+      "notes": "TODO: bước render chờ ADR-003/004 và adapter provider; cập nhật job bằng PATCH /jobs/{id}.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Create crawl job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create crawl job": {
+      "main": [
+        [
+          {
+            "node": "TODO: run crawl + extract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl: Wait": {
+      "main": [
+        [
+          {
+            "node": "Get crawl job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get crawl job": {
+      "main": [
+        [
+          {
+            "node": "Crawl: Done?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl: Done?": {
+      "main": [
+        [
+          {
+            "node": "Get PKB gate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crawl: Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl: Failed?": {
+      "main": [
+        [
+          {
+            "node": "Crawl: Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crawl: Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TODO: run crawl + extract": {
+      "main": [
+        [
+          {
+            "node": "Crawl: Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get PKB gate": {
+      "main": [
+        [
+          {
+            "node": "PKB approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PKB approved?": {
+      "main": [
+        [
+          {
+            "node": "TODO: M2 script",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PKB rejected?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PKB rejected?": {
+      "main": [
+        [
+          {
+            "node": "PKB: Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PKB: Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PKB: Wait": {
+      "main": [
+        [
+          {
+            "node": "Get PKB gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TODO: M2 script": {
+      "main": [
+        [
+          {
+            "node": "Create script revision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create script revision": {
+      "main": [
+        [
+          {
+            "node": "Get script gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get script gate": {
+      "main": [
+        [
+          {
+            "node": "Script approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script approved?": {
+      "main": [
+        [
+          {
+            "node": "Create video job",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Script rejected?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script rejected?": {
+      "main": [
+        [
+          {
+            "node": "Script: Stop",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Script: Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script: Wait": {
+      "main": [
+        [
+          {
+            "node": "Get script gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create video job": {
+      "main": [
+        [
+          {
+            "node": "TODO: render (FFmpeg/TTS/ảnh AI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "pinData": {},
+  "tags": []
+}
