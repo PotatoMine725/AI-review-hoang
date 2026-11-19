@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "asset_id": "pdfcraft-pagenum-studio",
+  "url": "https://pdfcraft.devtoolcafe.com/en/studio/",
+  "viewport": {"width": 1920, "height": 1080},
+  "crop": [336, 92, 1584, 950],
+  "steps": [
+    {"op": "goto", "url": "https://pdfcraft.devtoolcafe.com/en/studio/"},
+    {"op": "upload", "selector": "input[type=file] >> nth=0", "files": ["mau-nhieu-trang.pdf"]},
+    {"op": "wait", "ms": 1800},
+    {"op": "click", "selector": "text=\"Page Numbers\" >> nth=0"},
+    {"op": "wait", "ms": 700},
+    {"op": "click", "selector": "input[type=number] >> nth=1"},
+    {"op": "press", "key": "Control+A"},
+    {"op": "press", "key": "2"},
+    {"op": "press", "key": "4"},
+    {"op": "wait", "ms": 400},
+    {"op": "click", "selector": "role=button[name=\"Apply Changes\"]"},
+    {"op": "wait", "ms": 1500},
+    {"op": "hover", "selector": "iframe >> nth=0"},
+    {"op": "scroll", "dy": 650},
+    {"op": "wait", "ms": 1500},
+    {"op": "scroll", "dy": 1320},
+    {"op": "wait", "ms": 2000}
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "asset_id": "pdfcraft-merge-studio",
+  "url": "https://pdfcraft.devtoolcafe.com/en/studio/",
+  "viewport": {"width": 1920, "height": 1080},
+  "crop": [336, 92, 1584, 950],
+  "steps": [
+    {"op": "goto", "url": "https://pdfcraft.devtoolcafe.com/en/studio/"},
+    {"op": "wait", "ms": 800},
+    {"op": "upload", "selector": "input[type=file] >> nth=0", "files": ["mau-a.pdf", "mau-b.pdf"]},
+    {"op": "wait", "ms": 2500},
+    {"op": "click", "selector": "text=\"Combine Files & Merge PDF\" >> nth=0"},
+    {"op": "wait", "ms": 1200},
+    {"op": "click", "selector": "button:has-text(\"mau-b.pdf\"):has-text(\"+\") >> nth=-1"},
+    {"op": "wait", "ms": 900},
+    {"op": "click", "selector": "role=button[name=\"Append\"] >> nth=-1"},
+    {"op": "wait", "ms": 3000},
+    {"op": "hover", "selector": "iframe >> nth=0"},
+    {"op": "scroll", "dy": 1300},
+    {"op": "wait", "ms": 600},
+    {"op": "scroll", "dy": 1300},
+    {"op": "wait", "ms": 600},
+    {"op": "scroll", "dy": 1300},
+    {"op": "wait", "ms": 2000}
+  ]
+}
