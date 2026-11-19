@@ -40,6 +40,14 @@ def test_require_raises_with_names_only() -> None:
     assert "acc" not in str(e.value)
 
 
+def test_openai_key_is_read_hidden_and_required_by_edit_step() -> None:
+    assert Settings.from_env({}).missing("edit") == ["OPENAI_API_KEY"]
+    s = Settings.from_env({"OPENAI_API_KEY": " sk-test-123 "})
+    assert s.missing("edit") == []
+    assert s.openai_api_key.get_secret_value() == "sk-test-123"
+    assert "sk-test-123" not in repr(s) + str(s.model_dump())
+
+
 def test_require_ok_when_all_present() -> None:
     Settings.from_env({"GEMINI_API_KEY": "k"}).require("extract")
 

@@ -28,6 +28,7 @@ STEP_REQUIREMENTS: dict[str, tuple[str, ...]] = {
     "extract": ("GEMINI_API_KEY",),
     "script": ("GEMINI_API_KEY",),
     "ai_scene": ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN"),
+    "edit": ("OPENAI_API_KEY",),
 }
 
 
@@ -59,6 +60,8 @@ class Settings(BaseModel):
     # Nhà cung cấp (chỉ cần khi chạy bước tương ứng).
     gemini_api_key: SecretStr = SecretStr("")
     fal_key: SecretStr = SecretStr("")
+    # OpenAI: khâu edit video để nâng chất lượng (Thông xác nhận 19/11/2026). Render vẫn chạy local.
+    openai_api_key: SecretStr = SecretStr("")
     cloudflare_account_id: SecretStr = SecretStr("")
     cloudflare_api_token: SecretStr = SecretStr("")
     # Ngưỡng chi phí một job (USD, giá niêm yết). None = không chặn. Vượt ngưỡng thì job
@@ -83,6 +86,7 @@ class Settings(BaseModel):
             n8n_service_token=SecretStr(env.get("N8N_SERVICE_TOKEN", "").strip()),
             gemini_api_key=SecretStr(env.get("GEMINI_API_KEY", "").strip()),
             fal_key=SecretStr(env.get("FAL_KEY", "").strip()),
+            openai_api_key=SecretStr(env.get("OPENAI_API_KEY", "").strip()),
             cloudflare_account_id=SecretStr(env.get("CLOUDFLARE_ACCOUNT_ID", "").strip()),
             cloudflare_api_token=SecretStr(env.get("CLOUDFLARE_API_TOKEN", "").strip()),
             job_cost_limit_usd=float(limit) if limit else None,
