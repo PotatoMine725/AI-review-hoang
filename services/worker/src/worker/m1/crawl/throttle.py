@@ -12,6 +12,8 @@ from urllib.parse import urlsplit
 
 from worker.m1.models import RequestLogEntry
 
+SLACK_S = 0.02  # dư thêm khi phải xếp hàng, bù độ trễ hẹn giờ của hệ điều hành
+
 
 def now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="milliseconds")
@@ -43,13 +45,16 @@ class Throttle:
     async def wait(self, url: str, kind: Literal["page", "robots", "sitemap"]) -> RequestLogEntry:
         host = urlsplit(url).netloc
         interval = self._interval.get(host, self.min_interval)
-        last = self._last.get(host)
+        # Đặt chỗ (giờ được phép gửi) TRƯỚC khi chờ: không có `await` giữa lúc đọc và ghi `_last`,
+        # nên nhiều tác vụ gọi `wait` cùng lúc (crawl song song) vẫn xếp hàng cách nhau ≥ interval.
+        now, last = self._clock(), self._last.get(host)
+        slot = now if last is None or now - last >= interval else last + interval + SLACK_S
+        self._last[host] = slot
         # Lặp vì trên Windows asyncio.sleep có thể dậy sớm ~15 ms
-        while last is not None and (gap := self._clock() - last) < interval:
-            await self._sleep(interval - gap + 0.005)
+        while (gap := slot - self._clock()) > 0:
+            await self._sleep(gap + 0.005)
         t = self._clock()
         entry = RequestLogEntry(url=url, kind=kind, host=host, t=round(t, 3), fetched_at=now_iso())
-        self._last[host] = t
         self.log.append(entry)
         return entry
 
