@@ -26,6 +26,7 @@ from worker.api.deps import (
 )
 from worker.api.errors import ApiError, DatabaseError
 from worker.api.generator import ScriptGenerationError, ScriptGenerator
+from worker.api.m2_input import build_m2_input, input_context
 from worker.api.schemas import (
     CrawlRequest,
     JobCreated,
@@ -213,9 +214,6 @@ def create_script(product_id: UUID, body: ScriptCreate, _: ServiceDep, db: Db) -
     return {"revision": revision}
 
 
-M2_INPUT_VERSION = "p1-ac-03-input.v1-draft"
-
-
 @router.post(
     "/products/{product_id}/scripts/generate", response_model=RevisionCreated, status_code=201
 )
@@ -251,20 +249,9 @@ async def generate_script(
     pkb = _one(rows, "PKB version")
     if pkb["status"] != "approved":
         raise ApiError(422, f"PKB version {body.knowledge_version} chưa được duyệt")
-    m2_input: dict[str, Any] = {
-        "schema_version": M2_INPUT_VERSION,
-        "product_id": pid,
-        "knowledge_version": body.knowledge_version,
-        "approved_pkb": {
-            "status": "approved",
-            "schema_version": pkb["data"]["schema_version"],
-            "data": pkb["data"],
-            "sources": pkb["sources"],
-        },
-        "permitted_assets": body.permitted_assets,
-    }
-    if body.content_context is not None:
-        m2_input["content_context"] = body.content_context
+    m2_input = build_m2_input(
+        pid, body.knowledge_version, pkb, body.permitted_assets, body.content_context
+    )
     try:
         qa = [f.model_dump(exclude_none=True) for f in body.qa_feedback]
         script = await generator(m2_input, qa or None)
@@ -283,7 +270,11 @@ async def generate_script(
             "p_content": script.content,
             "p_idempotency_key": body.idempotency_key,
             "p_parent_revision": body.parent_revision,
-            "p_report": script.report,
+            # Lưu phần input không suy ra được từ PKB để runner video kiểm lại kịch bản.
+            "p_report": {
+                **script.report,
+                "input": input_context(body.permitted_assets, body.content_context),
+            },
             "p_cost_breakdown": script.cost_breakdown,
         },
     )

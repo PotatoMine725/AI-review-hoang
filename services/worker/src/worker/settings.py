@@ -74,6 +74,8 @@ class Settings(BaseModel):
     runner_poll_interval_s: float = 5.0
     runner_max_attempts: int = 3
     runner_retry_backoff_s: float = 30.0
+    # Job `video`: thư mục ghi MP4 và báo cáo dựng (mỗi job một thư mục con), trên máy render.
+    video_store_dir: str = "./data/videos"
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> Settings:
@@ -95,6 +97,7 @@ class Settings(BaseModel):
             runner_poll_interval_s=float(env.get("RUNNER_POLL_INTERVAL_S", "5") or 5),
             runner_max_attempts=int(env.get("RUNNER_MAX_ATTEMPTS", "3") or 3),
             runner_retry_backoff_s=float(env.get("RUNNER_RETRY_BACKOFF_S", "30") or 30),
+            video_store_dir=env.get("WORKER_VIDEO_DIR", "").strip() or "./data/videos",
         )
 
     def _value(self, env_name: str) -> str:

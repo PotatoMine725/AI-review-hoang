@@ -65,7 +65,14 @@ def test_generates_and_stores_revision(client: TestClient, db: FakeDb, gen: Fake
     assert m2["content_context"] == {"platform": "tiktok"}
     assert m2["product_id"] == PRODUCT_ID and m2["knowledge_version"] == 1
     args = db.last("rpc:create_script_revision")
-    assert args["p_content"] == {"scenes": []} and args["p_report"] == {"ok": True}
+    assert args["p_content"] == {"scenes": []} and args["p_report"] == {
+        "ok": True,
+        # input không suy ra được từ PKB được lưu để runner video dựng lại đúng input đã dùng
+        "input": {
+            "permitted_assets": [{"asset_id": "a1"}],
+            "content_context": {"platform": "tiktok"},
+        },
+    }
     assert args["p_parent_revision"] == 2 and args["p_idempotency_key"] == "exec1:script"
 
 

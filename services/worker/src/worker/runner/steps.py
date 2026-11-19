@@ -6,6 +6,8 @@ chỉ sửa adapter (ADR-0005).
 
 from __future__ import annotations
 
+import asyncio
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
@@ -17,6 +19,8 @@ from worker.m1.crawl.store import LocalPageStore
 from worker.m1.extract.service import ExtractError, extract_product
 from worker.m1.llm import make_llm
 from worker.m1.models import CrawlResult
+from worker.produce.config import ProduceConfig
+from worker.produce.pipeline import produce
 
 
 class StepError(Exception):
@@ -87,4 +91,82 @@ class GeminiExtractStep:
             sources=res.sources,
             cost_breakdown=res.cost_breakdown,
             warnings=res.warnings,
+        )
+
+
+@dataclass
+class VideoRequest:
+    script: dict[str, Any]  # script_revisions.content (đã duyệt)
+    m2_input: dict[str, Any]  # input M2 dựng lại từ PKB đã duyệt + `report["input"]` của revision
+    assets_path: Path  # assets.json (bảng asset_id → file, TẠM THỜI trên máy render)
+    out_dir: Path
+    mode: str = "preview"  # preview = `-q draft`, final = `-q looks`
+    ratios: tuple[str, ...] = ("16:9", "9:16")
+
+
+@dataclass
+class VideoOutcome:
+    manifest: dict[str, Any]  # vào generation_jobs.result_manifest
+    warnings: list[str] = field(default_factory=list)
+
+
+class VideoStep(Protocol):
+    async def __call__(self, req: VideoRequest) -> VideoOutcome:
+        """Dựng MP4 từ kịch bản đã duyệt. Không ra MP4 nào thì raise `StepError`."""
+        ...
+
+
+def video_manifest(report: dict[str, Any], report_path: Path) -> dict[str, Any]:
+    """Phần `render_report.json` đủ để đọc kết quả mà không mở file (đường dẫn, độ dài, mốc)."""
+    return {
+        "status": report["status"],  # completed | out_of_range
+        "mode": report["mode"],
+        "ratios": report["ratios"],
+        "target_s": report.get("target_s"),
+        "actual_s": report.get("actual_s"),
+        "outputs": [
+            {
+                k: o.get(k)
+                for k in ("ratio", "ok", "mp4", "duration_s", "size", "duration_check", "error")
+            }
+            for o in report.get("outputs", [])
+        ],
+        "warnings": report.get("warnings", []),
+        "timings_s": report.get("timings_s"),
+        "report_path": str(report_path),
+    }
+
+
+class ProduceVideoStep:
+    """Adapter mặc định: `worker.produce.produce` (P1-08/P1-09). TTS VieNeu và HyperFrames chạy
+    cục bộ qua venv của spike (biến `PRODUCE_*`), nên runner này chỉ chạy trên máy render."""
+
+    def __init__(self, cfg: ProduceConfig | None = None) -> None:
+        self._cfg = cfg
+
+    async def __call__(self, req: VideoRequest) -> VideoOutcome:
+        inputs = req.out_dir / "inputs"
+        inputs.mkdir(parents=True, exist_ok=True)
+        script_path, input_path = inputs / "script.json", inputs / "input.json"
+        script_path.write_text(json.dumps(req.script, ensure_ascii=False), encoding="utf-8")
+        input_path.write_text(json.dumps(req.m2_input, ensure_ascii=False), encoding="utf-8")
+        res = await asyncio.to_thread(
+            produce,
+            script_path,
+            input_path,
+            req.assets_path,
+            req.out_dir,
+            mode=req.mode,
+            ratios=req.ratios,
+            cfg=self._cfg,
+        )
+        if not res.ok:
+            err = res.report.get("error") or {}
+            raise StepError(
+                f"{err.get('code', 'produce_failed')}: {err.get('message', 'không dựng được MP4')}"
+                f" (xem {res.report_path})"
+            )
+        return VideoOutcome(
+            manifest=video_manifest(res.report, res.report_path),
+            warnings=list(res.report.get("warnings", [])),
         )

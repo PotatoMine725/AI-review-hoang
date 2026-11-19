@@ -1,4 +1,10 @@
-"""Nhận và chạy job `crawl`: claim → crawl → (extract) → tạo PKB `draft` → `completed`/`failed`.
+"""Nhận và chạy job `crawl` và `video`.
+
+- `crawl`: claim → crawl → (extract) → tạo PKB `draft` → `completed`/`failed`.
+- `video`: claim → nạp script revision `approved` + PKB `approved` (đúng `script_revision` và
+  `pkb_version` của job) → kiểm lại bằng validator M2 → TTS + render MP4 (`worker.produce`) →
+  `completed`/`failed`. Chạy trên máy render (cần VieNeu/HyperFrames cục bộ), bật bằng
+  `--types video`.
 
 Quy ước:
 - **Claim không cần migration mới**: `UPDATE ... WHERE id = X AND status = 'queued'` là nguyên tử
@@ -22,13 +28,23 @@ from typing import Any
 
 from worker.api.db import Database, Row
 from worker.api.errors import DatabaseError
+from worker.api.m2_input import build_m2_input
 from worker.m1.models import CrawlResult
-from worker.runner.steps import CrawlStep, ExtractOutcome, ExtractStep, StepError
+from worker.runner.steps import (
+    CrawlStep,
+    ExtractOutcome,
+    ExtractStep,
+    StepError,
+    VideoRequest,
+    VideoStep,
+)
 from worker.settings import Settings
 
 log = logging.getLogger("worker.runner")
 
-CLAIM_COLUMNS = "id,product_id,attempts,pkb_version,input_snapshot"
+CLAIM_COLUMNS = "id,product_id,attempts,pkb_version,script_revision,input_snapshot"
+VIDEO_RATIOS = ("16:9", "9:16")
+VIDEO_MODES = ("preview", "final")
 ERROR_LIMIT = 2000  # khớp check của generation_jobs.error
 
 
@@ -73,35 +89,38 @@ class JobRunner:
         self,
         db: Database,
         settings: Settings,
-        crawl: CrawlStep,
+        crawl: CrawlStep | None,
         extract: ExtractStep | None = None,
         *,
+        video: VideoStep | None = None,
         clock: Callable[[], float] = time.monotonic,
     ) -> None:
         self._db = db
         self._settings = settings
         self._crawl = crawl
         self._extract = extract
+        self._video = video
+        self._types = [t for t, step in (("crawl", crawl), ("video", video)) if step is not None]
         self._clock = clock
         self._not_before: dict[str, float] = {}  # job_id -> mốc được nhận lại (retry)
 
     # --- hàng đợi -----------------------------------------------------------------------------
-    def _candidates(self) -> list[Row]:
+    def _candidates(self, job_type: str) -> list[Row]:
         return self._db.select(
             "generation_jobs",
             {
                 "status": "eq.queued",
-                "job_type": "eq.crawl",
+                "job_type": f"eq.{job_type}",
                 "order": "created_at.asc",
                 "limit": "10",
                 "select": CLAIM_COLUMNS,
             },
         )
 
-    def claim_next(self) -> Row | None:
+    def claim_next(self, job_type: str = "crawl") -> Row | None:
         """Nhận job queued cũ nhất chưa chờ backoff. None nếu không có hoặc thua tranh claim."""
         now = self._clock()
-        for row in self._candidates():
+        for row in self._candidates(job_type):
             if self._not_before.get(str(row["id"]), 0.0) > now:
                 continue
             claimed = self._db.update(
@@ -116,12 +135,17 @@ class JobRunner:
     # --- chạy một job -------------------------------------------------------------------------
     async def run_once(self) -> bool:
         """Nhận và chạy tối đa một job. Trả True nếu có job được xử lý."""
-        job = self.claim_next()
+        job = next((j for t in self._types if (j := self.claim_next(t)) is not None), None)
         if job is None:
             return False
         job_id = str(job["id"])
         try:
-            await self._run_crawl_job(job)
+            if job.get("job_type") == "video" or (
+                job.get("job_type") is None and job.get("script_revision") is not None
+            ):
+                await self._run_video_job(job)
+            else:
+                await self._run_crawl_job(job)
         except StepError as e:
             self._fail(job, e.message, retryable=e.retryable, cost=e.cost_breakdown)
         except DatabaseError as e:
@@ -138,6 +162,8 @@ class JobRunner:
         if not isinstance(url, str) or not url:
             raise StepError("input_snapshot thiếu website_url")
 
+        if self._crawl is None:  # chỉ khi `claim_next("crawl")` bị gọi tay khi chưa cấu hình crawl
+            raise StepError("runner chưa cấu hình bước crawl")
         out_dir = Path(self._settings.page_store_dir) / job_id
         crawl = await self._crawl(url, out_dir)
         if crawl.status == "failed":
@@ -171,6 +197,92 @@ class JobRunner:
         log.info(
             "job %s: completed (pages=%s, pkb_version=%s)", job_id, crawl.pages_used, pkb_version
         )
+
+    # --- job video ----------------------------------------------------------------------------
+    def _one(self, table: str, filters: dict[str, str], what: str) -> Row:
+        rows = self._db.select(table, filters)
+        if not rows:
+            raise StepError(f"không tìm thấy {what}")
+        return rows[0]
+
+    async def _run_video_job(self, job: Row) -> None:
+        if self._video is None:
+            raise StepError("runner chưa cấu hình bước video")
+        job_id, product_id = str(job["id"]), str(job["product_id"])
+        revision, pkb_version = job.get("script_revision"), job.get("pkb_version")
+        if not isinstance(revision, int) or not isinstance(pkb_version, int):
+            raise StepError("job video thiếu script_revision hoặc pkb_version")
+        options = (job.get("input_snapshot") or {}).get("options") or {}
+
+        assets = options.get("assets_path")
+        if not isinstance(assets, str) or not assets:
+            raise StepError("input_snapshot.options thiếu assets_path (đường dẫn assets.json)")
+        assets_path = Path(assets)
+        if not assets_path.is_file():
+            raise StepError(f"assets.json không có trên máy render: {assets_path}")
+        mode = options.get("mode", "preview")
+        if mode not in VIDEO_MODES:
+            raise StepError(f"options.mode phải là một trong {VIDEO_MODES}, nhận {mode!r}")
+        ratios = options.get("ratios", list(VIDEO_RATIOS))
+        if (
+            not isinstance(ratios, list)
+            or not ratios
+            or any(r not in VIDEO_RATIOS for r in ratios)
+            or len(set(ratios)) != len(ratios)
+        ):
+            raise StepError(f"options.ratios phải là tập con không trùng của {VIDEO_RATIOS}")
+
+        script = self._one(
+            "script_revisions",
+            {"product_id": f"eq.{product_id}", "revision": f"eq.{revision}"},
+            f"script revision {revision}",
+        )
+        if script["status"] != "approved":
+            raise StepError(f"script revision {revision} chưa được duyệt ({script['status']})")
+        if script["knowledge_version"] != pkb_version:
+            raise StepError(
+                f"script revision {revision} sinh từ PKB v{script['knowledge_version']}, "
+                f"job đòi PKB v{pkb_version}"
+            )
+        pkb = self._one(
+            "product_knowledge",
+            {"product_id": f"eq.{product_id}", "version": f"eq.{pkb_version}"},
+            f"PKB version {pkb_version}",
+        )
+        if pkb["status"] != "approved":
+            raise StepError(f"PKB version {pkb_version} chưa được duyệt ({pkb['status']})")
+        context = (script.get("report") or {}).get("input")
+        if not isinstance(context, dict) or not isinstance(context.get("permitted_assets"), list):
+            raise StepError(
+                f"script revision {revision} không lưu input.permitted_assets "
+                "(sinh trước khi lưu input): sinh lại revision rồi duyệt"
+            )
+        m2_input = build_m2_input(
+            product_id,
+            pkb_version,
+            pkb,
+            context["permitted_assets"],
+            context.get("content_context"),
+        )
+
+        out_dir = Path(self._settings.video_store_dir) / job_id
+        outcome = await self._video(
+            VideoRequest(
+                script=script["content"],
+                m2_input=m2_input,
+                assets_path=assets_path,
+                out_dir=out_dir,
+                mode=mode,
+                ratios=tuple(ratios),
+            )
+        )
+        self._db.update(
+            "generation_jobs",
+            {"id": f"eq.{job_id}"},
+            {"status": "completed", "error": None, "result_manifest": outcome.manifest},
+        )
+        self._not_before.pop(job_id, None)
+        log.info("job %s: video %s (%s)", job_id, outcome.manifest.get("status"), out_dir)
 
     def _fail(
         self, job: Row, message: str, *, retryable: bool, cost: dict[str, Any] | None = None

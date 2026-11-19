@@ -8,7 +8,7 @@ from typing import Any
 
 from worker.api.db import Row
 from worker.m1.models import CrawlResult, PageRecord
-from worker.runner.steps import ExtractOutcome, StepError
+from worker.runner.steps import ExtractOutcome, StepError, VideoOutcome, VideoRequest
 
 PRODUCT = "00000000-0000-4000-8000-0000000000c1"
 
@@ -36,6 +36,8 @@ class JobsDb:
         self.jobs = list(jobs)
         self.pkb_calls: list[dict[str, Any]] = []
         self.next_version = 1
+        # Bảng khác mà runner video chỉ đọc (script_revisions, product_knowledge).
+        self.tables: dict[str, list[Row]] = {}
 
     def by_id(self, job_id: str) -> Row:
         return next(j for j in self.jobs if j["id"] == job_id)
@@ -50,7 +52,8 @@ class JobsDb:
         return True
 
     def select(self, table: str, filters: Mapping[str, str], jwt: str | None = None) -> list[Row]:
-        assert table == "generation_jobs"
+        if table != "generation_jobs":
+            return [dict(r) for r in self.tables.get(table, []) if self._match(r, filters)]
         rows = sorted(
             (r for r in self.jobs if self._match(r, filters)), key=lambda r: r["created_at"]
         )
@@ -150,3 +153,53 @@ class FakeExtract:
             cost_breakdown={"schema_version": "cost-breakdown.v1", "items": []},
             warnings=["w1"],
         )
+
+
+def video_job(job_id: str = "v1", **over: Any) -> Row:
+    fields: dict[str, Any] = {
+        "job_type": "video",
+        "pkb_version": 1,
+        "script_revision": 2,
+        "input_snapshot": {"options": {"assets_path": "ASSETS"}},
+        **over,
+    }
+    return job(job_id, **fields)
+
+
+def approved_script(**over: Any) -> Row:
+    row: Row = {
+        "product_id": PRODUCT,
+        "revision": 2,
+        "knowledge_version": 1,
+        "status": "approved",
+        "content": {"scenes": [{"scene_id": "s01"}]},
+        "report": {
+            "input": {"permitted_assets": [{"asset_id": "a1"}], "content_context": {"x": 1}}
+        },
+    }
+    row.update(over)
+    return row
+
+
+def approved_pkb(**over: Any) -> Row:
+    row: Row = {
+        "product_id": PRODUCT,
+        "version": 1,
+        "status": "approved",
+        "data": {"schema_version": "0.3", "identity": {"name": "X"}},
+        "sources": [{"source_id": "src_01"}],
+    }
+    row.update(over)
+    return row
+
+
+class FakeVideo:
+    def __init__(self, error: StepError | None = None) -> None:
+        self.error = error
+        self.requests: list[VideoRequest] = []
+
+    async def __call__(self, req: VideoRequest) -> VideoOutcome:
+        self.requests.append(req)
+        if self.error:
+            raise self.error
+        return VideoOutcome(manifest={"status": "completed", "outputs": []}, warnings=[])
