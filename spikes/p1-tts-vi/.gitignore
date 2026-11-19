@@ -1,0 +1,10 @@
+# Audio và model tải về: chỉ để local, không commit
+output/
+models/
+*.wav
+*.onnx
+*.onnx.json
+*.gguf
+*.safetensors
+.venv/
+.env

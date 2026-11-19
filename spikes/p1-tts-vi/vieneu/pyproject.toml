@@ -1,0 +1,44 @@
+[project]
+name = "p1-tts-vieneu"
+version = "0.1.0"
+description = "Spike P1-02b: ứng viên VieNeu-TTS (môi trường riêng; torch CUDA cu128 cho đo GPU)"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "tts-common",
+    "vieneu[cuda]",
+    "transformers==4.57.6",
+    # khai báo trực tiếp để [tool.uv.sources] lấy bản CUDA cu128 (phụ thuộc gián tiếp sẽ rơi về bản CPU)
+    "torch==2.8.0",
+    "torchaudio==2.8.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+tts-common = { path = "../common", editable = true }
+torch = { index = "pytorch-cu128" }
+torchaudio = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8", "pyright>=1.1.380"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyright]
+include = ["."]
+exclude = [".venv", "models", "output"]
+pythonVersion = "3.12"
+
+[tool.ruff.lint.isort]
+known-first-party = ["adapter", "pins"]

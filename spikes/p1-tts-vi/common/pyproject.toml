@@ -1,0 +1,30 @@
+[project]
+name = "tts-common"
+version = "0.1.0"
+description = "Spike P1-02b: chuẩn hoá văn bản tiếng Việt, adapter TTS, FakeTTS, đo RTF (chỉ dùng thư viện chuẩn)"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.9,<0.13"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+    "pyright>=1.1.380",
+    "jsonschema>=4.26.0",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"

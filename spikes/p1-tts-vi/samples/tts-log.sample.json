@@ -1,0 +1,64 @@
+{
+  "1": {
+    "segment_id": "s01-hook",
+    "voice_text": "Bạn còn mất cả buổi chỉ để làm một video review?",
+    "normalized": "Bạn còn mất cả buổi chỉ để làm một Vi đi ô Ri viu?",
+    "path": "s01.wav",
+    "duration_s": 3.28,
+    "gen_s": 3.33,
+    "voice": "Mai Anh"
+  },
+  "2": {
+    "segment_id": "s02-spec",
+    "voice_text": "Bình giữ nhiệt Lock&Lock 500ml giữ nóng 12 giờ, giữ lạnh 24 giờ.",
+    "normalized": "Bình giữ nhiệt Lock en Lock năm trăm mi li lít giữ nóng mười hai giờ, giữ lạnh hai mươi tư giờ.",
+    "path": "s02.wav",
+    "duration_s": 5.76,
+    "gen_s": 5.45,
+    "voice": "Mai Anh"
+  },
+  "3": {
+    "segment_id": "s03-feature",
+    "voice_text": "Nắp khóa kín, không rò nước, nặng chỉ 1,2 kg.",
+    "normalized": "Nắp khóa kín, không rò nước, nặng chỉ một phẩy hai ki lô gam.",
+    "path": "s03.wav",
+    "duration_s": 3.76,
+    "gen_s": 3.53,
+    "voice": "Mai Anh"
+  },
+  "4": {
+    "segment_id": "s04-price",
+    "voice_text": "Giá chỉ còn 390.000đ, giảm 25% đến hết ngày 31/10/2026.",
+    "normalized": "Giá chỉ còn ba trăm chín mươi nghìn đồng, giảm hai mươi lăm phần trăm đến hết ngày ba mươi mốt tháng mười năm hai nghìn không trăm hai mươi sáu.",
+    "path": "s04.wav",
+    "duration_s": 7.2,
+    "gen_s": 6.98,
+    "voice": "Mai Anh"
+  },
+  "5": {
+    "segment_id": "s05-cta",
+    "voice_text": "Bấm vào link ngay hôm nay để nhận ưu đãi!",
+    "normalized": "Bấm vào link ngay hôm nay để nhận ưu đãi!",
+    "path": "s05.wav",
+    "duration_s": 2.56,
+    "gen_s": 2.19,
+    "voice": "Mai Anh"
+  },
+  "_meta": {
+    "provider": "vieneu",
+    "model": "pnnbao-ump/VieNeu-TTS-v3-Turbo@61b85e3d[onnx/cpu]",
+    "voice": "Mai Anh",
+    "sample_rate": 48000,
+    "revisions": {
+      "pnnbao-ump/VieNeu-TTS-v3-Turbo": "61b85e3d937fbbacb387714180e8182823512523",
+      "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano": "6aa02b01e445cc585582cf0ba480bc3ea6c8dd68",
+      "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae"
+    },
+    "remote_code_sha256": {
+      "configuration_moss_audio_tokenizer.py": "b2d67dc4581e70f4b69b2d7eccefe32581d0c5192fe4d97fe1830e94a255b8aa",
+      "modeling_moss_audio_tokenizer.py": "b14af7c188944da5101adbd4aaa9c3617d66b83507f0efbd6eb416381a105930"
+    },
+    "pronunciations": "vieneu",
+    "note": "mẫu ngẫu nhiên: duration_s khác nhau giữa các lần chạy"
+  }
+}

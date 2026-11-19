@@ -1,0 +1,9 @@
+{
+  "segments": [
+    { "id": "s01-hook", "text": "Bạn còn mất cả buổi chỉ để làm một video review?" },
+    { "id": "s02-spec", "text": "Bình giữ nhiệt Lock&Lock 500ml giữ nóng 12 giờ, giữ lạnh 24 giờ." },
+    { "id": "s03-feature", "text": "Nắp khóa kín, không rò nước, nặng chỉ 1,2 kg." },
+    { "id": "s04-price", "text": "Giá chỉ còn 390.000đ, giảm 25% đến hết ngày 31/10/2026." },
+    { "id": "s05-cta", "text": "Bấm vào link ngay hôm nay để nhận ưu đãi!" }
+  ]
+}
