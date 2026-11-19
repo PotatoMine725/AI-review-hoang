@@ -50,6 +50,8 @@ class ProduceConfig(BaseModel):
     voice: str = "Mai Anh"
     tts_device: str = "cpu"  # cpu = ONNX; cuda = PyTorch; auto = cuda nếu torch thấy GPU
     tts_backend: str = "auto"
+    # Mốc từng từ cho phụ đề: "whisper-1" (cần OPENAI_API_KEY) hoặc "" = tắt (chia theo ký tự).
+    stt_model: str = ""
 
     preset: str = "dien-anh-toi-gian"
     fps: int = 30
@@ -127,6 +129,7 @@ class ProduceConfig(BaseModel):
             "voice",
             "tts_device",
             "tts_backend",
+            "stt_model",
             "preset",
             "gap_s",
             "workers",

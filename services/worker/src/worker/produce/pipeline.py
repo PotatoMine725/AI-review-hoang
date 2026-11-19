@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,6 +24,7 @@ from worker.produce.errors import ProduceError, SceneError
 from worker.produce.mapping import Mapper, SceneSpec
 from worker.produce.render import RatioRender, render_ratios
 from worker.produce.runner import Runner, run_process
+from worker.produce.stt import OpenAIWordStt, WordStt, dump_words, stt_cost_usd, transcribe_segments
 from worker.produce.timeline import Timeline, build_timeline
 from worker.produce.tts import TtsRun, synthesize
 
@@ -149,6 +151,47 @@ def _output_report(
     }
 
 
+def _stt_words(
+    tts: TtsRun,
+    cfg: ProduceConfig,
+    stt: WordStt | None,
+    plan_path: Path,
+    warnings: list[str],
+    timings: dict[str, float],
+) -> dict[str, Any] | None:
+    """Mốc từng từ → `<plan>.words.json` (driver render đọc để chia phụ đề). Lỗi chỉ cảnh báo."""
+    plan_path.with_suffix(".words.json").unlink(missing_ok=True)
+    if stt is None:
+        key = os.environ.get("OPENAI_API_KEY", "").strip()
+        if not cfg.stt_model:
+            return None
+        if not key:
+            warnings.append("stt_skipped: PRODUCE_STT_MODEL đặt nhưng thiếu OPENAI_API_KEY")
+            return None
+        try:
+            stt = OpenAIWordStt(key, cfg.stt_model, cache_dir=cfg.cache_dir / "stt")
+        except ProduceError as ex:
+            warnings.append(f"stt_skipped: {ex}")
+            return None
+    t0 = time.perf_counter()
+    words, stt_warn = transcribe_segments(stt, [(s.segment_id, s.wav) for s in tts.segments])
+    warnings.extend(stt_warn)
+    sidecar = plan_path.with_suffix(".words.json")
+    if words:
+        dump_words(words, sidecar)
+    timings["stt_s"] = round(time.perf_counter() - t0, 2)
+    total_s = sum(s.duration_s for s in tts.segments)
+    return {
+        "model": stt.model,
+        "segments": len(words),
+        "of": len(tts.segments),
+        "sidecar": str(sidecar) if words else None,
+        "api_calls": getattr(stt, "calls", None),
+        "cache_hits": getattr(stt, "cached", None),
+        "cost_usd_upper": stt_cost_usd(total_s),
+    }
+
+
 def produce(
     script_path: Path,
     input_path: Path,
@@ -161,6 +204,7 @@ def produce(
     runner: Runner = run_process,
     on_unsupported: str = "fail",
     limits: Limits | None = None,
+    stt: WordStt | None = None,
 ) -> ProduceResult:
     cfg = cfg or ProduceConfig.from_env()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -179,6 +223,7 @@ def produce(
         "predicted_s": None,
         "scenes": [],
         "tts": None,
+        "stt": None,
         "outputs": [],
         "timings_s": timings,
         "warnings": [],
@@ -260,6 +305,7 @@ def produce(
         plan_path = out_dir / f"{script_path.stem}-{mode}.json"
         plan_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2), encoding="utf-8")
         report["plan"] = str(plan_path)
+        report["stt"] = _stt_words(tts, cfg, stt, plan_path, report["warnings"], timings)
 
         t0 = time.perf_counter()
         renders = render_ratios(plan_path, list(ratios), mode, cfg, out_dir, runner)

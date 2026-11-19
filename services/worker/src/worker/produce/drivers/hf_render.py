@@ -62,8 +62,23 @@ def _load_cues() -> Any:
     return mod
 
 
+def _load_words(plan_path: Path) -> dict[str, list[Any]]:
+    """Mốc từng từ `<plan>.words.json` do worker ghi (rỗng nếu không có hoặc hỏng)."""
+    path = plan_path.with_suffix(".words.json")
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
 def split_subtitles(
-    plan: Any, tl: Any, ratio: str, subtitles: Any, cues: Any
+    plan: Any,
+    tl: Any,
+    ratio: str,
+    subtitles: Any,
+    cues: Any,
+    words: dict[str, list[Any]] | None = None,
 ) -> tuple[Any, Any, dict[str, int]]:
     """Plan + timeline mà mỗi câu quá dài đã được chia thành nhiều cue (id `<segment_id>#<k>`).
 
@@ -86,7 +101,14 @@ def split_subtitles(
                 timed.append(tseg)
                 continue
             split[seg.segment_id] = len(texts)
-            for k, cue in enumerate(cues.time_cues(texts, tseg.start_s, tseg.end_s), 1):
+            timed_cues = None
+            if words and words.get(seg.segment_id):  # mốc từng từ của STT, nếu có
+                timed_cues = cues.time_cues_words(
+                    texts, [tuple(w) for w in words[seg.segment_id]], tseg.start_s, tseg.end_s
+                )
+            if timed_cues is None:  # không có/khớp kém: chia theo số ký tự
+                timed_cues = cues.time_cues(texts, tseg.start_s, tseg.end_s)
+            for k, cue in enumerate(timed_cues, 1):
                 cue_id = f"{seg.segment_id}#{k}"
                 segs.append(
                     seg.model_copy(update={"segment_id": cue_id, "subtitle_text": cue.text})
@@ -337,11 +359,12 @@ def load_context(args: argparse.Namespace) -> SimpleNamespace:
         render_mod.subprocess.run = run_q
 
     cues = _load_cues()
+    words = _load_words(args.plan)
     split_log: dict[str, int] = {}
     original_build_ass = subtitles.build_ass
 
     def build_ass_split(plan_in: Any, tl_in: Any, ratio: str) -> str:
-        plan_s, tl_s, split = split_subtitles(plan_in, tl_in, ratio, subtitles, cues)
+        plan_s, tl_s, split = split_subtitles(plan_in, tl_in, ratio, subtitles, cues, words)
         split_log.update(split)
         return original_build_ass(plan_s, tl_s, ratio)
 
