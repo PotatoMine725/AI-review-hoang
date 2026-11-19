@@ -1,0 +1,86 @@
+<!--
+  Layout "feature_clip": thẻ tính năng + clip thao tác thật trong khung trình duyệt.
+  Ô clip: phần tử [data-slot="clip"] (bắt buộc). Python đọc thuộc tính này để kiểm tra layout.
+  props: eyebrow{text}, icon, title{text,highlight}, steps[{text,icon}], url, clip{src},
+         callout{text,icon} (hiện lúc zoom)
+  css (Python tính): --clip-aspect, --fx-s, --fx-tx, --fx-ty, --focus-at, --dur
+  Lớp hiện dần: khung trình duyệt (0 s) → eyebrow (0,25) → tiêu đề (0,5) → bước (0,8 + i×0,3)
+                → zoom vào clip_focus (--focus-at) → callout (--focus-at + 0,35)
+-->
+<div class="scene layout-feature-clip" data-layout="feature_clip">
+  <style>
+    .layout-feature-clip .safe { display: grid; }
+    .layout-feature-clip.is-portrait .safe { grid-template-rows: auto minmax(0, 1fr); gap: 50px; }
+    /* .stage là container (container query). Khung = min(rộng ô, (cao ô − thanh 64 − chỗ callout 40)
+       × tỉ lệ clip), nên khung + callout không bao giờ tràn khỏi .safe xuống vùng phụ đề, dù clip
+       cao hay thấp, ở cả 2 tỉ lệ. --clip-ar: Python tính (slots.clip_css). */
+    .layout-feature-clip .stage { min-height: 0; height: 100%; container-type: size;
+      display: grid; align-content: center; }
+    .layout-feature-clip .device {
+      width: min(100cqw, calc((100cqh - 64px - 40px) * var(--clip-ar, 1.78))); margin: 0 auto; }
+    .layout-feature-clip.is-portrait .stage { align-content: start; }
+    /* Ô clip to (lượt 4 #97): 16:9 cột clip ~60% chiều ngang, chữ thu gọn bên phải;
+       9:16 ô clip tràn lề ≥ 50% chiều cao, chỉ giữ tiêu đề ngắn phía trên. Cần crop theo tỉ lệ
+       (Clip.crop_by_ratio): 16:9 ~1,72, 9:16 ~1,15. */
+    .layout-feature-clip.is-landscape .safe { grid-template-columns: minmax(0, 1fr) 480px; gap: 56px; align-items: stretch; }
+    .layout-feature-clip.is-landscape .head { align-self: center; order: 2; gap: 20px; }
+    .layout-feature-clip.is-landscape .title { font-size: 54px; }
+    .layout-feature-clip.is-landscape .steps .chip { font-size: 28px; white-space: normal; padding: 12px 20px; }
+    .layout-feature-clip.is-portrait .safe { gap: 32px; }
+    .layout-feature-clip.is-portrait .head .row,
+    .layout-feature-clip.is-portrait .steps { display: none; }
+    .layout-feature-clip.is-portrait .title { font-size: 58px; }
+    .layout-feature-clip.is-portrait .stage { margin: 0 calc(-1 * var(--pad)); }
+    .layout-feature-clip.is-portrait .browser { border-radius: 0; }
+    .layout-feature-clip .head { display: flex; flex-direction: column; gap: 26px; align-items: flex-start; }
+    .layout-feature-clip .row { display: flex; align-items: center; gap: 24px; }
+    .layout-feature-clip .title { --hl-d: 0.95s; }
+    .layout-feature-clip .steps { display: flex; flex-wrap: wrap; gap: 16px; }
+    .layout-feature-clip .steps .n { display: inline-grid; place-items: center; width: 1.4em; height: 1.4em;
+      border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 0.8em; }
+    .layout-feature-clip .device { position: relative; }  /* khung + callout dính góc khung */
+    .layout-feature-clip .browser { width: 100%; }
+    .layout-feature-clip .callout { position: absolute; z-index: 3; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+    .layout-feature-clip.is-portrait .callout { right: 24px; bottom: -36px; }
+    .layout-feature-clip.is-landscape .callout { right: -30px; bottom: -34px; }
+  </style>
+
+  <div class="bg"></div>
+  <div class="bg-dots"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+
+  <div class="safe">
+    <div class="head">
+      <div class="row a-rise" style="--d: 0.25s">
+        <span class="icon-tile is-soft" data-icon="icon"></span>
+        <span class="eyebrow" data-text="eyebrow"></span>
+      </div>
+      <h2 class="title a-rise" style="--d: 0.5s" data-text="title"></h2>
+      <div class="steps" data-list="steps">
+          <span data-item class="chip a-pop" style="--d: calc(0.8s + var(--i) * 0.3s)">
+            <span data-icon="icon"></span><span data-text="text"></span>
+          </span>
+      </div>
+    </div>
+    <div class="stage a-rise-big" style="--d: 0s">
+      <div class="device">
+      <div class="browser">
+        <div class="bar"><i></i><i></i><i></i>
+          <span class="url" data-if="url"><span data-icon-name="globe"></span><span data-text="url"></span></span>
+        </div>
+        <div class="screen" data-slot="clip">
+          <div class="screen-inner zoom-focus">
+            <video data-src="clip.src" muted playsinline data-start="0"></video>
+          </div>
+        </div>
+      </div>
+      <div class="callout chip is-accent a-pop" style="--d: calc(var(--focus-at, 99s) + 0.35s)" data-if="callout">
+        <span data-icon="callout.icon"></span><span data-text="callout"></span>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <script>window.TPL.mount("feature_clip");</script>
+</div>

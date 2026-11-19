@@ -1,0 +1,42 @@
+/*
+ * Preset "Điện ảnh tối giản" = bộ design token. Thêm preset mới: chép file này, đổi giá trị,
+ * đặt tên lớp .preset-<id> trùng `preset` trong plan. Layout chỉ dùng biến, không dùng màu cứng.
+ *
+ * Độ tương phản (WCAG 2.1, đã tính). Trên --bg-0 / trên chỗ nền SÁNG NHẤT (tâm vầng --glow-a
+ * phủ --bg-2): --ink 17,4 / 7,1; --ink-muted 12,1 / 5,0; --accent 10,9 / 4,5; --accent-2 11,3 / 4,6.
+ * --on-accent trên --accent 10,3. Mọi cặp ≥ 4,5:1 (tiêu chí #80).
+ */
+.preset-dien-anh-toi-gian {
+  /* Nền tối nhiều lớp (3 màu nền) */
+  --bg-0: #080b14;
+  --bg-1: #10172a;
+  --bg-2: #1b2547;
+  /* Mặt thẻ (kính mờ) */
+  --surface: rgba(22, 30, 56, 0.78);
+  --surface-line: rgba(255, 255, 255, 0.09);
+  /* Chữ */
+  --ink: #f4f1ea;
+  --ink-muted: #c4cbdc; /* #b3bbd0 cũ chỉ 4,2:1 ở tâm vầng sáng */
+  /* Màu nhấn chính (hổ phách) + nhấn phụ (xanh ngọc) */
+  --accent: #f4b740;
+  --accent-soft: rgba(244, 183, 64, 0.16);
+  --on-accent: #1a1204;
+  --accent-2: #67d4e0;
+  --accent-2-soft: rgba(103, 212, 224, 0.14);
+  /* Vầng sáng nền */
+  --glow-a: rgba(80, 104, 220, 0.55);
+  --glow-b: rgba(244, 183, 64, 0.22);
+  --glow-c: rgba(103, 212, 224, 0.25);
+
+  --font: "Be Vietnam Pro", system-ui, sans-serif;
+  --radius-card: 36px;
+  --radius-chip: 999px;
+  --shadow-card: 0 30px 80px rgba(0, 0, 0, 0.55), 0 2px 0 rgba(255, 255, 255, 0.04) inset;
+
+  /* Chuyển động: chậm, êm (điện ảnh) */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-in: 0.7s;
+  /* Khoảng cách giữa các lớp hiện dần (tiêu chí 0,2–0,5 s) */
+  --stagger: 0.25s;
+}

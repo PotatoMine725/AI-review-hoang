@@ -1,0 +1,9 @@
+{
+  "name": "p1-render-v2",
+  "private": true,
+  "description": "Spike P1-06 (#80): HyperFrames CLI, ghim phiên bản cho bước 0",
+  "engines": { "node": ">=22" },
+  "devDependencies": {
+    "hyperframes": "0.8.173"
+  }
+}

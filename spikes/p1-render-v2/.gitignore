@@ -1,0 +1,14 @@
+node_modules/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+# Thư mục dựng tạm, output video, cache của HyperFrames: không commit
+.work/
+output/
+renders/
+.hyperframes/
+# Bước 0: bản mẫu của BE (có media nhúng) và log render: không commit
+step0/
+# Clip/ảnh/voice thật lấy từ spike khác: không commit
+local/

@@ -1,0 +1,41 @@
+[project]
+name = "p1-render-v2"
+version = "0.1.0"
+description = "Spike P1-06 (#80): renderer v2 — template HTML/CSS (HyperFrames) + FFmpeg, 1 preset × 4 bố cục"
+readme = "README.md"
+requires-python = ">=3.12"
+# Python chỉ dùng pydantic; dựng hình qua CLI HyperFrames (npm, ghim trong package.json) và ffmpeg.
+dependencies = [
+    "pydantic>=2.12",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["node_modules", "step0", ".work"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyright]
+include = ["*.py", "tests"]
+exclude = ["node_modules", "step0", ".work", ".venv"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["render: cần node + hyperframes + ffmpeg thật"]
