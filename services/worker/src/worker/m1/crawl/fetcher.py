@@ -31,6 +31,22 @@ class FetchResult:
     internal_links: list[tuple[str, str]] = field(default_factory=list)  # (href, anchor text)
 
 
+def stable_wait_js(stable_s: float, cap_s: float) -> str:
+    """Điều kiện `wait_for` của Crawl4AI: true khi chữ của trang không đổi trong `stable_s` giây,
+    hoặc sau `cap_s` giây kể từ lần kiểm đầu (luôn true khi hết hạn, để không bao giờ làm lỗi
+    trang vì quá giờ chờ). Crawl4AI gọi hàm này mỗi ~100 ms sau khi cuộn hết trang."""
+    return (
+        "js:() => {"
+        "const w = window, now = Date.now();"
+        "const n = document.body ? document.body.innerText.length : 0;"
+        "if (!w.__m1 ) { w.__m1 = {n: n, since: now, start: now}; return false; }"
+        "if (w.__m1.n !== n) { w.__m1.n = n; w.__m1.since = now; }"
+        f"return now - w.__m1.since >= {int(stable_s * 1000)}"
+        f" || now - w.__m1.start >= {int(cap_s * 1000)};"
+        "}"
+    )
+
+
 class PageFetcher(Protocol):
     async def fetch(self, url: str) -> FetchResult: ...
 
@@ -51,11 +67,16 @@ class Crawl4AIFetcher:
         )
         from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
 
+        stable = settings.wait_stable and settings.render_delay_s > 0
         self._run_config = CrawlerRunConfig(
             cache_mode=CacheMode.BYPASS,  # không dùng cache: log request phải thật
             user_agent=settings.user_agent,
             wait_until="domcontentloaded",  # networkidle hay treo ở SPA
-            delay_before_return_html=settings.render_delay_s,
+            # Chờ cố định `render_delay_s`, hoặc (wait_stable) chờ chữ ổn định, tối đa cũng chừng đó
+            wait_for=stable_wait_js(settings.stable_for_s, settings.render_delay_s)
+            if stable
+            else "",
+            delay_before_return_html=0.2 if stable else settings.render_delay_s,
             scan_full_page=True,  # cuộn hết trang để nội dung lazy-load hiện ra
             page_timeout=settings.page_timeout_ms,
             word_count_threshold=3,  # mặc định cao làm rơi thẻ giá (ít chữ)
@@ -66,7 +87,12 @@ class Crawl4AIFetcher:
             ),
             verbose=False,
         )
-        browser_config = BrowserConfig(headless=True, user_agent=settings.user_agent, verbose=False)
+        browser_config = BrowserConfig(
+            headless=True,
+            user_agent=settings.user_agent,
+            text_mode=settings.text_mode,  # không tải ảnh: nhanh hơn, chữ không đổi
+            verbose=False,
+        )
         self._crawler = AsyncWebCrawler(config=browser_config)
 
     async def __aenter__(self) -> Crawl4AIFetcher:

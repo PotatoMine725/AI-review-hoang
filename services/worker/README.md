@@ -38,6 +38,12 @@ Ghi `pages/*.md` và `crawl.json` vào thư mục `--out`. Không commit output.
 - Kéo theo `unclecode-litellm` (fork của litellm, đụng tên module `litellm`) và `patchright`; đã kiểm tra ở ADR-0001.
 - License: Apache-2.0 **kèm điều khoản ghi công**; web app phải ghi credit (xem ADR-0001, mục License Crawl4AI).
 
+### Tốc độ crawl
+
+- `M1_CRAWL_CONCURRENCY=3` (mặc định): mở tối đa 3 trang cùng lúc. Trang chủ luôn mở một mình trước. `Throttle` vẫn giữ ≤ 1 request/giây/host, nên chỉ phần chờ render chồng lên nhau. Thứ tự chọn trang và kết quả giống tuần tự (trừ link mới của các trang cùng lượt chưa có lúc chọn). Gặp chặn thì dừng, nhưng các trang đã mở trong lượt đó (tối đa `CONCURRENCY - 1`) vẫn hoàn tất. Muốn dừng tức thì: `M1_CRAWL_CONCURRENCY=1`.
+- `M1_CRAWL_WAIT_STABLE=1` (mặc định): sau khi cuộn hết trang, trả về khi chữ không đổi trong `M1_CRAWL_STABLE_FOR_S` (1 giây), tối đa `RENDER_DELAY_S`. Trang SPA dựng chậm sau lúc chữ đứng yên có thể bị cắt sớm: so `content_hash` với lần chạy `WAIT_STABLE=0`, lệch nhiều thì tắt.
+- `M1_CRAWL_TEXT_MODE=1` (mặc định): không tải ảnh/font.
+
 ### Ngôn ngữ trang
 
 `M1_CRAWL_LANGUAGES=en,vi` (mặc định) là các ngôn ngữ được crawl, theo thứ tự ưu tiên. Ngôn ngữ dò theo tiền tố path

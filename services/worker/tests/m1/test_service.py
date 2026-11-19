@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pytest
 
 from tests.m1.fakes import (
@@ -345,7 +347,8 @@ def test_trang_con_404_la_fetch_error() -> None:
 def test_bi_chan_o_trang_con_thi_dung_ngay_va_van_completed_neu_du_trang() -> None:
     pages = site(["/pricing", "/features", "/docs"])
     pages[f"{ROOT}/features"] = challenge_page(f"{ROOT}/features", 403)
-    result, fetcher, _, _ = run_crawl(ROOT, pages)
+    # concurrency=1: không có request nào đang bay khi gặp chặn (xem test song song bên dưới)
+    result, fetcher, _, _ = run_crawl(ROOT, pages, settings=CrawlSettings(concurrency=1))
 
     assert result.status == "completed"
     assert result.partial is True
@@ -377,7 +380,12 @@ def test_host_phu_bi_chan_thi_chi_dung_host_do() -> None:
     )
     pages[f"{support}/faq"] = challenge_page(f"{support}/faq", 403)
     pages[f"{support}/help"] = page(f"{support}/help")
-    result, fetcher, _, _ = run_crawl(ROOT, pages, options=CrawlOptions(allow_subdomains=True))
+    result, fetcher, _, _ = run_crawl(
+        ROOT,
+        pages,
+        options=CrawlOptions(allow_subdomains=True),
+        settings=CrawlSettings(concurrency=1),
+    )
 
     assert result.status == "completed" and result.partial is True
     assert f"{support}/help" not in fetcher.calls  # host đã bị chặn: không gửi thêm
@@ -406,3 +414,74 @@ def test_store_va_http_duoc_inject() -> None:
     store = MemoryStore()
     result, _, used_store, _ = run_crawl(ROOT, site(["/pricing"]), store=store)
     assert used_store is store and result.status == "completed"
+
+
+# ---------------------------------------------------------------- mở song song
+
+
+class SlowFetcher(FakeFetcher):
+    """Mỗi trang 'render' 5 giây giả lập; đếm số trang đang mở cùng lúc."""
+
+    def __init__(self, pages: dict[str, FetchResult]) -> None:
+        super().__init__(pages)
+        self.active = 0
+        self.peak = 0
+
+    async def fetch(self, url: str) -> FetchResult:
+        self.active += 1
+        self.peak = max(self.peak, self.active)
+        await asyncio.sleep(0)  # nhường cho các trang cùng lượt
+        await asyncio.sleep(0)
+        self.active -= 1
+        return await super().fetch(url)
+
+
+PAGES = ["/pricing", "/features", "/docs", "/faq", "/compare"]
+
+
+def test_mo_song_song_khong_vuot_concurrency_va_ket_qua_giong_tuan_tu() -> None:
+    serial, _, _, _ = run_crawl(ROOT, site(PAGES), settings=CrawlSettings(concurrency=1))
+    slow = SlowFetcher(site(PAGES))
+    par, _, _, _ = run_crawl(ROOT, site(PAGES), settings=CrawlSettings(concurrency=3), fetcher=slow)
+
+    assert 1 < slow.peak <= 3
+    assert [p.url for p in par.pages] == [p.url for p in serial.pages]
+    assert [p.source_id for p in par.pages] == [
+        f"src_{i:02d}" for i in range(1, len(par.pages) + 1)
+    ]
+    assert par.pages[0].found_via == "home"
+
+
+def test_trang_chu_luon_mo_mot_minh_va_throttle_van_giu_1_giay() -> None:
+    slow = SlowFetcher(site(PAGES))
+    res, _, _, _ = run_crawl(ROOT, site(PAGES), settings=CrawlSettings(concurrency=4), fetcher=slow)
+
+    assert res.requests and [r.kind for r in res.requests if r.kind == "page"][0] == "page"
+    assert slow.calls[0] == HOME
+    gaps = res.min_observed_interval_s
+    assert all(v is None or v >= 1.0 for v in gaps.values())
+
+
+def test_song_song_chon_cung_tap_trang_voi_tuan_tu_khi_co_quota() -> None:
+    quota = {"features": 1, "pricing": 1, "docs": 1, "faq": 1, "compare": 1, "other": 1}
+    paths = ["/features", "/features/a", "/features/b", "/pricing", "/docs", "/faq"]
+
+    def urls(n: int) -> list[str]:
+        res, _, _, _ = run_crawl(
+            ROOT,
+            site(paths),
+            settings=CrawlSettings(concurrency=n, type_quota=quota, max_pages=5),
+        )
+        return [p.url for p in res.pages]
+
+    assert urls(3) == urls(1)  # quota theo loại: mỗi loại có mặt trước khi một loại lấp thêm
+
+
+def test_song_song_bi_chan_thi_van_dung_va_chi_them_toi_da_concurrency_tru_1_request() -> None:
+    pages = site(["/pricing", "/features", "/docs", "/faq"])
+    pages[f"{ROOT}/pricing"] = challenge_page(f"{ROOT}/pricing", 403)
+    result, fetcher, _, _ = run_crawl(
+        ROOT, pages, settings=CrawlSettings(concurrency=3), fetcher=SlowFetcher(pages)
+    )
+    assert result.partial is True
+    assert len(fetcher.calls) <= 1 + 3  # trang chủ + một lượt đang bay, không mở lượt sau

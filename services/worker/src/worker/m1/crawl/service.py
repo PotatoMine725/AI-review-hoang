@@ -8,9 +8,10 @@ Module này không biết DB, hàng đợi hay API. Hàng đợi gọi `crawl_pr
 
 from __future__ import annotations
 
+import asyncio
 import time
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
 from urllib.parse import urlsplit
 
@@ -24,7 +25,7 @@ from worker.m1.crawl.http import HttpClient, UrllibHttpClient
 from worker.m1.crawl.robots import Robots, fetch_robots
 from worker.m1.crawl.store import PageStore, header_value
 from worker.m1.crawl.throttle import Throttle
-from worker.m1.models import CrawlResult, PageRecord, SkippedPage
+from worker.m1.models import CrawlResult, PageRecord, RequestLogEntry, SkippedPage
 from worker.m1.url import InvalidUrlError, normalize_page_url, normalize_product_url
 
 SKIPPED_DETAIL_LIMIT = 50  # số trang over_limit điểm cao nhất được ghi chi tiết
@@ -118,6 +119,10 @@ class _Crawl:
         self.robots_by_host: dict[str, Robots] = {}
         self.frontier: Frontier | None = None
         self.blocked_hosts: set[str] = set()
+        self.used_by_type: Counter[str] = Counter()
+        self.seen_hashes: dict[str, str] = {}
+        self.rules: dict[str, str] = {}  # url → quy tắc robots đã cho phép
+        self.host_ok: Callable[[str], bool] = lambda _host: True
         self.stopped = False  # bị chặn ở host gốc: dừng toàn bộ crawl
         self.block_detail: str | None = None  # lý do chặn đầu tiên ở trang con
 
@@ -157,102 +162,17 @@ class _Crawl:
         for sitemap_url in sitemap_urls:
             frontier.add(sitemap_url, "sitemap")
 
+        self.host_ok = host_ok
         tried: set[str] = set()
-        used_by_type: Counter[str] = Counter()
-        seen_hashes: dict[str, str] = {}
         # `tried` đếm cả lần mở trang lỗi/trùng → max_pages giới hạn số request trang
         while len(tried) < s.max_pages and not self.stopped:
-            cand = frontier.pick_next(tried, used_by_type, self.blocked_hosts)
-            if cand is None:
+            batch = await self._pick_batch(frontier, tried)
+            if not batch:
                 break
-            tried.add(cand.url)
-            is_home = cand.source == "home"
-            host = urlsplit(cand.url).netloc
-
-            robots = await self._robots_for(host)
-            allowed_by_robots, rule = robots.decide(cand.url)
-            if not allowed_by_robots:
-                frontier.skip(cand, SkipReason.ROBOTS_DISALLOWED, rule)
-                tried.discard(cand.url)  # chưa gửi request trang nào
-                continue
-
-            log = await self.throttle.wait(cand.url, "page")
-            t_page = time.monotonic()
-            result = await self._fetch(cand.url)
-            render_seconds = round(time.monotonic() - t_page, 2)
-            log.status = result.status_code
-
-            block = detect_block(result, is_home, s.min_home_chars)
-            if block:
-                if is_home:
-                    raise _home_error(block)
-                self._skip_blocked(cand, block, host)
-                continue
-
-            final_url = normalize_page_url(result.redirected_url or result.url)
-            if not host_ok(urlsplit(final_url).netloc):
-                frontier.skip(cand, SkipReason.REDIRECT_OUT_OF_SCOPE, final_url)
-                continue
-
-            raw_md, fit_md = (
-                normalize_text(result.raw_markdown),
-                normalize_text(result.fit_markdown),
-            )
-            # Khử trùng theo raw. Lưu cả raw_hash và fit_hash: bước 2 chọn gửi bản nào cho LLM.
-            raw_hash, fit_hash = content_hash(raw_md), content_hash(fit_md)
-            if raw_hash in seen_hashes:
-                frontier.skip(cand, SkipReason.DUPLICATE, seen_hashes[raw_hash])
-                continue
-            seen_hashes[raw_hash] = cand.url
-
-            # Link mới từ trang này vào frontier (không tốn request thêm)
-            for href, text in result.internal_links:
-                frontier.add(href, f"link:{cand.url}", text)
-
-            source_id = f"src_{len(self.pages) + 1:02d}"
-            unchanged = self.previous.get(cand.url) == raw_hash
-            if unchanged:
-                fit_path = raw_path = None
-            else:
-                stored = self.store.save_page(
-                    source_id=source_id,
-                    url=cand.url,
-                    page_type=cand.page_type,
-                    fetched_at=log.fetched_at,
-                    raw_md=raw_md,
-                    fit_md=fit_md,
-                    title=result.title,
-                    site_name=result.site_name,
-                )
-                fit_path, raw_path = stored.fit_path, stored.raw_path
-            self.pages.append(
-                PageRecord(
-                    source_id=source_id,
-                    url=cand.url,
-                    page_type=cand.page_type,
-                    content_hash=raw_hash,
-                    fetched_at=log.fetched_at,
-                    region=s.region,
-                    locale=s.locale,
-                    raw_path=raw_path,
-                    fit_path=fit_path,
-                    raw_hash=raw_hash,
-                    fit_hash=fit_hash,
-                    final_url=final_url,
-                    score=cand.score,
-                    found_via=cand.source,
-                    anchor_text=cand.text,
-                    http_status=result.status_code,
-                    robots_rule=rule,
-                    render_seconds=render_seconds,
-                    raw_chars=len(raw_md),
-                    fit_chars=len(fit_md),
-                    unchanged=unchanged,
-                    title=header_value(result.title) or None,
-                    site_name=header_value(result.site_name) or None,
-                )
-            )
-            used_by_type[cand.page_type] += 1
+            # Mở song song tối đa `concurrency` trang; Throttle vẫn giữ ≤ 1 request/giây/host.
+            fetched = await asyncio.gather(*(self._fetch_timed(c.url) for c in batch))
+            for cand, (result, log, render_seconds) in zip(batch, fetched, strict=True):
+                self._process(cand, result, log, render_seconds)
 
         # Còn trong frontier mà không crawl: bị chặn giữa chừng, vượt giới hạn, hoặc điểm 0
         for cand in list(frontier.candidates.values()):
@@ -264,6 +184,122 @@ class _Crawl:
                 frontier.skip(
                     cand, SkipReason.OVER_LIMIT if cand.score > 0 else SkipReason.LOW_SCORE
                 )
+
+    def _frontier(self) -> Frontier:
+        assert self.frontier is not None
+        return self.frontier
+
+    async def _pick_batch(self, frontier: Frontier, tried: set[str]) -> list[Candidate]:
+        """Chọn tối đa `concurrency` trang cho lượt mở tiếp theo (rỗng = hết ứng viên).
+
+        Trang chủ luôn mở một mình, vì link trong đó mới quyết định các trang kế. Trang đã chọn
+        nhưng chưa mở xong được tính vào hạn mức loại (`reserved`) để một loại không vượt quota.
+        """
+        s = self.settings
+        batch: list[Candidate] = []
+        reserved = Counter(self.used_by_type)
+        while len(batch) < max(1, s.concurrency) and len(tried) < s.max_pages:
+            cand = frontier.pick_next(tried, reserved, self.blocked_hosts)
+            if cand is None:
+                break
+            host = urlsplit(cand.url).netloc
+            allowed, rule = (await self._robots_for(host)).decide(cand.url)
+            if not allowed:
+                frontier.skip(cand, SkipReason.ROBOTS_DISALLOWED, rule)
+                continue  # chưa gửi request trang nào nên không tính vào `tried`
+            self.rules[cand.url] = rule
+            tried.add(cand.url)
+            reserved[cand.page_type] += 1
+            batch.append(cand)
+            if cand.source == "home":
+                break
+        return batch
+
+    async def _fetch_timed(self, url: str) -> tuple[FetchResult, RequestLogEntry, float]:
+        log = await self.throttle.wait(url, "page")
+        t_page = time.monotonic()
+        result = await self._fetch(url)
+        return result, log, round(time.monotonic() - t_page, 2)
+
+    def _process(
+        self, cand: Candidate, result: FetchResult, log: RequestLogEntry, render_seconds: float
+    ) -> None:
+        s = self.settings
+        is_home = cand.source == "home"
+        host = urlsplit(cand.url).netloc
+        log.status = result.status_code
+
+        block = detect_block(result, is_home, s.min_home_chars)
+        if block:
+            if is_home:
+                raise _home_error(block)
+            self._skip_blocked(cand, block, host)
+            return
+
+        final_url = normalize_page_url(result.redirected_url or result.url)
+        if not self.host_ok(urlsplit(final_url).netloc):
+            self._frontier().skip(cand, SkipReason.REDIRECT_OUT_OF_SCOPE, final_url)
+            return
+
+        raw_md, fit_md = (
+            normalize_text(result.raw_markdown),
+            normalize_text(result.fit_markdown),
+        )
+        # Khử trùng theo raw. Lưu cả raw_hash và fit_hash: bước 2 chọn gửi bản nào cho LLM.
+        raw_hash, fit_hash = content_hash(raw_md), content_hash(fit_md)
+        if raw_hash in self.seen_hashes:
+            self._frontier().skip(cand, SkipReason.DUPLICATE, self.seen_hashes[raw_hash])
+            return
+        self.seen_hashes[raw_hash] = cand.url
+
+        # Link mới từ trang này vào frontier (không tốn request thêm)
+        for href, text in result.internal_links:
+            self._frontier().add(href, f"link:{cand.url}", text)
+
+        source_id = f"src_{len(self.pages) + 1:02d}"
+        unchanged = self.previous.get(cand.url) == raw_hash
+        if unchanged:
+            fit_path = raw_path = None
+        else:
+            stored = self.store.save_page(
+                source_id=source_id,
+                url=cand.url,
+                page_type=cand.page_type,
+                fetched_at=log.fetched_at,
+                raw_md=raw_md,
+                fit_md=fit_md,
+                title=result.title,
+                site_name=result.site_name,
+            )
+            fit_path, raw_path = stored.fit_path, stored.raw_path
+        self.pages.append(
+            PageRecord(
+                source_id=source_id,
+                url=cand.url,
+                page_type=cand.page_type,
+                content_hash=raw_hash,
+                fetched_at=log.fetched_at,
+                region=s.region,
+                locale=s.locale,
+                raw_path=raw_path,
+                fit_path=fit_path,
+                raw_hash=raw_hash,
+                fit_hash=fit_hash,
+                final_url=final_url,
+                score=cand.score,
+                found_via=cand.source,
+                anchor_text=cand.text,
+                http_status=result.status_code,
+                robots_rule=self.rules.get(cand.url, ""),
+                render_seconds=render_seconds,
+                raw_chars=len(raw_md),
+                fit_chars=len(fit_md),
+                unchanged=unchanged,
+                title=header_value(result.title) or None,
+                site_name=header_value(result.site_name) or None,
+            )
+        )
+        self.used_by_type[cand.page_type] += 1
 
     async def _fetch(self, url: str) -> FetchResult:
         try:

@@ -155,3 +155,19 @@ def test_doc_m1_crawl_languages_tu_env() -> None:
     assert CrawlSettings().languages == ("en", "vi")
     assert CrawlSettings.from_env({"M1_CRAWL_LANGUAGES": "vi, EN"}).languages == ("vi", "en")
     assert CrawlSettings.from_env({"M1_CRAWL_LANGUAGES": '["en"]'}).languages == ("en",)
+
+
+def test_crawl_speed_settings_from_env() -> None:
+    d = CrawlSettings()
+    assert d.concurrency == 3 and d.wait_stable and d.text_mode
+    s = CrawlSettings.from_env(
+        {"M1_CRAWL_CONCURRENCY": "1", "M1_CRAWL_WAIT_STABLE": "0", "M1_CRAWL_TEXT_MODE": "false"}
+    )
+    assert (s.concurrency, s.wait_stable, s.text_mode) == (1, False, False)
+
+
+def test_stable_wait_js_has_cap_and_window() -> None:
+    from worker.m1.crawl.fetcher import stable_wait_js
+
+    js = stable_wait_js(1.0, 3.0)
+    assert js.startswith("js:()") and ">= 1000" in js and ">= 3000" in js

@@ -33,6 +33,13 @@ class CrawlSettings(BaseModel):
     http_timeout_s: float = 20.0
     page_timeout_ms: int = 45_000
     render_delay_s: float = 3.0  # chờ thêm sau domcontentloaded cho trang SPA
+    # Số trang mở cùng lúc. Throttle vẫn giữ ≤ 1 request/giây/host nên chỉ chồng phần chờ render.
+    concurrency: int = 3
+    # Chờ chữ trên trang ổn định thay vì chờ cố định `render_delay_s`: trả về khi chữ không đổi
+    # trong `stable_for_s` giây, tối đa `render_delay_s` giây. Tắt (False) thì chờ cố định như cũ.
+    wait_stable: bool = True
+    stable_for_s: float = 1.0
+    text_mode: bool = True  # không tải ảnh/font: nhanh hơn, nội dung chữ không đổi
     min_home_chars: int = 200  # trang chủ ít chữ hơn mức này → coi là không có nội dung
     # Hạn mức trang theo page_type để 1 loại (thường là features) không chiếm hết slot.
     # Hết ứng viên trong hạn mức thì lấp tiếp theo điểm.
@@ -67,6 +74,8 @@ class CrawlSettings(BaseModel):
                 continue
             if field.annotation in (str, int, float):
                 values[name] = raw
+            elif field.annotation is bool:
+                values[name] = raw.strip().lower() in ("1", "true", "yes", "on")
             elif field.annotation == tuple[str, ...] and not raw.lstrip().startswith("["):
                 values[name] = [v.strip().lower() for v in raw.split(",") if v.strip()]
             else:
