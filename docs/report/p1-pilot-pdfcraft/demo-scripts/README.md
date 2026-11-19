@@ -16,10 +16,8 @@ uv run python -m worker.demo record ../../docs/report/p1-pilot-pdfcraft/demo-scr
     --fixtures <fx> --out <out> --assets <out>/assets.json
 ```
 
-**Cần cắt tay sau khi quay (chưa tự động):** clip dài 26–54 s, cảnh chỉ 9–14 s, và `produce` lấy đúng độ dài cảnh từ đầu clip (không tua nhanh), nên phần kết quả ở cuối bị mất. Lần chạy 19/11/2026 cắt bằng FFmpeg (`trim` + `concat` vào một file, giây trong clip gốc):
+**Không cần cắt tay nữa.** `worker.demo` tự cắt đoạn chờ theo mốc từng bước (`step_times_s`): bước `wait`/`wait_for` dài hơn 1,2 s chỉ giữ 0,4 s đầu và 0,8 s cuối, giữ cuối 1,8 s (`encode.compact_spans`). Asset có `anchor: "end"`, nên khi clip vẫn dài hơn cảnh, `produce` tua nhanh tới 2× để giữ cả thao tác, dài hơn nữa thì bỏ phần đầu, giữ kết quả ở cuối.
 
-- merge: 5.0–7.6, 8.6–10.8, 13.0–14.8, 16.6–19.0, 23.0–28.3 (14,3 s)
-- pagenum: 5.0–6.3, 7.2–8.9, 14.4–15.8, 19.0–21.0, 22.2–25.2 (9,4 s)
-- word: 4.2–5.7, 6.3–9.0, 10.0–13.0, 31.0–35.0 (11,2 s)
+Chờ kết quả lâu (PDF→Word ~26 s) thì dùng `wait_for` chờ đúng dấu hiệu xong (vd. thông báo `Export completed`), không dùng `wait` cố định, để đoạn giữ lại là lúc vừa có kết quả.
 
-Mốc thay đổi theo mỗi lần quay (xem `step_times_s` trong `<asset_id>.run.json`). Bước tiếp theo nên tự động: cắt theo `step_times_s`, bỏ các bước `wait` dài.
+Lần chạy 19/11/2026 (run11): merge 25,5 s → tua 1,78×, số trang 18,7 s → 2× (giữ phần cuối), Word 12,4 s → 1,11×.

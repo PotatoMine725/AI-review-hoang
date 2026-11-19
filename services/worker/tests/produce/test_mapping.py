@@ -312,6 +312,18 @@ def part(a: float, b: float) -> AssetPart:
     return AssetPart(start_s=a, end_s=b)
 
 
+def test_fit_parts_anchor_end_speeds_up_then_keeps_the_tail() -> None:
+    parts = [part(0.0, 4.0), part(10.0, 16.0)]  # 10 s
+    kept, warns = fit_parts(parts, 6.0, anchor="end")  # 10 s ≤ 2 × 6 s: giữ hết, tua 1,67x
+    assert [(i, p.start_s, p.end_s) for i, p in kept] == [(0, 0.0, 4.0), (1, 10.0, 16.0)]
+    assert warns and warns[0].startswith("clip_sped_up")
+    kept, _ = fit_parts(parts, 4.0, anchor="end")  # > 2×: cửa sổ ~8 s cuối, tốc độ < 2,0
+    assert [(i, p.end_s) for i, p in kept] == [(0, 4.0), (1, 16.0)]
+    assert 7.9 < sum(p.length_s for _, p in kept) < 8.0
+    kept, _ = fit_parts(parts, 5.0)  # mặc định: từ đầu, tốc độ 1,0
+    assert [(i, p.end_s) for i, p in kept] == [(0, 4.0), (1, 11.0)]
+
+
 def test_fit_parts_trims_overflow() -> None:
     kept, warns = fit_parts([part(1.0, 5.0), part(10.0, 14.0)], 6.0)
     assert [(i, p.start_s, p.end_s) for i, p in kept] == [(0, 1.0, 5.0), (1, 10.0, 12.0)]

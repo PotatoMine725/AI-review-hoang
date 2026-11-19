@@ -24,7 +24,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from worker.produce.assets import Asset, AssetFocus, AssetPart, AssetsFile, resolve_media
 from worker.produce.config import ProduceConfig
@@ -83,15 +83,19 @@ def focus_offset(parts: list[AssetPart], focus: AssetFocus) -> float | None:
 
 
 def fit_parts(
-    parts: list[AssetPart], scene_s: float, focus: AssetFocus | None = None
+    parts: list[AssetPart],
+    scene_s: float,
+    focus: AssetFocus | None = None,
+    anchor: Literal["start", "end"] = "start",
 ) -> tuple[list[tuple[int, AssetPart]], list[str]]:
     """Chọn đoạn clip vừa độ dài cảnh ở tốc độ 1,0: cắt một cửa sổ dài bằng cảnh trên dải các
     đoạn nối liền.
 
     Có `focus` thì cửa sổ chứa nó, đặt mốc zoom ở FOCUS_AT thời lượng cảnh (kẹp theo mép clip);
-    không có, hoặc source_t ngoài đoạn của nó, thì lấy từ đầu. Mảnh ngắn hơn MIN_PART_S ở mép cửa
-    sổ bị bỏ. Thiếu thì KHÔNG kéo dài: tua chậm tới mức #88 cho phép (MIN_SPEED) kèm cảnh báo,
-    thấp hơn nữa thì `clip_too_short`. Trả [(chỉ số đoạn gốc, đoạn đã cắt)].
+    không có, hoặc source_t ngoài đoạn của nó, thì lấy từ đầu (`anchor="end"`: phần cuối).
+    Mảnh ngắn hơn MIN_PART_S ở mép cửa sổ bị bỏ. Thiếu thì KHÔNG kéo dài: tua chậm tới mức #88
+    cho phép (MIN_SPEED) kèm cảnh báo, thấp hơn nữa thì `clip_too_short`.
+    Trả [(chỉ số đoạn gốc, đoạn đã cắt)].
     """
     src = sum(p.length_s for p in parts)
     start = 0.0
@@ -99,7 +103,13 @@ def fit_parts(
     if at is not None and src > scene_s:
         target = min(FOCUS_AT * scene_s, scene_s - ZOOM_TAIL_S)
         start = min(max(at - target, 0.0), src - scene_s)
-    end = start + scene_s
+    window = scene_s
+    if at is None and anchor == "end" and src > scene_s:
+        # Clip quay tự động: tua nhanh tới MAX_SPEED để giữ cả thao tác; dài hơn nữa thì bỏ phần
+        # đầu, giữ phần cuối (kết quả thao tác).
+        window = min(src, MAX_SPEED * scene_s * 0.99)  # chừa sai số làm tròn: #88 chặn > 2,0
+        start = src - window
+    end = start + window
     kept: list[tuple[int, AssetPart]] = []
     offset = 0.0
     for idx, p in enumerate(parts):
@@ -123,6 +133,10 @@ def fit_parts(
             )
         warnings.append(
             f"clip_slowed: clip {total:.2f} s cho cảnh {scene_s:.2f} s, tua {speed:.2f}x"
+        )
+    elif total - scene_s >= MIN_PART_S:
+        warnings.append(
+            f"clip_sped_up: clip {total:.2f} s cho cảnh {scene_s:.2f} s, tua {total / scene_s:.2f}x"
         )
     return kept, warnings
 
@@ -481,7 +495,7 @@ class Mapper:
         asset = spec.asset[1]
         if not spec.claims:
             raise SceneError(spec.scene_id, "no_claims", "cảnh clip không có claim để làm tiêu đề")
-        kept, warns = fit_parts(asset.parts, ts.duration_s, asset.focus)
+        kept, warns = fit_parts(asset.parts, ts.duration_s, asset.focus, asset.anchor)
         spec.warnings += warns
 
         crop = asset.crop

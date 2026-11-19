@@ -69,6 +69,9 @@ class Asset(_Model):
     crop_by_ratio: dict[Literal["16:9", "9:16"], Rect] = Field(default_factory=dict)
     parts: list[AssetPart] = Field(default_factory=list)
     focus: AssetFocus | None = None
+    # Clip dài hơn cảnh, không có `focus`: lấy cửa sổ từ đầu ("start") hay phần cuối ("end").
+    # Clip quay tự động (worker.demo) để "end" vì kết quả của thao tác nằm ở cuối clip.
+    anchor: Literal["start", "end"] = "start"
     icon: str | None = None
     label: str | None = None  # nhãn công khai trên ảnh, vd. "Ảnh minh hoạ do AI tạo"
     source: str | None = None
