@@ -52,6 +52,8 @@ class ProduceConfig(BaseModel):
     tts_backend: str = "auto"
     # Mốc từng từ cho phụ đề: "whisper-1" (cần OPENAI_API_KEY) hoặc "" = tắt (chia theo ký tự).
     stt_model: str = ""
+    # QA khung hình bằng mô hình thị giác OpenAI (vd. "gpt-5.4-mini", cần OPENAI_API_KEY); "" = tắt.
+    qa_model: str = ""
 
     preset: str = "dien-anh-toi-gian"
     fps: int = 30
@@ -76,6 +78,7 @@ class ProduceConfig(BaseModel):
     check_icon: str = "check"
 
     ffprobe: str = "ffprobe"
+    ffmpeg: str = "ffmpeg"
 
     @field_validator("hf_args")
     @classmethod
@@ -130,6 +133,7 @@ class ProduceConfig(BaseModel):
             "tts_device",
             "tts_backend",
             "stt_model",
+            "qa_model",
             "preset",
             "gap_s",
             "workers",

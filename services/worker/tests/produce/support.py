@@ -120,6 +120,9 @@ class FakeRunner:
                 "streams": [{"codec_type": "video", "width": 1920, "height": 1080}],
             }
             return RunResult(0, json.dumps(data), "", 0.01)
+        if Path(cmd[0]).stem == "ffmpeg":  # QA: cắt một khung hình ra file cuối lệnh
+            Path(cmd[-1]).write_bytes(b"\xff\xd8fake-jpeg")
+            return RunResult(0, "", "", 0.01)
         driver = Path(cmd[1]).name
         if driver == "tts_synth.py":
             return self._tts(cmd[2], arg)

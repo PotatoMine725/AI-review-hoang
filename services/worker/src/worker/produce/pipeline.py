@@ -22,6 +22,7 @@ from worker.produce.assets import load_assets
 from worker.produce.config import Limits, ProduceConfig, load_limits
 from worker.produce.errors import ProduceError, SceneError
 from worker.produce.mapping import Mapper, SceneSpec
+from worker.produce.qa import OpenAIVisionQA, VisionQA, frame_jobs, run_qa
 from worker.produce.render import RatioRender, render_ratios
 from worker.produce.runner import Runner, run_process
 from worker.produce.stt import OpenAIWordStt, WordStt, dump_words, stt_cost_usd, transcribe_segments
@@ -126,8 +127,8 @@ def _output_report(
     cues: dict[str, int] = raw.get("subtitle_cues") or {}
     for seg_id, n in cues.items():
         warnings.append(
-            f"subtitle_split[{r.ratio}]: {seg_id} chia {n} cue theo số ký tự "
-            "(VieNeu chưa có mốc từng chữ)"
+            f"subtitle_split[{r.ratio}]: {seg_id} chia {n} cue "
+            "(mốc từng từ nếu có STT, không thì theo số ký tự)"
         )
     return {
         **out,
@@ -192,6 +193,60 @@ def _stt_words(
     }
 
 
+def _qa_frames(
+    done: list[dict[str, Any]],
+    kept: list[SceneSpec],
+    timeline: Timeline,
+    cfg: ProduceConfig,
+    qa: VisionQA | None,
+    runner: Runner,
+    out_dir: Path,
+    warnings: list[str],
+) -> dict[str, Any] | None:
+    """Mô hình thị giác xem một khung mỗi cảnh trong từng MP4. Chỉ báo, lỗi thành cảnh báo."""
+    if qa is None:
+        if not cfg.qa_model:
+            return None
+        key = os.environ.get("OPENAI_API_KEY", "").strip()
+        if not key:
+            warnings.append("qa_skipped: PRODUCE_QA_MODEL đặt nhưng thiếu OPENAI_API_KEY")
+            return None
+        qa = OpenAIVisionQA(key, cfg.qa_model)
+    scenes = [
+        (
+            s.scene_id,
+            [
+                (g["segment_id"], g.get("subtitle_text") or g["text"])
+                for g in s.scene["narration_segments"]
+            ],
+        )
+        for s in kept
+    ]
+    t0 = time.perf_counter()
+    jobs = {o["ratio"]: frame_jobs(o["ratio"], timeline, scenes) for o in done}
+    mp4s = {o["ratio"]: Path(o["mp4"]) for o in done}
+    verdicts, qa_warn = run_qa(qa, mp4s, jobs, cfg, runner, out_dir / "qa-frames")
+    warnings.extend(qa_warn)
+    return {
+        "model": qa.model,
+        "wall_s": round(time.perf_counter() - t0, 1),
+        "frames": [
+            {
+                "ratio": v.job.ratio,
+                "scene_id": v.job.scene_id,
+                "t_s": v.job.t_s,
+                "ok": v.ok,
+                "checks": v.checks,
+                "issues": v.issues,
+            }
+            for v in verdicts
+        ],
+        "failed_frames": sum(1 for v in verdicts if not v.ok),
+        "tokens_in": getattr(qa, "tokens_in", None),
+        "tokens_out": getattr(qa, "tokens_out", None),
+    }
+
+
 def produce(
     script_path: Path,
     input_path: Path,
@@ -205,6 +260,7 @@ def produce(
     on_unsupported: str = "fail",
     limits: Limits | None = None,
     stt: WordStt | None = None,
+    qa: VisionQA | None = None,
 ) -> ProduceResult:
     cfg = cfg or ProduceConfig.from_env()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -224,6 +280,7 @@ def produce(
         "scenes": [],
         "tts": None,
         "stt": None,
+        "qa": None,
         "outputs": [],
         "timings_s": timings,
         "warnings": [],
@@ -319,6 +376,8 @@ def produce(
         timings["probe_s"] = round(time.perf_counter() - t0, 2)
 
         done = [o for o in report["outputs"] if o["ok"]]
+        if done:
+            report["qa"] = _qa_frames(done, kept, timeline, cfg, qa, runner, out_dir, warnings)
         if not done:
             raise ProduceError(
                 "cả hai tỉ lệ đều dựng lỗi: " + str(report["outputs"][0]["error"])[:300]

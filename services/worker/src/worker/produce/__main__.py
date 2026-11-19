@@ -15,6 +15,7 @@ import logging
 import sys
 from pathlib import Path
 
+from worker.m2.generate import load_env
 from worker.produce.config import ProduceConfig
 from worker.produce.pipeline import produce
 
@@ -68,6 +69,13 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="parallel: không đọc/ghi cache MP4 theo cảnh (dựng lại mọi cảnh)",
     )
+    ap.add_argument(
+        "--env",
+        type=Path,
+        default=Path(".env"),
+        help="file .env nạp vào môi trường (không ghi đè biến đã đặt), mặc định ./.env: "
+        "OPENAI_API_KEY, PRODUCE_STT_MODEL, PRODUCE_QA_MODEL, ...",
+    )
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args(argv)
 
@@ -75,6 +83,7 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
+    load_env(args.env)
     over: dict[str, object] = {}
     if args.render_mode:
         over["render_mode"] = args.render_mode

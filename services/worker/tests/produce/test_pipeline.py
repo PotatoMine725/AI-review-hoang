@@ -216,3 +216,132 @@ def test_cli_rejects_bad_ratio(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit):
         main(["x.json", "--input", "i", "--assets", "a", "--out", "o", "--ratios", "1:1"])
     assert "--ratios" in capsys.readouterr().err
+
+
+# ---------------------------------------------------------------- STT + QA khung hình (P1, OpenAI)
+
+
+class FakeStt:
+    model = "whisper-1"
+
+    def __init__(self) -> None:
+        self.seen: list[Path] = []
+
+    def transcribe(self, wav: Path) -> list[tuple[str, float, float]]:
+        self.seen.append(wav)
+        return [("xin", 0.0, 0.3), ("chào", 0.3, 0.6)]
+
+
+class FakeQa:
+    model = "fake-vision"
+    tokens_in = 10
+    tokens_out = 5
+
+    def __init__(self, bad_scene: str | None = None) -> None:
+        self.bad_scene = bad_scene
+        self.jobs: list[Any] = []
+
+    def review(self, image_jpeg: bytes, job: Any) -> dict[str, Any]:
+        self.jobs.append(job)
+        assert image_jpeg.startswith(b"\xff\xd8")
+        bad = job.scene_id == self.bad_scene
+        return {
+            "readable": True,
+            "not_cut_off": not bad,
+            "title_distinct_from_subtitle": True,
+            "matches_narration": True,
+            "issues": ["chữ bị cắt ở mép phải"] if bad else [],
+        }
+
+
+def test_stt_writes_sidecar_next_to_plan(tmp_path: Path) -> None:
+    stt = FakeStt()
+    res, out = run(tmp_path, FakeRunner(), stt=stt)
+    assert res.report["stt"]["model"] == "whisper-1" and res.report["stt"]["segments"] > 0
+    sidecar = Path(res.report["stt"]["sidecar"])
+    assert sidecar == Path(res.report["plan"]).with_suffix(".words.json") and sidecar.parent == out
+    data = json.loads(sidecar.read_text(encoding="utf-8"))
+    assert data["s01-u01"][0] == ["xin", 0.0, 0.3]
+
+
+def test_stt_off_by_default_and_stale_sidecar_removed(tmp_path: Path) -> None:
+    res, out = run(tmp_path, FakeRunner(), stt=FakeStt())
+    sidecar = Path(res.report["stt"]["sidecar"])
+    assert sidecar.is_file()
+    res2, _ = run(tmp_path, FakeRunner())  # lần sau không bật STT
+    assert res2.report["stt"] is None and not sidecar.exists()
+
+
+def test_qa_reports_one_frame_per_scene_per_ratio(tmp_path: Path) -> None:
+    qa = FakeQa(bad_scene="s02")
+    fake = FakeRunner()
+    res, out = run(tmp_path, fake, qa=qa)
+    rep = res.report["qa"]
+    scenes = len(res.report["scenes"])
+    assert rep["model"] == "fake-vision" and len(rep["frames"]) == 2 * scenes
+    assert rep["failed_frames"] == 2 and {f["scene_id"] for f in rep["frames"] if not f["ok"]} == {
+        "s02"
+    }
+    assert any(w.startswith("qa_issue[9:16/s02@") and "bị cắt" in w for w in res.report["warnings"])
+    assert all(j.narration and 0 < j.t_s < 60 for j in qa.jobs)
+    assert (out / "qa-frames").is_dir()
+    assert sum(1 for c in fake.calls if Path(c[0]).stem == "ffmpeg") == 2 * scenes
+    assert res.report["status"] == "out_of_range" or res.ok  # QA không đổi trạng thái video
+
+
+def test_qa_failure_is_only_a_warning(tmp_path: Path) -> None:
+    class Broken(FakeQa):
+        def review(self, image_jpeg: bytes, job: Any) -> dict[str, Any]:
+            from worker.produce.errors import ProduceError
+
+            raise ProduceError("hết quota")
+
+    res, _ = run(tmp_path, FakeRunner(), qa=Broken())
+    assert res.ok and res.report["qa"]["frames"] == []
+    assert any(w.startswith("qa_failed[") and "hết quota" in w for w in res.report["warnings"])
+
+
+def test_qa_and_stt_skipped_without_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from worker.produce.config import ProduceConfig
+
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    cfg = make_cfg(tmp_path)
+    cfg = ProduceConfig.model_validate(
+        {**cfg.model_dump(), "stt_model": "whisper-1", "qa_model": "x"}
+    )
+    res = produce(
+        contract_run4(tmp_path / "contract"),
+        RUN4_INPUT,
+        make_assets(tmp_path),
+        tmp_path / "out",
+        cfg=cfg,
+        runner=FakeRunner(),
+        limits=LIMITS,
+    )
+    assert res.report["stt"] is None and res.report["qa"] is None
+    assert any(w.startswith("stt_skipped") for w in res.report["warnings"])
+    assert any(w.startswith("qa_skipped") for w in res.report["warnings"])
+
+
+def test_cli_loads_env_file_without_overriding_set_vars(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    env = tmp_path / ".env"
+    env.write_text(
+        "PRODUCE_STT_MODEL=whisper-1\nPRODUCE_QA_MODEL=gpt-5.4-mini\nPRODUCE_VOICE=Hải Đăng\n",
+        encoding="utf-8",
+    )
+    monkeypatch.delenv("PRODUCE_STT_MODEL", raising=False)
+    monkeypatch.delenv("PRODUCE_QA_MODEL", raising=False)
+    monkeypatch.setenv("PRODUCE_VOICE", "Mai Anh")  # đã đặt trong shell thì thắng .env
+    seen: dict[str, Any] = {}
+
+    def fake_produce(*a: Any, cfg: Any, **kw: Any) -> Any:
+        seen["cfg"] = cfg
+        raise SystemExit(0)
+
+    monkeypatch.setattr("worker.produce.__main__.produce", fake_produce)
+    with pytest.raises(SystemExit):
+        main(["s.json", "--input", "i.json", "--assets", "a.json", "--out", "o", "--env", str(env)])
+    cfg = seen["cfg"]
+    assert (cfg.stt_model, cfg.qa_model, cfg.voice) == ("whisper-1", "gpt-5.4-mini", "Mai Anh")

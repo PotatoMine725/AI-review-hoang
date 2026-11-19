@@ -41,7 +41,8 @@ FOCUS_AT = 0.6
 ZOOM_TAIL_S = 1.0
 # Tiêu đề cảnh clip coi là trùng phụ đề khi ≥ 60% từ (khác nhau) của nó có trong lời/phụ đề cảnh.
 TITLE_DUP_OVERLAP = 0.6
-_FEATURE_PATH = re.compile(r"features\[\d+\]")
+# M2 trỏ tới `features[i]` hoặc trường con của nó (`features[i].description`)
+_FEATURE_PATH = re.compile(r"(features\[\d+\])(?:\.\w+)?")
 LAYOUTS_88 = "hook, stat, feature_clip, claim, cta"
 CLAIM_BRANCH = "spike/p1-render-v2"  # nhánh #88, có layout claim từ commit 4e9f04f
 SCHEMA = "render-plan.v2-spike"
@@ -365,9 +366,10 @@ class Mapper:
         if overlap < TITLE_DUP_OVERLAP:
             return first["text"], refs
         for ref in first["fact_refs"]:
-            if not _FEATURE_PATH.fullmatch(ref["field_path"]):
+            m = _FEATURE_PATH.fullmatch(ref["field_path"])
+            if not m:
                 continue
-            path = f"{ref['field_path']}.name"
+            path = f"{m.group(1)}.name"
             try:
                 name = self.facts.text(path)
             except (KeyError, IndexError, TypeError, ValueError, FactError):

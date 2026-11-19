@@ -516,6 +516,22 @@ def test_clip_title_duplicate_without_feature_name_warns(tmp_path: Path) -> None
     assert any(w.startswith("title_duplicates_subtitle") for w in by_id(specs)["s02"].warnings)
 
 
+def test_clip_title_shortened_when_claim_points_to_feature_subfield(tmp_path: Path) -> None:
+    """M2 thật trỏ `features[i].description`, không phải `features[i]`: vẫn thay bằng tên."""
+    script, inp = load_run4()
+    claim = script["scenes"][1]["claims"][0]
+    claim["fact_refs"] = [
+        {"source_id": r["source_id"], "field_path": "features[0].description"}
+        for r in claim["fact_refs"]
+    ]
+    m = mapper(tmp_path, script, inp)
+    specs = m.plan_scenes()
+    title = build(m, specs)["scenes"][1]["props"]["title"]
+    assert title["text"] == "Hợp nhất PDF"
+    assert title["fact_refs"] == ["src_01:features[0].name"]
+    assert any(w.startswith("title_shortened") for w in by_id(specs)["s02"].warnings)
+
+
 def test_crop_by_ratio_passed_to_plan(tmp_path: Path) -> None:
     import json
 
