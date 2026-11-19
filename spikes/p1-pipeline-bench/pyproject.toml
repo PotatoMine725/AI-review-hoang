@@ -1,0 +1,33 @@
+[project]
+name = "p1-pipeline-bench"
+version = "0.1.0"
+description = "Spike P1-07: đo thời gian toàn luồng PDFCraft (chỉ stdlib, gọi các spike khác bằng subprocess)"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# chuỗi và comment tiếng Việt dài; `ruff format` vẫn chạy cho phần code
+ignore = ["E501"]
+
+[tool.pyright]
+include = ["*.py", "drivers"]
+exclude = [".venv"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "standard"
