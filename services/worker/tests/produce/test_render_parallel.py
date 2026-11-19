@@ -542,7 +542,7 @@ def test_hf_args_env_and_cache_key(tmp_path: Path) -> None:
     )
     assert "--hf-args" not in render._driver_cmd(plain, plan="p")
     cmd = render._driver_cmd(cfg, plan="p")
-    assert cmd[-2:] == ["--hf-args", "--experimental-fast-capture"]
+    assert cmd[-1] == "--hf-args=--experimental-fast-capture"
     env = render._env(cfg)
     assert env["A"] == "1" and env["B"] == "2" and env["P1_RENDER_MIN_TOTAL_S"] == "1"
     assert render._env(plain) == render.WIDE_LIMITS_ENV

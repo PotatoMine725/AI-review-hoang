@@ -74,7 +74,8 @@ def _driver_cmd(cfg: ProduceConfig, **opts: object) -> list[str]:
         flag = "--" + key.replace("_", "-")
         cmd += [flag] if value is True else [flag, str(value)]
     if cfg.hf_args.strip():
-        cmd += ["--hf-args", cfg.hf_args]
+        # dạng `=` để argparse không coi giá trị `--cờ` là option
+        cmd += [f"--hf-args={cfg.hf_args}"]
     return cmd
 
 
