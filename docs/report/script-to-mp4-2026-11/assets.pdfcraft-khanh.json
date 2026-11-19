@@ -1,5 +1,5 @@
 {
-  "note": "TẠM, thay cho BE Storage. Cho kịch bản chỉnh tay của Khánh (feat/khanh-pr92-script 68fb2a4). Đoạn cắt + focus chọn sau khi xem khung hình từng 0,25–1 s của 4 clip (báo cáo P1-08 lượt 4). Đường dẫn tuyệt đối của máy dev; không commit media. crop_by_ratio: 16:9 ~1,72 (ô clip ~60% ngang), 9:16 ~1,15 (ô clip ≥ 50% cao). Lượt 4b (09/11): s04 bỏ khung mờ (đoạn 2 từ 11,45 s); s05 bỏ khoảng trống giữa hai trang (5,0–6,25 s). | 19/11: bỏ crop_by_ratio 9:16 (dùng `crop` mặc định, rộng hơn): frame thật 9:16 hiện đủ bề ngang giao diện, crop hẹp [678,0,1242,1080] cắt mất UI.",
+  "note": "TẠM, thay cho BE Storage. Cho kịch bản chỉnh tay của Khánh (feat/khanh-pr92-script 68fb2a4). Đoạn cắt + focus chọn sau khi xem khung hình từng 0,25–1 s của 4 clip (báo cáo P1-08 lượt 4). Đường dẫn tuyệt đối của máy dev; không commit media. crop_by_ratio: 16:9 ~1,72 (ô clip ~60% ngang), 9:16 ~1,15 (ô clip ≥ 50% cao). Lượt 4b (09/11): s04 bỏ khung mờ (đoạn 2 từ 11,45 s); s05 bỏ khoảng trống giữa hai trang (5,0–6,25 s). | 19/11: bỏ crop_by_ratio 9:16 (dùng `crop` mặc định, rộng hơn): frame thật 9:16 hiện đủ bề ngang giao diện, crop hẹp [678,0,1242,1080] cắt mất UI. | 19/11 (2): 9:16 dùng cùng vùng cắt với 16:9 (gần cả màn hình, ~1,72) để thấy đủ giao diện (sidebar, tab); chữ nhỏ hơn nên dựa vào zoom focus.",
   "assets": {
     "pdfcraft-merge": {
       "kind": "clip",
@@ -29,6 +29,12 @@
       "icon": "files",
       "crop_by_ratio": {
         "16:9": [
+          60,
+          0,
+          1860,
+          1080
+        ],
+        "9:16": [
           60,
           0,
           1860,
@@ -72,6 +78,12 @@
           0,
           1860,
           1080
+        ],
+        "9:16": [
+          60,
+          0,
+          1860,
+          1080
         ]
       }
     },
@@ -111,6 +123,12 @@
           0,
           1860,
           1080
+        ],
+        "9:16": [
+          60,
+          0,
+          1860,
+          1080
         ]
       }
     },
@@ -146,6 +164,12 @@
       "icon": "file-text",
       "crop_by_ratio": {
         "16:9": [
+          30,
+          0,
+          1860,
+          1080
+        ],
+        "9:16": [
           30,
           0,
           1860,
