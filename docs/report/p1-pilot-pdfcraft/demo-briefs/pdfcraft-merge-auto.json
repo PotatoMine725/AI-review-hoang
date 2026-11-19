@@ -1,0 +1,10 @@
+{
+  "asset_id": "pdfcraft-merge-auto",
+  "url": "https://pdfcraft.devtoolcafe.com/en/tools/merge-pdf",
+  "goal": "Show merging two PDF files into one on PDFCraft: the page ready, add two PDF files, reorder is optional (skip it), press the Merge button, and finish with the merged result and its download button clearly visible. Mark the download/result element with focus.",
+  "facts": [
+    "Hợp nhất PDF: Kết hợp nhiều tệp PDF thành một tài liệu.",
+    "Bấm Merge để gộp tất cả tệp thành một PDF, rồi tải kết quả (f10)."
+  ],
+  "fixtures": ["mau-a.pdf", "mau-b.pdf"]
+}

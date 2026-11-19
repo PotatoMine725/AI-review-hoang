@@ -132,6 +132,25 @@ Mã thoát 0 = có MP4 (xem `status`), 2 = không ra MP4. Định dạng `assets
 chạy bằng venv của spike. Đường dẫn qua `PRODUCE_TTS_SPIKE`, `PRODUCE_RENDER_V2`, `PRODUCE_RENDER_FF` (mặc định: worktree
 anh em `.claude/worktrees/<tên>/spikes/<tên>`). Phần còn lại là code worker. Kết quả chạy thật: `docs/report/script-to-mp4-2026-11.md`.
 
+## Tự quay clip demo (`src/worker/demo/`)
+
+Thay quay tay bằng Playwright. **LLM không điều khiển trình duyệt lúc quay**: GPT (OpenAI) chỉ sinh một
+action-script JSON cho mỗi công cụ (`schema.ActionScript`: goto/click/type/upload/wait_for/scroll, có thể
+đánh dấu `focus` để zoom). Script được chạy thử trên trang thật; bước lỗi thì gửi lại GPT kèm DOM lúc đó
+để sửa (tối đa 4 vòng). Sau đó Playwright chạy lại script y hệt mỗi lần: con trỏ giả, gõ chậm, di chuột
+mượt, `recordVideo` → MP4 H.264 + đoạn `assets.json` (`produce.assets.Asset`, crop mặc định như clip tự quay).
+UI đổi thì `generate --regen`. Brief pilot: `docs/report/p1-pilot-pdfcraft/demo-briefs/`.
+
+```bash
+uv run playwright install chromium         # một lần (cần FFmpeg có ffprobe trong PATH)
+uv run python -m worker.demo samples --out D:\tmp\demo\fx          # PDF mẫu để upload
+uv run python -m worker.demo run ..\..\docs\report\p1-pilot-pdfcraft\demo-briefs\pdfcraft-merge-auto.json ^
+  --fixtures D:\tmp\demo\fx --scripts D:\tmp\demo\scripts --out D:\tmp\demo\out --assets D:\tmp\demo\out\assets.json
+```
+
+Cần `OPENAI_API_KEY` và `DEMO_LLM_MODEL` trong `.env`. Chỉ `record` (không gọi LLM, chạy lại được vô hạn): `python -m worker.demo record <script.json> ...`.
+Mã thoát 3 = script hỏng trên trang thật. Test trình duyệt chạy với `DEMO_CHROMIUM_PATH=<chrome>` (CI không cài trình duyệt nên bỏ qua).
+
 ## Bộ chạy job (`src/worker/runner/`)
 
 Tiến trình riêng, tách khỏi API: `uv run python -m worker.runner` (`--once` để xử lý hết job rồi thoát). Cần `.env` có `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY` (hoặc `LLM_PROVIDER=fixture`) và `uv run playwright install chromium`.

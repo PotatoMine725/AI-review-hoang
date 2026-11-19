@@ -20,7 +20,7 @@
 | `N8N_SERVICE_TOKEN` | n8n gọi endpoint dịch vụ (`X-Service-Token`) | `api_service` | Hoàng, tự sinh: `openssl rand -hex 32` |
 | `GEMINI_API_KEY` | Extract PKB (M1), sinh script (M2) | `extract`, `script` | Thông giao |
 | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Ảnh AI (cảnh AI, AC-P1-05) | `ai_scene` | Thông giao (chờ xác nhận provider) |
-| `OPENAI_API_KEY` | Khâu edit video để nâng chất lượng (chưa có code gọi) | `edit` | Thông giao (đã xác nhận 19/11/2026) |
+| `OPENAI_API_KEY` | Sinh action-script quay demo (`worker.demo`, cần thêm `DEMO_LLM_MODEL`); khâu edit video (chưa có code gọi) | `demo_script`, `edit` | Thông giao (đã xác nhận 19/11/2026) |
 | `FAL_KEY` | Provider ảnh dự phòng (nếu Thông chọn) | chưa gắn bước | chờ Thông |
 | `WORKER_PAGE_STORE_DIR`, `RUNNER_POLL_INTERVAL_S`, `RUNNER_MAX_ATTEMPTS`, `RUNNER_RETRY_BACKOFF_S` | Bộ chạy job (không phải khoá) | `runner` | Hoàng |
 | `JOB_COST_LIMIT_USD` | Ngưỡng chi phí một job (tuỳ chọn) | `Settings.check_cost` | Hoàng |
