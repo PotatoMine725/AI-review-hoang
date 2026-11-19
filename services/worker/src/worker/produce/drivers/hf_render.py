@@ -385,6 +385,9 @@ def mode_full(args: argparse.Namespace, ctx: SimpleNamespace) -> dict[str, Any]:
     # #88 chỉ dựng phụ đề ở bước ghép cuối, sau ~4 phút chụp hình. Dựng thử trước để lỗi còn lại
     # (vd. cue vẫn quá giới hạn) hiện sau vài giây. Không bỏ chữ nào.
     ctx.build_ass(ctx.plan, ctx.tl, args.ratio)
+    # Hai tỉ lệ chạy hai tiến trình `full` cùng lúc và cùng cần clip đã chuẩn bị (cùng khoá cache):
+    # thiếu khoá thì một bên đọc file bên kia đang ghi ("moov atom not found", khung sọc dọc).
+    install_clip_guard(ctx)
     res = ctx.render.render_ratio(
         ctx.plan, args.plan, ctx.tl, args.ratio, args.out, args.workers, "auto", args.tag,
         False, False,
