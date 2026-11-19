@@ -28,7 +28,7 @@ from tests.produce.support import (
     make_cfg,
 )
 from worker.produce import render
-from worker.produce.config import Limits
+from worker.produce.config import Limits, ProduceConfig
 from worker.produce.pipeline import produce
 from worker.produce.render import (
     WIDE_LIMITS_ENV,
@@ -530,3 +530,35 @@ def test_locked_prepare_recreates_a_partial_clip_left_by_a_killed_run(tmp_path: 
     wrapped = drv.locked(prepare, lambda path, scene_s: path.read_bytes() == b"complete")
     assert wrapped(None, 1.0, 1.0, tmp_path, out, 30).read_bytes() == b"complete"
     assert calls == ["prepare", "prepare"]  # lần đầu thấy file dở, xoá, tạo lại
+
+
+def test_hf_args_env_and_cache_key(tmp_path: Path) -> None:
+    py = ProduceConfig.venv_python(tmp_path)
+    py.parent.mkdir(parents=True)
+    py.touch()
+    plain = ProduceConfig(render_v2=tmp_path)
+    cfg = ProduceConfig(
+        render_v2=tmp_path, hf_args="--experimental-fast-capture", hf_env="A=1, B=2"
+    )
+    assert "--hf-args" not in render._driver_cmd(plain, plan="p")
+    cmd = render._driver_cmd(cfg, plan="p")
+    assert cmd[-2:] == ["--hf-args", "--experimental-fast-capture"]
+    env = render._env(cfg)
+    assert env["A"] == "1" and env["B"] == "2" and env["P1_RENDER_MIN_TOTAL_S"] == "1"
+    assert render._env(plain) == render.WIDE_LIMITS_ENV
+
+    drv = load_driver()
+    work = make_work(tmp_path / "w")
+    base = drv.scene_key(work, "16:9", "draft", 30, ENGINE)[0]
+    assert drv.scene_key(work, "16:9", "draft", 30, ENGINE, "")[0] == base
+    assert drv.scene_key(work, "16:9", "draft", 30, ENGINE, "--browser-gpu")[0] != base
+
+
+def test_patch_render_cmd_only_touches_the_hyperframes_command() -> None:
+    drv = load_driver()
+    hf = ["npx", "hyperframes", "render", "-q", "looks", "-w", "1"]
+    assert drv.patch_render_cmd(hf, "draft", ["--browser-gpu"]) == [
+        "npx", "hyperframes", "render", "-q", "draft", "--browser-gpu", "-w", "1",
+    ]  # fmt: skip
+    ff = ["ffmpeg", "-i", "a.mp4", "b.mp4"]
+    assert drv.patch_render_cmd(ff, "draft", ["--browser-gpu"]) == ff

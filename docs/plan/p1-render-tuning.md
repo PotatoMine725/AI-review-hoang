@@ -21,7 +21,8 @@ Kết luận từ số liệu: nút thắt là Chrome chụp khung bằng CPU, k
 2. **Chọn mặc định** `PRODUCE_RENDER_MODE` và `PRODUCE_RENDER_JOBS` theo quy tắc: tổng thời gian trung vị thấp nhất trong các cấu hình có 0 lỗi và RAM trống còn ≥ 2 GB lúc đỉnh. Chưa đổi mặc định trong code trước khi có số.
 3. **NVENC: chưa thêm công tắc.** Chỉ xét lại nếu bước 1 cho thấy mã hoá chiếm phần đáng kể (cột `Enc %` của GPU cao và `hyperframes_phases` cho thấy encode lớn). Nếu bật: mặc định tắt, đặt timeout cho ffmpeg (đã có `kill_tree` trong `produce/runner.py`), tự lùi về CPU khi lỗi, giới hạn 1–2 phiên mã hoá đồng thời, và chỉ bật mặc định sau 20 lượt liên tiếp không treo.
 4. **TTS giữ ONNX CPU** (`PRODUCE_TTS_DEVICE=cpu`). Chỉ thử `+cuda` trong bench để có số, không đổi mặc định.
-5. Sau khi có số: caption mốc từng chữ và QA vision bằng OpenAI (kế hoạch riêng).
+5. **Cờ HyperFrames 0.9.69 (chỉ đo, không đổi mặc định):** thêm hậu tố vào tên cấu hình: `+nolock` (`HYPERFRAMES_RENDER_LOCK=off`, bỏ hàng đợi render cùng tài khoản, đáng thử nhất cho `par*`), `+fast` (`--experimental-fast-capture`, hãng nói ~2×, mặc định chỉ bật trên macOS có GPU nên cần kiểm hình/phụ đề có đúng không), `+gpu` (`--browser-gpu`). Đặt cố định bằng `PRODUCE_HF_ARGS` / `PRODUCE_HF_ENV` (`A=1,B=2`). Cờ nằm trong khoá cache cảnh. Chỉ nhận cấu hình nào nhanh hơn rõ rệt, 0 lỗi, và so sánh hình/phụ đề không khác bản gốc.
+6. Sau khi có số: caption mốc từng chữ và QA vision bằng OpenAI (kế hoạch riêng).
 
 ## Cách đo (trên máy render)
 
@@ -32,7 +33,7 @@ cd services/worker
 uv run python -m worker.produce.bench ../../docs/report/m2-first-run-pdfcraft/run11-2026-11-12/script.json \
   --input ../../docs/report/m2-first-run-pdfcraft/input.json \
   --assets <đường dẫn assets.json trên máy, vd. bản pdfcraft-khanh> \
-  --out D:/tmp/bench-1 --configs seq3,par4,par6,par8,par6+cuda --repeat 2 --mode preview
+  --out D:/tmp/bench-1 --configs seq3,par4,par6,par8,par6+cuda,par4+nolock,par4+nolock+fast,par4+gpu --repeat 2 --mode preview
 # lặp lại với --mode final, và với --cache warm để đo hiệu quả cache
 ```
 

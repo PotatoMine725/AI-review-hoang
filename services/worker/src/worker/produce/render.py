@@ -57,6 +57,11 @@ class RatioRender:
     raw: dict[str, Any] = field(default_factory=dict)
 
 
+def _env(cfg: ProduceConfig) -> dict[str, str]:
+    """Môi trường cho driver: giới hạn tổng thời lượng rộng + biến thêm của HyperFrames."""
+    return {**WIDE_LIMITS_ENV, **cfg.hf_env_map}
+
+
 def _driver_cmd(cfg: ProduceConfig, **opts: object) -> list[str]:
     """`python hf_render.py --spike … --<khoá> <giá trị> …` (khoá có `_` đổi thành `-`)."""
     py = cfg.venv_python(cfg.render_v2)
@@ -68,6 +73,8 @@ def _driver_cmd(cfg: ProduceConfig, **opts: object) -> list[str]:
             continue
         flag = "--" + key.replace("_", "-")
         cmd += [flag] if value is True else [flag, str(value)]
+    if cfg.hf_args.strip():
+        cmd += ["--hf-args", cfg.hf_args]
     return cmd
 
 
@@ -85,7 +92,7 @@ def _render_one(
         workers=cfg.workers,
         out=out_dir,
     )
-    res = runner(cmd, cwd=cfg.render_v2, env=WIDE_LIMITS_ENV, timeout_s=3600)
+    res = runner(cmd, cwd=cfg.render_v2, env=_env(cfg), timeout_s=3600)
     if res.returncode != 0:
         tail = (res.stderr or res.stdout)[-1200:]
         log.error("render %s lỗi: %s", ratio, tail)
@@ -179,7 +186,7 @@ def _prepare(
         clips_dir=cfg.scratch_dir / "clips",
         out=jobs_dir,
     )
-    res = runner(cmd, cwd=cfg.render_v2, env=WIDE_LIMITS_ENV, timeout_s=900)
+    res = runner(cmd, cwd=cfg.render_v2, env=_env(cfg), timeout_s=900)
     if res.returncode != 0:
         raise ProduceError((res.stderr or res.stdout)[-1200:])
     return last_json_line(res.stdout)
@@ -239,7 +246,7 @@ def render_parallel(
                 parts=parts_file,
             )
         try:
-            res = runner(cmd, cwd=cfg.render_v2, env=WIDE_LIMITS_ENV, timeout_s=3600, cancel=cancel)
+            res = runner(cmd, cwd=cfg.render_v2, env=_env(cfg), timeout_s=3600, cancel=cancel)
         except (subprocess.TimeoutExpired, OSError) as ex:  # quá giờ cũng là job lỗi: huỷ cả pool
             return TaskResult(task, False, False, {}, f"{type(ex).__name__}: {ex}", 0.0)
         if res.returncode == CANCELLED_RC:

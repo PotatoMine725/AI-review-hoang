@@ -38,6 +38,7 @@ import importlib.util
 import json
 import math
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -143,15 +144,27 @@ def engine_fingerprint(spike: Path) -> dict[str, str]:
 
 
 def scene_key(
-    work: Path, ratio: str, quality: str, fps: int, engine: dict[str, str]
+    work: Path, ratio: str, quality: str, fps: int, engine: dict[str, str], hf_args: str = ""
 ) -> tuple[str, str]:
-    """(khoá cache, hash cây thư mục). Khoá đổi khi đổi nội dung, tỉ lệ, chất lượng, fps, engine."""
+    """(khoá cache, hash cây thư mục). Khoá đổi khi đổi nội dung, tỉ lệ, chất lượng, fps, engine,
+    cờ HyperFrames thêm (rỗng thì khoá giữ nguyên như trước)."""
     tree = tree_hash(work)
-    payload = json.dumps(
-        {"tree": tree, "ratio": ratio, "quality": quality, "fps": fps, "engine": engine},
-        sort_keys=True,
-    )
+    key: dict[str, Any] = {
+        "tree": tree, "ratio": ratio, "quality": quality, "fps": fps, "engine": engine,
+    }  # fmt: skip
+    if hf_args.strip():
+        key["hf_args"] = hf_args.split()
+    payload = json.dumps(key, sort_keys=True)
     return hashlib.sha256(payload.encode()).hexdigest()[:32], tree
+
+
+def patch_render_cmd(cmd: list[str], quality: str, extra: list[str]) -> list[str]:
+    """Đổi token chất lượng `looks` và chèn cờ thêm ngay sau nó. Chỉ lệnh `hyperframes render`
+    có token này nên lệnh ffmpeg/ffprobe không bị đụng tới."""
+    if "looks" not in cmd:
+        return cmd
+    i = cmd.index("looks")
+    return [*cmd[:i], quality, *extra, *cmd[i + 1 :]]
 
 
 def count_packets(mp4: Path, ffprobe: str) -> int:
@@ -314,11 +327,12 @@ def load_context(args: argparse.Namespace) -> SimpleNamespace:
     from plan import load_plan
     from timeline import build_timeline
 
-    if args.quality != "looks":
+    extra = shlex.split(args.hf_args)
+    if args.quality != "looks" or extra:
         real_run = render_mod.subprocess.run
 
         def run_q(cmd, *a, **kw):  # noqa: ANN001, ANN002, ANN003, ANN202
-            return real_run([args.quality if c == "looks" else c for c in cmd], *a, **kw)
+            return real_run(patch_render_cmd(list(cmd), args.quality, extra), *a, **kw)
 
         render_mod.subprocess.run = run_q
 
@@ -408,7 +422,7 @@ def mode_scene(args: argparse.Namespace, ctx: SimpleNamespace) -> dict[str, Any]
     ctx.compose.compose(sub_plan, sub_tl, args.ratio, work, clips)
     compose_s = time.perf_counter() - t0
     key, tree = scene_key(
-        work, args.ratio, args.quality, ctx.plan.fps, engine_fingerprint(ctx.spike)
+        work, args.ratio, args.quality, ctx.plan.fps, engine_fingerprint(ctx.spike), args.hf_args
     )
     ffprobe = ctx.media.tool("ffprobe")
     base: dict[str, Any] = {
@@ -511,6 +525,7 @@ def main() -> None:
     ap.add_argument("--ratios", default="16:9,9:16", help="prepare: các tỉ lệ cần kiểm phụ đề")
     ap.add_argument("--quality", choices=["draft", "looks"], default="looks")
     ap.add_argument("--workers", default="3")
+    ap.add_argument("--hf-args", default="", help="cờ thêm cho `hyperframes render`, vd. bench")
     ap.add_argument("--out", type=Path, help="thư mục ra (full, finalize) hoặc thư mục job (scene)")
     ap.add_argument("--tag", default="")
     ap.add_argument("--scene", default="", help="scene: scene_id cần dựng")

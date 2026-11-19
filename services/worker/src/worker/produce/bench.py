@@ -10,8 +10,11 @@ dùng thư mục cache TTS/cảnh mới cho mỗi lượt nên số đo gồm c�
 `warm` dùng chung một cache cho cả ma trận (đo hiệu quả cache). Nếu có `nvidia-smi`, mỗi lượt đo
 thêm mức dùng GPU/encoder/VRAM/nhiệt độ đỉnh (không bật NVENC, chỉ quan sát).
 
-Cấu hình có sẵn: `seq3` (tuần tự, 3 worker mỗi tỉ lệ), `par<N>` (song song N tiến trình, cache cảnh
-tắt trong chế độ cold), `<tên>+cuda` (thêm TTS PyTorch CUDA, vd. `par6+cuda`).
+Cấu hình có sẵn: `seq3` (tuần tự, 3 worker mỗi tỉ lệ), `par<N>` (song song N tiến trình,
+cache cảnh tắt trong chế độ cold). Hậu tố nối bằng `+`: `cuda` (TTS PyTorch CUDA), `nolock`
+(HYPERFRAMES_RENDER_LOCK=off, bỏ hàng đợi render cùng tài khoản), `fast`
+(`--experimental-fast-capture`), `gpu` (`--browser-gpu`), vd. `par6+nolock+fast`.
+Phiên bản HyperFrames được ghi vào `bench.json`/`bench.md` (`--hf-version` để ghi tay).
 """
 
 from __future__ import annotations
@@ -39,12 +42,22 @@ GPU_KEYS = ("gpu_util_pct", "enc_util_pct", "vram_mb", "temp_c", "power_w")
 Produce = Callable[..., ProduceResult]
 
 
+SUFFIXES = ("cuda", "nolock", "fast", "gpu")
+HF_FLAGS = {"fast": "--experimental-fast-capture", "gpu": "--browser-gpu"}
+
+
 def parse_config(name: str, base: ProduceConfig, *, warm: bool) -> ProduceConfig:
-    """`seq3`, `par6`, `par6+cuda` → ProduceConfig. Tên lạ thì ValueError."""
-    core, _, extra = name.partition("+")
-    if extra not in ("", "cuda"):
-        raise ValueError(f"hậu tố cấu hình không hợp lệ: {name!r} (chỉ có +cuda)")
-    over: dict[str, Any] = {"tts_device": "cuda" if extra else base.tts_device}
+    """`seq3`, `par6`, `par6+cuda`, `par4+nolock+fast` → ProduceConfig. Tên lạ thì ValueError."""
+    core, *extras = name.split("+")
+    bad = [x for x in extras if x not in SUFFIXES]
+    if bad:
+        raise ValueError(f"hậu tố cấu hình không hợp lệ: {bad[0]!r} (có {', '.join(SUFFIXES)})")
+    over: dict[str, Any] = {"tts_device": "cuda" if "cuda" in extras else base.tts_device}
+    flags = [HF_FLAGS[x] for x in extras if x in HF_FLAGS]
+    if flags:
+        over["hf_args"] = " ".join([base.hf_args, *flags]).strip()
+    if "nolock" in extras:
+        over["hf_env"] = ",".join(filter(None, [base.hf_env, "HYPERFRAMES_RENDER_LOCK=off"]))
     if m := re.fullmatch(r"seq(\d+)", core):
         over |= {"render_mode": "sequential", "workers": m.group(1)}
     elif m := re.fullmatch(r"par(\d+)", core):
@@ -53,6 +66,24 @@ def parse_config(name: str, base: ProduceConfig, *, warm: bool) -> ProduceConfig
         raise ValueError(f"cấu hình không hợp lệ: {name!r} (dạng seq3, par6, par6+cuda)")
     over["render_cache"] = warm and over["render_mode"] == "parallel"
     return base.model_copy(update=over)
+
+
+def hyperframes_version(cfg: ProduceConfig) -> str | None:
+    """Phiên bản HyperFrames của spike (`npx hyperframes --version`); không đọc được thì None."""
+    npx = shutil.which("npx")
+    if not npx:
+        return None
+    try:
+        out = subprocess.run(
+            [npx, "--no-install", "hyperframes", "--version"],
+            cwd=cfg.render_v2,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return out.splitlines()[-1] if out else None
 
 
 class GpuSampler:
@@ -188,7 +219,8 @@ def markdown(runs: list[dict[str, Any]], meta: dict[str, Any]) -> str:
         "# Đo `produce` theo cấu hình",
         "",
         f"Chế độ `{meta['mode']}`, tỉ lệ {', '.join(meta['ratios'])}, cache `{meta['cache']}`, "
-        f"{meta['repeat']} lượt mỗi cấu hình. Số là trung vị các lượt thành công (giây).",
+        f"{meta['repeat']} lượt mỗi cấu hình, HyperFrames {meta.get('hyperframes') or '?'}. "
+        "Số là trung vị các lượt thành công (giây).",
         "",
         "| Cấu hình | Lượt OK | TTS | Render | Tổng | RAM HF MB | GPU % | Enc % | VRAM MB |",
         "|---|---|---|---|---|---|---|---|---|",
@@ -229,6 +261,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--mode", choices=("preview", "final"), default="preview")
     ap.add_argument("--ratios", default="16:9,9:16")
     ap.add_argument("--cache", choices=("cold", "warm"), default="cold")
+    ap.add_argument("--hf-version", default="", help="ghi tay phiên bản HyperFrames (vd. 0.9.69)")
     args = ap.parse_args(argv)
     configs = [c.strip() for c in args.configs.split(",") if c.strip()]
     ratios = tuple(r.strip() for r in args.ratios.split(",") if r.strip())
@@ -250,7 +283,13 @@ def main(argv: list[str] | None = None) -> int:
         ratios=ratios,
         warm=args.cache == "warm",
     )
-    meta = {"mode": args.mode, "ratios": list(ratios), "cache": args.cache, "repeat": args.repeat}
+    meta = {
+        "mode": args.mode,
+        "ratios": list(ratios),
+        "cache": args.cache,
+        "repeat": args.repeat,
+        "hyperframes": args.hf_version or hyperframes_version(ProduceConfig.from_env()),
+    }
     (args.out / "bench.json").write_text(
         json.dumps({"meta": meta, "runs": runs}, ensure_ascii=False, indent=2), encoding="utf-8"
     )

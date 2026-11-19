@@ -19,7 +19,17 @@ def test_parse_config_variants() -> None:
     assert bench.parse_config("seq2", base, warm=True).render_cache is False
 
 
-@pytest.mark.parametrize("name", ["fast", "par", "par4+nvenc", "seq"])
+def test_parse_config_hyperframes_suffixes() -> None:
+    base = ProduceConfig()
+    cfg = bench.parse_config("par4+nolock+fast+gpu", base, warm=False)
+    assert cfg.hf_args == "--experimental-fast-capture --browser-gpu"
+    assert cfg.hf_env_map == {"HYPERFRAMES_RENDER_LOCK": "off"}
+    assert cfg.tts_device == "cpu"
+    plain = bench.parse_config("par4", base, warm=False)
+    assert plain.hf_args == "" and plain.hf_env_map == {}
+
+
+@pytest.mark.parametrize("name", ["fast", "par", "par4+nvenc", "seq", "par4+fast+x"])
 def test_parse_config_rejects_unknown(name: str) -> None:
     with pytest.raises(ValueError):
         bench.parse_config(name, ProduceConfig(), warm=False)
@@ -92,3 +102,9 @@ def test_cli_rejects_bad_config(tmp_path: Path, capsys) -> None:  # type: ignore
             ["s.json", "--input", "i", "--assets", "a", "--out", str(tmp_path), "--configs", "gpu9"]
         )
     assert "cấu hình không hợp lệ" in capsys.readouterr().err
+
+
+def test_markdown_shows_hyperframes_version() -> None:
+    meta = {"mode": "preview", "ratios": ["16:9"], "cache": "cold", "repeat": 1}
+    assert "HyperFrames ?" in bench.markdown([], meta)
+    assert "HyperFrames 0.9.69" in bench.markdown([], {**meta, "hyperframes": "0.9.69"})

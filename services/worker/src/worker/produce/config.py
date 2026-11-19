@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import shlex
 import sys
 import tempfile
 from collections.abc import Mapping
@@ -64,6 +65,9 @@ class ProduceConfig(BaseModel):
         default=2048, ge=0
     )  # chừa lại cho hệ điều hành + trình duyệt
     render_cache: bool = True  # cache MP4 theo cảnh; --no-cache tắt
+    # Cờ/biến môi trường thêm cho `hyperframes render` (để đo bench; mặc định rỗng = như cũ).
+    hf_args: str = ""  # vd. "--experimental-fast-capture --browser-gpu"
+    hf_env: str = ""  # vd. "HYPERFRAMES_RENDER_LOCK=off,KEY=VAL"
 
     brand_icon: str = "sparkles"  # icon Lucide có sẵn trong template #88
     default_icon: str = "sparkles"
@@ -71,12 +75,23 @@ class ProduceConfig(BaseModel):
 
     ffprobe: str = "ffprobe"
 
+    @field_validator("hf_args")
+    @classmethod
+    def _hf_args(cls, v: str) -> str:
+        shlex.split(v)  # báo lỗi sớm nếu dấu nháy sai
+        return v
+
     @field_validator("gap_s")
     @classmethod
     def _gap(cls, v: float) -> float:
         if not 0 <= v <= MAX_GAP_S:
             raise ValueError(f"gap_s phải trong 0–{MAX_GAP_S} s (tiêu chí khoảng nghỉ), nhận {v}")
         return v
+
+    @property
+    def hf_env_map(self) -> dict[str, str]:
+        pairs = (p.partition("=") for p in self.hf_env.split(",") if p.strip())
+        return {k.strip(): v.strip() for k, _, v in pairs if k.strip()}
 
     @property
     def scene_cache_dir(self) -> Path:
@@ -120,6 +135,8 @@ class ProduceConfig(BaseModel):
             "render_job_ram_mb",
             "render_ram_reserve_mb",
             "render_cache",
+            "hf_args",
+            "hf_env",
         ):
             names = [ENV_PREFIX + field.upper()]
             if field in legacy:
