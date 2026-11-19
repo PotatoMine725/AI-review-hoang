@@ -44,6 +44,7 @@ def test_review_sends_image_and_texts_and_counts_tokens() -> None:
     user = body["messages"][1]["content"]
     assert body["model"] == "gpt-5.4-mini" and body["response_format"] == {"type": "json_object"}
     assert "Lời đọc." in user[0]["text"] and "Phụ đề." in user[0]["text"]
+    assert user[0]["text"].startswith("Phụ đề đang hiện: Phụ đề.")  # câu đang đọc đứng trước
     assert user[1]["image_url"]["url"].startswith("data:image/jpeg;base64,")
     assert "9:16" in body["messages"][0]["content"]
     assert (qa.tokens_in, qa.tokens_out, qa.calls) == (100, 20, 1)

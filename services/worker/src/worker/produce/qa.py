@@ -32,14 +32,19 @@ CHECKS = ("readable", "not_cut_off", "title_distinct_from_subtitle", "matches_na
 
 SYSTEM = (
     "Bạn kiểm tra một khung hình của video review sản phẩm tiếng Việt (tỉ lệ {ratio}). "
-    "Chỉ nhìn ảnh và đối chiếu với lời đọc được cung cấp; không bịa. "
+    "Chỉ nhìn ảnh và đối chiếu với chữ được cung cấp; không bịa. "
+    "Bối cảnh bố cục: clip thao tác nằm trong khung trình duyệt; ở tỉ lệ 9:16 khung này CỐ Ý "
+    "tràn sát mép trái/phải, và phụ đề nằm ở vùng dưới. Mép khung chứa clip không phải lỗi. "
     "Trả về MỘT object JSON có các khoá boolean: "
     "readable (mọi chữ trên hình đọc rõ, không mờ/vỡ), "
-    "not_cut_off (không chữ hay thành phần giao diện nào bị cắt ở mép khung), "
-    "title_distinct_from_subtitle (tiêu đề trên hình KHÔNG lặp nguyên câu phụ đề ở dưới; "
-    "true nếu không có tiêu đề), "
-    "matches_narration (nội dung hình, nhất là clip thao tác, khớp lời đọc); "
-    "và issues: danh sách chuỗi ngắn mô tả từng lỗi (rỗng nếu không có)."
+    "not_cut_off (false CHỈ khi chữ, nút, tiêu đề hoặc phụ đề bị cụt giữa chừng; "
+    "việc clip chạm mép khung thì vẫn true), "
+    "title_distinct_from_subtitle (false CHỈ khi tiêu đề trên hình và phụ đề là cùng một câu hoặc "
+    "gần như giống hệt; tên thương hiệu ngắn không tính là lặp; true nếu không có tiêu đề), "
+    "matches_narration (so với 'Phụ đề đang hiện', tức câu đang được đọc lúc này, KHÔNG phải cả "
+    "cảnh: false CHỈ khi hình mâu thuẫn hoặc rõ ràng không liên quan tới câu đó; 'Lời cả cảnh' "
+    "chỉ để hiểu ngữ cảnh); "
+    "và issues: danh sách chuỗi ngắn mô tả từng lỗi thật (rỗng nếu không có)."
 )
 
 
@@ -85,7 +90,7 @@ class OpenAIVisionQA:
         user = [
             {
                 "type": "text",
-                "text": f"Lời đọc của cảnh: {job.narration}\nPhụ đề đang hiện: {job.caption}",
+                "text": f"Phụ đề đang hiện: {job.caption}\nLời cả cảnh (ngữ cảnh): {job.narration}",
             },
             {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}},
         ]
