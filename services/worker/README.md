@@ -112,6 +112,26 @@ uv run python -m worker.m2.generate <input.json> --out <thư mục>
 Ghi `script.json` (kịch bản, hoặc output thô nếu không hợp lệ), `validation.json`, `cost.json`, `stages.json`, `feedback.json`, `initial|repair.{raw,prepared,kind_audit}.json`. Khoá `_note` trong
 file input (ghi chú cho người đọc) được bỏ trước khi kiểm. Lần chạy đầu: `docs/report/m2-first-run-pdfcraft.md`.
 
+## P1-08 — kịch bản M2 → MP4 (`src/worker/produce/`)
+
+```bash
+uv run python -m worker.produce <script.json> --input <input.json> --assets <assets.json> --out <thư mục> \
+    [--mode preview|final] [--ratios 16:9,9:16] [--on-unsupported fail|skip]
+```
+
+Kiểm kịch bản bằng validator M2, ánh xạ sang plan `render-plan.v2-spike` của #88, TTS VieNeu theo `segment_id`
+(cache theo hash), timeline từ audio đo thật, dựng 2 tỉ lệ song song (`--workers 3` mỗi bên), kiểm MP4 bằng ffprobe,
+ghi `render_report.json`. `preview` = `-q draft`, `final` = `-q looks`. Video ngoài 40–45 s (đọc từ config #77) chỉ bị báo,
+không kéo dài/cắt. Cảnh M2 không có layout: mặc định dừng và báo đúng cảnh; `--on-unsupported skip` bỏ cảnh đó.
+`text_card` có claim mà không có `stat_display` dùng layout chỉ-chữ `claim` (cần template #88 `spike/p1-render-v2` từ commit `4e9f04f`,
+patch ở `docs/report/script-to-mp4-2026-11/patches/`); thiếu layout thì lỗi `layout_missing_in_template` ở đúng cảnh.
+Phụ đề vượt giới hạn dòng của tỉ lệ (9:16: 2 × 24 ký tự) tự chia thành nhiều cue (`produce/cues.py`), thời gian chia theo số ký tự.
+Mã thoát 0 = có MP4 (xem `status`), 2 = không ra MP4. Định dạng `assets.json`: docstring `produce/assets.py`.
+
+**Phần gọi spike (chưa port):** VieNeu #73 (`drivers/tts_synth.py`) và HyperFrames + FFmpeg #88 (`drivers/hf_render.py`)
+chạy bằng venv của spike. Đường dẫn qua `PRODUCE_TTS_SPIKE`, `PRODUCE_RENDER_V2`, `PRODUCE_RENDER_FF` (mặc định: worktree
+anh em `.claude/worktrees/<tên>/spikes/<tên>`). Phần còn lại là code worker. Kết quả chạy thật: `docs/report/script-to-mp4-2026-11.md`.
+
 ## Bộ chạy job (`src/worker/runner/`)
 
 Tiến trình riêng, tách khỏi API: `uv run python -m worker.runner` (`--once` để xử lý hết job rồi thoát). Cần `.env` có `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY` (hoặc `LLM_PROVIDER=fixture`) và `uv run playwright install chromium`.

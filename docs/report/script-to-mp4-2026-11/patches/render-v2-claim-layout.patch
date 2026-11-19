@@ -1,0 +1,164 @@
+From 4e9f04f679e053708382e5d2549dd1a849f599db Mon Sep 17 00:00:00 2001
+From: Potatomine725 <WotblitzGamer725@gmail.com>
+Date: Tue, 3 Nov 2026 09:05:48 +0700
+Subject: [PATCH] =?UTF-8?q?feat(render-v2):=20layout=20claim=20ch=E1=BB=89?=
+ =?UTF-8?q?=20c=C3=B3=20ch=E1=BB=AF=20cho=20c=E1=BA=A3nh=20M2=20kh=C3=B4ng?=
+ =?UTF-8?q?=20c=C3=B3=20stat=5Fdisplay=20(Refs=20#67,=20#80)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Layout thứ 5 của template: hiện claim nguyên văn (không rút gọn, không ghép giá trị/nhãn),
+icon trung tính, dùng class và biến của preset hiện tại. Mọi chữ vẫn cần fact_refs.
+Đổi duy nhất ngoài template: thêm claim vào Layout trong plan.py.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ spikes/p1-render-v2/README.md                 |  3 +-
+ spikes/p1-render-v2/plan.py                   |  2 +-
+ .../p1-render-v2/template/layouts/claim.html  | 55 +++++++++++++++++++
+ spikes/p1-render-v2/tests/test_core.py        | 33 ++++++++++-
+ 4 files changed, 89 insertions(+), 4 deletions(-)
+ create mode 100644 spikes/p1-render-v2/template/layouts/claim.html
+
+diff --git a/spikes/p1-render-v2/README.md b/spikes/p1-render-v2/README.md
+index a8271a7..8c8dd53 100644
+--- a/spikes/p1-render-v2/README.md
++++ b/spikes/p1-render-v2/README.md
+@@ -4,7 +4,8 @@ Issue **#80** (Refs #67). Prompt: `docs/prompts/be-p1-render-template-v2.md`.
+ Branch `spike/p1-render-v2`, tạo từ `spike/p1-render` (#77, chưa merge).
+ 
+ **Mục đích: lấy số đo cho buổi chốt công nghệ.** Đây chưa phải triển khai, và cũng không ép BE dùng HyperFrames.
+-Phạm vi: 1 preset ("điện ảnh tối giản") × 4 bố cục (`hook`, `stat`, `feature_clip`, `cta`) × 2 tỉ lệ.
++Phạm vi: 1 preset ("điện ảnh tối giản") × 5 bố cục (`hook`, `stat`, `feature_clip`, `claim`, `cta`) × 2 tỉ lệ.
++`claim` (chỉ có chữ, hiện claim nguyên văn) thêm sau, cho cảnh M2 không có `stat_display` (Refs P1-08).
+ Đầu vào là video mẫu PDFCraft **40–45 s**. Làm 16:9 trước, 9:16 sau.
+ 
+ ## Kết quả ngắn
+diff --git a/spikes/p1-render-v2/plan.py b/spikes/p1-render-v2/plan.py
+index 5357b26..f00b899 100644
+--- a/spikes/p1-render-v2/plan.py
++++ b/spikes/p1-render-v2/plan.py
+@@ -16,7 +16,7 @@ from typing import Any, Literal
+ 
+ from pydantic import BaseModel, ConfigDict, Field, model_validator
+ 
+-Layout = Literal["hook", "stat", "feature_clip", "cta"]
++Layout = Literal["hook", "stat", "feature_clip", "claim", "cta"]
+ Ratio = Literal["9:16", "16:9"]
+ 
+ # Khoá props được phép là chuỗi trần (không phải chữ hiển thị cần nguồn).
+diff --git a/spikes/p1-render-v2/template/layouts/claim.html b/spikes/p1-render-v2/template/layouts/claim.html
+new file mode 100644
+index 0000000..492db5a
+--- /dev/null
++++ b/spikes/p1-render-v2/template/layouts/claim.html
+@@ -0,0 +1,55 @@
++<!--
++  Layout "claim": chỉ có chữ. Cho cảnh có claim nhưng không có số liệu để làm layout stat và không có
++  clip để làm feature_clip (vd cảnh proof / text_card của M2 khi claim không có stat_display).
++  Hiện claim NGUYÊN VĂN: không rút gọn, không tách thành giá trị + nhãn. Icon trung tính, không minh hoạ theo nghĩa.
++  props: eyebrow{text}, icon, claim{text,highlight}, points[{text,icon}]
++  Lớp hiện dần: minh hoạ (0 s) → eyebrow (0,25) → claim (0,5) → ý phụ (0,9 + i×0,3)
++-->
++<div class="scene layout-claim" data-layout="claim">
++  <style>
++    .layout-claim .safe { display: flex; align-items: center; }
++    .layout-claim.is-portrait .safe { flex-direction: column; justify-content: center; gap: 52px; }
++    .layout-claim.is-landscape .safe { flex-direction: row; gap: 90px; }
++    .layout-claim .illo { position: relative; flex: none; display: grid; place-items: center; }
++    .layout-claim.is-portrait .illo { width: 320px; height: 320px; }
++    .layout-claim.is-landscape .illo { width: 520px; height: 520px; }
++    /* Vòng tròn đồng tâm xoay chậm phía sau icon (cùng kiểu layout stat) */
++    .layout-claim .rings { position: absolute; inset: 0; animation: ring-spin 24s linear both; }
++    .layout-claim .rings circle { fill: none; stroke: var(--accent-2); stroke-opacity: 0.25; stroke-width: 1.5; }
++    .layout-claim .rings circle:nth-child(2) { stroke: var(--accent); stroke-dasharray: 6 14; stroke-opacity: 0.5; }
++    .layout-claim .illo .icon-tile { width: 46%; height: 46%; border-radius: 30%; }
++    .layout-claim .copy { display: flex; flex-direction: column; gap: 30px; min-width: 0; }
++    .layout-claim.is-portrait .copy { align-items: center; text-align: center; }
++    .layout-claim .claim { font-size: calc(var(--fs-title) * 0.85); --hl-d: 1.1s; }
++    .layout-claim .points { display: flex; flex-direction: column; gap: 16px; }
++    .layout-claim .point { display: flex; align-items: flex-start; gap: 18px; padding: 18px 26px; text-align: left;
++      border-radius: 36px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--surface-line);
++      font-weight: 700; font-size: var(--fs-body); line-height: 1.3; }
++    .layout-claim .point svg { width: 1.1em; height: 1.1em; margin-top: 0.1em; color: var(--accent); flex: none; }
++  </style>
++
++  <div class="bg"></div>
++  <div class="bg-dots"></div>
++  <div class="orb orb-a"></div>
++  <div class="orb orb-c"></div>
++
++  <div class="safe">
++    <div class="illo a-pop" style="--d: 0s">
++      <svg class="rings" viewBox="0 0 200 200">
++        <circle cx="100" cy="100" r="98" /><circle cx="100" cy="100" r="80" /><circle cx="100" cy="100" r="62" />
++      </svg>
++      <span class="icon-tile" data-icon="icon"></span>
++    </div>
++    <div class="copy">
++      <div class="eyebrow a-rise" style="--d: 0.25s" data-text="eyebrow"></div>
++      <h2 class="title claim a-rise" style="--d: 0.5s" data-text="claim"></h2>
++      <div class="points" data-list="points">
++          <div data-item class="point a-pop" style="--d: calc(0.9s + var(--i) * 0.3s)">
++            <span data-icon="icon"></span><span data-text="text"></span>
++          </div>
++      </div>
++    </div>
++  </div>
++
++  <script>window.TPL.mount("claim");</script>
++</div>
+diff --git a/spikes/p1-render-v2/tests/test_core.py b/spikes/p1-render-v2/tests/test_core.py
+index ff8d020..5185857 100644
+--- a/spikes/p1-render-v2/tests/test_core.py
++++ b/spikes/p1-render-v2/tests/test_core.py
+@@ -80,10 +80,11 @@ def test_read_layout_hai_goc_bi_chan() -> None:
+         read_layout('<div data-layout="a"></div><div data-layout="b"></div>')
+ 
+ 
+-def test_template_that_co_du_4_layout_va_o_clip() -> None:
++def test_template_that_co_du_5_layout_va_o_clip() -> None:
+     layouts = load_layouts(ROOT / "template" / "layouts")
+-    assert set(layouts) == {"hook", "stat", "feature_clip", "cta"}
++    assert set(layouts) == {"hook", "stat", "feature_clip", "claim", "cta"}
+     assert "clip" in layouts["feature_clip"].slots
++    assert "clip" not in layouts["claim"].slots  # layout chỉ có chữ, không có ô clip
+ 
+ 
+ # ---------- zoom vào clip_focus ----------
+@@ -222,6 +223,34 @@ def test_chu_tren_hinh_khong_nguon_bi_chan_tru_cta() -> None:
+     RenderPlan.model_validate(cta)  # cảnh cta được miễn
+ 
+ 
++def test_layout_claim_chu_phai_co_nguon() -> None:
++    """Layout chỉ-chữ vẫn theo luật chữ trên hình: claim và ý phụ cần fact_refs."""
++    data = _raw()
++    fid = next(iter(data["facts"]))
++    data["scenes"].insert(
++        1,
++        {
++            "scene_id": "s90",
++            "role": "proof",
++            "layout": "claim",
++            "narration_segments": [
++                {"segment_id": "u90", "text": "Câu", "voice": "v/s90.wav", "fact_refs": [fid]}
++            ],
++            "props": {
++                "eyebrow": {"text": "X", "fact_refs": [fid]},
++                "icon": "sparkles",
++                "claim": {"text": "Nguyên văn claim", "fact_refs": [fid]},
++                "points": [{"text": "Ý phụ", "fact_refs": [fid], "icon": "check"}],
++            },
++        },
++    )
++    RenderPlan.model_validate(data)
++    bad = copy.deepcopy(data)
++    del bad["scenes"][1]["props"]["points"][0]["fact_refs"]
++    with pytest.raises(ValidationError, match="thiếu fact_refs"):
++        RenderPlan.model_validate(bad)
++
++
+ # ---------- phụ đề ----------
+ 
+ 

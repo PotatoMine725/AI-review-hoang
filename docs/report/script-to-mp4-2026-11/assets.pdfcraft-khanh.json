@@ -1,0 +1,190 @@
+{
+  "note": "TẠM, thay cho BE Storage. Cho kịch bản chỉnh tay của Khánh (feat/khanh-pr92-script 68fb2a4). Đoạn cắt + focus chọn sau khi xem khung hình từng 0,25–1 s của 4 clip (báo cáo P1-08 lượt 4). Đường dẫn tuyệt đối của máy dev; không commit media. crop_by_ratio: 16:9 ~1,72 (ô clip ~60% ngang), 9:16 ~1,15 (ô clip ≥ 50% cao). Lượt 4b (09/11): s04 bỏ khung mờ (đoạn 2 từ 11,45 s); s05 bỏ khoảng trống giữa hai trang (5,0–6,25 s).",
+  "assets": {
+    "pdfcraft-merge": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-merge.mp4",
+      "crop": [
+        440,
+        0,
+        1480,
+        1080
+      ],
+      "parts": [
+        {
+          "start_s": 9.8,
+          "end_s": 21.8
+        }
+      ],
+      "focus": {
+        "part": 0,
+        "source_t": 14.0,
+        "rect": [
+          1440,
+          120,
+          480,
+          900
+        ]
+      },
+      "icon": "files",
+      "crop_by_ratio": {
+        "16:9": [
+          60,
+          0,
+          1860,
+          1080
+        ],
+        "9:16": [
+          678,
+          0,
+          1242,
+          1080
+        ]
+      }
+    },
+    "pdfcraft-pagenum": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-pagenum.mp4",
+      "crop": [
+        440,
+        0,
+        1480,
+        1080
+      ],
+      "parts": [
+        {
+          "start_s": 1.4,
+          "end_s": 2.8
+        },
+        {
+          "start_s": 8.8,
+          "end_s": 15.0
+        }
+      ],
+      "focus": {
+        "part": 1,
+        "source_t": 13.5,
+        "rect": [
+          1380,
+          560,
+          500,
+          260
+        ]
+      },
+      "icon": "hash",
+      "crop_by_ratio": {
+        "16:9": [
+          60,
+          0,
+          1860,
+          1080
+        ],
+        "9:16": [
+          678,
+          0,
+          1242,
+          1080
+        ]
+      }
+    },
+    "pdfcraft-word-export": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-word-export.mp4",
+      "crop": [
+        440,
+        0,
+        1480,
+        1080
+      ],
+      "parts": [
+        {
+          "start_s": 1.3,
+          "end_s": 4.4
+        },
+        {
+          "start_s": 11.45,
+          "end_s": 12.25
+        }
+      ],
+      "focus": {
+        "part": 0,
+        "source_t": 3.0,
+        "rect": [
+          1480,
+          0,
+          440,
+          360
+        ]
+      },
+      "icon": "file-output",
+      "crop_by_ratio": {
+        "16:9": [
+          60,
+          0,
+          1860,
+          1080
+        ],
+        "9:16": [
+          678,
+          0,
+          1242,
+          1080
+        ]
+      }
+    },
+    "pdfcraft-word-result": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-word-result.mp4",
+      "crop": [
+        220,
+        0,
+        1480,
+        1080
+      ],
+      "parts": [
+        {
+          "start_s": 0.0,
+          "end_s": 5.0
+        },
+        {
+          "start_s": 6.25,
+          "end_s": 7.15
+        }
+      ],
+      "focus": {
+        "part": 0,
+        "source_t": 4.0,
+        "rect": [
+          380,
+          600,
+          1060,
+          420
+        ]
+      },
+      "icon": "file-text",
+      "crop_by_ratio": {
+        "16:9": [
+          30,
+          0,
+          1860,
+          1080
+        ],
+        "9:16": [
+          344,
+          0,
+          1242,
+          1080
+        ]
+      }
+    },
+    "ai-paperwork": {
+      "kind": "image",
+      "path": "D:/Code/AI-Content-Review/AI-review-BE/.claude/worktrees/p1-render-v2/spikes/p1-render-v2/local/ai/paperwork-s1.jpg",
+      "label": "Ảnh minh hoạ do AI tạo",
+      "source": "Cloudflare FLUX.1 schnell (#71), prompt 'paperwork' (ảnh của spike #88)"
+    }
+  },
+  "scene_assets": {
+    "s01": "ai-paperwork"
+  }
+}

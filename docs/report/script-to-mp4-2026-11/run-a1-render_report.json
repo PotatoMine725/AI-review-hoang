@@ -1,0 +1,210 @@
+{
+  "schema": "render-report.v1-spike",
+  "status": "failed",
+  "mode": "preview",
+  "ratios": [
+    "16:9",
+    "9:16"
+  ],
+  "script": "..\\..\\docs\\report\\m2-first-run-pdfcraft\\run4-2026-10-30\\script.json",
+  "input": "..\\..\\docs\\report\\m2-first-run-pdfcraft\\input.json",
+  "assets": "..\\..\\docs\\report\\script-to-mp4-2026-11\\assets.pdfcraft.json",
+  "target_s": {
+    "min": 40.0,
+    "max": 45.0,
+    "script_target_duration_s": 42,
+    "script_estimated_duration_s": 18.9
+  },
+  "actual_s": 17.667,
+  "predicted_s": 17.667,
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "layout": "hook",
+      "footage": "image:ai-paperwork",
+      "duration_s_actual": 4.233,
+      "warnings": [
+        "scene_asset_override: ảnh ai-paperwork gán bằng assets.json, kịch bản M2 không nêu asset_id (visual_plan.kind=text_card)"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-merge",
+      "duration_s_actual": 3.633,
+      "warnings": [
+        "focus_dropped: vùng zoom nằm ngoài đoạn clip đã cắt"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-pagenum",
+      "duration_s_actual": 3.967,
+      "warnings": [
+        "focus_dropped: vùng zoom nằm ngoài đoạn clip đã cắt"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s04",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-word-export",
+      "duration_s_actual": 3.8,
+      "warnings": [
+        "focus_dropped: vùng zoom nằm ngoài đoạn clip đã cắt"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s05",
+      "role": "proof",
+      "layout": null,
+      "footage": null,
+      "duration_s_actual": 0.0,
+      "warnings": [
+        "unsupported_scene: M2 role=proof kind=text_card: #88 chưa có layout cho tổ hợp này (hiện có: hook, stat, feature_clip, cta); không có layout chỉ-chữ để hiện claim nguyên văn."
+      ],
+      "status": "unsupported",
+      "derived": false,
+      "error": {
+        "code": "unsupported_scene",
+        "message": "M2 role=proof kind=text_card: #88 chưa có layout cho tổ hợp này (hiện có: hook, stat, feature_clip, cta); không có layout chỉ-chữ để hiện claim nguyên văn.",
+        "hint": "M2 cần sinh stat_display cho claim của cảnh này (layout stat), hoặc template #88 cần thêm layout chỉ có chữ."
+      }
+    },
+    {
+      "scene_id": "s06",
+      "role": "cta",
+      "layout": "cta",
+      "footage": null,
+      "duration_s_actual": 2.033,
+      "warnings": [
+        "cta_narration_derived: M2 chỉ có cta.text (nút), không có lời đọc CTA; worker đọc nguyên văn cta.text. M2 cần sinh lời đọc CTA (#83)"
+      ],
+      "status": "rendered",
+      "derived": true,
+      "error": null
+    }
+  ],
+  "tts": {
+    "model": "pnnbao-ump/VieNeu-TTS-v3-Turbo@61b85e3d[onnx/cpu]",
+    "hits": 0,
+    "misses": 5,
+    "load_s": 15.0,
+    "wall_s": 31.82,
+    "segments": [
+      {
+        "segment_id": "s01-u01",
+        "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt.",
+        "spoken": "Xử lý pi đi ép miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt.",
+        "duration_s": 4.08,
+        "cached": false,
+        "synth_s": 3.941
+      },
+      {
+        "segment_id": "s02-u01",
+        "text": "Kết hợp nhiều tệp PDF thành một tài liệu một cách dễ dàng.",
+        "spoken": "Kết hợp nhiều tệp pi đi ép thành một tài liệu một cách dễ dàng.",
+        "duration_s": 3.52,
+        "cached": false,
+        "synth_s": 3.094
+      },
+      {
+        "segment_id": "s03-u01",
+        "text": "Bạn có thể đánh số trang tùy chỉnh vị trí và định dạng dễ dàng.",
+        "spoken": "Bạn có thể đánh số trang tùy chỉnh vị trí và định dạng dễ dàng.",
+        "duration_s": 3.84,
+        "cached": false,
+        "synth_s": 3.393
+      },
+      {
+        "segment_id": "s04-u01",
+        "text": "Chuyển đổi PDF sang tài liệu Word chỉnh sửa được một cách nhanh chóng.",
+        "spoken": "Chuyển đổi pi đi ép sang tài liệu Word chỉnh sửa được một cách nhanh chóng.",
+        "duration_s": 3.68,
+        "cached": false,
+        "synth_s": 3.265
+      },
+      {
+        "segment_id": "s06-u01",
+        "text": "Xem thêm thông tin",
+        "spoken": "Xem thêm thông tin",
+        "duration_s": 1.36,
+        "cached": false,
+        "synth_s": 1.196
+      }
+    ]
+  },
+  "outputs": [
+    {
+      "ratio": "16:9",
+      "ok": true,
+      "render_wall_s": 280.6,
+      "mp4": "D:\\tmp\\p1-script-to-mp4\\run-a\\script-preview-16x9.mp4",
+      "duration_s": 17.667,
+      "size": [
+        1920,
+        1080
+      ],
+      "duration_check": "too_short",
+      "predicted_s": 17.667,
+      "delta_s": 0.0,
+      "quality": "draft",
+      "workers": "3",
+      "steps_s": {
+        "compose": 3.2,
+        "hyperframes": 262.6,
+        "hyperframes_phases": {
+          "compile": 4.6,
+          "extract": 6.7,
+          "audio": 0.0,
+          "probe": 1.8,
+          "setup": 1.1,
+          "capture": 237.3,
+          "encode": 2.2,
+          "assemble": 0.4,
+          "rendered_in": 253.3
+        },
+        "ffmpeg": 3.1
+      },
+      "hf_peak_ram_mb": 4954
+    },
+    {
+      "ratio": "9:16",
+      "ok": false,
+      "render_wall_s": 265.1,
+      "mp4": null,
+      "error": "Traceback (most recent call last):\n  File \"D:\\Code\\AI-Content-Review\\AI-review-BE\\.claude\\worktrees\\p1-script-to-mp4\\services\\worker\\src\\worker\\produce\\drivers\\hf_render.py\", line 59, in <module>\n    main()\n  File \"D:\\Code\\AI-Content-Review\\AI-review-BE\\.claude\\worktrees\\p1-script-to-mp4\\services\\worker\\src\\worker\\produce\\drivers\\hf_render.py\", line 52, in main\n    res = render_mod.render_ratio(\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\Code\\AI-Content-Review\\AI-review-BE\\.claude\\worktrees\\p1-render-v2\\spikes\\p1-render-v2\\render.py\", line 205, in render_ratio\n    ff_wall, ff_rss = finalize(plan, tl, ratio, work, video, out)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\Code\\AI-Content-Review\\AI-review-BE\\.claude\\worktrees\\p1-render-v2\\spikes\\p1-render-v2\\render.py\", line 126, in finalize\n    (work / \"subs.ass\").write_text(build_ass(plan, tl, ratio), encoding=\"utf-8\")\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\Code\\AI-Content-Review\\AI-review-BE\\.claude\\worktrees\\p1-render-v2\\spikes\\p1-render-v2\\subtitles.py\", line 107, in build_ass\n    raise PlanError(\nplan.PlanError: s01-u01: phụ đề 3 dòng ở 9:16, cần câu ngắn hơn\n"
+    }
+  ],
+  "timings_s": {
+    "validate_s": 0.04,
+    "map_s": 0.0,
+    "tts_s": 31.82,
+    "render_s": 280.6,
+    "probe_s": 1.69,
+    "total_s": 314.2
+  },
+  "warnings": [
+    "scene_skipped[s05]: unsupported_scene",
+    "predicted_too_short: timeline 17.67 s ngoài 40–45 s (vẫn dựng, không kéo dài/cắt)",
+    "render_failed: ['9:16']"
+  ],
+  "error": null,
+  "plan": "D:\\tmp\\p1-script-to-mp4\\run-a\\script-preview.json"
+}
