@@ -46,7 +46,7 @@ class ProduceResult:
 
 def _read(path: Path) -> dict[str, Any]:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError) as ex:
         raise ProduceError(f"không đọc được JSON {path}: {ex}") from ex
 

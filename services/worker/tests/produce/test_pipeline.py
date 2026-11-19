@@ -345,3 +345,13 @@ def test_cli_loads_env_file_without_overriding_set_vars(
         main(["s.json", "--input", "i.json", "--assets", "a.json", "--out", "o", "--env", str(env)])
     cfg = seen["cfg"]
     assert (cfg.stt_model, cfg.qa_model, cfg.voice) == ("whisper-1", "gpt-5.4-mini", "Mai Anh")
+
+
+def test_assets_and_script_files_with_bom_are_readable(tmp_path: Path) -> None:
+    """PowerShell 5 `Set-Content -Encoding utf8` ghi BOM; không được làm hỏng đọc JSON."""
+    from worker.produce.assets import load_assets
+
+    assets = make_assets(tmp_path)
+    assets.write_bytes(b"\xef\xbb\xbf" + assets.read_bytes())
+    loaded, _ = load_assets(assets)
+    assert loaded.assets

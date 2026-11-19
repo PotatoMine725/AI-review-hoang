@@ -107,7 +107,7 @@ class AssetsFile(_Model):
 def load_assets(path: Path) -> tuple[AssetsFile, Path]:
     """Trả (nội dung, thư mục gốc để giải đường dẫn tương đối)."""
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
         return AssetsFile.model_validate(data), path.resolve().parent
     except (OSError, ValueError) as ex:
         raise ProduceError(f"assets.json không đọc được ({path}): {ex}") from ex
