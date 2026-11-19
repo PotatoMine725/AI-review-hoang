@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from worker.demo.recorder import ease, mouse_path
-from worker.demo.schema import ActionScript
+from worker.demo.recorder import HOLD_AT_END_S, ease, mouse_path
+from worker.demo.schema import DEFAULT_CROP, ActionScript
 
 BASE = {"asset_id": "demo-merge", "url": "https://example.com/tool"}
 
@@ -14,6 +14,14 @@ def script(steps: list[dict], **extra) -> dict:
 
 
 GOTO = {"op": "goto", "url": "https://example.com/tool"}
+
+
+def test_default_crop_centres_the_page_and_end_hold_keeps_clip_long_enough() -> None:
+    x, y, w, h = DEFAULT_CROP
+    # trang 1920 px có nội dung căn giữa (x ≈ 330–1580): crop phải bao trọn, không lệch một bên
+    assert x <= 330 and x + w >= 1580 and abs((x + w / 2) - 960) <= 10
+    assert (y, h) == (0, 1080) and x + w <= 1920
+    assert HOLD_AT_END_S >= 3.0  # clip tự quay 8,4 s từng ngắn hơn cảnh 14,3 s (tua < 0,6×)
 
 
 def test_valid_script_roundtrip() -> None:

@@ -31,7 +31,8 @@ from worker.demo.schema import (
 )
 
 HOLD_AFTER_LOAD_S = 0.8  # để người xem thấy trang trước khi thao tác
-HOLD_AT_END_S = 1.5
+# Giữ cuối đủ dài để clip không ngắn hơn cảnh (khâu dựng cần clip ≥ 0,6× độ dài cảnh).
+HOLD_AT_END_S = 3.0
 THINK_S = 0.35  # nghỉ ngắn giữa hai thao tác
 
 # Con trỏ giả: video của Playwright không có con trỏ hệ điều hành, nên vẽ bằng DOM.

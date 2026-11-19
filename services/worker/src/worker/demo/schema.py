@@ -16,9 +16,10 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 Rect = tuple[int, int, int, int]
 
-# Cùng giá trị crop với các clip tự quay hiện có (assets.json: [440, 0, 1480, 1080]) để layout
-# của khâu dựng dùng clip mới như clip cũ.
-DEFAULT_CROP: Rect = (440, 0, 1480, 1080)
+# Crop là (x, y, rộng, cao). Trang quay bằng Playwright (viewport 1920×1080) có nội dung căn giữa,
+# rộng ~1250 px (x ≈ 330–1580); (440, 0, 1480, 1080) của clip tự quay cắt mất mép trái. 1800×1080
+# (tỉ lệ 5:3 như cửa sổ trình duyệt của layout) căn giữa lấy trọn nội dung.
+DEFAULT_CROP: Rect = (60, 0, 1800, 1080)
 _ASSET_ID = re.compile(r"^[a-z0-9][a-z0-9-]{1,63}$")
 _FILE_NAME = re.compile(r"^[\w][\w .()-]{0,100}$")
 
