@@ -129,9 +129,11 @@ def test_generator_errors_map_to_http(
     assert not [k for k, _ in db.calls if k == "rpc:create_script_revision"]
 
 
-def test_requires_service_token(client: TestClient, gen: FakeGenerator) -> None:
+def test_requires_login_or_service_token(client: TestClient, gen: FakeGenerator) -> None:
     assert client.post(URL, json=BODY).status_code == 401
-    assert client.post(URL, json=BODY, headers=OWNER).status_code == 401
+    assert client.post(URL, json=BODY, headers={"Authorization": "Bearer sai"}).status_code == 401
+    # Owner đã đăng nhập nhưng không sở hữu product (RLS không trả dòng) thì 404.
+    assert client.post(URL, json=BODY, headers=OWNER).status_code == 404
 
 
 def test_rejects_unknown_fields(client: TestClient, gen: FakeGenerator) -> None:

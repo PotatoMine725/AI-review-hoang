@@ -48,6 +48,11 @@ class CostLimitExceededError(RuntimeError):
         super().__init__(f"chi phí {cost_usd:.6f} USD vượt ngưỡng {limit_usd:.6f} USD của một job")
 
 
+def _origins(raw: str) -> tuple[str, ...]:
+    items = tuple(o.strip().rstrip("/") for o in raw.split(",") if o.strip())
+    return items or Settings.model_fields["cors_origins"].default
+
+
 class Settings(BaseModel):
     # Supabase. URL local mặc định của `supabase start`. Khoá anon dùng khi đọc thay mặt người
     # dùng (RLS);
@@ -77,6 +82,8 @@ class Settings(BaseModel):
     runner_retry_backoff_s: float = 30.0
     # Job `video`: thư mục ghi MP4 và báo cáo dựng (mỗi job một thư mục con), trên máy render.
     video_store_dir: str = "./data/videos"
+    # Origin của web (CORS), cách nhau bằng dấu phẩy. Mặc định chỉ `pnpm dev` của FE.
+    cors_origins: tuple[str, ...] = ("http://localhost:3000", "http://127.0.0.1:3000")
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> Settings:
@@ -99,6 +106,7 @@ class Settings(BaseModel):
             runner_max_attempts=int(env.get("RUNNER_MAX_ATTEMPTS", "3") or 3),
             runner_retry_backoff_s=float(env.get("RUNNER_RETRY_BACKOFF_S", "30") or 30),
             video_store_dir=env.get("WORKER_VIDEO_DIR", "").strip() or "./data/videos",
+            cors_origins=_origins(env.get("WORKER_CORS_ORIGINS", "")),
         )
 
     def _value(self, env_name: str) -> str:

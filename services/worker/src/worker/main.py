@@ -1,13 +1,21 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from worker.api.errors import ApiError, error_body
 from worker.api.routes import router
-from worker.settings import MissingConfigError
+from worker.settings import MissingConfigError, Settings
 
 app = FastAPI(title="AI Review Content Factory — Worker")
 app.include_router(router)
+# CORS cho web (trình duyệt gọi thẳng worker bằng Bearer token, không dùng cookie).
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=list(Settings.from_env().cors_origins),
+    allow_methods=["GET", "POST", "PATCH"],
+    allow_headers=["Authorization", "Content-Type"],
+)
 
 
 @app.exception_handler(ApiError)

@@ -1,17 +1,21 @@
 """Endpoint P1: Product → PKB → script → job. Hợp đồng: `docs/specs/p1-pipeline-db-contract.md`.
 
 Quyền:
-- Owner (token Supabase): tạo product, tạo job crawl, đọc dữ liệu của mình (RLS), duyệt PKB/script.
-- Service (X-Service-Token, n8n/worker): tạo PKB version, script revision, job video, cập nhật job.
+- Owner (token Supabase): tạo product, tạo job crawl và video, sinh script, đọc dữ liệu của mình
+  (RLS), duyệt PKB/script, tải MP4 của job.
+- Service (X-Service-Token, n8n/worker): tạo PKB version, script revision, cập nhật job, và làm
+  lại các việc của owner.
 Ghi luôn đi qua RPC `service_role`; quyền sở hữu khi duyệt do RPC kiểm bằng `p_actor`.
 """
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Annotated, Any
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
+from fastapi.responses import FileResponse
 from starlette.concurrency import run_in_threadpool
 
 from worker.api.db import Database, Row
@@ -21,6 +25,7 @@ from worker.api.deps import (
     current_owner,
     get_db,
     get_script_generator,
+    get_settings,
     owner_or_service,
     require_service,
 )
@@ -43,6 +48,7 @@ from worker.api.schemas import (
     VideoRequest,
 )
 from worker.m1.url import InvalidUrlError, normalize_product_url
+from worker.settings import Settings
 
 router = APIRouter()
 
@@ -118,7 +124,9 @@ def create_crawl_job(product_id: UUID, body: CrawlRequest, who: AnyoneDep, db: D
 
 
 @router.post("/products/{product_id}/videos", response_model=JobCreated, status_code=202)
-def create_video_job(product_id: UUID, body: VideoRequest, _: ServiceDep, db: Db) -> Any:
+def create_video_job(product_id: UUID, body: VideoRequest, who: AnyoneDep, db: Db) -> Any:
+    if isinstance(who, Owner):
+        _product(db, who, product_id)  # owner chỉ tạo job cho product của mình (RLS)
     job_id = _db_call(
         db.rpc,
         "create_generation_job",
@@ -151,6 +159,39 @@ JOB_COLUMNS = (
 def get_job(job_id: UUID, who: AnyoneDep, db: Db) -> Any:
     return _one(
         _read(db, who, "generation_jobs", {"id": f"eq.{job_id}", "select": JOB_COLUMNS}), "job"
+    )
+
+
+@router.get("/jobs/{job_id}/video")
+def get_job_video(
+    job_id: UUID,
+    who: AnyoneDep,
+    db: Db,
+    settings: Annotated[Settings, Depends(get_settings)],
+    ratio: str = "16:9",
+) -> FileResponse:
+    """Phát MP4 của job `video` đã xong (hỗ trợ Range). Chỉ phục vụ file nằm trong thư mục của
+    job dưới `WORKER_VIDEO_DIR`, và chỉ khi job đọc được theo RLS của người gọi."""
+    job = _one(
+        _read(db, who, "generation_jobs", {"id": f"eq.{job_id}", "select": JOB_COLUMNS}), "job"
+    )
+    if job.get("job_type") != "video" or job.get("status") != "completed":
+        raise ApiError(409, "job không phải video hoặc chưa hoàn tất")
+    outputs = (job.get("result_manifest") or {}).get("outputs") or []
+    out = next(
+        (o for o in outputs if o.get("ratio") == ratio and o.get("ok") and o.get("mp4")), None
+    )
+    if out is None:
+        raise ApiError(404, f"job không có MP4 tỉ lệ {ratio}")
+    root = (Path(settings.video_store_dir) / str(job_id)).resolve()
+    path = Path(str(out["mp4"])).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
+        raise ApiError(404, "file MP4 không còn trên máy render")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        content_disposition_type="inline",
+        filename=f"{job_id}-{ratio.replace(':', 'x')}.mp4",
     )
 
 
@@ -221,12 +262,14 @@ async def generate_script(
     product_id: UUID,
     body: ScriptGenerate,
     response: Response,
-    _: ServiceDep,
+    who: AnyoneDep,
     db: Db,
     generator: Annotated[ScriptGenerator | None, Depends(get_script_generator)],
 ) -> Any:
     """Sinh script (M2) từ PKB `approved` rồi lưu thành revision `draft`. Chạy đồng bộ (LLM)."""
     pid = str(product_id)
+    if isinstance(who, Owner):  # owner chỉ sinh script cho product của mình (RLS)
+        await run_in_threadpool(_product, db, who, product_id)
     # Cùng key trả revision cũ, không gọi LLM lần nữa (idempotent, tiết kiệm quota).
     prior = await run_in_threadpool(
         _db_call,
