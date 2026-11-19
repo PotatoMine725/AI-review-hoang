@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import wave
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from worker.produce.config import ProduceConfig
-from worker.produce.runner import RunResult
+from worker.produce.runner import CANCELLED_RC, RunResult
 
 REPO = Path(__file__).resolve().parents[4]
 RUN4_DIR = REPO / "docs" / "report" / "m2-first-run-pdfcraft"
@@ -83,6 +84,14 @@ class FakeRunner:
         self.mp4_duration_s = mp4_duration_s
         self.speak_s = speak_s
         self.fail_ratio: str | None = None
+        # --- dựng song song theo cảnh (P1-09)
+        self.scene_frames: dict[str, int] = {}  # scene_id → số khung (mặc định 60)
+        self.fail_scene: tuple[str, str] | None = None  # (scene_id, tỉ lệ) bị lỗi
+        self.hold_until_cancel: set[tuple[str, str]] = set()  # job chờ tới khi bị huỷ
+        self.salt: dict[str, str] = {}  # scene_id → "nội dung" (đổi thì khoá cache đổi)
+        self.parts: dict[str, list[str]] = {}  # tỉ lệ → scene_id theo thứ tự đã nối
+        self.cancelled: list[tuple[str, str]] = []
+        self._lock = threading.Lock()
         self.subtitle_cues: dict[str, dict[str, int]] = {}  # tỉ lệ → {segment_id: số cue}
 
     def count(self, name: str) -> int:
@@ -98,10 +107,12 @@ class FakeRunner:
         cwd: Path | None = None,
         env: Mapping[str, str] | None = None,
         timeout_s: float = 1800,
+        cancel: threading.Event | None = None,
     ) -> RunResult:
         cmd = list(cmd)
-        self.calls.append(cmd)
-        self.envs.append(env)
+        with self._lock:
+            self.calls.append(cmd)
+            self.envs.append(env)
         arg = {cmd[i]: cmd[i + 1] for i in range(len(cmd) - 1) if cmd[i].startswith("--")}
         if cmd[0].endswith("ffprobe") or cmd[0] == "ffprobe":
             data = {
@@ -113,6 +124,13 @@ class FakeRunner:
         if driver == "tts_synth.py":
             return self._tts(cmd[2], arg)
         if driver == "hf_render.py":
+            mode = arg.get("--mode", "full")
+            if mode == "prepare":
+                return self._prepare(arg)
+            if mode == "scene":
+                return self._scene(arg, cancel)
+            if mode == "finalize":
+                return self._finalize(arg)
             return self._render(arg)
         raise AssertionError(f"lệnh lạ: {cmd}")
 
@@ -146,6 +164,88 @@ class FakeRunner:
                 }
             )
         return RunResult(0, json.dumps({"model": "fake", "load_s": 6.5, "segments": done}), "", 7.0)
+
+    def hf_calls(self, mode: str) -> list[dict[str, str]]:
+        """Đối số `--khoá giá trị` của mọi lần gọi hf_render.py ở chế độ `mode`."""
+        out = []
+        for c in self.calls:
+            if len(c) > 2 and Path(c[1]).name == "hf_render.py":
+                arg = {c[i]: c[i + 1] for i in range(len(c) - 1) if c[i].startswith("--")}
+                if arg.get("--mode", "full") == mode:
+                    out.append(arg)
+        return out
+
+    def _prepare(self, arg: dict[str, str]) -> RunResult:
+        plan = json.loads(Path(arg["--plan"]).read_text(encoding="utf-8"))
+        scenes = [
+            {"scene_id": s["scene_id"], "frames": self.scene_frames.get(s["scene_id"], 60)}
+            for s in plan["scenes"]
+        ]
+        out = {
+            "fps": 30,
+            "total_frames": sum(s["frames"] for s in scenes),
+            "scenes": scenes,
+            "subtitle_cues": {},
+            "prepare_s": 0.5,
+        }
+        return RunResult(0, "noise\n" + json.dumps(out), "", 0.5)
+
+    def _scene(self, arg: dict[str, str], cancel: threading.Event | None) -> RunResult:
+        sid, ratio = arg["--scene"], arg["--ratio"]
+        if (sid, ratio) in self.hold_until_cancel and cancel is not None:
+            cancel.wait(10)
+            if cancel.is_set():
+                with self._lock:
+                    self.cancelled.append((sid, ratio))
+                return RunResult(CANCELLED_RC, "", "huỷ", 0.1)
+        if self.fail_scene == (sid, ratio):
+            return RunResult(1, "", f"Chrome crash ở {sid}", 2.0)
+        tag = ratio.replace(":", "x")
+        key = f"{sid}-{ratio}-{arg['--quality']}-{self.salt.get(sid, '')}"
+        cache = arg.get("--cache-dir")
+        if cache:
+            mp4 = Path(cache) / tag / f"{key}.mp4"
+        else:
+            mp4 = Path(arg["--out"]) / f"{sid}-{tag}.mp4"
+        hit = mp4.is_file()
+        if not hit:
+            mp4.parent.mkdir(parents=True, exist_ok=True)
+            mp4.write_bytes(b"mp4")
+        out = {
+            "scene_id": sid,
+            "ratio": ratio,
+            "key": key,
+            "frames": self.scene_frames.get(sid, 60),
+            "compose_s": 0.1,
+            "cache_hit": hit,
+            "output": str(mp4),
+            "hf_wall_s": 0.0 if hit else 5.0,
+            "hf_phases": {},
+            "wall_s": 0.2 if hit else 5.5,
+        }
+        return RunResult(0, "noise\n" + json.dumps(out), "", out["wall_s"])
+
+    def _finalize(self, arg: dict[str, str]) -> RunResult:
+        ratio = arg["--ratio"]
+        parts = json.loads(Path(arg["--parts"]).read_text(encoding="utf-8"))
+        with self._lock:
+            self.parts[ratio] = [p["scene_id"] for p in parts]
+        plan = Path(arg["--plan"])
+        mp4 = Path(arg["--out"]) / f"{plan.stem}-{ratio.replace(':', 'x')}.mp4"
+        mp4.write_bytes(b"mp4")
+        raw = {
+            "ratio": ratio,
+            "output": str(mp4),
+            "quality": arg["--quality"],
+            "workers": "1",
+            "ffmpeg_wall_s": 2.0,
+            "concat_mode": "copy",
+            "concat_reason": None,
+            "concat_s": 0.1,
+            "frames": sum(p["frames"] for p in parts),
+            "subtitle_cues": {},
+        }
+        return RunResult(0, "noise\n" + json.dumps(raw), "", 2.5)
 
     def _render(self, arg: dict[str, str]) -> RunResult:
         ratio = arg["--ratio"]

@@ -1,7 +1,8 @@
 """CLI (chạy trong services/worker):
 
     uv run python -m worker.produce <script.json> --input <input.json> \\
-        --assets <assets.json> --out <dir> [--mode preview|final] [--ratios 16:9,9:16]
+        --assets <assets.json> --out <dir> [--mode preview|final] [--ratios 16:9,9:16] \\
+        [--render-mode sequential|parallel] [--render-jobs N] [--no-cache]
 
 Mã thoát: 0 = có MP4 (kể cả `out_of_range`, xem `status` trong render_report.json),
 2 = không ra MP4.
@@ -51,6 +52,22 @@ def main(argv: list[str] | None = None) -> int:
         help="cảnh M2 không có layout: fail (mặc định, không dựng) "
         "hoặc skip (bỏ cảnh đó, ghi vào report)",
     )
+    ap.add_argument(
+        "--render-mode",
+        choices=["sequential", "parallel"],
+        help="sequential = mỗi tỉ lệ một tiến trình HyperFrames; parallel = chia theo cảnh "
+        "(mặc định lấy PRODUCE_RENDER_MODE)",
+    )
+    ap.add_argument(
+        "--render-jobs",
+        type=int,
+        help="parallel: số tiến trình HyperFrames chạy cùng lúc (mặc định PRODUCE_RENDER_JOBS)",
+    )
+    ap.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="parallel: không đọc/ghi cache MP4 theo cảnh (dựng lại mọi cảnh)",
+    )
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args(argv)
 
@@ -58,6 +75,15 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
+    over: dict[str, object] = {}
+    if args.render_mode:
+        over["render_mode"] = args.render_mode
+    if args.render_jobs:
+        over["render_jobs"] = args.render_jobs
+    if args.no_cache:
+        over["render_cache"] = False
+    cfg = ProduceConfig.from_env()
+    cfg = ProduceConfig.model_validate({**cfg.model_dump(), **over}) if over else cfg
     result = produce(
         args.script,
         args.input,
@@ -65,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
         args.out,
         mode=args.mode,
         ratios=args.ratios,
-        cfg=ProduceConfig.from_env(),
+        cfg=cfg,
         on_unsupported=args.on_unsupported,
     )
     rep = result.report

@@ -14,9 +14,9 @@ import sys
 import tempfile
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Self
+from typing import Literal, Self
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from worker.produce.errors import ProduceError
 
@@ -56,6 +56,14 @@ class ProduceConfig(BaseModel):
     gap_s: float = 0.12  # nghỉ giữa hai câu, 0,12–0,15 s
     tail_s: float = 0.6  # giữ khung cuối sau câu cuối
     workers: str = "3"  # --workers của HyperFrames cho MỖI tỉ lệ (số đo #95: 3 tốt hơn auto)
+    # P1-09: dựng song song theo cảnh. `sequential` = đường cũ (mỗi tỉ lệ một tiến trình).
+    render_mode: Literal["sequential", "parallel"] = "sequential"
+    render_jobs: int = Field(default=4, ge=1)  # số tiến trình HyperFrames chạy cùng lúc (parallel)
+    render_job_ram_mb: int = Field(default=1900, ge=256)  # đỉnh RAM mỗi tiến trình (đo: 1,7–1,9 GB)
+    render_ram_reserve_mb: int = Field(
+        default=2048, ge=0
+    )  # chừa lại cho hệ điều hành + trình duyệt
+    render_cache: bool = True  # cache MP4 theo cảnh; --no-cache tắt
 
     brand_icon: str = "sparkles"  # icon Lucide có sẵn trong template #88
     default_icon: str = "sparkles"
@@ -69,6 +77,11 @@ class ProduceConfig(BaseModel):
         if not 0 <= v <= MAX_GAP_S:
             raise ValueError(f"gap_s phải trong 0–{MAX_GAP_S} s (tiêu chí khoảng nghỉ), nhận {v}")
         return v
+
+    @property
+    def scene_cache_dir(self) -> Path:
+        """Cache MP4 theo cảnh (nằm ngoài repo, cùng gốc với cache TTS)."""
+        return self.cache_dir / "render-scenes"
 
     @property
     def tts_dir(self) -> Path:
@@ -102,6 +115,11 @@ class ProduceConfig(BaseModel):
             "preset",
             "gap_s",
             "workers",
+            "render_mode",
+            "render_jobs",
+            "render_job_ram_mb",
+            "render_ram_reserve_mb",
+            "render_cache",
         ):
             names = [ENV_PREFIX + field.upper()]
             if field in legacy:

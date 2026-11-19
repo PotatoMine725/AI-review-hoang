@@ -145,6 +145,7 @@ def _output_report(
             "ffmpeg": raw.get("ffmpeg_wall_s"),
         },
         "hf_peak_ram_mb": raw.get("hf_peak_ram_mb"),
+        "render": raw.get("render"),
     }
 
 
