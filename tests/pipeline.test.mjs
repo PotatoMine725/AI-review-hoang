@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { summarizePkb, summarizeScript, parseAssets, videoOptions, isActiveJob } from '../src/features/pipeline/model.ts';
+import { renderProfile, summarizePkb, summarizeScript, parseAssets, videoOptions, isActiveJob } from '../src/features/pipeline/model.ts';
 
 test('summarizePkb reads PKB v0.3 fields and tolerates missing ones', () => {
   const summary = summarizePkb({ identity: { name: 'PDFCraft', tagline: 'Công cụ PDF', description: 'd' }, usp: [{ text: 'Chạy trên trình duyệt' }, { nope: 1 }], features: [{ name: 'Gộp PDF' }] });
@@ -26,4 +26,10 @@ test('parseAssets and videoOptions validate worker inputs', () => {
   assert.throws(() => videoOptions({ assetsPath: 'x', mode: 'final', ratios: [] }), /tỉ lệ/);
   assert.equal(isActiveJob({ status: 'running' }), true);
   assert.equal(isActiveJob({ status: 'completed' }), false);
+});
+
+test('renderProfile is stable and distinguishes mode and ratios', () => {
+  assert.equal(renderProfile('preview', ['9:16']), 'preview-9x16');
+  assert.equal(renderProfile('final', ['9:16', '16:9']), 'final-16x9+9x16');
+  assert.equal(renderProfile('final', ['16:9', '9:16']), renderProfile('final', ['9:16', '16:9']));
 });

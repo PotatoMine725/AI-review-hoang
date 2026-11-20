@@ -56,5 +56,10 @@ export function videoOptions({ assetsPath, mode, ratios }: { assetsPath: string;
   return { assets_path: assetsPath.trim(), mode, ratios };
 }
 
+/** DB chỉ cho 1 video chưa lỗi cho mỗi (revision, render_profile), nên đặt profile theo chế độ + tỉ lệ để dựng lại bản khác cùng kịch bản. */
+export function renderProfile(mode: "preview" | "final", ratios: string[]): string {
+  return `${mode}-${[...ratios].sort().map(ratio => ratio.replace(":", "x")).join("+")}`;
+}
+
 export const jobLabels: Record<string, string> = { queued: "Đang chờ", running: "Đang chạy", completed: "Hoàn tất", failed: "Lỗi" };
 export const reviewLabels: Record<string, string> = { draft: "Bản nháp", in_review: "Chờ duyệt", approved: "Đã duyệt", rejected: "Bị từ chối" };

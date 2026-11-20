@@ -5,7 +5,7 @@ import { useAuth } from "@/features/auth/provider";
 import { worker } from "@/lib/api/worker-client";
 import { WorkerApiError, type Job, type ReviewDecision } from "@/lib/api/worker";
 import { ensureMerchant, listJobs, listPkbVersions, listProducts, listScripts, type PkbRow, type ProductRow, type ReviewStatus, type ScriptRow } from "@/lib/api/pipeline-data";
-import { isActiveJob, jobLabels, newKey, parseAssets, reviewLabels, summarizePkb, summarizeScript, videoOptions } from "./model";
+import { isActiveJob, jobLabels, newKey, parseAssets, renderProfile, reviewLabels, summarizePkb, summarizeScript, videoOptions } from "./model";
 import "./pipeline.css";
 
 const TECH_KEY = "reviewlab.pipeline.tech.v1";
@@ -65,12 +65,14 @@ export function Pipeline() {
   </div>;
 }
 
+type Where = "top" | "crawl" | "pkb" | "script" | "video";
 type Data = { pkbs: PkbRow[]; scripts: ScriptRow[]; jobs: Job[] };
 
 function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: () => void }) {
   const [data, setData] = useState<Data>({ pkbs: [], scripts: [], jobs: [] });
   const [busy, setBusy] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const [notice, setNotice] = useState<{ where: Where; message: string } | null>(null);
+  const [techOpen, setTechOpen] = useState(false);
   const [tech, setTech] = useState({ assetsPath: "", assets: "" });
   const [mode, setMode] = useState<"preview" | "final">("preview");
   const [ratios, setRatios] = useState<string[]>(RATIOS);
@@ -78,8 +80,8 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
   const load = useCallback(async () => {
     try {
       const [pkbs, scripts, jobs] = await Promise.all([listPkbVersions(product.id), listScripts(product.id), listJobs(product.id)]);
-      setData({ pkbs, scripts, jobs }); setError("");
-    } catch (cause) { setError(messageOf(cause)); }
+      setData({ pkbs, scripts, jobs });
+    } catch (cause) { setNotice({ where: "top", message: messageOf(cause) }); }
   }, [product.id]);
   useEffect(() => { void Promise.resolve().then(load); }, [load]);
   useEffect(() => {
@@ -94,17 +96,25 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
     const controller = new AbortController();
     worker.waitForJob(activeJob, { signal: controller.signal, onUpdate: job => setData(current => ({ ...current, jobs: current.jobs.map(item => item.id === job.id ? job : item) })) })
       .then(() => { void load(); onChanged(); })
-      .catch(cause => { if (!controller.signal.aborted) setError(messageOf(cause)); });
+      .catch(cause => { if (!controller.signal.aborted) setNotice({ where: "top", message: messageOf(cause) }); });
     return () => controller.abort();
   }, [activeJob, load, onChanged]);
 
-  async function run(label: string, action: () => Promise<unknown>) {
+  // Lỗi của một thao tác hiện ngay tại mục đó và không bị xoá khi nạp lại dữ liệu.
+  async function run(where: Where, label: string, action: () => Promise<unknown>) {
     if (busy) return;
-    setBusy(label); setError("");
+    setBusy(label); setNotice(null);
     try { await action(); await load(); onChanged(); }
-    catch (cause) { setError(messageOf(cause)); await load(); }
+    catch (cause) {
+      const conflict = where === "video" && cause instanceof WorkerApiError && cause.status === 409;
+      const message = conflict ? "Kịch bản này đã có video với cấu hình (chế độ + tỉ lệ) này. Đổi chế độ hoặc tỉ lệ, hoặc sinh bản kịch bản mới." : messageOf(cause);
+      if (where === "video" && /assets_path|permitted_assets/.test(message)) setTechOpen(true);
+      setNotice({ where, message });
+      await load();
+    }
     finally { setBusy(null); }
   }
+
 
   const pkb = data.pkbs[0];
   const approvedPkb = data.pkbs.find(item => item.status === "approved");
@@ -114,11 +124,12 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
   const videos = data.jobs.filter(job => job.job_type === "video");
 
   return <>
-    {error && <p role="alert" className="studio-error">{error}</p>}
+    <NoticeAt notice={notice} where="top" />
     <section className="pl-card" aria-label="Crawl">
       <h2>1. Crawl</h2>
       {crawl ? <p><JobBadge job={crawl} /> {crawl.error && <span className="studio-error">{crawl.error}</span>}</p> : <p className="pl-muted">Chưa có job crawl.</p>}
-      <div className="pl-row"><button className="secondary-button" type="button" disabled={!!busy || (!!crawl && isActiveJob(crawl))} onClick={() => run("crawl", () => worker.createCrawlJob(product.id, newKey("crawl")))}>Crawl lại</button></div>
+      <div className="pl-row"><button className="secondary-button" type="button" disabled={!!busy || (!!crawl && isActiveJob(crawl))} onClick={() => run("crawl", "crawl", () => worker.createCrawlJob(product.id, newKey("crawl")))}>Crawl lại</button></div>
+      <NoticeAt notice={notice} where="crawl" />
     </section>
 
     <section className="pl-card" aria-label="PKB">
@@ -127,15 +138,16 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
       {pkb && <>
         <PkbSummary row={pkb} />
         {pkb.review_note && <p className="pl-muted">Ghi chú: {pkb.review_note}</p>}
-        <ReviewBar status={pkb.status} busy={!!busy} onReview={(decision, note) => run("pkb", () => worker.reviewPkb(product.id, pkb.version, { decision, note }))} />
+        <ReviewBar status={pkb.status} busy={!!busy} onReview={(decision, note) => run("pkb", "pkb", () => worker.reviewPkb(product.id, pkb.version, { decision, note }))} />
       </>}
+      <NoticeAt notice={notice} where="pkb" />
     </section>
 
     <section className="pl-card" aria-label="Script">
       <h2>3. Kịch bản {script && <Status value={script.status} />}</h2>
       {!approvedPkb && <p className="pl-muted">Cần duyệt PKB trước.</p>}
       <div className="pl-row">
-        <button className="primary-button" type="button" disabled={!approvedPkb || !!busy} onClick={() => run("script", async () => {
+        <button className="primary-button" type="button" disabled={!approvedPkb || !!busy} onClick={() => run("script", "script", async () => {
           if (!approvedPkb) return;
           await worker.generateScript(product.id, { knowledge_version: approvedPkb.version, idempotency_key: newKey("script"), parent_revision: script?.revision, permitted_assets: parseAssets(tech.assets).map(asset => ({ ...asset, product_id: product.id })) });
         })}>{busy === "script" ? "Đang sinh (có thể vài phút)…" : script ? "Sinh bản mới" : "Sinh kịch bản"}</button>
@@ -143,14 +155,15 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
       {script && <>
         <ScriptSummary row={script} />
         {script.review_note && <p className="pl-muted">Ghi chú: {script.review_note}</p>}
-        <ReviewBar status={script.status} busy={!!busy} onReview={(decision, note) => run("script-review", () => worker.reviewScript(product.id, script.revision, { decision, note }))} />
+        <ReviewBar status={script.status} busy={!!busy} onReview={(decision, note) => run("script", "script-review", () => worker.reviewScript(product.id, script.revision, { decision, note }))} />
       </>}
+      <NoticeAt notice={notice} where="script" />
     </section>
 
     <section className="pl-card" aria-label="Video">
       <h2>4. Video</h2>
       {!approvedScript && <p className="pl-muted">Cần duyệt kịch bản trước.</p>}
-      <details>
+      <details open={techOpen} onToggle={event => setTechOpen(event.currentTarget.open)}>
         <summary>Tùy chọn kỹ thuật (tạm, đến khi BE có mặc định)</summary>
         <div className="pl-card">
           <label className="pl-field">assets_path (đường dẫn assets.json trên máy render)<input type="text" value={tech.assetsPath} onChange={event => saveTech({ ...tech, assetsPath: event.target.value })} placeholder="D:/Code/.../assets.pdfcraft.json" /></label>
@@ -160,14 +173,19 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
       <div className="pl-row">
         <label className="pl-field">Chế độ<select value={mode} onChange={event => setMode(event.target.value as "preview" | "final")}><option value="preview">preview</option><option value="final">final</option></select></label>
         {RATIOS.map(ratio => <label key={ratio} className="pl-row"><input type="checkbox" checked={ratios.includes(ratio)} onChange={event => setRatios(event.target.checked ? [...ratios, ratio] : ratios.filter(item => item !== ratio))} />{ratio}</label>)}
-        <button className="primary-button" type="button" disabled={!approvedScript || !approvedPkb || !!busy || videos.some(isActiveJob)} onClick={() => run("video", async () => {
+        <button className="primary-button" type="button" disabled={!approvedScript || !approvedPkb || !!busy || videos.some(isActiveJob)} onClick={() => run("video", "video", async () => {
           if (!approvedScript || !approvedPkb) return;
-          await worker.createVideoJob(product.id, { pkb_version: approvedScript.knowledge_version, script_revision: approvedScript.revision, idempotency_key: newKey("video"), options: videoOptions({ assetsPath: tech.assetsPath, mode, ratios }) });
+          await worker.createVideoJob(product.id, { pkb_version: approvedScript.knowledge_version, script_revision: approvedScript.revision, idempotency_key: newKey("video"), render_profile: renderProfile(mode, ratios), options: videoOptions({ assetsPath: tech.assetsPath, mode, ratios }) });
         })}>Dựng video</button>
       </div>
+      <NoticeAt notice={notice} where="video" />
       {videos.map(job => <VideoJob key={job.id} job={job} />)}
     </section>
   </>;
+}
+
+function NoticeAt({ notice, where }: { notice: { where: Where; message: string } | null; where: Where }) {
+  return notice?.where === where ? <p role="alert" className="studio-error">{notice.message}</p> : null;
 }
 
 function JobBadge({ job }: { job: Job }) {
