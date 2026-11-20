@@ -6,6 +6,8 @@ Các contract JSON dùng chung cho nhiều module (FE, BE, AI). Contract riêng 
 |---|---|
 | `cost-breakdown.v1.schema.json` | Cột `cost_breakdown` của `generation_jobs` (job `crawl`, `video`) và `content_scripts` (đề xuất, chờ #23) |
 | `script.v0.schema.json` | Kịch bản video dọc 9:16 (M2 -> M3), lưu vào `content_scripts` |
+| [`m2/p1-ac-03-script-vi.v1.schema.json`](../m2/p1-ac-03-script-vi.v1.schema.json) | **Bản nháp** contract M2 tiếng Việt cho P1-AC-03; chưa thay `script.v0`. Nêu rõ PKB schema/knowledge version, text card do renderer tạo, và fact refs cho phép thiếu `source_id` với fact owner |
+| [`m2/p1-ac-03-input.v1.schema.json`](../m2/p1-ac-03-input.v1.schema.json) | **Bản nháp** input M2: Product/PKB approved, khai báo phiên bản, allowlist tư liệu; content context tùy chọn, không phụ thuộc Campaign/Affiliate. PKB 0.3 là đề xuất trong PR #68 cho tới khi merge vào `dev` |
 
 
 ## `cost_breakdown` v1
