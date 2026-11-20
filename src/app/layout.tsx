@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { WorkspaceShell } from "@/features/workspace/shell";
 import { ErrorBoundary } from "@/features/workspace/error-boundary";
-import { MockAuthProvider } from "@/features/auth/provider";
+import { AuthProvider } from "@/features/auth/provider";
 import { PreferencesProvider } from "@/features/studio/preferences";
 import "./studio.css";
 import "@/features/auth/auth.css";
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ErrorBoundary>
-          <PreferencesProvider><MockAuthProvider><WorkspaceShell>{children}</WorkspaceShell></MockAuthProvider></PreferencesProvider>
+          <PreferencesProvider><AuthProvider><WorkspaceShell>{children}</WorkspaceShell></AuthProvider></PreferencesProvider>
         </ErrorBoundary>
       </body>
     </html>

@@ -62,8 +62,7 @@ export function Header() {
     catch { setError(t("Chưa mở được dự án. Hãy tải lại trang.", "Could not open the project. Reload and retry.")); }
   }
   function logout() {
-    try { signOut(); }
-    catch { setError(t("Chưa đăng xuất được. Hãy thử lại.", "Could not sign out. Please retry.")); }
+    signOut().catch(() => setError(t("Chưa đăng xuất được. Hãy thử lại.", "Could not sign out. Please retry.")));
   }
   return <>
     <a className="studio-skip" href="#main-content">{t("Đến nội dung", "Skip to content")}</a>

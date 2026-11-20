@@ -1,8 +1,4 @@
 export type Account = { id: string; name: string; email: string; role: "creator" | "admin" };
-export type MockAccount = Account & { salt: string; passwordHash: string };
-export const ACCOUNTS_KEY = "reviewlab.mock-accounts.v1";
-export const SESSION_KEY = "reviewlab.mock-session.v1";
-export const DEMO_PASSWORD = "123456";
 
 export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -15,45 +11,14 @@ export function validateRegistration(name: string, email: string, password: stri
   if (password !== confirmation) throw new Error("confirmation");
 }
 
-// This is a browser-only mock. Never persist a password in plain text.
-export async function passwordHash(password: string, salt: string) {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: encoder.encode(salt), iterations: 100_000, hash: "SHA-256" }, key, 256);
-  return Array.from(new Uint8Array(bits), byte => byte.toString(16).padStart(2, "0")).join("");
-}
+type AuthUser = { id: string; email?: string; user_metadata?: Record<string, unknown>; app_metadata?: Record<string, unknown> };
 
-export async function demoAccounts(): Promise<MockAccount[]> {
-  const accounts: Account[] = [
-    { id: "demo", name: "Creator", email: "creator@reviewlab.demo", role: "creator" },
-    { id: "admin-demo", name: "Admin", email: "admin@reviewlab.demo", role: "admin" },
-  ];
-  return Promise.all(accounts.map(async account => ({ ...account, salt: account.id, passwordHash: await passwordHash(DEMO_PASSWORD, account.id) })));
-}
-
-export function updateDemoAccounts(accounts: MockAccount[], seeds: MockAccount[]) {
-  const seedIds = new Set(seeds.map(account => account.id));
-  return [...seeds, ...accounts.filter(account => !seedIds.has(account.id))];
-}
-
-export function findLoginAccount(accounts: MockAccount[], identifier: string) {
-  const login = normalizeEmail(identifier);
-  const demoId = login === "creator" ? "demo" : login === "admin" ? "admin-demo" : null;
-  return accounts.find(account => demoId ? account.id === demoId : account.email === login);
-}
-
-export function readAccounts(raw: string): MockAccount[] {
-  const accounts = JSON.parse(raw) as MockAccount[];
-  if (!Array.isArray(accounts) || accounts.some(account => !account ||
-    ![account.id, account.name, account.email, account.salt].every(value => typeof value === "string" && value.length > 0) ||
-    !["creator", "admin"].includes(account.role) || !/^[a-f0-9]{64}$/.test(account.passwordHash)) ||
-    new Set(accounts.map(account => account.email)).size !== accounts.length ||
-    new Set(accounts.map(account => account.id)).size !== accounts.length) throw new Error("storage");
-  return accounts;
-}
-
-export function publicAccount({ id, name, email, role }: MockAccount): Account {
-  return { id, name, email, role };
+// Role chỉ lấy từ app_metadata (chỉ service_role ghi được); user_metadata do chính người dùng sửa nên không tin.
+// BE hiện chỉ có owner, nên mọi tài khoản thật là creator; admin chỉ để mở các trang admin còn dùng dữ liệu mẫu.
+export function accountFromUser(user: AuthUser): Account {
+  const email = user.email ?? "";
+  const name = typeof user.user_metadata?.name === "string" && user.user_metadata.name.trim() ? user.user_metadata.name.trim() : email.split("@")[0];
+  return { id: user.id, name, email, role: user.app_metadata?.role === "admin" ? "admin" : "creator" };
 }
 
 export function loginDestination(next: string | null, role: Account["role"]) {
