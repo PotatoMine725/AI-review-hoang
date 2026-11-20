@@ -217,7 +217,7 @@ class JobRunner:
         assets = options.get("assets_path")
         if not isinstance(assets, str) or not assets:
             raise StepError("input_snapshot.options thiếu assets_path (đường dẫn assets.json)")
-        assets_path = Path(assets)
+        assets_path = Path(assets).absolute()  # render chạy ở thư mục khác (cwd của spike)
         if not assets_path.is_file():
             raise StepError(f"assets.json không có trên máy render: {assets_path}")
         mode = options.get("mode", "preview")
@@ -265,7 +265,9 @@ class JobRunner:
             context.get("content_context"),
         )
 
-        out_dir = Path(self._settings.video_store_dir) / job_id
+        # Tuyệt đối: bước render chạy tiến trình con với cwd là thư mục spike, đường dẫn tương đối
+        # (mặc định `./data/videos`) sẽ trỏ sai chỗ.
+        out_dir = (Path(self._settings.video_store_dir) / job_id).absolute()
         outcome = await self._video(
             VideoRequest(
                 script=script["content"],

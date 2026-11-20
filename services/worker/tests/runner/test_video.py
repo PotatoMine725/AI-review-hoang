@@ -55,6 +55,19 @@ def test_video_job_builds_input_from_approved_pkb_and_completes(tmp_path: Path) 
     assert req.m2_input["approved_pkb"]["data"]["identity"] == {"name": "X"}
 
 
+def test_relative_video_dir_and_assets_become_absolute(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    db, assets = setup(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    db.jobs[0]["input_snapshot"]["options"]["assets_path"] = "assets.json"
+    runner = JobRunner(db, Settings(video_store_dir="./videos"), None, video=(video := FakeVideo()))
+    assert run(runner) is True
+    (req,) = video.requests
+    assert req.out_dir.is_absolute() and req.out_dir.name == "v1"
+    assert req.assets_path.is_absolute() and req.assets_path.name == assets.name
+
+
 def test_defaults_are_preview_and_both_ratios(tmp_path: Path) -> None:
     db, _ = setup(tmp_path)
     video = FakeVideo()
