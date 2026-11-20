@@ -1,8 +1,8 @@
-"""Ca parity, dựng từ `validate_contracts.py` của Định ở e33827c (ca của 29f868a giữ nguyên).
+"""Ca parity từ `validate_contracts.py` của Định (e33827c; thêm ca thời lượng 29/30/35 s ở 5378a70).
 
 Dùng ở hai nơi:
 - `test_validate.py`: chạy validator của worker trên các ca này.
-- Script ghi kỳ vọng (`fixtures/parity-e33827c.json`): chạy hàm của Định trên cùng các ca.
+- Script ghi kỳ vọng (`fixtures/parity-5378a70.json`): chạy hàm của Định trên cùng các ca.
   Cách tạo lại: xem docstring của `test_validate.py`.
 
 Không import gì của worker để script của Định cũng import được file này.
@@ -90,7 +90,7 @@ def build_cases() -> list[Case]:
     ]
     cases += [Case(f"m2/examples/{n}", "script", ctx, load(n)) for n in EXAMPLE_FILES]
 
-    for target in (39, 40, 45, 46):
+    for target in (29, 30, 35, 39, 40, 45, 46):
         doc = deepcopy(script)
         doc["target_duration_s"] = target
         cases.append(Case(f"m2/target-duration-{target}s-contract-only", "script", ctx, doc))

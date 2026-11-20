@@ -123,7 +123,7 @@ def test_syllable_count_rule() -> None:
 def test_schema_invalid_output() -> None:
     doc = valid_script()
     del doc["hook"]
-    doc["target_duration_s"] = 30
+    doc["target_duration_s"] = 29  # dưới mốc 30 s của contract (#126)
     res, _ = run([ok(doc)])
     assert res.status == "failed" and res.error_code == "llm_invalid_output"
     assert res.retryable is False and res.data is None

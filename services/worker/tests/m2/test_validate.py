@@ -1,7 +1,7 @@
 """Parity: validator worker cho cùng kết luận (và cùng lỗi đầu tiên) với script của Định.
 
-Kỳ vọng `fixtures/parity-e33827c.json` được ghi bằng cách chạy chính `validate_contracts.py` ở
-commit e33827c trên các ca của `parity_cases.py`, không viết tay. Tạo lại khi contract đổi: xem
+Kỳ vọng `fixtures/parity-5378a70.json` được ghi bằng cách chạy chính `validate_contracts.py` ở
+commit 5378a70 trên các ca của `parity_cases.py`, không viết tay. Tạo lại khi contract đổi: xem
 `record_parity.py`.
 """
 
@@ -17,7 +17,7 @@ from tests.m2.parity_cases import Case, build_cases, input_from_context
 from worker.m2.validate import SCRIPT_SCHEMA, content_errors, schema_errors, validate_input
 
 EXPECTED = json.loads(
-    (Path(__file__).parent / "fixtures" / "parity-e33827c.json").read_text(encoding="utf-8")
+    (Path(__file__).parent / "fixtures" / "parity-5378a70.json").read_text(encoding="utf-8")
 )["first_error"]
 CASES = build_cases()
 FIRST_ERROR_MAX = 90  # `first_error` của bản gốc cắt lỗi schema còn 90 ký tự

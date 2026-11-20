@@ -34,3 +34,11 @@ bỏ `cta.fact_refs` khi không có claim). Schema, ví dụ, PKB và luật val
 (blob `638f499` → `39e7b55`) chỉ thêm hai ca hồi quy trong `main()`, đã thêm vào `tests/m2/parity_cases.py`
 (`neutral-cta-empty-claims`, `cta-product-claim-still-needs-refs`). Kỳ vọng parity ghi lại từ chính script của Định
 ở `e33827c`: `tests/m2/fixtures/parity-e33827c.json` (52 ca cũ giữ nguyên kết quả).
+
+Từ `e33827c` đến `5378a70` (dev, 20/11): ba file đổi, chép nguyên byte từ `docs/specs/m2/` của dev.
+- Mục tiêu thời lượng 40–45 s → 30–40 s (#126): sinh `p1-ac-03-script-vi.prompt.md` (blob `904e0c5` → `3681390`),
+  sửa `p1-ac-03-script-vi-repair.prompt.md` (`eec7480` → `0166168`) và `p1-ac-03-script-vi.v1.schema.json`
+  (`149ba9f` → `955dd69`, `target_duration_s` nhận 30–45 để kịch bản cũ vẫn hợp lệ).
+- Quy nguồn tự công bố nói tự nhiên, không mở mọi video bằng “Theo X công bố” (#129): hai prompt trên.
+- Input schema, ví dụ, PKB không đổi. `validate_contracts.py` chỉ đổi ca thời lượng; parity ghi lại ở
+  `tests/m2/fixtures/parity-5378a70.json` (chỉ 4 ca thời lượng khác `e33827c`: 29, 30, 35, 39 s).

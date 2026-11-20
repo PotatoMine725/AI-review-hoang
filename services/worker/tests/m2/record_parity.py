@@ -6,7 +6,7 @@ Không phải test (không có tiền tố `test_`). Chạy tay khi contract #83
     .venv/Scripts/python -I -X utf8 tests/m2/record_parity.py \
         <tmp>/spikes/m1-crawl-extract tests/m2 tests/m2/fixtures/parity-<commit>.json
 
-Kết quả e33827c (18/11) được ghi từ chính `validate_contracts.py`.
+Kết quả 5378a70 (20/11) được ghi từ chính `validate_contracts.py` trên dev.
 """
 
 import json
@@ -30,7 +30,7 @@ for c in build_cases():
     else:
         err = vc.first_error(script_v, c.doc) or vc.validate_p1_vi_script_content(c.doc, c.context)
     res[c.name] = err
-source = "spikes/m1-crawl-extract/validate_contracts.py @ e33827c (#83)"
+source = "spikes/m1-crawl-extract/validate_contracts.py @ 5378a70 (#83, #126)"
 doc = {"source": source, "first_error": res}
 out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 for name, err in res.items():

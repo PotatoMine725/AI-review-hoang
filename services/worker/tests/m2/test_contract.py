@@ -1,7 +1,7 @@
-"""Contract M2 trong worker phải trùng byte với commit e33827c của #83.
+"""Contract M2 trong worker phải trùng byte với commit 5378a70 của dev (#83, #126, #129).
 
 So bằng git blob SHA-1 (`sha1(b"blob <len>\\0" + bytes)`), tính bằng Python thuần, nên chạy được
-trên CI clone nông không có commit e33827c. SHA lấy từ `git ls-tree -r e33827c`.
+trên CI clone nông. SHA lấy từ `git ls-tree -r 5378a70`.
 """
 
 from __future__ import annotations
@@ -12,10 +12,10 @@ import pytest
 
 from worker.m2.validate import CONTRACT_DIR
 
-BLOB_SHA_E33827C = {
-    "p1-ac-03-script-vi.prompt.md": "904e0c53fd51531ebd1365bf9c8bdacf32521061",
-    "p1-ac-03-script-vi-repair.prompt.md": "eec7480a15e8ed259b6548911f4366b1077d336f",
-    "p1-ac-03-script-vi.v1.schema.json": "149ba9f538346d9c62345dfa30af21c0fef2e3a6",
+BLOB_SHA_5378A70 = {
+    "p1-ac-03-script-vi.prompt.md": "36813902e92ab775735168eab6eb893b864972dc",
+    "p1-ac-03-script-vi-repair.prompt.md": "0166168e011824ad00c7f06237e84a2fdd40a30e",
+    "p1-ac-03-script-vi.v1.schema.json": "955dd69ba37d5df34f416e03dc23845e0b3cd269",
     "p1-ac-03-input.v1.schema.json": "0b567b22c53f3ab016ec2cc6b5d64414b7c573b9",
     "examples/invalid-script-p1-ac-03-vi-missing-fact-ref.json": (
         "5e58f0ccca0d4f550ba746c487dc5e8b055e1a0d"
@@ -36,12 +36,12 @@ def git_blob_sha(data: bytes) -> str:
     return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
 
-@pytest.mark.parametrize("name", sorted(BLOB_SHA_E33827C))
-def test_contract_file_matches_commit_e33827c(name: str) -> None:
-    assert git_blob_sha((CONTRACT_DIR / name).read_bytes()) == BLOB_SHA_E33827C[name]
+@pytest.mark.parametrize("name", sorted(BLOB_SHA_5378A70))
+def test_contract_file_matches_commit_5378a70(name: str) -> None:
+    assert git_blob_sha((CONTRACT_DIR / name).read_bytes()) == BLOB_SHA_5378A70[name]
 
 
 def test_no_untracked_contract_files() -> None:
     """File mới trong contract/ phải được ghi nguồn và SHA ở đây (trừ SOURCE.md)."""
     found = {p.relative_to(CONTRACT_DIR).as_posix() for p in CONTRACT_DIR.rglob("*") if p.is_file()}
-    assert found - {"SOURCE.md"} == set(BLOB_SHA_E33827C)
+    assert found - {"SOURCE.md"} == set(BLOB_SHA_5378A70)
