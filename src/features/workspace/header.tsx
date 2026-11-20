@@ -47,7 +47,7 @@ export function Header() {
   const needle = query.trim().toLocaleLowerCase();
   const matching = projects.filter(project => requests.some(request => (request.projectId ?? request.id) === project.id && `${project.title} ${request.sourceUrl} ${request.notes} ${request.prompt} ${request.references.map(file => file.name).join(" ")}`.toLocaleLowerCase().includes(needle)));
   const current = projects.find(p => pathname === `/creator/project/${p.id}` || (pathname === "/creator/create" && draft.projectId === p.id));
-  const pageName = admin ? navigation.find(item => pathname.startsWith(item.href))?.label : current?.title ?? t("Dự án mới", "New project");
+  const pageName = admin ? navigation.find(item => pathname.startsWith(item.href))?.label : (pathname.startsWith("/creator/pipeline") ? t("Pipeline thật", "Live pipeline") : current?.title) ?? t("Dự án mới", "New project");
   const displayName = account?.name ?? user.name;
   const initials = displayName.split(" ").map(part => part[0]).slice(-2).join("").toUpperCase();
   const expanded = mobile ? sidebar : !sidebarCollapsed;
@@ -70,6 +70,7 @@ export function Header() {
       <Link className="studio-brand" href={admin ? "/admin/users" : "/creator/create"}>reviewlab<span>.</span></Link>
       {admin ? <nav aria-label={t("Điều hướng", "Navigation")}>{navigation.map(item => <Link key={item.href} href={item.href} className={pathname.startsWith(item.href) ? "active" : ""} aria-current={pathname.startsWith(item.href) ? "page" : undefined} onClick={() => setSidebar(false)}>{item.label}</Link>)}</nav> : <>
         <button className="new-project-button" type="button" disabled={!ready} onClick={newProject}>{t("Tạo dự án mới", "New project")}<span aria-hidden="true">+</span></button>
+        <Link className={`secondary-button pipeline-link${pathname.startsWith("/creator/pipeline") ? " active" : ""}`} href="/creator/pipeline" onClick={() => setSidebar(false)}>{t("Pipeline thật", "Live pipeline")}</Link>
         <div className="project-list-label">{t("Dự án của bạn", "Your projects")}</div>
         <nav className="project-list" aria-label={t("Dự án", "Projects")}>
           {projects.map(project => <button key={project.id} className={current?.id === project.id ? "active" : ""} type="button" aria-current={current?.id === project.id ? "page" : undefined} disabled={!ready} onClick={() => openProject(project.id)}><strong>{project.title}</strong><small>{date(project.latest.createdAt)} · {project.count} {t("lần tạo", "generations")}</small></button>)}

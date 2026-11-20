@@ -396,3 +396,6 @@
   .video-view-list .output-card-heading { padding:14px 12px 0; }
   .video-view-list .output-card-footer { padding:4px 12px 12px; }
 }
+
+.pipeline-link { margin:8px 0 0; width:100%; }
+.pipeline-link.active { border-color:#5759d6; }
