@@ -538,7 +538,10 @@ def main() -> int:
             wrong_knowledge_version_error or "output knowledge_version did not match input",
         )
     )
-    for target_duration, want_valid in ((39, False), (40, True), (45, True), (46, False)):
+    # Mục tiêu 30–40 s từ 19/11/2026; schema nhận tới 45 để kịch bản cũ (mốc 40–45) vẫn hợp lệ.
+    for target_duration, want_valid in (
+        (29, False), (30, True), (35, True), (39, True), (40, True), (45, True), (46, False)
+    ):
         duration_script = deepcopy(p1_script)
         duration_script["target_duration_s"] = target_duration
         duration_error = first_error(p1_vi_script_v, duration_script)
@@ -549,7 +552,7 @@ def main() -> int:
                 f"m2/target-duration-{target_duration}s-contract-only",
                 "pass" if want_valid else "fail",
                 (not duration_error) == want_valid,
-                duration_error or "target nằm trong contract 40–45s; không đo MP4 thực tế",
+                duration_error or "target nằm trong contract 30–45s; không đo MP4 thực tế",
             )
         )
 

@@ -15,7 +15,7 @@
 | M2-AC03-09 | LLM trả rỗng, JSON hỏng, sai schema hoặc thiếu trường | Fail rõ ràng, không persist; retry có giới hạn nếu chính sách provider cho phép | Chờ quyết định retry |
 | M2-AC03-10 | LLM timeout, quota hoặc provider lỗi | Trả lỗi có thể phân loại, không tạo script giả/fixture như kết quả thật; retry/quota behavior cần chốt | Chờ LLM adapter |
 | M2-AC03-11 | Script hợp lệ gửi sang TTS | Gửi từng `segment_id` theo thứ tự; giữ riêng lời thoại hiển thị và văn bản normalize; nhận audio + duration đo thật cùng ID | Chờ kiểm thử adapter/integration |
-| M2-AC03-12 | Timeline dựng video | Ghép segment theo thứ tự; khoảng nghỉ 0,15 giây chỉ là cấu hình thử, không thêm sau segment cuối; xử lý transition overlap một lần; MP4 cuối không mất câu/lệch phụ đề và đạt 40–45 giây | Chờ kiểm thử BE/TTS/renderer; hai vòng sửa vẫn là đề xuất |
+| M2-AC03-12 | Timeline dựng video | Ghép segment theo thứ tự; khoảng nghỉ 0,15 giây chỉ là cấu hình thử, không thêm sau segment cuối; xử lý transition overlap một lần; MP4 cuối không mất câu/lệch phụ đề và đạt 30–40 giây | Chờ kiểm thử BE/TTS/renderer; hai vòng sửa vẫn là đề xuất |
 | M2-AC03-13 | Một script được renderer xuất 9:16 và 16:9 | Kịch bản dùng chung; tỉ lệ và layout do renderer quyết định | Chờ tích hợp renderer |
 | M2-AC03-14 | Regression các ví dụ `script.v0` hiện có | Ví dụ cũ vẫn pass/fail như trước; contract draft tiếng Việt không đổi hành vi v0 | Đã chạy validator chung |
 | M2-AC03-15 | Không có Campaign/Affiliate hoặc không truyền content context | Input vẫn hợp lệ; output ghi rõ mặc định platform/intent/audience/CTA, CTA trung tính và destination null | Đã có validator |
@@ -36,10 +36,10 @@
 | M2-AC03-30 | `target_duration_s` bằng 46 giây | Contract từ chối target trên 45 giây | Schema/validator contract |
 | M2-AC03-31 | `estimated_duration_s` được worker tính từ tổng âm tiết / tốc độ cấu hình | Ghi nhãn ước tính; không thay `target_duration_s`, duration TTS hoặc thời lượng MP4 | Chờ bước hậu xử lý trong worker |
 | M2-AC03-32 | JSON thô từ LLM không có `estimated_duration_s` | Chấp nhận response thô; worker bổ sung estimate trước khi trả `ScriptResult` hoàn chỉnh | Chờ tích hợp `generate_script` |
-| M2-AC03-33 | Ước tính lời thoại nằm trong 40–45 giây nhưng MP4 thực tế ngoài khoảng | Không nghiệm thu theo estimate; yêu cầu đánh giá timeline/audio và MP4 đo thật | Chờ tích hợp TTS/renderer |
+| M2-AC03-33 | Ước tính lời thoại nằm trong 30–40 giây nhưng MP4 thực tế ngoài khoảng | Không nghiệm thu theo estimate; yêu cầu đánh giá timeline/audio và MP4 đo thật | Chờ tích hợp TTS/renderer |
 | M2-AC03-34 | LLM trả `schema_version`, `product_id`, `pkb_schema_version` hoặc `knowledge_version` sai với contract/input | Từ chối output; không tự sửa hoặc suy ra ID/version từ nội dung PKB | Schema/validator fixture |
 | M2-AC03-35 | CTA tự lấy URL từ `identity.website`, hoặc `cta.fact_refs` sai đường dẫn/nguồn | Không có destination do người dùng cung cấp thì destination phải null; nếu CTA có fact refs thì từng ref phải hợp lệ như claim ref | Fixture validator; lần chạy #92 đã tái hiện model tự điền destination |
-| M2-AC03-36 | Lời thoại ngắn hơn mốc thử 150–170 âm tiết | Bổ sung thao tác/giới hạn có căn cứ khi phù hợp. Đo thời lượng trên audio/MP4 thực tế | Prompt; cần hiệu chỉnh bằng TTS thật |
+| M2-AC03-36 | Lời thoại ngắn hơn mốc thử 115–150 âm tiết | Bổ sung thao tác/giới hạn có căn cứ khi phù hợp. Đo thời lượng trên audio/MP4 thực tế | Prompt; cần hiệu chỉnh bằng TTS thật |
 | M2-AC03-37 | Visual plan yêu cầu ảnh AI mới sinh | Dùng `kind=ai_generated_image`, `source_type=ai_generation`, `generation_request`; không giả `asset_id` đã tồn tại | Schema/fixture validator |
 | M2-AC03-38 | Asset clip nằm trong allowlist nhưng `visual_plan.kind` là `logo` | Từ chối sai loại tư liệu và báo cảnh/asset/loại cần dùng | Fixture validator, đối chiếu run7/run8 |
 
@@ -53,7 +53,7 @@
 
 - Input chỉ nhận Product và PKB đã approved đúng version, cùng allowlist tư liệu thuộc Product. Content context độc lập là tùy chọn; quyền tư liệu do người dùng/nhóm xác nhận, không suy ra từ allowlist schema.
 - Mọi claim về sản phẩm trỏ đúng fact trong cặp PKB `schema_version` + `knowledge_version` đã được người dùng xác nhận; `source_id` tùy chọn với fact owner và khi có thì phải khớp fact.
-- Kịch bản được sinh bằng LLM thật, bằng tiếng Việt, có `target_duration_s` trong khoảng 40–45 giây. `estimated_duration_s` được tính riêng từ lời thoại và gắn nhãn ước tính; chỉ nghiệm thu thời lượng trên MP4 cuối, gồm hook, nội dung, CTA, khoảng nghỉ và chuyển cảnh.
+- Kịch bản được sinh bằng LLM thật, bằng tiếng Việt, có `target_duration_s` trong khoảng 30–40 giây. `estimated_duration_s` được tính riêng từ lời thoại và gắn nhãn ước tính; chỉ nghiệm thu thời lượng trên MP4 cuối, gồm hook, nội dung, CTA, khoảng nghỉ và chuyển cảnh.
 - TTS/renderer tích hợp bằng contract đã được hai bên thống nhất; renderer chịu trách nhiệm tính timeline audio thật, xuất 9:16 và 16:9, và xác nhận MP4 cuối. Ca contract chỉ kiểm tra giá trị target; không được báo như bằng chứng MP4 đạt thời lượng.
 - Kết quả schema/fixture được báo riêng, không đại diện cho kiểm tra ownership/quyền/resolve asset phía BE hoặc tích hợp LLM/TTS/renderer.
 - Lỗi provider hoặc validation không lưu kịch bản chưa hợp lệ.

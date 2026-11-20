@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://specs.ai-review.internal/m2/p1-ac-03-script-vi.v1.schema.json",
   "title": "P1-AC-03 Vietnamese Script v1 (Draft)",
-  "description": "Bản nháp output M2 tiếng Việt, chờ thống nhất với BE/TTS/renderer. target_duration_s là mục tiêu MP4 40–45 giây; estimated_duration_s là ước tính trước TTS, không phải duration đo được.",
+  "description": "Bản nháp output M2 tiếng Việt, chờ thống nhất với BE/TTS/renderer. target_duration_s là mục tiêu MP4 30–40 giây (schema nhận tới 45 cho dữ liệu cũ); estimated_duration_s là ước tính trước TTS, không phải duration đo được.",
   "type": "object",
   "required": [
     "schema_version",
@@ -43,7 +43,7 @@
       "type": "string",
       "enum": ["awareness", "education", "consideration", "conversion"]
     },
-    "target_duration_s": { "type": "integer", "minimum": 40, "maximum": 45, "description": "Mục tiêu thời lượng MP4 hoàn chỉnh; phải xác nhận bằng timeline/audio thực tế sau khi render, không suy ra từ text hoặc fixture." },
+    "target_duration_s": { "type": "integer", "minimum": 30, "maximum": 45, "description": "Mục tiêu thời lượng MP4 hoàn chỉnh, nhắm 30–40 giây (tối đa 45 để kịch bản cũ theo mốc 40–45 vẫn hợp lệ); phải xác nhận bằng timeline/audio thực tế sau khi render, không suy ra từ text hoặc fixture." },
     "concept": {
       "type": "object",
       "required": ["title", "angle"],
