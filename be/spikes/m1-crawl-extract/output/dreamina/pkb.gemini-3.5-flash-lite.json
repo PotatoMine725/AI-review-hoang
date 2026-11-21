@@ -1,0 +1,352 @@
+{
+  "data": {
+    "identity": {
+      "name": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Dreamina AI turns your prompts into vivid, cinematic images in seconds—with high prompt fidelity, beginner-friendly tools, and free access to get you started.",
+        "value": "Dreamina"
+      },
+      "website": "https://dreamina.capcut.com",
+      "tagline": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "An all-in-one AI creative platform powered by advanced image and video generation models, turning ideas into high-quality visuals.",
+        "value": "An all-in-one AI creative platform powered by advanced image and video generation models, turning ideas into high-quality visuals."
+      },
+      "description": {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Dreamina is an all‑in‑one AI creative platform that lets you generate cinematic images, dynamic videos, and realistic talking avatars from simple text prompts, photos, or audio.",
+        "value": "Dreamina is an all‑in‑one AI creative platform that lets you generate cinematic images, dynamic videos, and realistic talking avatars from simple text prompts, photos, or audio."
+      },
+      "category": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "An all-in-one AI creative platform",
+        "value": "AI creative platform"
+      },
+      "company": null,
+      "version": null,
+      "models": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Create a 30-second cinematic AI video with Seedance 2.5, telling a complete, emotionally grounded story in a single generation.",
+          "name": "Seedance 2.5"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Dreamina brings advanced AI models—like Seedance 2.0 for video, Seedream 5.0 Lite for high‑quality images, and Nano Banana Pro for enhanced creativity",
+          "name": "Seedance 2.0"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Dreamina brings advanced AI models—like Seedance 2.0 for video, Seedream 5.0 Lite for high‑quality images, and Nano Banana Pro for enhanced creativity",
+          "name": "Seedream 5.0 Lite"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Dreamina brings advanced AI models—like Seedance 2.0 for video, Seedream 5.0 Lite for high‑quality images, and Nano Banana Pro for enhanced creativity",
+          "name": "Nano Banana Pro"
+        }
+      ]
+    },
+    "pricing": {
+      "currency": {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "VND390000/month",
+        "value": "VND"
+      },
+      "region": "VN",
+      "locale": "en-US",
+      "default_view": "monthly",
+      "other_views": [],
+      "plans": [
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Basic\nVND390000/month",
+          "name": "Basic",
+          "currency": "VND",
+          "list_price": 390000.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "VND390000/month",
+          "limits": [
+            "4161 credits/month"
+          ],
+          "audience": null
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Standard\nVND939000/month",
+          "name": "Standard",
+          "currency": "VND",
+          "list_price": 939000.0,
+          "promo_price": null,
+          "promo_terms": null,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "VND939000/month",
+          "limits": [
+            "10202 credits/month"
+          ],
+          "audience": null
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Advanced\nVND2487227/monthVND4145379\nVND 2,487,227 for the first month, then VND 4,145,379/month.",
+          "name": "Advanced",
+          "currency": "VND",
+          "list_price": 4145379.0,
+          "promo_price": 2487227.0,
+          "promo_terms": "first month",
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "VND 2,487,227 for the first month, then VND 4,145,379/month.",
+          "limits": [
+            "46581 credits/month"
+          ],
+          "audience": null
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_02",
+          "evidence": "Ultra\nVND8134328/monthVND13557213\nVND 8,134,328 for the first month, then VND 13,557,213/month.",
+          "name": "Ultra",
+          "currency": "VND",
+          "list_price": 13557213.0,
+          "promo_price": 8134328.0,
+          "promo_terms": "first month",
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "VND 8,134,328 for the first month, then VND 13,557,213/month.",
+          "limits": [
+            "156154 credits/month"
+          ],
+          "audience": null
+        }
+      ],
+      "usage_prices": [],
+      "free_plan": {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Yes. Dreamina offers a free option that lets you explore its AI creation tools with available credits.",
+        "value": true
+      },
+      "trial_days": null
+    },
+    "features": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Turn your brand ideas into logos, app icons, 3D brand visuals, and sticker packs with AI.",
+        "id": "f1",
+        "name": "Logos & Icons",
+        "description": "Turn your brand ideas into logos, app icons, 3D brand visuals, and sticker packs with AI.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Design posters with AI for product launches, fashion campaigns, Black Friday, and more.",
+        "id": "f2",
+        "name": "AI Posters",
+        "description": "Design posters with AI for product launches, fashion campaigns, Black Friday, and more.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Turn images into product showcases, social reels, dance videos, and AI character clips.",
+        "id": "f3",
+        "name": "AI Video Generator",
+        "description": "Turn images into product showcases, social reels, dance videos, and AI character clips.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Use AI to restore old photos, swap backgrounds, enhance product shots, and expand scenes.",
+        "id": "f4",
+        "name": "AI Photo Editor",
+        "description": "Use AI to restore old photos, swap backgrounds, enhance product shots, and expand scenes.",
+        "screenshot_ids": []
+      }
+    ],
+    "use_cases": [
+      {
+        "origin": "crawled",
+        "source_id": "src_09",
+        "evidence": "It enables quick creation of TikTok clips, Instagram reels, YouTube shorts, and viral campaigns without cameras or crews.",
+        "title": "Social media content & viral marketing"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_09",
+        "evidence": "Startup founders, creative agencies, and advertisers can use Sora-2 to visualize ideas before production as it transforms written concepts into visual mockups for pitch decks, ad proposals, and",
+        "title": "Concept visualization & pitch presentations"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_09",
+        "evidence": "Educators, trainers, and content creators can use Sora-2 to design realistic, engaging learning materials while generating detailed visuals for online courses, tutorials, corporate training, and",
+        "title": "Educational content & training materials"
+      }
+    ],
+    "limitations": [],
+    "schema_version": "0.2",
+    "audiences": [],
+    "usp": [],
+    "competitors": [],
+    "brand": null,
+    "compliance": null,
+    "affiliate": null,
+    "quality": null
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://dreamina.capcut.com/",
+      "page_type": "other",
+      "fetched_at": "2026-10-06T02:24:33.248+00:00",
+      "content_hash": "sha256:78fda76ddc5696a39e7652af2449b41b62866b601e2ed04dfb0773d0bf7ffe2c",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_01-other-home.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_02",
+      "url": "https://dreamina.capcut.com/pricing/dreamina-price",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:24:41.405+00:00",
+      "content_hash": "sha256:f4be5bde81de67a247ae948dce98129651dec02facb3eb482c0777d31e94dd63",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "raw",
+      "markdown_path": "pages/src_02-pricing-pricing-dreamina-price.raw.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_20",
+      "url": "https://dreamina.capcut.com/seedance/seedance-price",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:26:22.744+00:00",
+      "content_hash": "sha256:8dd486a7e7525b5a38b97eb8179c19fef54f74660d836920d945df644478d4f7",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "raw",
+      "markdown_path": "pages/src_20-pricing-seedance-seedance-price.raw.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_03",
+      "url": "https://dreamina.capcut.com/tools",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:24:47.189+00:00",
+      "content_hash": "sha256:6637332aa29e4e29678ab807b43610c6490966dc846d980bb604ce13bb86fab6",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_03-features-tools.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_04",
+      "url": "https://dreamina.capcut.com/ai-image",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:24:53.739+00:00",
+      "content_hash": "sha256:e36dca8830bff8ef2b1ee3a9457ed787350bd89c9710a82f3b836f2580699660",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_04-features-ai-image.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_05",
+      "url": "https://dreamina.capcut.com/ai-model",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:24:58.697+00:00",
+      "content_hash": "sha256:b83fd889fe29692893de0c2d04bf7ea7b4aa839b5c4854394382aca7a9386b24",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_05-features-ai-model.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_06",
+      "url": "https://dreamina.capcut.com/ai-video",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:03.493+00:00",
+      "content_hash": "sha256:a926a4cb076697bc958382fd2ae66afc1a37e708d24926959626ff5a3e597e82",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_06-features-ai-video.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_07",
+      "url": "https://dreamina.capcut.com/tools/age-ai",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:08.019+00:00",
+      "content_hash": "sha256:4e119e83f1ba6ef49d544d3c8d7e69889b0fdc35fa9f6f3d38fe4d96e0560397",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_07-features-tools-age-ai.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_08",
+      "url": "https://dreamina.capcut.com/tools/models",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:12.747+00:00",
+      "content_hash": "sha256:c674517d1ec6dd43ac5338a38110c1c624a7ae5463ed3768f742db9dc740011d",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_08-features-tools-models.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_09",
+      "url": "https://dreamina.capcut.com/tools/sora-2",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:18.604+00:00",
+      "content_hash": "sha256:ccd24110aea052c777ffe40fa851c5846aee00dd078ccfe19b232353f413b742",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_09-features-tools-sora-2.md",
+      "image_paths": []
+    }
+  ],
+  "meta": {
+    "product": "dreamina",
+    "schema_version": "0.2",
+    "model": "gemini-3.5-flash-lite",
+    "mode": "batch",
+    "generated_at": "2026-10-07T07:40:14+00:00",
+    "llm_calls": 1,
+    "cache_hits": 0,
+    "input_tokens": 22882,
+    "output_tokens": 2400,
+    "cost_usd": 0.012865,
+    "evidence_in_source": 0.81,
+    "unknown_source_ids": []
+  }
+}

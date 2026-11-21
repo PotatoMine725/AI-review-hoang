@@ -1,0 +1,1400 @@
+{
+  "product": "claude",
+  "name": "Claude",
+  "root_url": "https://claude.com",
+  "allowed_hosts": [
+    "claude.com",
+    "*.claude.com"
+  ],
+  "user_agent": "AIReviewContentFactory-Spike/0.1 (+https://github.com/PotatoMine725/AI-review-BE; M1 research spike)",
+  "limits": {
+    "max_pages": 30,
+    "max_extra_host_pages": 5,
+    "min_interval_s": 1.0
+  },
+  "started_at": "2026-10-06T02:44:03.505+00:00",
+  "blocked": null,
+  "sitemaps": [
+    {
+      "url": "https://claude.com/sitemap.xml",
+      "status": 200,
+      "urls": 3325,
+      "children": 0,
+      "error": ""
+    },
+    {
+      "url": "https://claude.com/docs/sitemap.xml",
+      "status": 200,
+      "urls": 262,
+      "children": 0,
+      "error": ""
+    }
+  ],
+  "finished_at": "2026-10-06T02:47:21.739+00:00",
+  "crawl_seconds": 198.23,
+  "robots": {
+    "claude.com": {
+      "host": "claude.com",
+      "url": "https://claude.com/robots.txt",
+      "status": 200,
+      "policy": "parsed",
+      "sitemaps": [
+        "https://claude.com/sitemap.xml",
+        "https://claude.com/docs/sitemap.xml"
+      ],
+      "fetched_at": "2026-10-06T02:44:03.505+00:00",
+      "error": "",
+      "group": "*",
+      "rules": [
+        [
+          "allow",
+          "/"
+        ]
+      ],
+      "crawl_delay": null
+    },
+    "support.claude.com": {
+      "host": "support.claude.com",
+      "url": "https://support.claude.com/robots.txt",
+      "status": 200,
+      "policy": "parsed",
+      "sitemaps": [
+        "https://support.claude.com/sitemap.xml"
+      ],
+      "fetched_at": "2026-10-06T02:44:25.698+00:00",
+      "error": "",
+      "group": "*",
+      "rules": [
+        [
+          "disallow",
+          "/not-authorized"
+        ],
+        [
+          "disallow",
+          "/not-found"
+        ],
+        [
+          "disallow",
+          "/[helpCenterIdentifier]/"
+        ]
+      ],
+      "crawl_delay": 1.0
+    },
+    "platform.claude.com": {
+      "host": "platform.claude.com",
+      "url": "https://platform.claude.com/robots.txt",
+      "status": 200,
+      "policy": "parsed",
+      "sitemaps": [
+        "https://platform.claude.com/sitemap.xml",
+        "https://platform.claude.com/cookbook/sitemap.xml"
+      ],
+      "fetched_at": "2026-10-06T02:45:58.369+00:00",
+      "error": "",
+      "group": "*",
+      "rules": [
+        [
+          "disallow",
+          "/api/"
+        ]
+      ],
+      "crawl_delay": null
+    }
+  },
+  "requests": [
+    {
+      "url": "https://claude.com/robots.txt",
+      "kind": "robots",
+      "host": "claude.com",
+      "t": 5641.14,
+      "fetched_at": "2026-10-06T02:44:03.505+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/sitemap.xml",
+      "kind": "sitemap",
+      "host": "claude.com",
+      "t": 5642.218,
+      "fetched_at": "2026-10-06T02:44:04.577+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/docs/sitemap.xml",
+      "kind": "sitemap",
+      "host": "claude.com",
+      "t": 5643.64,
+      "fetched_at": "2026-10-06T02:44:06.000+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5645.468,
+      "fetched_at": "2026-10-06T02:44:07.823+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/pricing",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5651.281,
+      "fetched_at": "2026-10-06T02:44:13.646+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/code-with-claude",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5657.796,
+      "fetched_at": "2026-10-06T02:44:20.153+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://support.claude.com/robots.txt",
+      "kind": "robots",
+      "host": "support.claude.com",
+      "t": 5663.343,
+      "fetched_at": "2026-10-06T02:44:25.698+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://support.claude.com/en",
+      "kind": "page",
+      "host": "support.claude.com",
+      "t": 5664.359,
+      "fetched_at": "2026-10-06T02:44:26.721+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/product/tag",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5670.078,
+      "fetched_at": "2026-10-06T02:44:32.438+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/product/cowork",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5676.75,
+      "fetched_at": "2026-10-06T02:44:39.118+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/product/design",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5684.031,
+      "fetched_at": "2026-10-06T02:44:46.397+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/solutions/sales",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5690.64,
+      "fetched_at": "2026-10-06T02:44:52.996+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/product/overview",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5697.562,
+      "fetched_at": "2026-10-06T02:44:59.919+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/solutions/agents",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5704.546,
+      "fetched_at": "2026-10-06T02:45:06.907+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/solutions/coding",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5711.015,
+      "fetched_at": "2026-10-06T02:45:13.370+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/features/artifacts",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5717.703,
+      "fetched_at": "2026-10-06T02:45:20.066+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/solutions/commerce",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5724.562,
+      "fetched_at": "2026-10-06T02:45:26.918+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/docs",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5731.296,
+      "fetched_at": "2026-10-06T02:45:33.662+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://support.claude.com/",
+      "kind": "page",
+      "host": "support.claude.com",
+      "t": 5737.234,
+      "fetched_at": "2026-10-06T02:45:39.590+00:00",
+      "status": 302
+    },
+    {
+      "url": "https://claude.com/connectors",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5743.078,
+      "fetched_at": "2026-10-06T02:45:45.440+00:00",
+      "status": 308
+    },
+    {
+      "url": "https://claude.com/docs/government/org-admin/billing",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5749.843,
+      "fetched_at": "2026-10-06T02:45:52.203+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://platform.claude.com/robots.txt",
+      "kind": "robots",
+      "host": "platform.claude.com",
+      "t": 5756.015,
+      "fetched_at": "2026-10-06T02:45:58.369+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "kind": "page",
+      "host": "platform.claude.com",
+      "t": 5757.031,
+      "fetched_at": "2026-10-06T02:45:59.390+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/models/overview",
+      "kind": "page",
+      "host": "platform.claude.com",
+      "t": 5764.421,
+      "fetched_at": "2026-10-06T02:46:06.786+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/platform/api",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5770.265,
+      "fetched_at": "2026-10-06T02:46:12.621+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/plugins/sales",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5777.25,
+      "fetched_at": "2026-10-06T02:46:19.604+00:00",
+      "status": 308
+    },
+    {
+      "url": "https://claude.com/plugins/finance",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5782.578,
+      "fetched_at": "2026-10-06T02:46:24.945+00:00",
+      "status": 308
+    },
+    {
+      "url": "https://claude.com/plugins/brand-voice",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5787.921,
+      "fetched_at": "2026-10-06T02:46:30.289+00:00",
+      "status": 308
+    },
+    {
+      "url": "https://support.claude.com/en/articles/15594475",
+      "kind": "page",
+      "host": "support.claude.com",
+      "t": 5793.484,
+      "fetched_at": "2026-10-06T02:46:35.847+00:00",
+      "status": 301
+    },
+    {
+      "url": "https://claude.com/docs/plugins/platform-support",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5800.437,
+      "fetched_at": "2026-10-06T02:46:42.792+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/docs/connectors/building/directory-vs-custom",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5807.781,
+      "fetched_at": "2026-10-06T02:46:50.135+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/solutions/teachers",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5813.546,
+      "fetched_at": "2026-10-06T02:46:55.905+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/blog-usecases/sales",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5820.812,
+      "fetched_at": "2026-10-06T02:47:03.169+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/product/claude-code",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5826.125,
+      "fetched_at": "2026-10-06T02:47:08.489+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://claude.com/solutions/education",
+      "kind": "page",
+      "host": "claude.com",
+      "t": 5832.609,
+      "fetched_at": "2026-10-06T02:47:14.972+00:00",
+      "status": 200
+    }
+  ],
+  "min_observed_interval_s": {
+    "claude.com": 1.078,
+    "support.claude.com": 1.016,
+    "platform.claude.com": 1.016
+  },
+  "pages_found": 3770,
+  "pages_used": 29,
+  "skipped_counts": {
+    "excluded_path": 1818,
+    "locale_duplicate": 1284,
+    "over_limit": 566,
+    "low_score": 71,
+    "asset": 1,
+    "duplicate_of": 1
+  },
+  "skipped": [
+    {
+      "url": "https://support.claude.com/",
+      "reason": "duplicate_of: https://support.claude.com/en",
+      "page_type": "faq",
+      "score": 75,
+      "found_via": "link:https://claude.com/docs"
+    },
+    {
+      "url": "https://academy.claude.com/use-cases",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "link:https://claude.com/"
+    },
+    {
+      "url": "https://code.claude.com/docs",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "link:https://claude.com/solutions/coding"
+    },
+    {
+      "url": "https://support.claude.com/en/collections/9811436-billing",
+      "reason": "over_limit",
+      "page_type": "pricing",
+      "score": 70,
+      "found_via": "link:https://support.claude.com/en/articles/15594475"
+    },
+    {
+      "url": "https://claude.com/blog-category/claude-code",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-product/claude-cowork",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-product/claude-design",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-product/claude-enterprise",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-product/claude-science",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-product/claude-security",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-product/claude-tag",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-usecases/government",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/blog-usecases/startups",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/code-of-conduct",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/london",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/london-extended",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/makers",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/san-francisco",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/san-francisco-extended",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/tokyo",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/tokyo-extended",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/product/claude-science",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/product/claude-security",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/resources/use-cases",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "url": "https://claude.com/solutions/code-modernization",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/customer-support",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/cybersecurity",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/enterprise",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/financial-services",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/government",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/healthcare",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/life-sciences",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/nonprofits",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/small-business",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://academy.claude.com/tutorials",
+      "reason": "over_limit",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "link:https://claude.com/"
+    },
+    {
+      "url": "https://claude.com/claude-for-slack",
+      "reason": "over_limit",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "link:https://claude.com/product/claude-code"
+    },
+    {
+      "url": "https://platform.claude.com/docs",
+      "reason": "over_limit",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "link:https://claude.com/solutions/agents"
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "reason": "over_limit",
+      "page_type": "pricing",
+      "score": 55,
+      "found_via": "link:https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/session/ldn-opening-keynote",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/session/sf-opening-keynote",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/code-with-claude/session/tyo-opening-keynote",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/docs/claude-science/tools-and-environments",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/docs/office-agents/work-across-apps",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/product/claude-code/enterprise",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://claude.com/solutions/life-sciences/ai-adoption-index",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/changelog",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "link:https://claude.com/product/claude-code"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/common-workflows",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "link:https://claude.com/product/claude-code"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/github-actions",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "link:https://claude.com/product/claude-code"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/overview",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "link:https://claude.com/"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/quickstart",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "link:https://claude.com/product/claude-code"
+    },
+    {
+      "url": "https://code.claude.com/docs/en/setup",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 50,
+      "found_via": "link:https://claude.com/product/claude-code"
+    }
+  ],
+  "pages": [
+    {
+      "id": "src_01",
+      "url": "https://claude.com/",
+      "final_url": "https://claude.com/",
+      "page_type": "other",
+      "score": 1000,
+      "found_via": "home",
+      "anchor_text": "Skip to main content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:07.823+00:00",
+      "render_seconds": 5.81,
+      "raw_chars": 17407,
+      "fit_chars": 2907,
+      "raw_has_price": true,
+      "fit_has_price": false,
+      "raw_hash": "sha256:6bc2b6125bc68cab6b350ff5711638841439042e0c4e8ae58231e2d8860566b5",
+      "fit_hash": "sha256:a33815648f82aea5d3fbf947c88f474826720ff3bdfa5108abe9dc7aa0b64ffb",
+      "file": "pages/src_01-other-home.md",
+      "raw_file": "pages/src_01-other-home.raw.md"
+    },
+    {
+      "id": "src_02",
+      "url": "https://claude.com/pricing",
+      "final_url": "https://claude.com/pricing",
+      "page_type": "pricing",
+      "score": 100,
+      "found_via": "sitemap",
+      "anchor_text": "Overview",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:13.646+00:00",
+      "render_seconds": 6.5,
+      "raw_chars": 39066,
+      "fit_chars": 14583,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:1978f7becac3f4eb19dad3e7ba421539183c494faf4b5500911b89a8f80e90bd",
+      "fit_hash": "sha256:7b5429acec6f3bc0deeec03a0aa48b5da6350513367d827d15ce096a886318e4",
+      "file": "pages/src_02-pricing-pricing.md",
+      "raw_file": "pages/src_02-pricing-pricing.raw.md"
+    },
+    {
+      "id": "src_03",
+      "url": "https://claude.com/code-with-claude",
+      "final_url": "https://claude.com/code-with-claude",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to main content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:20.153+00:00",
+      "render_seconds": 5.53,
+      "raw_chars": 3698,
+      "fit_chars": 1653,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:21c3b89c0df2215c6ee069f9576fd1583c42ad9047661e9b578723ad84fceb9f",
+      "fit_hash": "sha256:862354b8b3836bbbad5f69671947f54243087a0bcf917830021007da42998ee9",
+      "file": "pages/src_03-features-code-with-claude.md",
+      "raw_file": "pages/src_03-features-code-with-claude.raw.md"
+    },
+    {
+      "id": "src_04",
+      "url": "https://support.claude.com/en",
+      "final_url": "https://support.claude.com/en",
+      "page_type": "faq",
+      "score": 75,
+      "found_via": "link:https://claude.com/",
+      "anchor_text": "Support center",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "no_match",
+      "fetched_at": "2026-10-06T02:44:26.721+00:00",
+      "render_seconds": 5.7,
+      "raw_chars": 9467,
+      "fit_chars": 1815,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:4d79831ee28cafe093a2ae6f9df681e5addb003efe1b000dc8076564f84742a0",
+      "fit_hash": "sha256:82bcb3d4e02f775875d662db2766bb1310cb171321fb07a2a1f92d2f237c182b",
+      "file": "pages/src_04-faq-en.md",
+      "raw_file": "pages/src_04-faq-en.raw.md"
+    },
+    {
+      "id": "src_05",
+      "url": "https://claude.com/product/tag",
+      "final_url": "https://claude.com/product/tag",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "@Claude",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:32.438+00:00",
+      "render_seconds": 6.67,
+      "raw_chars": 27508,
+      "fit_chars": 7909,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:457af8c17aaaedcac6e7f617b3cff5ce2a5d9388a58e2869db876c09be6d87f6",
+      "fit_hash": "sha256:b4ec1ee4728a0e372887cb8c9af2f81e77dc7d34979a61fd0258b187b80bf5fa",
+      "file": "pages/src_05-features-product-tag.md",
+      "raw_file": "pages/src_05-features-product-tag.raw.md"
+    },
+    {
+      "id": "src_06",
+      "url": "https://claude.com/product/cowork",
+      "final_url": "https://claude.com/product/cowork",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Claude Cowork",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:39.118+00:00",
+      "render_seconds": 7.28,
+      "raw_chars": 31861,
+      "fit_chars": 12664,
+      "raw_has_price": true,
+      "fit_has_price": false,
+      "raw_hash": "sha256:9918574bd9f837b3905892c097da3a80df74bf7a046e7e172f867888c6788d93",
+      "fit_hash": "sha256:69fd3d823cb7ea74b44356efd41e9f19b97cdd59bf88b1598c4e5f701c9fd82c",
+      "file": "pages/src_06-features-product-cowork.md",
+      "raw_file": "pages/src_06-features-product-cowork.raw.md"
+    },
+    {
+      "id": "src_07",
+      "url": "https://claude.com/product/design",
+      "final_url": "https://claude.com/product/design",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Design",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:46.397+00:00",
+      "render_seconds": 6.59,
+      "raw_chars": 25439,
+      "fit_chars": 9490,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:dbb1a85c8566bcc1102071bfa7f27bd3e0faa6f705ace2bad36153dd22f0519c",
+      "fit_hash": "sha256:dd12b7abd9cbf9c989aaa66ed470d97d0c74ef5cdafb6342c10a3714c31ff55b",
+      "file": "pages/src_07-features-product-design.md",
+      "raw_file": "pages/src_07-features-product-design.raw.md"
+    },
+    {
+      "id": "src_08",
+      "url": "https://claude.com/solutions/sales",
+      "final_url": "https://claude.com/solutions/sales",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Sales",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:52.996+00:00",
+      "render_seconds": 6.91,
+      "raw_chars": 25952,
+      "fit_chars": 9235,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:c3b8c8aa74dbafe0273763f49f7135e57efa499d17b07a184eaea9f0ce569e15",
+      "fit_hash": "sha256:ea644a8afb8a2f92bc9cc31bdf8dcf99d847e62635a96986d3d57b7620bd3d39",
+      "file": "pages/src_08-features-solutions-sales.md",
+      "raw_file": "pages/src_08-features-solutions-sales.raw.md"
+    },
+    {
+      "id": "src_09",
+      "url": "https://claude.com/product/overview",
+      "final_url": "https://claude.com/product/overview",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Claude",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:44:59.919+00:00",
+      "render_seconds": 6.95,
+      "raw_chars": 70503,
+      "fit_chars": 17469,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:4eb8cd266f4e4bfe5ef1788b6e63e2bccd1d842ae124023fa283ac4fcc5f6b20",
+      "fit_hash": "sha256:47e22ad196e0f2042a649980bc7df0555379769f0c854f09565395eab391d4e0",
+      "file": "pages/src_09-features-product-overview.md",
+      "raw_file": "pages/src_09-features-product-overview.raw.md"
+    },
+    {
+      "id": "src_10",
+      "url": "https://claude.com/solutions/agents",
+      "final_url": "https://claude.com/solutions/agents",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "AI Agents",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:06.907+00:00",
+      "render_seconds": 6.45,
+      "raw_chars": 20706,
+      "fit_chars": 4393,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:ade6e3480fc1feb6eeeb9490b09f0898d81481db96f5c526a3179f0181ef322b",
+      "fit_hash": "sha256:157ebf1369426e6de6d37a9d4bd1f3fcefa2d4edab0a431c12963f4e3e04343e",
+      "file": "pages/src_10-features-solutions-agents.md",
+      "raw_file": "pages/src_10-features-solutions-agents.raw.md"
+    },
+    {
+      "id": "src_11",
+      "url": "https://claude.com/solutions/coding",
+      "final_url": "https://claude.com/solutions/coding",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Coding",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:13.370+00:00",
+      "render_seconds": 6.67,
+      "raw_chars": 30058,
+      "fit_chars": 12580,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:94fb0e6edab9ea1bfc70028a3d23b4495b06a6cad79b99da525aa56be7d73847",
+      "fit_hash": "sha256:b6e5fa27dd8d79c5d41d15c221c3249095ed241b2af061475a86ad2cf0a79485",
+      "file": "pages/src_11-features-solutions-coding.md",
+      "raw_file": "pages/src_11-features-solutions-coding.raw.md"
+    },
+    {
+      "id": "src_12",
+      "url": "https://claude.com/features/artifacts",
+      "final_url": "https://claude.com/features/artifacts",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Artifacts",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:20.066+00:00",
+      "render_seconds": 6.84,
+      "raw_chars": 22840,
+      "fit_chars": 7285,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:a32c2d90120f60dce24806a27c62ff4da51c4409a35b4bfc29a692193489f884",
+      "fit_hash": "sha256:13d819fc23053a604fcb860f45ea355e32a7e0f28d716b83e1a708887f683d12",
+      "file": "pages/src_12-features-features-artifacts.md",
+      "raw_file": "pages/src_12-features-features-artifacts.raw.md"
+    },
+    {
+      "id": "src_13",
+      "url": "https://claude.com/solutions/commerce",
+      "final_url": "https://claude.com/solutions/commerce",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Commerce",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:26.918+00:00",
+      "render_seconds": 6.73,
+      "raw_chars": 34751,
+      "fit_chars": 16001,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:0926472a96e94b7aa7af3b2dd7e8aac36ec1308bca3fb307b2993066886de9b5",
+      "fit_hash": "sha256:8409a773d4ce597edba9eb3a727972c84d8c6a298f7b20e555e1394cdfd1a9cc",
+      "file": "pages/src_13-features-solutions-commerce.md",
+      "raw_file": "pages/src_13-features-solutions-commerce.raw.md"
+    },
+    {
+      "id": "src_14",
+      "url": "https://claude.com/docs",
+      "final_url": "https://claude.com/docs",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to main content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:33.662+00:00",
+      "render_seconds": 5.92,
+      "raw_chars": 9406,
+      "fit_chars": 5497,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:9e6d8bec5869fa816cff634b777209056fda478f0902580b8fca9ad14e9e4e8f",
+      "fit_hash": "sha256:098ad77021f5186fa4945ba9b2fc95b245f69d1f22a6b024c892fbe9ed934e20",
+      "file": "pages/src_14-docs-docs.md",
+      "raw_file": "pages/src_14-docs-docs.raw.md"
+    },
+    {
+      "id": "src_15",
+      "url": "https://claude.com/connectors",
+      "final_url": "https://claude.com/marketplace/connectors-plugins",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "link:https://claude.com/product/cowork",
+      "anchor_text": "Learn more",
+      "status": 308,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:45.440+00:00",
+      "render_seconds": 6.75,
+      "raw_chars": 37970,
+      "fit_chars": 13957,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:2ca257606aa0c1e0bd72c3868735515951a4519bc6a8b9cf264c2d3f5e547b6e",
+      "fit_hash": "sha256:0c118018d7caa24607cab75c990ef04562aac2a27ceb79cd5ad456a227a9f495",
+      "file": "pages/src_15-docs-connectors.md",
+      "raw_file": "pages/src_15-docs-connectors.raw.md"
+    },
+    {
+      "id": "src_16",
+      "url": "https://claude.com/docs/government/org-admin/billing",
+      "final_url": "https://claude.com/docs/government/org-admin/billing",
+      "page_type": "pricing",
+      "score": 55,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to main content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:45:52.203+00:00",
+      "render_seconds": 6.16,
+      "raw_chars": 11529,
+      "fit_chars": 3894,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:91243d877de96751947e47d12e0e9cbd40226056aee0b47562c161f9c3380c71",
+      "fit_hash": "sha256:ea5bd1649fef3bd5358883527039b50c1e306623093849028f9752e85b9f91ab",
+      "file": "pages/src_16-pricing-docs-government-org-admin-billing.md",
+      "raw_file": "pages/src_16-pricing-docs-government-org-admin-billing.raw.md"
+    },
+    {
+      "id": "src_17",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "final_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "page_type": "pricing",
+      "score": 55,
+      "found_via": "link:https://claude.com/pricing",
+      "anchor_text": "Learn more",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "no_match",
+      "fetched_at": "2026-10-06T02:45:59.390+00:00",
+      "render_seconds": 7.39,
+      "raw_chars": 44802,
+      "fit_chars": 21462,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:03e28d717c9218b970010001ccefef1c5a7da63657d66b6768fc1d2f3f900b69",
+      "fit_hash": "sha256:c03a068e137cf042ed235f3cad6f677a019fa8288907045545724e039d835dae",
+      "file": "pages/src_17-pricing-docs-en-about-claude-pricing.md",
+      "raw_file": "pages/src_17-pricing-docs-en-about-claude-pricing.raw.md"
+    },
+    {
+      "id": "src_18",
+      "url": "https://platform.claude.com/docs/en/models/overview",
+      "final_url": "https://platform.claude.com/docs/en/models/overview",
+      "page_type": "pricing",
+      "score": 55,
+      "found_via": "link:https://platform.claude.com/docs/en/about-claude/pricing",
+      "anchor_text": "Models & pricing",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "no_match",
+      "fetched_at": "2026-10-06T02:46:06.786+00:00",
+      "render_seconds": 5.83,
+      "raw_chars": 12467,
+      "fit_chars": 4287,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:b7bbc69b5150448ec32c62fb398c630adffb2cb6100b968dea86d1d53de5f848",
+      "fit_hash": "sha256:942bd23d7c1ce49ff248ffde542275975db294b914c6e8afea5e664164c4c5c2",
+      "file": "pages/src_18-pricing-docs-en-models-overview.md",
+      "raw_file": "pages/src_18-pricing-docs-en-models-overview.raw.md"
+    },
+    {
+      "id": "src_19",
+      "url": "https://claude.com/platform/api",
+      "final_url": "https://claude.com/platform/api",
+      "page_type": "docs",
+      "score": 45,
+      "found_via": "sitemap",
+      "anchor_text": "Claude Platform",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:12.621+00:00",
+      "render_seconds": 6.97,
+      "raw_chars": 37337,
+      "fit_chars": 16451,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:8fe69282d27e1bd4c923a6a099a2157261019cd769884ca7ad5ce65205264e36",
+      "fit_hash": "sha256:3ab20f0956b5eb743fef65b6d4586d9925dcf174b31c9773ae5eab5acdec2623",
+      "file": "pages/src_19-docs-platform-api.md",
+      "raw_file": "pages/src_19-docs-platform-api.raw.md"
+    },
+    {
+      "id": "src_20",
+      "url": "https://claude.com/plugins/sales",
+      "final_url": "https://claude.com/marketplace/plugins/sales",
+      "page_type": "docs",
+      "score": 45,
+      "found_via": "link:https://claude.com/solutions/sales",
+      "anchor_text": "Learn more",
+      "status": 308,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:19.604+00:00",
+      "render_seconds": 5.33,
+      "raw_chars": 17518,
+      "fit_chars": 2000,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:34b9395996e9bc613d77fc48a3d05e3ebda68932b755092f5e9d2de523b8386b",
+      "fit_hash": "sha256:5701327983510f3333ca2eb2ea6733e6f37ad737d6d86140d2aeb6578db2ce2c",
+      "file": "pages/src_20-docs-plugins-sales.md",
+      "raw_file": "pages/src_20-docs-plugins-sales.raw.md"
+    },
+    {
+      "id": "src_21",
+      "url": "https://claude.com/plugins/finance",
+      "final_url": "https://claude.com/marketplace/plugins/finance",
+      "page_type": "docs",
+      "score": 45,
+      "found_via": "link:https://claude.com/product/cowork",
+      "anchor_text": "Learn more",
+      "status": 308,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:24.945+00:00",
+      "render_seconds": 5.34,
+      "raw_chars": 17395,
+      "fit_chars": 1814,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:815d91d902e9f8691231a89692931a6fbb49b3a91364d6f2170b0a83006b8c3f",
+      "fit_hash": "sha256:ff3f788011e9d1a11fc62583d2f749baa3ccc26e635c9f824802afbea1c89651",
+      "file": "pages/src_21-docs-plugins-finance.md",
+      "raw_file": "pages/src_21-docs-plugins-finance.raw.md"
+    },
+    {
+      "id": "src_22",
+      "url": "https://claude.com/plugins/brand-voice",
+      "final_url": "https://claude.com/marketplace/plugins/brand-voice",
+      "page_type": "docs",
+      "score": 45,
+      "found_via": "link:https://claude.com/product/cowork",
+      "anchor_text": "Learn more",
+      "status": 308,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:30.289+00:00",
+      "render_seconds": 5.56,
+      "raw_chars": 17706,
+      "fit_chars": 2255,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:941ede29c98b0fe34fb1fe52343c13e19c53698b5ebfb4eb5c3f996e2bfdae2a",
+      "fit_hash": "sha256:3fd9c9b00ed7ed13a0e41d54fbbd72c5142529f9975106288e6445e8c58bb309",
+      "file": "pages/src_22-docs-plugins-brand-voice.md",
+      "raw_file": "pages/src_22-docs-plugins-brand-voice.raw.md"
+    },
+    {
+      "id": "src_23",
+      "url": "https://support.claude.com/en/articles/15594475",
+      "final_url": "https://support.claude.com/en/articles/15594475-what-is-claude-tag",
+      "page_type": "faq",
+      "score": 45,
+      "found_via": "link:https://claude.com/product/tag",
+      "anchor_text": "Read more",
+      "status": 301,
+      "robots_allowed": true,
+      "robots_rule": "no_match",
+      "fetched_at": "2026-10-06T02:46:35.847+00:00",
+      "render_seconds": 6.94,
+      "raw_chars": 17156,
+      "fit_chars": 8546,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:433662595cf18d6f45b5a11cceafa94a2278d658782aab640c5667011565a59f",
+      "fit_hash": "sha256:6c27f1bf1c4d354729e103488a077c5bc44d05b535004c5c8e7acc936dec478f",
+      "file": "pages/src_23-faq-en-articles-15594475.md",
+      "raw_file": "pages/src_23-faq-en-articles-15594475.raw.md"
+    },
+    {
+      "id": "src_24",
+      "url": "https://claude.com/docs/plugins/platform-support",
+      "final_url": "https://claude.com/docs/plugins/platform-support",
+      "page_type": "faq",
+      "score": 45,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to main content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:42.792+00:00",
+      "render_seconds": 7.33,
+      "raw_chars": 12691,
+      "fit_chars": 5455,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:42df3fe6fea5ff324e2f2012163aa3a923c2ea76f543fa86b88efa53b5fd2cb2",
+      "fit_hash": "sha256:fbdf60c74bf9b3858cb17e5ba6b6e3f61291bb6827481aaf067a3cbcfc4cc408",
+      "file": "pages/src_24-faq-docs-plugins-platform-support.md",
+      "raw_file": "pages/src_24-faq-docs-plugins-platform-support.raw.md"
+    },
+    {
+      "id": "src_25",
+      "url": "https://claude.com/docs/connectors/building/directory-vs-custom",
+      "final_url": "https://claude.com/docs/connectors/building/directory-vs-custom",
+      "page_type": "compare",
+      "score": 25,
+      "found_via": "sitemap",
+      "anchor_text": "Choose a directory listing or a custom connector",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:50.135+00:00",
+      "render_seconds": 5.75,
+      "raw_chars": 14188,
+      "fit_chars": 5017,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:f420629db688eedfad1c89f3d011ca7600bab66b335a0571ff0d85aac069a0ce",
+      "fit_hash": "sha256:b2160584f44f41ba66dc5a4d8ad4d7af850893449cfc6b78fce7e53bb81e0a4a",
+      "file": "pages/src_25-compare-docs-connectors-building-directory-vs-custom.md",
+      "raw_file": "pages/src_25-compare-docs-connectors-building-directory-vs-custom.raw.md"
+    },
+    {
+      "id": "src_26",
+      "url": "https://claude.com/solutions/teachers",
+      "final_url": "https://claude.com/solutions/teachers",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "K-12 teachers",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:46:55.905+00:00",
+      "render_seconds": 7.25,
+      "raw_chars": 25668,
+      "fit_chars": 7736,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:2a5ef3f5816bbcd5379ab639141a314dd56de3b38d96672ed332996dda63172d",
+      "fit_hash": "sha256:a87f040ebb3f58beb6852096dd632cdb224dc058cd304157cd3a10df03b81078",
+      "file": "pages/src_26-features-solutions-teachers.md",
+      "raw_file": "pages/src_26-features-solutions-teachers.raw.md"
+    },
+    {
+      "id": "src_27",
+      "url": "https://claude.com/blog-usecases/sales",
+      "final_url": "https://claude.com/blog",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:47:03.169+00:00",
+      "render_seconds": 5.28,
+      "raw_chars": 43142,
+      "fit_chars": 17111,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:32f35dddf0d33a2aa74620b95e8559e1be883f16568194a36aa054ce6d72e451",
+      "fit_hash": "sha256:6b80c8f28903e6f394942923b66fb1677b88accf6f0ee86399a90fb29e717114",
+      "file": "pages/src_27-features-blog-usecases-sales.md",
+      "raw_file": "pages/src_27-features-blog-usecases-sales.raw.md"
+    },
+    {
+      "id": "src_28",
+      "url": "https://claude.com/product/claude-code",
+      "final_url": "https://claude.com/product/claude-code",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Claude Code",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:47:08.489+00:00",
+      "render_seconds": 6.47,
+      "raw_chars": 36931,
+      "fit_chars": 14708,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:bfde7ac8123393d4d8ff94dae64ca03249a0af8249eab041d7c8541ec938e416",
+      "fit_hash": "sha256:4c42a76fbcc2967596a7e17a34c2c4abca9e4b0bf051ee0c53bae17f33ab3cc5",
+      "file": "pages/src_28-features-product-claude-code.md",
+      "raw_file": "pages/src_28-features-product-claude-code.raw.md"
+    },
+    {
+      "id": "src_29",
+      "url": "https://claude.com/solutions/education",
+      "final_url": "https://claude.com/solutions/education",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap",
+      "anchor_text": "Higher education",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-06T02:47:14.972+00:00",
+      "render_seconds": 6.67,
+      "raw_chars": 23258,
+      "fit_chars": 4926,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:88530bbf62f4c9f848eea24351f1c9cf8c75e9d76303d615f5220905437fbf5f",
+      "fit_hash": "sha256:f34100778a24fa9858b9e6653c2835ac6c6fdfa12333ce761d48ee4c34cf1383",
+      "file": "pages/src_29-features-solutions-education.md",
+      "raw_file": "pages/src_29-features-solutions-education.raw.md"
+    }
+  ]
+}

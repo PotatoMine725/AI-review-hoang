@@ -1,0 +1,48 @@
+{
+  "note": "TẠM, thay cho BE Storage. Đường dẫn tuyệt đối của máy dev (Windows); không commit media. Crop/đoạn clip/vùng zoom lấy từ plan pdfcraft-40-45s.json của #88 (quyết định biên tập, M2 không sinh).",
+  "assets": {
+    "pdfcraft-merge": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-merge.mp4",
+      "crop": [440, 0, 1480, 1080],
+      "parts": [{ "start_s": 9.8, "end_s": 17.6 }],
+      "focus": { "part": 0, "source_t": 16.0, "rect": [520, 110, 560, 330] },
+      "icon": "files"
+    },
+    "pdfcraft-pagenum": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-pagenum.mp4",
+      "crop": [440, 0, 1480, 1080],
+      "parts": [
+        { "start_s": 1.6, "end_s": 4.0 },
+        { "start_s": 9.4, "end_s": 11.48 },
+        { "start_s": 11.62, "end_s": 13.6 }
+      ],
+      "focus": { "part": 2, "source_t": 11.9, "rect": [1240, 600, 660, 460] },
+      "icon": "hash"
+    },
+    "pdfcraft-word-export": {
+      "kind": "clip",
+      "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-word-export.mp4",
+      "crop": [440, 0, 1480, 1080],
+      "parts": [
+        { "start_s": 1.4, "end_s": 3.6 },
+        {
+          "path": "D:/Code/AI-Content-Review/_refs/assets/pdfcraft/pdfcraft-word-result.mp4",
+          "start_s": 0.0,
+          "end_s": 7.0,
+          "crop": [220, 0, 1480, 1080]
+        }
+      ],
+      "focus": { "part": 1, "source_t": 4.0, "rect": [400, 90, 1040, 600] },
+      "icon": "file-output"
+    },
+    "ai-paperwork": {
+      "kind": "image",
+      "path": "D:/Code/AI-Content-Review/AI-review-BE/.claude/worktrees/p1-render-v2/spikes/p1-render-v2/local/ai/paperwork-s1.jpg",
+      "label": "Ảnh minh hoạ do AI tạo",
+      "source": "Cloudflare FLUX.1 schnell (#71), prompt 'paperwork' (ảnh của spike #88)"
+    }
+  },
+  "scene_assets": { "s01": "ai-paperwork" }
+}

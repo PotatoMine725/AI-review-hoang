@@ -1,0 +1,244 @@
+{
+  "schema": "render-report.v1-spike",
+  "status": "out_of_range",
+  "mode": "preview",
+  "ratios": [
+    "16:9",
+    "9:16"
+  ],
+  "script": "D:\\tmp\\m2-run7-2026-11-09\\script.s01-edited.json",
+  "input": "D:\\Code\\AI-Content-Review\\AI-review-BE\\.claude\\worktrees\\m2-generate-script\\docs\\report\\m2-first-run-pdfcraft\\input.json",
+  "assets": "..\\..\\docs\\report\\script-to-mp4-2026-11\\assets.pdfcraft-khanh.json",
+  "target_s": {
+    "min": 40.0,
+    "max": 45.0,
+    "script_target_duration_s": 42,
+    "script_estimated_duration_s": 33.9
+  },
+  "actual_s": 34.733,
+  "predicted_s": 34.733,
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "layout": "hook",
+      "footage": "image:ai-paperwork",
+      "duration_s_actual": 8.267,
+      "warnings": [
+        "scene_asset_override: ảnh ai-paperwork gán bằng assets.json, kịch bản M2 không nêu asset_id (visual_plan.kind=text_card)"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-merge",
+      "duration_s_actual": 9.867,
+      "warnings": [
+        "title_duplicates_subtitle: tiêu đề trùng 100% lời/phụ đề, claim không trỏ tới features[i] có tên để thay"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-pagenum",
+      "duration_s_actual": 9.5,
+      "warnings": [
+        "clip_slowed: clip 7.60 s cho cảnh 9.50 s, tua 0.80x",
+        "title_duplicates_subtitle: tiêu đề trùng 79% lời/phụ đề, claim không trỏ tới features[i] có tên để thay"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s04",
+      "role": "cta",
+      "layout": "cta",
+      "footage": null,
+      "duration_s_actual": 7.1,
+      "warnings": [],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    }
+  ],
+  "tts": {
+    "model": "pnnbao-ump/VieNeu-TTS-v3-Turbo@61b85e3d[onnx/cpu]",
+    "hits": 8,
+    "misses": 0,
+    "load_s": null,
+    "wall_s": 0.51,
+    "segments": [
+      {
+        "segment_id": "s01-u01",
+        "text": "Bạn cần một công cụ xử lý PDF miễn phí và mạnh mẽ ngay trong trình duyệt?",
+        "spoken": "Bạn cần một công cụ xử lý pi đi ép miễn phí và mạnh mẽ ngay trong trình duyệt?",
+        "duration_s": 4.48,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s01-u02",
+        "text": "Hôm nay cùng khám phá PDFCraft với các tính năng hữu ích.",
+        "spoken": "Hôm nay cùng khám phá PDFCraft với các tính năng hữu ích.",
+        "duration_s": 3.52,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s02-u01",
+        "text": "Bạn có thể kết hợp nhiều tệp PDF thành một tài liệu bằng tính năng hợp nhất.",
+        "spoken": "Bạn có thể kết hợp nhiều tệp pi đi ép thành một tài liệu bằng tính năng hợp nhất.",
+        "duration_s": 4.32,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s02-u02",
+        "text": "Công cụ cho phép gộp đến một trăm tệp cùng lúc với tổng dung lượng lên đến năm trăm mê-ga-byte.",
+        "spoken": "Công cụ cho phép gộp đến một trăm tệp cùng lúc với tổng dung lượng lên đến năm trăm mê-ga-byte.",
+        "duration_s": 5.28,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s03-u01",
+        "text": "Ngoài ra, bạn có thể thêm số trang vào tài liệu PDF và chỉnh sửa vị trí tùy ý.",
+        "spoken": "Ngoài ra, bạn có thể thêm số trang vào tài liệu pi đi ép và chỉnh sửa vị trí tùy ý.",
+        "duration_s": 4.88,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s03-u02",
+        "text": "Ứng dụng cũng hỗ trợ chuyển tài liệu PDF sang định dạng Word để chỉnh sửa.",
+        "spoken": "Ứng dụng cũng hỗ trợ chuyển tài liệu pi đi ép sang định dạng Word để chỉnh sửa.",
+        "duration_s": 4.4,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s04-u01",
+        "text": "Sử dụng hoàn toàn miễn phí, không cần đăng ký và mọi thao tác đều diễn ra trong trình duyệt.",
+        "spoken": "Sử dụng hoàn toàn miễn phí, không cần đăng ký và mọi thao tác đều diễn ra trong trình duyệt.",
+        "duration_s": 4.96,
+        "cached": true,
+        "synth_s": null
+      },
+      {
+        "segment_id": "s04-u02",
+        "text": "Xem thêm thông tin.",
+        "spoken": "Xem thêm thông tin.",
+        "duration_s": 1.36,
+        "cached": true,
+        "synth_s": null
+      }
+    ]
+  },
+  "outputs": [
+    {
+      "ratio": "16:9",
+      "ok": true,
+      "render_wall_s": 336.7,
+      "subtitle_cues": {},
+      "mp4": "D:\\tmp\\m2-run7-2026-11-09\\produce\\script.s01-edited-preview-16x9.mp4",
+      "duration_s": 34.733,
+      "size": [
+        1920,
+        1080
+      ],
+      "duration_check": "too_short",
+      "predicted_s": 34.733,
+      "delta_s": -0.0,
+      "quality": "draft",
+      "workers": "3",
+      "steps_s": {
+        "compose": 3.1,
+        "hyperframes": 311.2,
+        "hyperframes_phases": {
+          "compile": 2.8,
+          "extract": 5.1,
+          "audio": 0.0,
+          "probe": 1.0,
+          "setup": 1.1,
+          "capture": 287.5,
+          "encode": 5.3,
+          "assemble": 0.4,
+          "rendered_in": 303.7
+        },
+        "ffmpeg": 6.0
+      },
+      "hf_peak_ram_mb": 5840
+    },
+    {
+      "ratio": "9:16",
+      "ok": true,
+      "render_wall_s": 393.9,
+      "subtitle_cues": {
+        "s01-u01": 2,
+        "s01-u02": 2,
+        "s02-u01": 2,
+        "s02-u02": 2,
+        "s03-u01": 2,
+        "s03-u02": 2,
+        "s04-u01": 2
+      },
+      "mp4": "D:\\tmp\\m2-run7-2026-11-09\\produce\\script.s01-edited-preview-9x16.mp4",
+      "duration_s": 34.733,
+      "size": [
+        1080,
+        1920
+      ],
+      "duration_check": "too_short",
+      "predicted_s": 34.733,
+      "delta_s": -0.0,
+      "quality": "draft",
+      "workers": "3",
+      "steps_s": {
+        "compose": 2.8,
+        "hyperframes": 370.3,
+        "hyperframes_phases": {
+          "compile": 2.8,
+          "extract": 5.1,
+          "audio": 0.0,
+          "probe": 1.0,
+          "setup": 1.1,
+          "capture": 347.5,
+          "encode": 4.5,
+          "assemble": 0.4,
+          "rendered_in": 362.4
+        },
+        "ffmpeg": 4.5
+      },
+      "hf_peak_ram_mb": 5849
+    }
+  ],
+  "timings_s": {
+    "validate_s": 0.03,
+    "map_s": 0.0,
+    "tts_s": 0.51,
+    "render_s": 393.9,
+    "probe_s": 3.5,
+    "total_s": 398.0
+  },
+  "warnings": [
+    "predicted_too_short: timeline 34.73 s ngoài 40–45 s (vẫn dựng, không kéo dài/cắt)",
+    "subtitle_split[9:16]: s01-u01 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)",
+    "subtitle_split[9:16]: s01-u02 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)",
+    "subtitle_split[9:16]: s02-u01 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)",
+    "subtitle_split[9:16]: s02-u02 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)",
+    "subtitle_split[9:16]: s03-u01 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)",
+    "subtitle_split[9:16]: s03-u02 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)",
+    "subtitle_split[9:16]: s04-u01 chia 2 cue theo số ký tự (VieNeu chưa có mốc từng chữ)"
+  ],
+  "error": null,
+  "plan": "D:\\tmp\\m2-run7-2026-11-09\\produce\\script.s01-edited-preview.json"
+}

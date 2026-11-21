@@ -1,0 +1,274 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "models": [],
+      "name": {
+        "value": "PDFCraft",
+        "origin": "crawled",
+        "source_id": "src_03",
+        "evidence": "Find answers to common questions about PDFCraft"
+      },
+      "tagline": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+        "value": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt"
+      },
+      "category": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Công cụ PDF Chuyên nghiệp Công cụ Chuyên nghiệp",
+        "value": "PDF tools"
+      },
+      "website": "https://pdfcraft.devtoolcafe.com",
+      "product_kind": "software"
+    },
+    "pricing": {
+      "plans": [],
+      "usage_prices": [],
+      "other_views": [],
+      "free_plan": {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Hoàn toàn Miễn phí\nKhông đăng ký, không giới hạn, không chi phí ẩn.",
+        "value": true
+      },
+      "region": "VN",
+      "locale": "en-US"
+    },
+    "features": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### Hợp nhất PDF Kết hợp nhiều tệp PDF thành một tài liệu. Công cụ hợp nhất PDF trực tuyến miễn phí với kéo và thả để sắp xếp lại.",
+        "name": "Hợp nhất PDF",
+        "description": "Kết hợp nhiều tệp PDF thành một tài liệu. Công cụ hợp nhất PDF trực tuyến miễn phí với kéo và thả để sắp xếp lại.",
+        "id": "f1"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### Chỉnh sửa PDF Chỉnh sửa tệp PDF trực tuyến. Thêm văn bản, hình ảnh, chú thích, đánh dấu và hình dạng vào tài liệu của bạn.",
+        "name": "Chỉnh sửa PDF",
+        "description": "Chỉnh sửa tệp PDF trực tuyến. Thêm văn bản, hình ảnh, chú thích, đánh dấu và hình dạng vào tài liệu của bạn.",
+        "id": "f2"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### JPG sang PDF Chuyển đổi hình ảnh JPG sang PDF. Kết hợp nhiều tệp JPG thành một tài liệu PDF duy nhất.",
+        "name": "JPG sang PDF",
+        "description": "Chuyển đổi hình ảnh JPG sang PDF. Kết hợp nhiều tệp JPG thành một tài liệu PDF duy nhất.",
+        "id": "f3"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### PDF sang JPG Chuyển đổi trang PDF sang hình ảnh JPG. Trích xuất chất lượng cao với DPI có thể tùy chỉnh.",
+        "name": "PDF sang JPG",
+        "description": "Chuyển đổi trang PDF sang hình ảnh JPG. Trích xuất chất lượng cao với DPI có thể tùy chỉnh.",
+        "id": "f4"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "### Mã hóa PDF Bảo vệ bằng mật khẩu tệp PDF. Thêm mã hóa và đặt quyền.",
+        "name": "Mã hóa PDF",
+        "description": "Bảo vệ bằng mật khẩu tệp PDF. Thêm mã hóa và đặt quyền.",
+        "id": "f5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Không đăng ký, không giới hạn, không chi phí ẩn.",
+        "id": "f6",
+        "name": "Không đăng ký, không chi phí ẩn",
+        "description": "Dùng không cần đăng ký, không có chi phí ẩn.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Mọi xử lý diễn ra trong trình duyệt. Tệp của bạn không bao giờ rời khỏi thiết bị.",
+        "id": "f7",
+        "name": "Xử lý trong trình duyệt (PDFCraft tự công bố)",
+        "description": "PDFCraft công bố: mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Add page numbers to PDF documents. Customize position, format, and starting number.",
+        "id": "f8",
+        "name": "Đánh số trang",
+        "description": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Convert PDF to editable Word (DOCX) documents.",
+        "id": "f9",
+        "name": "Chuyển PDF sang Word",
+        "description": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_10",
+        "evidence": "Click the Merge button to automatically convert and combine all files into a single PDF, then download your result.",
+        "id": "f10",
+        "name": "Cách ghép",
+        "description": "Bấm Merge để gộp tất cả tệp thành một PDF rồi tải về.",
+        "screenshot_ids": []
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Showing all 132 tools",
+        "id": "f11",
+        "name": "Số công cụ liệt kê trên trang công cụ",
+        "description": "Trang công cụ PDFCraft hiện liệt kê 132 công cụ.",
+        "screenshot_ids": []
+      }
+    ],
+    "use_cases": [],
+    "limitations": [
+      {
+        "origin": "crawled",
+        "source_id": "src_10",
+        "evidence": "You can merge up to 100 files at once, with a total combined size of up to 500MB.",
+        "text": "You can merge up to 100 files at once, with a total combined size of up to 500MB."
+      }
+    ],
+    "audiences": [],
+    "usp": [],
+    "quality": {
+      "completeness": null,
+      "conflicts": []
+    }
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://pdfcraft.devtoolcafe.com/",
+      "page_type": "other",
+      "fetched_at": "2026-11-17T07:50:51.845+00:00",
+      "content_hash": "sha256:50a0b073ed4c89e4a664175f0ac7772003f64cf241c8dcaa608794af5a63a744",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_01-other-home.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_02",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:50:58.893+00:00",
+      "content_hash": "sha256:e30705a8cf595eec93d59184c07a85cda0daa1ea9522a611acb5f2230047dd01",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_02-features-en-tools.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_03",
+      "url": "https://pdfcraft.devtoolcafe.com/en/faq",
+      "page_type": "faq",
+      "fetched_at": "2026-11-17T07:51:06.143+00:00",
+      "content_hash": "sha256:212eeb6d08438834fa4034d7ac0a2436c301bf6e4281414e952eea784013bd02",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_03-faq-en-faq.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_04",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/ocr-pdf",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:12.177+00:00",
+      "content_hash": "sha256:819f1a02021c04e8b49ae91e7fd6824568c0c95ec942b19727b7056fd4e3bdd4",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_04-features-en-tools-ocr-pdf.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_05",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/edit-pdf",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:17.846+00:00",
+      "content_hash": "sha256:411be828a7347c8db6b6b64a7c03c54bf93065db17ae5e5a4f6a6313609af21c",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_05-features-en-tools-edit-pdf.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_06",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/sign-pdf",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:23.561+00:00",
+      "content_hash": "sha256:872fab025da1e57357b206d32e080f92014a08bb7fbf3699a5e3d160d4347c95",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_06-features-en-tools-sign-pdf.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_07",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/crop-pdf",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:29.255+00:00",
+      "content_hash": "sha256:91310862603e18b02f7f7da1061a12d12b126d14724c28da61cc0e6f28363d04",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_07-features-en-tools-crop-pdf.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_08",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/bookmark",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:35.076+00:00",
+      "content_hash": "sha256:18b0f09f01cfe4bb8dff7b6a950c74bae0156223e49a403ce2a77840484f8207",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_08-features-en-tools-bookmark.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_09",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/n-up-pdf",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:40.807+00:00",
+      "content_hash": "sha256:3bf4bf80f54410cac16f55708c043414c2cc029455c509d1de8073281e396a21",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_09-features-en-tools-n-up-pdf.md",
+      "image_paths": []
+    },
+    {
+      "id": "src_10",
+      "url": "https://pdfcraft.devtoolcafe.com/en/tools/merge-pdf",
+      "page_type": "features",
+      "fetched_at": "2026-11-17T07:51:46.877+00:00",
+      "content_hash": "sha256:bb0f578df40b970dbc1963a57b7bba627ccb59eaa4456f7bb731d384988e8607",
+      "region": "VN",
+      "locale": "en-US",
+      "variant": "fit",
+      "markdown_path": "pages/src_10-features-en-tools-merge-pdf.md",
+      "image_paths": []
+    }
+  ]
+}

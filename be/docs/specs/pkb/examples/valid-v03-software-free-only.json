@@ -1,0 +1,48 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "name": {
+        "value": "Acme PDF (dữ liệu mẫu)",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Acme PDF (dữ liệu mẫu)",
+        "extracted_via": "og"
+      },
+      "website": "https://example.com",
+      "product_kind": "software"
+    },
+    "pricing": {
+      "plans": [
+        {
+          "name": "Free",
+          "list_price": 0,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "Hoàn toàn Miễn phí",
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "Hoàn toàn Miễn phí"
+        }
+      ],
+      "free_plan": {
+        "value": true,
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Hoàn toàn Miễn phí"
+      }
+    }
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://example.com/",
+      "page_type": "other",
+      "fetched_at": "2026-10-21T01:00:00+00:00",
+      "content_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "variant": "fit",
+      "markdown_path": "pages/src_01-other-home.md",
+      "image_paths": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "asset_id": "pdfcraft-word-studio",
+  "url": "https://pdfcraft.devtoolcafe.com/en/studio/",
+  "viewport": {"width": 1920, "height": 1080},
+  "crop": [336, 130, 1584, 950],
+  "steps": [
+    {"op": "goto", "url": "https://pdfcraft.devtoolcafe.com/en/studio/"},
+    {"op": "upload", "selector": "input[type=file] >> nth=0", "files": ["mau-nhieu-trang.pdf"]},
+    {"op": "wait", "ms": 1800},
+    {"op": "click", "selector": "text=\"PDF to Word\" >> nth=0"},
+    {"op": "wait", "ms": 1200},
+    {"op": "click", "selector": "role=button[name=\"Export & Save\"]"},
+    {"op": "wait_for", "selector": "text=/Export completed/i", "timeout_ms": 60000},
+    {"op": "wait", "ms": 2500}
+  ]
+}

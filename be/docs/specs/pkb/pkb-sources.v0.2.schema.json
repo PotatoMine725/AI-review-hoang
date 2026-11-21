@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "PKB schema v0.2: product_knowledge.sources[] (1 phần tử).",
+  "properties": {
+    "content_hash": {
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "fetched_at": {
+      "title": "Fetched At",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^src_\\d{2}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "image_paths": {
+      "description": "Đường dẫn Storage (private) của ảnh.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Image Paths",
+      "type": "array"
+    },
+    "locale": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Locale"
+    },
+    "markdown_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Đường dẫn Storage (private) của markdown.",
+      "title": "Markdown Path"
+    },
+    "page_type": {
+      "title": "Page Type",
+      "type": "string"
+    },
+    "region": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Region"
+    },
+    "url": {
+      "title": "Url",
+      "type": "string"
+    },
+    "variant": {
+      "description": "Bản markdown đã gửi cho LLM.",
+      "enum": [
+        "raw",
+        "fit"
+      ],
+      "title": "Variant",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "url",
+    "page_type",
+    "fetched_at",
+    "content_hash",
+    "variant"
+  ],
+  "title": "Source",
+  "type": "object"
+}

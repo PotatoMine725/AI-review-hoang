@@ -1,0 +1,10 @@
+{
+  "asset_id": "pdfcraft-word-export-auto",
+  "url": "https://pdfcraft.devtoolcafe.com/en/tools/pdf-to-docx",
+  "goal": "Show converting a PDF to an editable Word (DOCX) file on PDFCraft: the page ready, add one PDF, press the convert button, and finish with the result and its download button visible. The tool is at /en/tools/pdf-to-docx and its button is labelled 'Convert to DOCX'. Conversion takes about 30 seconds in the browser, so wait for the 'Download' button with timeout_ms 60000 (a button whose name contains Download; match exactly one element). Do not open the downloaded file. If this URL is not the PDF to Word tool (404 or wrong page), start from https://pdfcraft.devtoolcafe.com/en/tools and open the tool whose title mentions converting PDF to Word.",
+  "facts": [
+    "Chuyển PDF sang Word: chuyển tài liệu PDF sang định dạng Word (DOCX) để chỉnh sửa.",
+    "Mọi xử lý diễn ra trong trình duyệt, tệp của bạn không rời khỏi thiết bị."
+  ],
+  "fixtures": ["mau-nhieu-trang.pdf"]
+}

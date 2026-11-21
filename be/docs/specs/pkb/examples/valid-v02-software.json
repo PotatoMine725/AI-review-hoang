@@ -1,0 +1,47 @@
+{
+  "data": {
+    "schema_version": "0.2",
+    "identity": {
+      "name": {
+        "value": "Example AI Tool",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Example AI Tool"
+      },
+      "website": "https://example.com"
+    },
+    "pricing": {
+      "plans": [
+        {
+          "name": "Pro",
+          "currency": "USD",
+          "list_price": 20,
+          "price_unit": "month",
+          "billing_cycle": "monthly",
+          "price_text": "$20 / month",
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "$20 / month"
+        }
+      ]
+    },
+    "usp": [
+      {
+        "origin": "merchant",
+        "text": "Dùng thử miễn phí"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://example.com/pricing",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-13T09:00:00+00:00",
+      "content_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "variant": "raw",
+      "markdown_path": "pages/src_01-pricing.md",
+      "image_paths": []
+    }
+  ]
+}

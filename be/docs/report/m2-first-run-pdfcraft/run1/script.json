@@ -1,0 +1,203 @@
+{
+  "schema_version": "0.3",
+  "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+  "pkb_schema_version": "0.3",
+  "knowledge_version": 1,
+  "language": "vi",
+  "platform": "tiktok",
+  "audience": "người xem phổ thông",
+  "context_defaults_applied": [
+    "platform",
+    "intent",
+    "audience",
+    "cta"
+  ],
+  "intent": "awareness",
+  "target_duration_s": 42,
+  "concept": {
+    "title": "Xử lý PDF an toàn và miễn phí ngay trong trình duyệt",
+    "angle": "demo"
+  },
+  "hook": {
+    "text": "Bạn có biết xử lý tệp PDF trực tiếp trong trình duyệt mà không cần tải lên máy chủ?",
+    "type": "curiosity",
+    "fact_refs": [
+      {
+        "source_id": "src_01",
+        "field_path": "features[2].description"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "narration_segments": [
+        {
+          "segment_id": "s01-u01",
+          "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt."
+        }
+      ],
+      "subtitle_text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+      "visual_plan": {
+        "kind": "text_card",
+        "source_type": "generated_text",
+        "text": "PDFCraft - Xử lý PDF ngay trong trình duyệt",
+        "purpose": "Giới thiệu tiêu đề sản phẩm"
+      },
+      "claims": [
+        {
+          "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+          "type": "identity",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "identity.tagline.value"
+            }
+          ],
+          "segment_ids": [
+            "s01-u01"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s02-u01",
+          "text": "Công cụ hợp nhất PDF trực tuyến miễn phí với kéo và thả để sắp xếp lại."
+        }
+      ],
+      "subtitle_text": "Hợp nhất nhiều tệp PDF thành một tài liệu một cách dễ dàng",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-merge",
+        "purpose": "Minh họa tính năng gộp file PDF"
+      },
+      "claims": [
+        {
+          "text": "Hợp nhất PDF Kết hợp nhiều tệp PDF thành một tài liệu",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[0].description"
+            }
+          ],
+          "segment_ids": [
+            "s02-u01"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s03-u01",
+          "text": "Bạn có thể thêm số trang vào tài liệu PDF và dễ dàng chuyển đổi sang Word."
+        }
+      ],
+      "subtitle_text": "Thêm số trang và chuyển PDF sang Word",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-pagenum",
+        "purpose": "Minh họa tính năng đánh số trang"
+      },
+      "claims": [
+        {
+          "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_02",
+              "field_path": "features[3].description"
+            }
+          ],
+          "segment_ids": [
+            "s03-u01"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s04",
+      "role": "proof",
+      "narration_segments": [
+        {
+          "segment_id": "s04-u01",
+          "text": "Mọi xử lý diễn ra trong trình duyệt, tệp của bạn hoàn toàn riêng tư."
+        }
+      ],
+      "subtitle_text": "Mọi xử lý diễn ra trong trình duyệt",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-word-export",
+        "purpose": "Minh họa tính năng xuất file"
+      },
+      "claims": [
+        {
+          "text": "Mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[2].description"
+            }
+          ],
+          "segment_ids": [
+            "s04-u01"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s05",
+      "role": "cta",
+      "narration_segments": [
+        {
+          "segment_id": "s05-u01",
+          "text": "Dùng không cần đăng ký, không có chi phí ẩn. Xem thêm thông tin ngay."
+        }
+      ],
+      "subtitle_text": "Hoàn toàn miễn phí, không cần đăng ký",
+      "visual_plan": {
+        "kind": "text_card",
+        "source_type": "generated_text",
+        "text": "PDFCraft - Hoàn toàn miễn phí",
+        "purpose": "Kêu gọi hành động"
+      },
+      "claims": [
+        {
+          "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[1].description"
+            }
+          ],
+          "segment_ids": [
+            "s05-u01"
+          ]
+        }
+      ]
+    }
+  ],
+  "cta": {
+    "text": "Xem thêm thông tin.",
+    "destination": "https://pdfcraft.devtoolcafe.com",
+    "fact_refs": [
+      {
+        "source_id": "src_01",
+        "field_path": "website"
+      }
+    ]
+  }
+}

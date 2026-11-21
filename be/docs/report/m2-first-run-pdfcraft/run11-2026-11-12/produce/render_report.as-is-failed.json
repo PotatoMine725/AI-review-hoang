@@ -1,0 +1,158 @@
+{
+  "schema": "render-report.v1-spike",
+  "status": "failed",
+  "mode": "preview",
+  "ratios": [
+    "16:9"
+  ],
+  "script": "D:\\tmp\\m2-run11-2026-11-12\\script.json",
+  "input": "D:\\tmp\\m2-run11-2026-11-12\\input.json",
+  "assets": "D:\\tmp\\m2-run11-2026-11-12\\assets.json",
+  "target_s": {
+    "min": 40.0,
+    "max": 45.0,
+    "script_target_duration_s": 42,
+    "script_estimated_duration_s": 35.5
+  },
+  "actual_s": null,
+  "predicted_s": 36.433,
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-merge",
+      "duration_s_actual": 14.167,
+      "warnings": [
+        "clip_slowed: clip 12.00 s cho cảnh 14.17 s, tua 0.85x"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-pagenum",
+      "duration_s_actual": 9.433,
+      "warnings": [
+        "clip_slowed: clip 7.60 s cho cảnh 9.43 s, tua 0.81x",
+        "title_duplicates_subtitle: tiêu đề trùng 83% lời/phụ đề, claim không trỏ tới features[i] có tên để thay"
+      ],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "layout": "feature_clip",
+      "footage": "clip:pdfcraft-word-export",
+      "duration_s_actual": 10.967,
+      "warnings": [],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    },
+    {
+      "scene_id": "s04",
+      "role": "cta",
+      "layout": "cta",
+      "footage": null,
+      "duration_s_actual": 1.867,
+      "warnings": [],
+      "status": "rendered",
+      "derived": false,
+      "error": null
+    }
+  ],
+  "tts": {
+    "model": "pnnbao-ump/VieNeu-TTS-v3-Turbo@61b85e3d[onnx/cpu]",
+    "hits": 0,
+    "misses": 8,
+    "load_s": 7.47,
+    "wall_s": 23.9,
+    "segments": [
+      {
+        "segment_id": "s01-u01",
+        "text": "Bạn cần gộp tệp PDF và thao tác với tài liệu mà không cần đăng ký tài khoản?",
+        "spoken": "Bạn cần gộp tệp pi đi ép và thao tác với tài liệu mà không cần đăng ký tài khoản?",
+        "duration_s": 4.4,
+        "cached": false,
+        "synth_s": 1.827
+      },
+      {
+        "segment_id": "s01-u02",
+        "text": "Khám phá ngay PDFCraft với công cụ hợp nhất tài liệu trực tuyến hoàn toàn miễn phí.",
+        "spoken": "Khám phá ngay PDFCraft với công cụ hợp nhất tài liệu trực tuyến hoàn toàn miễn phí.",
+        "duration_s": 4.96,
+        "cached": false,
+        "synth_s": 2.128
+      },
+      {
+        "segment_id": "s01-u03",
+        "text": "Công cụ này cho phép kết hợp nhiều tệp PDF thành một tài liệu một cách trực tuyến.",
+        "spoken": "Công cụ này cho phép kết hợp nhiều tệp pi đi ép thành một tài liệu một cách trực tuyến.",
+        "duration_s": 4.4,
+        "cached": false,
+        "synth_s": 1.759
+      },
+      {
+        "segment_id": "s02-u01",
+        "text": "Mỗi lượt ghép tối đa một trăm tệp, với tổng dung lượng lên đến năm trăm mê-ga-byte.",
+        "spoken": "Mỗi lượt ghép tối đa một trăm tệp, với tổng dung lượng lên đến năm trăm mê-ga-byte.",
+        "duration_s": 4.8,
+        "cached": false,
+        "synth_s": 2.019
+      },
+      {
+        "segment_id": "s02-u02",
+        "text": "Bạn cũng có thể thêm số trang và tùy chỉnh vị trí hoặc định dạng theo ý muốn.",
+        "spoken": "Bạn cũng có thể thêm số trang và tùy chỉnh vị trí hoặc định dạng theo ý muốn.",
+        "duration_s": 4.4,
+        "cached": false,
+        "synth_s": 2.065
+      },
+      {
+        "segment_id": "s03-u01",
+        "text": "Theo PDFCraft công bố, mọi xử lý diễn ra trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị.",
+        "spoken": "Theo PDFCraft công bố, mọi xử lý diễn ra trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị.",
+        "duration_s": 6.48,
+        "cached": false,
+        "synth_s": 2.565
+      },
+      {
+        "segment_id": "s03-u02",
+        "text": "Bạn còn có thể chuyển đổi tài liệu PDF sang định dạng Word để chỉnh sửa.",
+        "spoken": "Bạn còn có thể chuyển đổi tài liệu pi đi ép sang định dạng Word để chỉnh sửa.",
+        "duration_s": 4.24,
+        "cached": false,
+        "synth_s": 1.739
+      },
+      {
+        "segment_id": "s04-u01",
+        "text": "Xem thêm thông tin.",
+        "spoken": "Xem thêm thông tin.",
+        "duration_s": 1.2,
+        "cached": false,
+        "synth_s": 0.517
+      }
+    ]
+  },
+  "outputs": [],
+  "timings_s": {
+    "validate_s": 0.03,
+    "map_s": 0.0,
+    "tts_s": 23.9,
+    "total_s": 23.9
+  },
+  "warnings": [
+    "predicted_too_short: timeline 36.43 s ngoài 40–45 s (vẫn dựng, không kéo dài/cắt)"
+  ],
+  "error": {
+    "code": "clip_too_short",
+    "scene_id": "s03",
+    "message": "s03: [clip_too_short] clip chỉ có 3.90 s cho cảnh 10.97 s (tốc độ 0.36 < 0.6); chọn thêm đoạn clip trong assets.json"
+  }
+}

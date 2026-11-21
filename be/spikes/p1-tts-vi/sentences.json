@@ -1,0 +1,14 @@
+{
+  "sentences": [
+    {"id": "s1-hook", "focus": "hook ngắn", "text": "Bạn còn mất cả buổi chỉ để làm một video review?"},
+    {"id": "s2-price-pct", "focus": "giá 390.000đ, 500ml, phần trăm, tên riêng Lock&Lock", "text": "Bình giữ nhiệt Lock&Lock 500ml chỉ còn 390.000đ, giảm 25%."},
+    {"id": "s3-million-en", "focus": "1,2 triệu, ElevenLabs, Pro", "text": "Gói Pro của ElevenLabs có giá khoảng 1,2 triệu đồng mỗi tháng."},
+    {"id": "s4-units", "focus": "số + giờ, đọc số đếm", "text": "Giữ nóng 12 giờ, giữ lạnh 24 giờ, bảo hành 5 năm."},
+    {"id": "s5-minutes-ai", "focus": "15 phút, AI, thời lượng", "text": "Chỉ cần 15 phút là AI tạo xong video 20 giây."},
+    {"id": "s6-date-money", "focus": "tiền lớn, phần trăm, ngày", "text": "Nạp từ 1.250.000đ, nhận thêm 10% khi đăng ký trước ngày 31/10/2026."},
+    {"id": "s7-decimal-range", "focus": "thập phân, kg, khoảng số", "text": "Dung lượng 2,5 lít, nặng 1,2 kg, giao hàng trong 2-3 ngày."},
+    {"id": "s8-en-plan", "focus": "tên gói tiếng Anh", "text": "Dùng thử miễn phí gói Starter, không cần thẻ tín dụng."},
+    {"id": "s9-cta", "focus": "CTA ngắn", "text": "Bấm vào link ngay hôm nay để nhận ưu đãi!"}
+  ],
+  "script": "Bạn còn mất cả buổi chỉ để làm một video review? Bình giữ nhiệt Lock&Lock 500ml giữ nóng 12 giờ, giữ lạnh 24 giờ. Nắp khóa kín, không rò nước, nặng chỉ 1,2 kg. Giá chỉ còn 390.000đ, giảm 25% đến hết ngày 31/10/2026. Bấm vào link ngay hôm nay để nhận ưu đãi!"
+}

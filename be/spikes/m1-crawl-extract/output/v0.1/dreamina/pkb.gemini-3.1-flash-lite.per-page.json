@@ -1,0 +1,2086 @@
+{
+  "identity": {
+    "name": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "An all-in-one AI creative platform powered by advanced image and video generation models, turning ideas into high-quality visuals.",
+      "value": "Dreamina"
+    },
+    "tagline": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Dreamina AI turns your prompts into vivid, cinematic images in seconds—with high prompt fidelity, beginner-friendly tools, and free access to get you started.",
+      "value": "Dreamina AI turns your prompts into vivid, cinematic images in seconds"
+    },
+    "description": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Dreamina is an all‑in‑one AI creative platform that lets you generate cinematic images, dynamic videos, and realistic talking avatars from simple text prompts, photos, or audio.",
+      "value": "Dreamina is an all‑in‑one AI creative platform that lets you generate cinematic images, dynamic videos, and realistic talking avatars from simple text prompts, photos, or audio."
+    },
+    "category": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "An all-in-one AI creative platform powered by advanced image and video generation models",
+      "value": "AI creative platform"
+    },
+    "company": {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Based on ByteDance Seedream model",
+      "value": "ByteDance"
+    },
+    "version": null,
+    "models": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Meet Dreamina Seedance 2.5",
+        "name": "Seedance 2.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Seedream 5.0 Lite for high‑quality images",
+        "name": "Seedream 5.0 Lite"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "Nano Banana Pro for enhanced creativity",
+        "name": "Nano Banana Pro"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "New model LIVE: Dreamina Seedance 2.5 is now available",
+        "name": "Dreamina Seedance 2.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Dreamina Seedance 2.0 Mini",
+        "name": "Dreamina Seedance 2.0 Mini"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Dreamina Seedance 2.0",
+        "name": "Dreamina Seedance 2.0"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Seedream 4.0",
+        "name": "Seedream 4.0"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Seedream 4.1",
+        "name": "Seedream 4.1"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Seedream 4.5",
+        "name": "Seedream 4.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Seedream 5.0 Pro",
+        "name": "Seedream 5.0 Pro"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_20",
+        "evidence": "Seedance 2.0 became one of the most talked-about video models in the first half of 2026",
+        "name": "Seedance 2.0"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_03",
+        "evidence": "Create engaging audio with the powerful audio generator Seedaudio 1.5.",
+        "name": "Seedaudio 1.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_04",
+        "evidence": "powered by Seedream and GPT Image 2 models",
+        "name": "Seedream"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_04",
+        "evidence": "powered by Seedream and GPT Image 2 models",
+        "name": "GPT Image 2"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_05",
+        "evidence": "Discover Dreamina’s multimodal AI model system powered by Seedance, Seedream, and GPT Image 2",
+        "name": "Seedance"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_07",
+        "evidence": "Try Veo 3.1",
+        "name": "Veo 3.1"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_07",
+        "evidence": "Try Nano Banana",
+        "name": "Nano Banana"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_07",
+        "evidence": "Try Sora 2 Pro",
+        "name": "Sora 2 Pro"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_08",
+        "evidence": "Seedream 5.0: The Most Powerful AI Image Generator",
+        "name": "Seedream 5.0"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_09",
+        "evidence": "Dreamina Seedance 2.0 mini",
+        "name": "Seedance 2.0 mini"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_09",
+        "evidence": "Try Nano Bnanana Pro",
+        "name": "Nano Bnanana Pro"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_15",
+        "evidence": "Driven by Seedance 1.0 model",
+        "name": "Seedance 1.0"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_15",
+        "evidence": "Dreamina's OmniHuman model also offers fluent audio and realistic lip-sync for high-quality avatar videos.",
+        "name": "OmniHuman"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_18",
+        "evidence": "Canva vs Dreamina Seedream 3.0: The Complete Design Tool Showdown",
+        "name": "Seedream 3.0"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_22",
+        "evidence": "Seedance 2.5 and 2.0 Fast costs in Dreamina's September offer",
+        "name": "Seedance 2.0 Fast"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_22",
+        "evidence": "Seedance 2.0 Pro",
+        "name": "Seedance 2.0 Pro"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_24",
+        "evidence": "Once you have typed in your prompt, select Video 3.5 pro bySeedance 1.5 Pro model to suit your creative requirements.",
+        "name": "Video 3.5 pro by Seedance 1.5 Pro"
+      }
+    ]
+  },
+  "pricing": {
+    "currency": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "VND10000 = 107 credits",
+      "value": "VND"
+    },
+    "plans": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "VND 2,487,227 for the first month, then VND 4,145,379/month.",
+        "name": "Standard",
+        "price": 4145379.0,
+        "price_text": "VND 2,487,227 for the first month, then VND 4,145,379/month.",
+        "billing_period": "month",
+        "currency": "VND",
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "VND 8,134,328 for the first month, then VND 13,557,213/month.",
+        "name": "Pro",
+        "price": 13557213.0,
+        "price_text": "VND 8,134,328 for the first month, then VND 13,557,213/month.",
+        "billing_period": "month",
+        "currency": "VND",
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Basic\nVND390000/month",
+        "name": "Basic",
+        "price": 390000.0,
+        "price_text": "VND390000/month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Standard\nVND939000/month",
+        "name": "Standard",
+        "price": 939000.0,
+        "price_text": "VND939000/month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Advanced\nVND2487227/month",
+        "name": "Advanced",
+        "price": 2487227.0,
+        "price_text": "VND2487227/month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Ultra\nVND8134328/month",
+        "name": "Ultra",
+        "price": 8134328.0,
+        "price_text": "VND8134328/month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_20",
+        "evidence": "Dreamina currently provides the lowest compared price for both versions covered here: **$0.097/sec for Seedance 2.5** on the annual Advanced plan",
+        "name": "Annual Advanced (Seedance 2.5)",
+        "price": 0.097,
+        "price_text": "$0.097/sec",
+        "billing_period": "year",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_20",
+        "evidence": "Seedance 2.0 reaches $0.046 per second on its best current monthly promotional offer",
+        "name": "Monthly Promotional (Seedance 2.0)",
+        "price": 0.046,
+        "price_text": "$0.046/sec",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_20",
+        "evidence": "$0.055 per second on the best annual offer",
+        "name": "Annual (Seedance 2.0)",
+        "price": 0.055,
+        "price_text": "$0.055/sec",
+        "billing_period": "year",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_05",
+        "evidence": "Compare real resolution, clip length, and pricing, then generate native 4K for free on Dreamina.",
+        "name": "Free",
+        "price": 0.0,
+        "price_text": "free",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_17",
+        "evidence": "Get Start for free",
+        "name": "Free",
+        "price": 0.0,
+        "price_text": "Get Start for free",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_19",
+        "evidence": "Explore Dreamina Seedance 2.5 pricing from $0.035/second at 720p",
+        "name": "Seedance 2.5",
+        "price": 0.035,
+        "price_text": "$0.035/second",
+        "billing_period": "usage",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_22",
+        "evidence": "The US introductory subscription payment is $1.50 for the first month.",
+        "name": "Basic recurring monthly subscription",
+        "price": 1.5,
+        "price_text": "$1.50 for the first month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      }
+    ],
+    "free_plan": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Yes. Dreamina provides free daily credits for generating images and videos, so you can start creating right away with no upfront payment.",
+      "value": true
+    },
+    "trial_days": null
+  },
+  "features": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "Video generation from references",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "AI video generator is built for beginners and pros. Turn prompts into dynamic scenes with consistent characters, diverse styles, and smooth motion",
+      "name": "AI video generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "AI photo editor Use AI to restore old photos, swap backgrounds, enhance product shots, and expand scenes.",
+      "name": "AI photo editor",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Lip sync audio generations",
+      "name": "Lip sync",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Accurate partial redraws",
+      "name": "Partial redraws",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Remove the Dreamina watermark in downloads",
+      "name": "Remove watermark",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Extend video length",
+      "name": "Extend video length",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Increase video resolution",
+      "name": "Increase video resolution",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Make videos smoother (frame rate to up to 60 FPS)",
+      "name": "High frame rate video",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Fast queue",
+      "name": "Fast queue",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "full-speed, queue-free creation",
+      "name": "Full-speed, queue-free creation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "multimodal reference control, native audio, consistent characters, connected scenes, and 4K creation options",
+      "name": "Multimodal video generation",
+      "description": "Includes native audio, consistent characters, connected scenes, and 4K creation options."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "Reference-based video generation",
+      "description": "Generate 30-second videos from up to 50 references."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Create 4K AI images from text prompts or reference photos with Dreamina.",
+      "name": "AI image generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Create engaging audio with the powerful audio generator Seedaudio 1.5.",
+      "name": "AI audio generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Dreamina's viral skills studio turns your photos into trending video and image formats in seconds.",
+      "name": "Trends Studio",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Dreamina's AI marketing studio turns your product and model photos into campaign-ready content.",
+      "name": "Marketing Studio",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Create cinematic images and videos with Dreamina AI Cinema Studio.",
+      "name": "AI Cinema Studio",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Use Dreamina CLI to connect AI agents with image and video models",
+      "name": "Dreamina CLI",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "supporting text to image generation, AI art creation, and creative visual design.",
+      "name": "Text to image generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Generate engaging audio with the powerful audio generator Seedaudio 1.5. Generate multilingual dialogue, music, ambience, sound effects, dubbing, and more",
+      "name": "Audio generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "Video generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Use Dreamina's Instagram font generator to create cool and stylish text",
+      "name": "Instagram font generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Create polished presentations with an AI pitch deck generator.",
+      "name": "AI pitch deck generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Transform your photos with an image-to-painting Dreamina AI tool.",
+      "name": "Image-to-painting",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Choose an AI background remover for transparent cutouts, product images, or design work.",
+      "name": "AI background remover",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Compare real resolution, clip length, and pricing, then generate native 4K for free on Dreamina.",
+      "name": "Native 4K generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "including text-to-video and image-to-video generation",
+      "name": "Text-to-video and image-to-video generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "30-second video generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Use our AI clone video generator to make lifelike digital avatars and videos online without manual filming.",
+      "name": "AI clone video generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Explore Dreamina AI Canvas to create, edit, connect, and organize images, videos, audio, and creative assets with multiple models in one flexible workspace.",
+      "name": "AI Canvas workspace",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Bring fictional characters to life with the Dreamina AI character voice generator.",
+      "name": "AI character voice generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Use Dreamina's audio editor online tool to edit voices, dialogue, music, and sound effects",
+      "name": "Audio editor",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Dreamina uses advanced face recognition to analyze facial structure, contours, and skin details before applying changes.",
+      "name": "Advanced AI face detection",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Dreamina lets users preview how they might look at different ages, from teenage years (13–19) to young adulthood (20–35), middle age (36–55), and senior years (56+).",
+      "name": "Multiple age transformation options",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "The output focuses on natural skin texture shifts, subtle wrinkles, and color changes instead of exaggerated filters.",
+      "name": "Natural, realistic aging and de-aging effects",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "The AI face age filter enhances realism, generating outputs in high resolutions from 2K to 8K",
+      "name": "High resolution output (2K to 8K)",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Dreamina generates older or younger variations within seconds after you upload a photo and write a prompt.",
+      "name": "Fast generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "featuring multi-camera storytelling, native audio co-generation",
+      "name": "Multi-camera storytelling and native audio co-generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "featuring web search for broader knowledge and timely results",
+      "name": "Web search integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Simulate reality with physics-based worldbuilding",
+      "name": "Physics-based worldbuilding",
+      "description": "Simulates real-world physics including gravity, motion, and cause-and-effect."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Produce videos with realistic object permanences",
+      "name": "Realistic object permanence",
+      "description": "Ensures consistent object tracking, momentum, and spatial continuity without morphing."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Transform videos endlessly with Remix variations",
+      "name": "Remix editing",
+      "description": "Reimagine videos through new prompts while preserving original composition and subjects."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Sora 2 AI generator can generate videos with sound, offering synchronized audio that includes character voices, ambient sounds, and background music",
+      "name": "Synchronized audio generation",
+      "description": "Generates videos with character voices, ambient sounds, and background music."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Dreamina AI video generator allows you to create AI video VFX by describing effects such as explosions, lighting, energy waves, or cinematic transitions.",
+      "name": "Generate AI video VFX from prompts",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Upload images and turn them into animated clips with AI-generated VFX using generation.",
+      "name": "Apply VFX to images and scenes",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Dreamina includes tools like for smoother motion, for higher resolution, and for immersive audio.",
+      "name": "Advanced AI tools (Interpolate, Upscale, Generate soundtrack)",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Dreamina's AI VFX editor supports multi-scene projects, which means that multiple clips are available within the same project.",
+      "name": "Multi-scene project support",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Dreamina's analyzes text prompts and uploaded images, then organizes layout, typography, and visual hierarchy to create polished ad designs.",
+      "name": "Generate professional ad visuals from text and images",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Dreamina's Canvas uses AI editing tools that analyze each visual layer while preserving the original composition.",
+      "name": "AI editing tools on Canvas",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "The AI image generator understands marketing intent and brand style, refining colors and composition",
+      "name": "Marketing intent and brand style understanding",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "This strong combines features like Interactive editing, Remove, Background remover, and Expand to refine layouts, replace details, and extend scenes naturally",
+      "name": "Interactive editing, Remove, Background remover, and Expand",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Iconic film style",
+      "name": "Iconic film style",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Cinematic long take",
+      "name": "Cinematic long take",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Film storyboard",
+      "name": "Film storyboard",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Image to film",
+      "name": "Image to film",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Micro-expression prompt",
+      "name": "Micro-expression prompt",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Image set",
+      "name": "Image set",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Visual development",
+      "name": "Visual development",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Character design",
+      "name": "Character design",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Narrative short film",
+      "name": "Narrative short film",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "E-commerce images",
+      "name": "E-commerce images",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Veo 3 by Google DeepMind converts text descriptions into high-quality cinematic videos using advanced diffusion models.",
+      "name": "Text-to-video generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Veo 3's image-to-video tool analyzes uploaded static images and animates them into fluid video sequences using advanced computer vision and motion synthesis.",
+      "name": "Image-to-video generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Veo 3 allows precise camera direction from text prompts, understanding cinematography terms like angles, dolly moves, tracking shots, and composition.",
+      "name": "Cinematic camera controls",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "With Google Veo 3 AI free access via Dreamina, you can customize the soundtrack based on your generated content for a polished, professional result.",
+      "name": "Background music customization",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "The Image-to-Video feature allows Veo-3.1 to analyze reference images and maintain consistent characters across every frame.",
+      "name": "Image-to-Video",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Veo-3.1 uses temporal coherence algorithms to extend scenes seamlessly, building videos up to 60 seconds long.",
+      "name": "Video extension",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Veo-3.1 eliminates the need for juggling between editing suites by generating complete audiovisual content in one go. It automatically adds scene-based music, realistic ambient sounds",
+      "name": "Automatic audio generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "With advanced options like Frames to Video and Ingredients to Video, you can set the foundation by choosing your opening frames, refining character appearances",
+      "name": "Creative controls",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Hyper-Realistic “Child Version of Me” Generation",
+      "name": "Hyper-Realistic “Child Version of Me” Generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Cinematic Before-and-After Storytelling",
+      "name": "Cinematic Before-and-After Storytelling",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Instant Results with Copy-Paste AI Prompts",
+      "name": "Instant Results with Copy-Paste AI Prompts",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Dreamina's \"Creative upscale\" technology intelligently enhances details and sharpens clarity without introducing artifacts",
+      "name": "Creative upscale",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Dreamina's \"Remove\" feature allows you to brush over the spots you want to erase, while blending in perfectly matched background details",
+      "name": "Remove",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Dreamina's \"Blend\" tool allows you to merge two pictures (a foreground & background image) into a stunning, cohesive composition",
+      "name": "Blend",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Stretch your images way beyond their edges without having distorted results when using Dreamina's \"Expand\" feature.",
+      "name": "Expand",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "With Dreamina's Inpaint tool, you can revamp or tweak targeted spots in your image by brushing over them and typing what you'd like to see instead.",
+      "name": "Inpaint",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Seedance is designed for native multi-shot sequences, enabling users to generate complete, story-driven videos without extra editing.",
+      "name": "Multi-shot sequence generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Seedance 1.0 transforms still images into fully dynamic video sequences",
+      "name": "Image to video",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Video 3.0 by Seedance model offers a Multiframes feature that allows creators to upload up to 10 frames at once",
+      "name": "Multiframes",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Seedance 1.0 uses advanced motion prediction to make movements smoother and more natural",
+      "name": "Frame interpolation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Dreamina's Seedance HD upscale tool boosts video resolution up to high quality without losing clarity or detail",
+      "name": "HD Upscale",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "The Generate soundtrack tool in Dreamina allows users to automatically add background music that matches the tone, rhythm, and pacing of their generated videos.",
+      "name": "Generate soundtrack",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "Higher visual quality than previous Seedance models",
+      "name": "Higher visual quality",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "Faster video generation and shorter waiting times",
+      "name": "Faster video generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "Lower credit consumption per generation",
+      "name": "Lower credit consumption",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "Excellent motion consistency and prompt understanding",
+      "name": "Motion consistency and prompt understanding",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Dreamina’s “Draw text on image” feature lets you declare exact strings",
+      "name": "Draw text on image",
+      "description": "Allows users to declare exact text strings to be rendered on generated images."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Dreamina’s canvas editor for multi-layer adjustments (spacing, layer order, component grouping).",
+      "name": "Canvas editor",
+      "description": "Provides multi-layer adjustments including spacing, layer order, and component grouping."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "AI video generation",
+      "description": "Generate 30-second videos from up to 50 references."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Discover Dreamina AI background replacer and effortlessly transform your photos with Seedream 4.0's image-to-image background replacement.",
+      "name": "AI background replacer",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Transform portraits with Dreamina's AI face editor and get expert face edits with Seedream 4.0's precision.",
+      "name": "AI face editor",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Discover how to change color of object in photos with Dreamina's Seedream 4.0.",
+      "name": "Object color change",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Discover ByteDance Seedream 4.0 with multi-image fusion, group generation, and interactive editing in Dreamina.",
+      "name": "Multi-image fusion",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Discover ByteDance Seedream 4.0 with multi-image fusion, group generation, and interactive editing in Dreamina.",
+      "name": "Group generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Discover ByteDance Seedream 4.0 with multi-image fusion, group generation, and interactive editing in Dreamina.",
+      "name": "Interactive editing",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "support for up to 30-second continuous scenes",
+      "name": "30-second continuous scenes",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "richer multimodal references",
+      "name": "Multimodal references",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "more precise editing workflows",
+      "name": "Precise editing workflows",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "Generate videos from up to 50 references",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "name": "Generate 30-second videos from up to 50 references",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "AI Logo Generator",
+      "name": "AI Logo Generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "AI Poster Maker Online",
+      "name": "AI Poster Maker",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "AI Headshot Generator Online",
+      "name": "AI Headshot Generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "AI Text to Image Generator",
+      "name": "AI Text to Image Generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "AI Image to Image Generator",
+      "name": "AI Image to Image Generator",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "These users need a product surface where they can write prompts, upload references, review outputs, and iterate quickly.",
+      "name": "Prompt-based video generation",
+      "description": "Users can write prompts and upload references to generate and iterate on video outputs."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "The animation option of Dreamina enables you to convert motionless images in an advertisement to flowing, eye-catching motion sequences.",
+      "name": "AI Animation",
+      "description": "Converts motionless images into motion sequences."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "Dreamina integrates AI soundtrack generation directly into the video creation workflow",
+      "name": "AI Soundtrack Generation",
+      "description": "Generates background music that matches the video's tone, mood, and pacing."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "The AI lip sync feature seen in short-form video examples matches or aligns the audio with on-screen characters or presenters.",
+      "name": "AI Lip Sync",
+      "description": "Aligns audio with on-screen characters or presenters."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "HD video upscaling improves the resolution and sharpness without any distortion of the original images.",
+      "name": "HD Video Upscale",
+      "description": "Improves resolution and sharpness of videos."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "AI text effects make headlines, subheadings, and captions more visually appealing while remaining readable.",
+      "name": "AI Text Effects",
+      "description": "Styles text for headlines, subheadings, and captions."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "allows you to delete unwanted objects or distractions from images quickly and seamlessly.",
+      "name": "AI Object Removal",
+      "description": "Deletes unwanted objects or distractions from images."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "intelligently enlarges image boundaries to fit different blog layouts or dimensions.",
+      "name": "AI Image Expansion",
+      "description": "Enlarges image boundaries to fit different layouts."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "The combines multiple images or elements into one cohesive visual seamlessly.",
+      "name": "AI Image Inpainting/Combining",
+      "description": "Combines multiple images or elements into one cohesive visual."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "Seedance 2.5 can work with up to 50 multimodal inputs, including text, images, video, audio, storyboards, character settings, style frames, camera descriptions, sound notes, and reference clips.",
+      "name": "Multimodal reference support",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "R2V helps the model understand a reference and transform it into moving footage.",
+      "name": "R2V (Reference to Video)",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "Green-screen references are useful when human action or product demonstration matters.",
+      "name": "Green-screen reference support",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "White model references are useful when space, camera path, and relative position matter more than final texture.",
+      "name": "White model guidance",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "Seedance 2.5 improves event sequencing, action timing, and camera rhythm",
+      "name": "Timeline control",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "Dreamina Seedance 2.5 is strongest when users iterate with localized editing",
+      "name": "Localized editing",
+      "description": null
+    }
+  ],
+  "use_cases": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Turn your brand ideas into logos, app icons, 3D brand visuals, and sticker packs with AI.",
+      "value": "Logos and icons design"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Design posters with AI for product launches, fashion campaigns, Black Friday, and more.",
+      "value": "Poster design"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Turn images into product showcases, social reels, dance videos, and AI character clips.",
+      "value": "Social media content creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Use AI to restore old photos, swap backgrounds, enhance product shots, and expand scenes.",
+      "value": "Photo editing and restoration"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "AI video generator",
+      "value": "AI video generation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "AI image generator",
+      "value": "AI image generation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Avatar maker",
+      "value": "Avatar creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Logo generator",
+      "value": "Logo generation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "AI face swap",
+      "value": "Face swap"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "develop concepts, references, and variations with the lower-cost Seedance 2.0 option",
+      "value": "Concept development"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "test Seedance 2.5 for shots where access to the newest model is the priority",
+      "value": "High-quality video production"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Create AI Ads, UGC & Product Content",
+      "value": "Marketing and advertising content creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Create cinematic images and videos",
+      "value": "Cinematic video production"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Turn any photo into engaging video content",
+      "value": "Image-to-video animation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_03",
+      "evidence": "Create engaging audio with the powerful audio generator Seedaudio 1.5.",
+      "value": "Audio generation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Create a Shopify banner with Dreamina's AI tools.",
+      "value": "Shopify banner creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Create stunning thumbnails with Dreamina's Fortnite thumbnail maker.",
+      "value": "Fortnite thumbnail creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Create an illustrated family diagram with Dreamina's free genogram maker.",
+      "value": "Genogram creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Create stunning Minecraft birthday invitations with Dreamina's AI tools",
+      "value": "Birthday invitation creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Make engaging pitch videos with AI in minutes.",
+      "value": "Pitch videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Create paper animation videos with AI using Dreamina.",
+      "value": "Paper animation videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Turn perfume photos into video ads with Dreamina.",
+      "value": "Perfume video ads"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Create eye-catching YouTube thumbnails with Dreamina's Mr Beast thumbnail maker.",
+      "value": "YouTube thumbnails"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Create the best AI short drama series online for free.",
+      "value": "AI short drama series"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Turn any story idea into a cinematic short film with Dreamina's free AI short film generator.",
+      "value": "Cinematic short films"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Dreamina's AI age filter helps bring storytelling ideas to life by aging characters for comics, concept art, or narrative visuals.",
+      "value": "Creative photo projects"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "The AI aging photo online free tool makes it easy to create fun, shareable aging transformations for platforms like TikTok, Instagram, and Reels.",
+      "value": "Social media content"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Dreamina allows users to place aged results next to original faces to visualize dramatic time shifts.",
+      "value": "Before-and-after comparisons"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Create high-quality videos with official Seedance 2.0",
+      "value": "Create high-quality videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Turn ideas into smarter, more accurate visuals",
+      "value": "Turn ideas into visuals"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Social media content & viral marketing",
+      "value": "Social media content & viral marketing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Concept visualization & pitch presentations",
+      "value": "Concept visualization & pitch presentations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Educational content & training materials",
+      "value": "Educational content & training materials"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Creators use an AI VFX generator to add cinematic effects like , lighting, or motion overlays to short-form videos.",
+      "value": "Social media video effects and reels"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Marketers use AI VFX makers to create eye-catching visuals for ads and campaigns.",
+      "value": "Marketing videos and ad creatives"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Game designers and content creators use Dreamina as a VFX AI generator to create character abilities, energy effects, or combat visuals.",
+      "value": "Gaming and character effects"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Small business owners use Dreamina to create professional social media ads without hiring designers.",
+      "value": "Social media ads for small businesses"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Brands and entrepreneurs rely on Dreamina to build complete launch asset sets, including image ads and .",
+      "value": "Product launch campaigns"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Marketers use Dreamina to quickly produce themed creatives for Black Friday, Christmas, Valentine's Day, and other key seasons.",
+      "value": "Seasonal and holiday promotions"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Cartoons & Anime",
+      "value": "Cartoons & Anime"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Horror Short Film",
+      "value": "Horror Short Film"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Anime Music Video",
+      "value": "Anime Music Video"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "AC commercial",
+      "value": "Commercial video production"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Marketing teams leverage Veo 3 to quickly produce holiday or seasonal promos",
+      "value": "Promotional videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Whether you want dreamy bokeh shots, abstract motion visuals, or surreal ambience scenes, Veo 3 turns your ideas into stylish video moments.",
+      "value": "Aesthetic clips and mood visuals"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Professional filmmaking & cinematic storytelling",
+      "value": "Professional filmmaking & cinematic storytelling"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Brand-safe marketing & advertising campaigns",
+      "value": "Brand-safe marketing & advertising campaigns"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "High-fidelity product demonstrations & presentations",
+      "value": "High-fidelity product demonstrations & presentations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "social media storytelling, birthday edits, and personal memory art.",
+      "value": "Social media storytelling"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "birthday edits",
+      "value": "Birthday edits"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "personal memory art",
+      "value": "Personal memory art"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "making promo designs that get people's attention, draw unique figures, or make sure that your prints are clear and sharp.",
+      "value": "Marketing graphics"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "making promo designs that get people's attention, draw unique figures, or make sure that your prints are clear and sharp.",
+      "value": "Social posts"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "making promo designs that get people's attention, draw unique figures, or make sure that your prints are clear and sharp.",
+      "value": "Concept sketches"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "making promo designs that get people's attention, draw unique figures, or make sure that your prints are clear and sharp.",
+      "value": "Brand assets"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Professional creators, whether in film, advertising, or digital production, can now rely on a tool that marries speed, storytelling, and quality",
+      "value": "Film production"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Professional creators, whether in film, advertising, or digital production",
+      "value": "Advertising"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "It also helps brands reuse existing visuals for campaigns while keeping production costs low.",
+      "value": "Brand campaigns"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "ecommerce showcases",
+      "value": "ecommerce showcases"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "marketing campaigns",
+      "value": "marketing campaigns"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "short-form social content",
+      "value": "short-form social content"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "story-driven videos",
+      "value": "story-driven videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "product videos",
+      "value": "product videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "youtube shorts",
+      "value": "youtube shorts"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "ai short drama",
+      "value": "ai short drama"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "build pricing page graphics that clarify tiers, reduce decision friction, and increase conversion.",
+      "value": "Creating SaaS pricing page graphics"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Generate add-on explainer cards for usage-based pricing",
+      "value": "Generating add-on explainer cards"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Design a startup-friendly pricing hero",
+      "value": "Designing pricing hero sections"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Learn graphic design, style transfer, precision editing, and advanced techniques in Dreamina's latest AI model.",
+      "value": "Graphic design"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Learn graphic design, style transfer, precision editing, and advanced techniques in Dreamina's latest AI model.",
+      "value": "Style transfer"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Learn graphic design, style transfer, precision editing, and advanced techniques in Dreamina's latest AI model.",
+      "value": "Precision editing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "cinematic videos for social media, ads, ecommerce, or creative storytelling",
+      "value": "Social media"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "cinematic videos for social media, ads, ecommerce, or creative storytelling",
+      "value": "Ads"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "cinematic videos for social media, ads, ecommerce, or creative storytelling",
+      "value": "Ecommerce"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "cinematic videos for social media, ads, ecommerce, or creative storytelling",
+      "value": "Creative storytelling"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "A marketer can create product ads.",
+      "value": "Creating product ads"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "A storyboard artist can turn shot panels into a video draft.",
+      "value": "Turning storyboard panels into video drafts"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "A game team can test a trailer beat.",
+      "value": "Testing game trailer beats"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "A social creator can check motion, style, and timing.",
+      "value": "Checking motion, style, and timing for social content"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "Whether you are creating advertisements to be posted on social media, blogs, or ads, Dreamina can help you quickly make professional-looking short ads.",
+      "value": "Creating social media advertisements"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "Short-form blog advertisements also benefit greatly from AI-assisted creative workflows.",
+      "value": "Creating blog advertisements"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "It is particularly applicable to explainer advertisements, spokesperson videos, or character-based ads.",
+      "value": "Explainer advertisements"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "It is particularly applicable to explainer advertisements, spokesperson videos, or character-based ads.",
+      "value": "Spokesperson videos"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "This guide focuses on dance creators, product demo teams, sports editors, VFX artists, performance directors, and character-video creators.",
+      "value": "Dance creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "This guide focuses on dance creators, product demo teams, sports editors, VFX artists, performance directors, and character-video creators.",
+      "value": "Product demonstration"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "This guide focuses on dance creators, product demo teams, sports editors, VFX artists, performance directors, and character-video creators.",
+      "value": "Sports editing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "This guide focuses on dance creators, product demo teams, sports editors, VFX artists, performance directors, and character-video creators.",
+      "value": "VFX production"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "This guide focuses on dance creators, product demo teams, sports editors, VFX artists, performance directors, and character-video creators.",
+      "value": "Character video creation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "technical explanations where a wrong order can ruin the message.",
+      "value": "Technical explanations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "training modules, animatics, walkthroughs, and technical explanations",
+      "value": "Training modules"
+    }
+  ],
+  "limitations": [
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "The number of credits required may vary depending on the model, feature, and generation settings you use.",
+      "value": "Credit consumption varies by model, feature, and settings."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Commercial-use eligibility depends on the applicable Dreamina terms, the content you create, and the models or assets involved.",
+      "value": "Commercial use eligibility is subject to terms and specific content/model restrictions."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Do not interpret this guide as a promise of unlimited credits.",
+      "value": "Not unlimited credits"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Plan a one-minute AI video on mobile: understand free generation limits",
+      "value": "Free generation limits apply"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Yes, you can apply Dreamina's AI age filter to the most clear, front-facing photos with defined facial features.",
+      "value": "Requires clear, front-facing photos with defined facial features."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "While it's designed for creative aging rather than scientific accuracy, the results are visually convincing.",
+      "value": "Designed for creative aging rather than scientific accuracy."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Generate 30-second videos from up to 50 references.",
+      "value": "Generate 30-second videos from up to 50 references"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Typically, they range from a few seconds to about a minute",
+      "value": "Video length typically ranges from a few seconds to about a minute."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "This usually happens when the input photos are unclear or low quality.",
+      "value": "Requires clear, high-quality input photos for best results."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "Seedance 2.0 Mini uses a credit-based pricing model, and the exact cost shifts based on the platform, resolution, clip length, and whether you turn on audio or add video references.",
+      "value": "Credit consumption depends on resolution, clip length, audio settings, and reference inputs."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Explore Dreamina Seedance 2.5 pricing from $0.035/second at 720p",
+      "value": "Pricing is based on 720p resolution"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "The offer is scheduled for September 23, 2026 at 11:00 through October 9, 2026 at 23:59 (UTC+8).",
+      "value": "Offer valid from September 23, 2026 to October 9, 2026."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "The $1.50 first-month price is a US example, not a universal price in all 12 countries.",
+      "value": "Pricing varies by market and country."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "The first mistake is treating the model as if it can infer production logic from a short keyword.",
+      "value": "Cannot infer production logic from short keywords alone"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "The second mistake is mixing conflicting references without explanation.",
+      "value": "Conflicting references without explanation can cause issues"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_25",
+      "evidence": "Does Seedance 2.5 replace professional production tools? Not completely.",
+      "value": "Does not completely replace professional production tools"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "src_01",
+      "url": "https://dreamina.capcut.com/",
+      "page_type": "other",
+      "fetched_at": "2026-10-06T02:24:33.248+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:78fda76ddc5696a39e7652af2449b41b62866b601e2ed04dfb0773d0bf7ffe2c"
+    },
+    {
+      "source_id": "src_02",
+      "url": "https://dreamina.capcut.com/pricing/dreamina-price",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:24:41.405+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:f4be5bde81de67a247ae948dce98129651dec02facb3eb482c0777d31e94dd63"
+    },
+    {
+      "source_id": "src_20",
+      "url": "https://dreamina.capcut.com/seedance/seedance-price",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:26:22.744+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:8dd486a7e7525b5a38b97eb8179c19fef54f74660d836920d945df644478d4f7"
+    },
+    {
+      "source_id": "src_03",
+      "url": "https://dreamina.capcut.com/tools",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:24:47.189+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:6637332aa29e4e29678ab807b43610c6490966dc846d980bb604ce13bb86fab6"
+    },
+    {
+      "source_id": "src_04",
+      "url": "https://dreamina.capcut.com/ai-image",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:24:53.739+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:e36dca8830bff8ef2b1ee3a9457ed787350bd89c9710a82f3b836f2580699660"
+    },
+    {
+      "source_id": "src_05",
+      "url": "https://dreamina.capcut.com/ai-model",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:24:58.697+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:b83fd889fe29692893de0c2d04bf7ea7b4aa839b5c4854394382aca7a9386b24"
+    },
+    {
+      "source_id": "src_06",
+      "url": "https://dreamina.capcut.com/ai-video",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:03.493+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:a926a4cb076697bc958382fd2ae66afc1a37e708d24926959626ff5a3e597e82"
+    },
+    {
+      "source_id": "src_07",
+      "url": "https://dreamina.capcut.com/tools/age-ai",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:08.019+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:4e119e83f1ba6ef49d544d3c8d7e69889b0fdc35fa9f6f3d38fe4d96e0560397"
+    },
+    {
+      "source_id": "src_08",
+      "url": "https://dreamina.capcut.com/tools/models",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:12.747+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:c674517d1ec6dd43ac5338a38110c1c624a7ae5463ed3768f742db9dc740011d"
+    },
+    {
+      "source_id": "src_09",
+      "url": "https://dreamina.capcut.com/tools/sora-2",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:18.604+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:ccd24110aea052c777ffe40fa851c5846aee00dd078ccfe19b232353f413b742"
+    },
+    {
+      "source_id": "src_10",
+      "url": "https://dreamina.capcut.com/tools/ai-vfx",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:23.687+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:54a7fd566006a1d5655e5e17fd4f2caa6fb7d55855f2c4ae5a139a9e7e4a9c51"
+    },
+    {
+      "source_id": "src_11",
+      "url": "https://dreamina.capcut.com/tools/ai-ads",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:28.838+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:f4d1deaf20c511abecb75fd62fcb80f48568dba4bd1cdc5a029fddacf1245930"
+    },
+    {
+      "source_id": "src_12",
+      "url": "https://dreamina.capcut.com/ai-tool/home",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:25:33.627+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:cff64cc7da8b1b7c3384d68928e583058d970498fa0dad3236a550541ee6bc3e"
+    },
+    {
+      "source_id": "src_26",
+      "url": "https://dreamina.capcut.com/tools/veo-3",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:26:59.124+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:f7dca36183ca68c4568683a8075e696ecf1d42901080e9cb773df77042cce7f5"
+    },
+    {
+      "source_id": "src_27",
+      "url": "https://dreamina.capcut.com/tools/veo-3-1",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:27:07.500+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:7527fdb270035910f381732ce608a9b9d80099ba7e7e7ab6b133def417f27acc"
+    },
+    {
+      "source_id": "src_13",
+      "url": "https://dreamina.capcut.com/create/childhood-vs-now",
+      "page_type": "compare",
+      "fetched_at": "2026-10-06T02:25:39.745+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:def87b4ad2983b87bf8ec3f6032028d389c18e57a1ee371b1f2f8cd28a756ec6"
+    },
+    {
+      "source_id": "src_14",
+      "url": "https://dreamina.capcut.com/resource/grok-vs-chatgpt",
+      "page_type": "compare",
+      "fetched_at": "2026-10-06T02:25:44.148+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:0647649952b7a07ec97c5468edc5f790b19a1d9d90ba0be1ea6ae13e3f3a7c93"
+    },
+    {
+      "source_id": "src_15",
+      "url": "https://dreamina.capcut.com/resource/seedance-vs-veo",
+      "page_type": "compare",
+      "fetched_at": "2026-10-06T02:25:49.410+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:75363ec1c2a40fcb9651f73d68e8b8f927581c2bea349c187fa5840b930087db"
+    },
+    {
+      "source_id": "src_16",
+      "url": "https://dreamina.capcut.com/seedance/seedance-2-0-mini-pricing",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:25:54.257+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:6cf507d5d2faf46395efa63a713d56f855ea7f0664eb5716d6ffc17bd5207f76"
+    },
+    {
+      "source_id": "src_17",
+      "url": "https://dreamina.capcut.com/resource/chatgpt-image-generator-for-saas-pricing-page-graphics",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:26:07.170+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:d63c73aa6d8a01b8a850efc37a35061488b357013890cb92140cc67b84d4f220"
+    },
+    {
+      "source_id": "src_18",
+      "url": "https://dreamina.capcut.com/seedream/tips-guides",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:26:12.010+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:bc4a50471bbf4a4874a9781c0b7053a7ca3bb4e4df02f45f24f61fc02195be4a"
+    },
+    {
+      "source_id": "src_19",
+      "url": "https://dreamina.capcut.com/seedance/tips-guides",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:26:17.527+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:794871a7b2b458c878e1ee806d44ed178458f9221ac9fa9ca672751d99981409"
+    },
+    {
+      "source_id": "src_21",
+      "url": "https://dreamina.capcut.com/resource/tips-tutorials",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:26:27.437+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:c8a1b93ea7e25ed50cb8c93e0d4a18af7aad318337b343c06290ce1595f8d888"
+    },
+    {
+      "source_id": "src_22",
+      "url": "https://dreamina.capcut.com/resource/dreamina-september-offer-faq-2026",
+      "page_type": "faq",
+      "fetched_at": "2026-10-06T02:26:33.570+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:9f4299471fc7d23933026d0f3116da916ee0cf64d7f9408fe0f77787a79c8082"
+    },
+    {
+      "source_id": "src_23",
+      "url": "https://dreamina.capcut.com/seedance/seedance-2-5-api-access",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:26:38.260+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:0cae9d65d23394614861dbd48133d0163db46e757c7da5beb4d22c807eac6e7a"
+    },
+    {
+      "source_id": "src_24",
+      "url": "https://dreamina.capcut.com/resource/short-form-advertisement-guide",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:26:42.751+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:3ecf95e3125f21e53f00def9cab99b6ffce9a22912bdabc21548643c5e78a3b8"
+    },
+    {
+      "source_id": "src_25",
+      "url": "https://dreamina.capcut.com/seedance/seedance-2-5-motion-reference-guide",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:26:47.312+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:cc47857c0f1352be19d793158d059fd91ee2de9762135188ba856bc0f165799e"
+    }
+  ],
+  "meta": {
+    "product": "dreamina",
+    "model": "gemini-3.1-flash-lite",
+    "mode": "per_page",
+    "generated_at": "2026-10-06T03:14:13+00:00",
+    "llm_calls": 27,
+    "cache_hits": 27,
+    "input_tokens": 70970,
+    "output_tokens": 31637,
+    "cost_usd": 0.065198,
+    "evidence_in_source": 0.978,
+    "unknown_source_ids": []
+  }
+}

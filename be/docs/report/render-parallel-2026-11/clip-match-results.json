@@ -1,0 +1,113 @@
+{
+ "note": "PSNR của ô clip (crop 920x670 tại 138,175) so với khung clip đã chuẩn bị, độ lệch d: khung f của cảnh so với khung f+d của clip. 16:9, plan PDFCraft, bản draft.",
+ "scenes": {
+  "s03": {
+   "abs_start_frame": 320,
+   "start_s_4f": 10.6667,
+   "start_s_exact": 10.666666666666666,
+   "frames": 220,
+   "sequential": {
+    "mean_psnr_by_d": {
+     "-3": 19.02,
+     "-2": 19.32,
+     "-1": 19.85,
+     "0": 19.21,
+     "1": 18.9,
+     "2": 18.65,
+     "3": 18.42
+    },
+    "best_d": "-1",
+    "closer_to_d0": 0,
+    "closer_to_d-1": 23,
+    "indistinguishable": 195
+   },
+   "parallel": {
+    "mean_psnr_by_d": {
+     "-3": 18.75,
+     "-2": 18.99,
+     "-1": 19.28,
+     "0": 19.8,
+     "1": 19.2,
+     "2": 18.89,
+     "3": 18.65
+    },
+    "best_d": "0",
+    "closer_to_d0": 19,
+    "closer_to_d-1": 3,
+    "indistinguishable": 196
+   }
+  },
+  "s04": {
+   "abs_start_frame": 540,
+   "start_s_4f": 18.0,
+   "start_s_exact": 18.0,
+   "frames": 227,
+   "sequential": {
+    "mean_psnr_by_d": {
+     "-3": 20.75,
+     "-2": 21.08,
+     "-1": 21.55,
+     "0": 22.56,
+     "1": 21.26,
+     "2": 20.8,
+     "3": 20.41
+    },
+    "best_d": "0",
+    "closer_to_d0": 49,
+    "closer_to_d-1": 6,
+    "indistinguishable": 170
+   },
+   "parallel": {
+    "mean_psnr_by_d": {
+     "-3": 20.76,
+     "-2": 21.1,
+     "-1": 21.57,
+     "0": 22.58,
+     "1": 21.28,
+     "2": 20.81,
+     "3": 20.43
+    },
+    "best_d": "0",
+    "closer_to_d0": 49,
+    "closer_to_d-1": 6,
+    "indistinguishable": 170
+   }
+  },
+  "s05": {
+   "abs_start_frame": 767,
+   "start_s_4f": 25.5667,
+   "start_s_exact": 25.566666666666666,
+   "frames": 246,
+   "sequential": {
+    "mean_psnr_by_d": {
+     "-3": 25.28,
+     "-2": 25.51,
+     "-1": 25.96,
+     "0": 25.44,
+     "1": 25.22,
+     "2": 25.1,
+     "3": 25.0
+    },
+    "best_d": "-1",
+    "closer_to_d0": 1,
+    "closer_to_d-1": 8,
+    "indistinguishable": 235
+   },
+   "parallel": {
+    "mean_psnr_by_d": {
+     "-3": 25.15,
+     "-2": 25.25,
+     "-1": 25.46,
+     "0": 25.9,
+     "1": 25.45,
+     "2": 25.23,
+     "3": 25.12
+    },
+    "best_d": "0",
+    "closer_to_d0": 9,
+    "closer_to_d-1": 0,
+    "indistinguishable": 235
+   }
+  }
+ }
+}

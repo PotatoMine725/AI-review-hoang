@@ -1,0 +1,1012 @@
+{
+  "allowlist_revision": {
+    "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+    "knowledge_version": 1,
+    "permitted_assets_sha256": "010406b1a67eca48c098c4add40e7beb1c39fabcc3b8837da93af00e1c4a8db1",
+    "permitted_assets_count": 4
+  },
+  "initial": {
+    "raw": {
+      "schema_version": "p1-ac-03.v1-draft",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "pkb_schema_version": "0.3",
+      "knowledge_version": 1,
+      "language": "vi",
+      "platform": "tiktok",
+      "audience": "người xem phổ thông",
+      "context_defaults_applied": [
+        "platform",
+        "intent",
+        "audience",
+        "cta"
+      ],
+      "intent": "awareness",
+      "target_duration_s": 42,
+      "concept": {
+        "title": "Trải nghiệm xử lý PDF trực tuyến với PDFCraft",
+        "angle": "demo"
+      },
+      "hook": {
+        "text": "Bạn cần gộp tệp PDF nhanh chóng và không cần đăng ký tài khoản?",
+        "type": "curiosity",
+        "fact_refs": [
+          {
+            "source_id": "src_01",
+            "field_path": "features[1].name"
+          }
+        ]
+      },
+      "scenes": [
+        {
+          "scene_id": "s01",
+          "role": "hook",
+          "narration_segments": [
+            {
+              "segment_id": "s01-u01",
+              "text": "Bạn cần gộp tệp PDF nhanh chóng và không cần đăng ký tài khoản?"
+            },
+            {
+              "segment_id": "s01-u02",
+              "text": "Khám phá ngay PDFCraft với công cụ hợp nhất tài liệu trực tuyến hoàn toàn miễn phí."
+            }
+          ],
+          "subtitle_text": "Gộp tệp PDF trực tuyến, không cần đăng ký với PDFCraft.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-merge",
+            "purpose": "Hiển thị giao diện hợp nhất PDF bằng cách kéo thả."
+          },
+          "claims": [
+            {
+              "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[1].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u01"
+              ]
+            },
+            {
+              "text": "Kết hợp nhiều tệp PDF thành một tài liệu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[0].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s02",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s02-u01",
+              "text": "Mỗi lượt ghép tối đa một trăm tệp, với tổng dung lượng lên đến năm trăm mê-ga-byte."
+            },
+            {
+              "segment_id": "s02-u02",
+              "text": "Bạn cũng có thể thêm số trang và tùy chỉnh vị trí hoặc định dạng theo ý muốn."
+            }
+          ],
+          "subtitle_text": "Ghép đến 100 tệp và thêm số trang dễ dàng.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-pagenum",
+            "purpose": "Minh họa tính năng đánh số trang cho tài liệu PDF."
+          },
+          "claims": [
+            {
+              "text": "Mỗi lượt ghép tối đa 100 tệp, tổng dung lượng tối đa 500 MB.",
+              "type": "limitation",
+              "fact_refs": [
+                {
+                  "source_id": "src_10",
+                  "field_path": "limitations[0].text"
+                }
+              ],
+              "segment_ids": [
+                "s02-u01"
+              ],
+              "stat_display": {
+                "value": "100",
+                "label": "Số tệp tối đa mỗi lượt ghép",
+                "unit": "tệp",
+                "scope": "Tổng dung lượng tối đa 500 MB"
+              }
+            },
+            {
+              "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[3].description"
+                }
+              ],
+              "segment_ids": [
+                "s02-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s03",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s03-u01",
+              "text": "Theo PDFCraft công bố, mọi xử lý diễn ra trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị."
+            },
+            {
+              "segment_id": "s03-u02",
+              "text": "Bạn còn có thể chuyển đổi tài liệu PDF sang định dạng Word để chỉnh sửa."
+            }
+          ],
+          "subtitle_text": "Xử lý trực tiếp trong trình duyệt và hỗ trợ chuyển đổi sang Word.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-export",
+            "purpose": "Minh họa thao tác xuất file PDF sang định dạng Word (.docx)."
+          },
+          "claims": [
+            {
+              "text": "PDFCraft công bố: mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[2].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u01"
+              ]
+            },
+            {
+              "text": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[4].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s04",
+          "role": "cta",
+          "narration_segments": [
+            {
+              "segment_id": "s04-u01",
+              "text": "Xem thêm thông tin."
+            }
+          ],
+          "subtitle_text": "Xem thêm thông tin.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-result",
+            "purpose": "Hiển thị kết quả tài liệu sau khi thao tác."
+          },
+          "claims": [
+            {
+              "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+              "type": "identity",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "identity.tagline.value"
+                }
+              ],
+              "segment_ids": [
+                "s04-u01"
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "text": "Xem thêm thông tin.",
+        "destination": null
+      }
+    },
+    "prepared": {
+      "schema_version": "p1-ac-03.v1-draft",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "pkb_schema_version": "0.3",
+      "knowledge_version": 1,
+      "language": "vi",
+      "platform": "tiktok",
+      "audience": "người xem phổ thông",
+      "context_defaults_applied": [
+        "platform",
+        "intent",
+        "audience",
+        "cta"
+      ],
+      "intent": "awareness",
+      "target_duration_s": 42,
+      "concept": {
+        "title": "Trải nghiệm xử lý PDF trực tuyến với PDFCraft",
+        "angle": "demo"
+      },
+      "hook": {
+        "text": "Bạn cần gộp tệp PDF nhanh chóng và không cần đăng ký tài khoản?",
+        "type": "curiosity",
+        "fact_refs": [
+          {
+            "source_id": "src_01",
+            "field_path": "features[1].name"
+          }
+        ]
+      },
+      "scenes": [
+        {
+          "scene_id": "s01",
+          "role": "hook",
+          "narration_segments": [
+            {
+              "segment_id": "s01-u01",
+              "text": "Bạn cần gộp tệp PDF nhanh chóng và không cần đăng ký tài khoản?"
+            },
+            {
+              "segment_id": "s01-u02",
+              "text": "Khám phá ngay PDFCraft với công cụ hợp nhất tài liệu trực tuyến hoàn toàn miễn phí."
+            }
+          ],
+          "subtitle_text": "Gộp tệp PDF trực tuyến, không cần đăng ký với PDFCraft.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-merge",
+            "purpose": "Hiển thị giao diện hợp nhất PDF bằng cách kéo thả."
+          },
+          "claims": [
+            {
+              "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[1].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u01"
+              ]
+            },
+            {
+              "text": "Kết hợp nhiều tệp PDF thành một tài liệu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[0].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s02",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s02-u01",
+              "text": "Mỗi lượt ghép tối đa một trăm tệp, với tổng dung lượng lên đến năm trăm mê-ga-byte."
+            },
+            {
+              "segment_id": "s02-u02",
+              "text": "Bạn cũng có thể thêm số trang và tùy chỉnh vị trí hoặc định dạng theo ý muốn."
+            }
+          ],
+          "subtitle_text": "Ghép đến 100 tệp và thêm số trang dễ dàng.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-pagenum",
+            "purpose": "Minh họa tính năng đánh số trang cho tài liệu PDF."
+          },
+          "claims": [
+            {
+              "text": "Mỗi lượt ghép tối đa 100 tệp, tổng dung lượng tối đa 500 MB.",
+              "type": "limitation",
+              "fact_refs": [
+                {
+                  "source_id": "src_10",
+                  "field_path": "limitations[0].text"
+                }
+              ],
+              "segment_ids": [
+                "s02-u01"
+              ],
+              "stat_display": {
+                "value": "100",
+                "label": "Số tệp tối đa mỗi lượt ghép",
+                "unit": "tệp",
+                "scope": "Tổng dung lượng tối đa 500 MB"
+              }
+            },
+            {
+              "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[3].description"
+                }
+              ],
+              "segment_ids": [
+                "s02-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s03",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s03-u01",
+              "text": "Theo PDFCraft công bố, mọi xử lý diễn ra trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị."
+            },
+            {
+              "segment_id": "s03-u02",
+              "text": "Bạn còn có thể chuyển đổi tài liệu PDF sang định dạng Word để chỉnh sửa."
+            }
+          ],
+          "subtitle_text": "Xử lý trực tiếp trong trình duyệt và hỗ trợ chuyển đổi sang Word.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-export",
+            "purpose": "Minh họa thao tác xuất file PDF sang định dạng Word (.docx)."
+          },
+          "claims": [
+            {
+              "text": "PDFCraft công bố: mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[2].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u01"
+              ]
+            },
+            {
+              "text": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[4].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s04",
+          "role": "cta",
+          "narration_segments": [
+            {
+              "segment_id": "s04-u01",
+              "text": "Xem thêm thông tin."
+            }
+          ],
+          "subtitle_text": "Xem thêm thông tin.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-result",
+            "purpose": "Hiển thị kết quả tài liệu sau khi thao tác."
+          },
+          "claims": [
+            {
+              "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+              "type": "identity",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "identity.tagline.value"
+                }
+              ],
+              "segment_ids": [
+                "s04-u01"
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "text": "Xem thêm thông tin.",
+        "destination": null
+      }
+    },
+    "kind_audit": [
+      {
+        "scene_id": "s01",
+        "asset_id": "pdfcraft-merge",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      },
+      {
+        "scene_id": "s02",
+        "asset_id": "pdfcraft-pagenum",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      },
+      {
+        "scene_id": "s03",
+        "asset_id": "pdfcraft-word-export",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      },
+      {
+        "scene_id": "s04",
+        "asset_id": "pdfcraft-word-result",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      }
+    ],
+    "schema_errors": [],
+    "content_errors": [],
+    "syllables": 111,
+    "valid": true
+  },
+  "feedback": [
+    {
+      "source": "syllable_advisory",
+      "message": "Lời đọc hiện có 111 âm tiết, ít hơn mốc khuyến nghị 150–170. Chỉ là khuyến nghị: bổ sung/rút gọn bằng nội dung có căn cứ trong fact, không thêm claim hay kéo dài câu chỉ để đủ số.",
+      "syllables": 111
+    }
+  ],
+  "repair": {
+    "raw": {
+      "schema_version": "p1-ac-03.v1-draft",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "pkb_schema_version": "0.3",
+      "knowledge_version": 1,
+      "language": "vi",
+      "platform": "tiktok",
+      "audience": "người xem phổ thông",
+      "context_defaults_applied": [
+        "platform",
+        "intent",
+        "audience",
+        "cta"
+      ],
+      "intent": "awareness",
+      "target_duration_s": 42,
+      "concept": {
+        "title": "Trải nghiệm xử lý PDF trực tuyến với PDFCraft",
+        "angle": "demo"
+      },
+      "hook": {
+        "text": "Bạn cần gộp tệp PDF và thao tác với tài liệu mà không cần đăng ký tài khoản?",
+        "type": "curiosity",
+        "fact_refs": [
+          {
+            "source_id": "src_01",
+            "field_path": "features[1].name"
+          }
+        ]
+      },
+      "scenes": [
+        {
+          "scene_id": "s01",
+          "role": "hook",
+          "narration_segments": [
+            {
+              "segment_id": "s01-u01",
+              "text": "Bạn cần gộp tệp PDF và thao tác với tài liệu mà không cần đăng ký tài khoản?"
+            },
+            {
+              "segment_id": "s01-u02",
+              "text": "Khám phá ngay PDFCraft với công cụ hợp nhất tài liệu trực tuyến hoàn toàn miễn phí."
+            },
+            {
+              "segment_id": "s01-u03",
+              "text": "Công cụ này cho phép kết hợp nhiều tệp PDF thành một tài liệu một cách trực tuyến."
+            }
+          ],
+          "subtitle_text": "Gộp tệp PDF trực tuyến, không cần đăng ký với PDFCraft.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-merge",
+            "purpose": "Hiển thị giao diện hợp nhất PDF bằng cách kéo thả."
+          },
+          "claims": [
+            {
+              "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[1].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u01"
+              ]
+            },
+            {
+              "text": "Hoàn toàn Miễn phí",
+              "type": "pricing",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "pricing.free_plan.value"
+                }
+              ],
+              "segment_ids": [
+                "s01-u02"
+              ]
+            },
+            {
+              "text": "Kết hợp nhiều tệp PDF thành một tài liệu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[0].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u03"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s02",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s02-u01",
+              "text": "Mỗi lượt ghép tối đa một trăm tệp, với tổng dung lượng lên đến năm trăm mê-ga-byte."
+            },
+            {
+              "segment_id": "s02-u02",
+              "text": "Bạn cũng có thể thêm số trang và tùy chỉnh vị trí hoặc định dạng theo ý muốn."
+            }
+          ],
+          "subtitle_text": "Ghép đến 100 tệp và thêm số trang dễ dàng.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-pagenum",
+            "purpose": "Minh họa tính năng đánh số trang cho tài liệu PDF."
+          },
+          "claims": [
+            {
+              "text": "Mỗi lượt ghép tối đa 100 tệp, tổng dung lượng tối đa 500 MB.",
+              "type": "limitation",
+              "fact_refs": [
+                {
+                  "source_id": "src_10",
+                  "field_path": "limitations[0].text"
+                }
+              ],
+              "segment_ids": [
+                "s02-u01"
+              ],
+              "stat_display": {
+                "value": "100",
+                "label": "Số tệp tối đa mỗi lượt ghép",
+                "unit": "tệp",
+                "scope": "Tổng dung lượng tối đa 500 MB"
+              }
+            },
+            {
+              "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[3].description"
+                }
+              ],
+              "segment_ids": [
+                "s02-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s03",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s03-u01",
+              "text": "Theo PDFCraft công bố, mọi xử lý diễn ra trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị."
+            },
+            {
+              "segment_id": "s03-u02",
+              "text": "Bạn còn có thể chuyển đổi tài liệu PDF sang định dạng Word để chỉnh sửa."
+            }
+          ],
+          "subtitle_text": "Xử lý trực tiếp trong trình duyệt và hỗ trợ chuyển đổi sang Word.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-export",
+            "purpose": "Minh họa thao tác xuất file PDF sang định dạng Word (.docx)."
+          },
+          "claims": [
+            {
+              "text": "PDFCraft công bố: mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[2].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u01"
+              ]
+            },
+            {
+              "text": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[4].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s04",
+          "role": "cta",
+          "narration_segments": [
+            {
+              "segment_id": "s04-u01",
+              "text": "Xem thêm thông tin."
+            }
+          ],
+          "subtitle_text": "Xem thêm thông tin.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-result",
+            "purpose": "Hiển thị kết quả tài liệu sau khi thao tác."
+          },
+          "claims": [
+            {
+              "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+              "type": "identity",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "identity.tagline.value"
+                }
+              ],
+              "segment_ids": [
+                "s04-u01"
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "text": "Xem thêm thông tin.",
+        "destination": null
+      }
+    },
+    "prepared": {
+      "schema_version": "p1-ac-03.v1-draft",
+      "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+      "pkb_schema_version": "0.3",
+      "knowledge_version": 1,
+      "language": "vi",
+      "platform": "tiktok",
+      "audience": "người xem phổ thông",
+      "context_defaults_applied": [
+        "platform",
+        "intent",
+        "audience",
+        "cta"
+      ],
+      "intent": "awareness",
+      "target_duration_s": 42,
+      "concept": {
+        "title": "Trải nghiệm xử lý PDF trực tuyến với PDFCraft",
+        "angle": "demo"
+      },
+      "hook": {
+        "text": "Bạn cần gộp tệp PDF và thao tác với tài liệu mà không cần đăng ký tài khoản?",
+        "type": "curiosity",
+        "fact_refs": [
+          {
+            "source_id": "src_01",
+            "field_path": "features[1].name"
+          }
+        ]
+      },
+      "scenes": [
+        {
+          "scene_id": "s01",
+          "role": "hook",
+          "narration_segments": [
+            {
+              "segment_id": "s01-u01",
+              "text": "Bạn cần gộp tệp PDF và thao tác với tài liệu mà không cần đăng ký tài khoản?"
+            },
+            {
+              "segment_id": "s01-u02",
+              "text": "Khám phá ngay PDFCraft với công cụ hợp nhất tài liệu trực tuyến hoàn toàn miễn phí."
+            },
+            {
+              "segment_id": "s01-u03",
+              "text": "Công cụ này cho phép kết hợp nhiều tệp PDF thành một tài liệu một cách trực tuyến."
+            }
+          ],
+          "subtitle_text": "Gộp tệp PDF trực tuyến, không cần đăng ký với PDFCraft.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-merge",
+            "purpose": "Hiển thị giao diện hợp nhất PDF bằng cách kéo thả."
+          },
+          "claims": [
+            {
+              "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[1].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u01"
+              ]
+            },
+            {
+              "text": "Hoàn toàn Miễn phí",
+              "type": "pricing",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "pricing.free_plan.value"
+                }
+              ],
+              "segment_ids": [
+                "s01-u02"
+              ]
+            },
+            {
+              "text": "Kết hợp nhiều tệp PDF thành một tài liệu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[0].description"
+                }
+              ],
+              "segment_ids": [
+                "s01-u03"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s02",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s02-u01",
+              "text": "Mỗi lượt ghép tối đa một trăm tệp, với tổng dung lượng lên đến năm trăm mê-ga-byte."
+            },
+            {
+              "segment_id": "s02-u02",
+              "text": "Bạn cũng có thể thêm số trang và tùy chỉnh vị trí hoặc định dạng theo ý muốn."
+            }
+          ],
+          "subtitle_text": "Ghép đến 100 tệp và thêm số trang dễ dàng.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-pagenum",
+            "purpose": "Minh họa tính năng đánh số trang cho tài liệu PDF."
+          },
+          "claims": [
+            {
+              "text": "Mỗi lượt ghép tối đa 100 tệp, tổng dung lượng tối đa 500 MB.",
+              "type": "limitation",
+              "fact_refs": [
+                {
+                  "source_id": "src_10",
+                  "field_path": "limitations[0].text"
+                }
+              ],
+              "segment_ids": [
+                "s02-u01"
+              ],
+              "stat_display": {
+                "value": "100",
+                "label": "Số tệp tối đa mỗi lượt ghép",
+                "unit": "tệp",
+                "scope": "Tổng dung lượng tối đa 500 MB"
+              }
+            },
+            {
+              "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[3].description"
+                }
+              ],
+              "segment_ids": [
+                "s02-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s03",
+          "role": "demo",
+          "narration_segments": [
+            {
+              "segment_id": "s03-u01",
+              "text": "Theo PDFCraft công bố, mọi xử lý diễn ra trong trình duyệt và tệp của bạn không bao giờ rời khỏi thiết bị."
+            },
+            {
+              "segment_id": "s03-u02",
+              "text": "Bạn còn có thể chuyển đổi tài liệu PDF sang định dạng Word để chỉnh sửa."
+            }
+          ],
+          "subtitle_text": "Xử lý trực tiếp trong trình duyệt và hỗ trợ chuyển đổi sang Word.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-export",
+            "purpose": "Minh họa thao tác xuất file PDF sang định dạng Word (.docx)."
+          },
+          "claims": [
+            {
+              "text": "PDFCraft công bố: mọi xử lý diễn ra trong trình duyệt, tệp không rời khỏi thiết bị.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "features[2].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u01"
+              ]
+            },
+            {
+              "text": "Chuyển PDF sang tài liệu Word (DOCX) chỉnh sửa được.",
+              "type": "feature",
+              "fact_refs": [
+                {
+                  "source_id": "src_02",
+                  "field_path": "features[4].description"
+                }
+              ],
+              "segment_ids": [
+                "s03-u02"
+              ]
+            }
+          ]
+        },
+        {
+          "scene_id": "s04",
+          "role": "cta",
+          "narration_segments": [
+            {
+              "segment_id": "s04-u01",
+              "text": "Xem thêm thông tin."
+            }
+          ],
+          "subtitle_text": "Xem thêm thông tin.",
+          "visual_plan": {
+            "kind": "screen_recording",
+            "source_type": "existing_asset",
+            "asset_id": "pdfcraft-word-result",
+            "purpose": "Hiển thị kết quả tài liệu sau khi thao tác."
+          },
+          "claims": [
+            {
+              "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+              "type": "identity",
+              "fact_refs": [
+                {
+                  "source_id": "src_01",
+                  "field_path": "identity.tagline.value"
+                }
+              ],
+              "segment_ids": [
+                "s04-u01"
+              ]
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "text": "Xem thêm thông tin.",
+        "destination": null
+      }
+    },
+    "kind_audit": [
+      {
+        "scene_id": "s01",
+        "asset_id": "pdfcraft-merge",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      },
+      {
+        "scene_id": "s02",
+        "asset_id": "pdfcraft-pagenum",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      },
+      {
+        "scene_id": "s03",
+        "asset_id": "pdfcraft-word-export",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      },
+      {
+        "scene_id": "s04",
+        "asset_id": "pdfcraft-word-result",
+        "old_kind": "screen_recording",
+        "new_kind": "screen_recording",
+        "status": "unchanged"
+      }
+    ],
+    "schema_errors": [],
+    "content_errors": [],
+    "syllables": 133,
+    "valid": true
+  },
+  "final": {
+    "from": "repair"
+  }
+}

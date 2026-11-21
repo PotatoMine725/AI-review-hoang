@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+# Video, khung hình tạm, thư mục làm việc của ffmpeg: không commit
+output/
+.work/
+# Voice/ảnh thật lấy từ spike khác (PR #71, #73): không commit
+local/

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Fake Merge PDF</title>
+<style>body{font:18px sans-serif;margin:0;padding:80px 560px}
+#drop{display:block;border:3px dashed #888;padding:60px;text-align:center}
+button{font-size:20px;padding:12px 24px;margin-top:24px}
+#result{display:none;margin-top:40px}</style></head>
+<body>
+<h1>Merge PDF</h1>
+<label id="drop" for="f">Drop PDF files here</label>
+<input id="f" type="file" accept="application/pdf" multiple hidden>
+<ul id="list"></ul>
+<button id="merge" disabled>Merge</button>
+<div id="result"><p>Merged!</p><a id="dl" href="#" download>Download</a></div>
+<script>
+const f=document.getElementById('f'), m=document.getElementById('merge');
+f.addEventListener('change',()=>{
+  document.getElementById('list').innerHTML=[...f.files].map(x=>`<li>${x.name}</li>`).join('');
+  m.disabled=f.files.length<2;
+});
+m.addEventListener('click',()=>setTimeout(()=>{document.getElementById('result').style.display='block'},300));
+</script></body></html>

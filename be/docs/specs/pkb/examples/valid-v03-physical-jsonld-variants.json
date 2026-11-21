@@ -1,0 +1,161 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "product_kind": "physical",
+      "name": {
+        "value": "Bình giữ nhiệt Acme Demo 500ml (dữ liệu mẫu)",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"name\":\"Bình giữ nhiệt Acme Demo 500ml (dữ liệu mẫu)\""
+      },
+      "website": "https://shop.example.com/products/binh-giu-nhiet-acme-demo-500ml",
+      "brand_name": {
+        "value": "Acme Demo",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"brand\":{\"@type\":\"Brand\",\"name\":\"Acme Demo\"}"
+      },
+      "sku": {
+        "value": "AD-500",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"sku\":\"AD-500\""
+      }
+    },
+    "offers": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"price\":\"350000\"",
+        "extracted_via": "jsonld",
+        "price_text": "350000",
+        "amount": 350000,
+        "currency": "VND",
+        "availability": "in_stock",
+        "platform": "shop.example.com",
+        "variant_ref": "v1"
+      }
+    ],
+    "variants": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "data-attr-value=\"AD-500-BE\"",
+        "extracted_via": "dom",
+        "id": "v1",
+        "name": "Be",
+        "attributes": [
+          {
+            "key": "Màu",
+            "value": "Be"
+          }
+        ],
+        "selected": true
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "data-attr-value=\"AD-500-XA\"",
+        "extracted_via": "dom",
+        "id": "v2",
+        "name": "Xanh",
+        "attributes": [
+          {
+            "key": "Màu",
+            "value": "Xanh"
+          }
+        ],
+        "selected": false
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "data-attr-value=\"AD-500-DO\"",
+        "extracted_via": "dom",
+        "id": "v3",
+        "name": "Đỏ",
+        "attributes": [
+          {
+            "key": "Màu",
+            "value": "Đỏ"
+          }
+        ],
+        "selected": false
+      }
+    ],
+    "specs": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"sku\":\"AD-500\"",
+        "extracted_via": "jsonld",
+        "key": "Mã model",
+        "value": "AD-500"
+      }
+    ],
+    "media": {
+      "images": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "AD-500-BE_1.jpg",
+          "extracted_via": "dom",
+          "role": "hero",
+          "variant_ref": "v1",
+          "url": "https://cdn.example.com/acme-demo/AD-500-BE_1.jpg"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "AD-500-BE_2.jpg",
+          "extracted_via": "dom",
+          "role": "gallery",
+          "variant_ref": "v1",
+          "url": "https://cdn.example.com/acme-demo/AD-500-BE_2.jpg"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "AD-500-XA_1.jpg",
+          "extracted_via": "dom",
+          "role": "gallery",
+          "variant_ref": "v2",
+          "url": "https://cdn.example.com/acme-demo/AD-500-XA_1.jpg"
+        },
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "<meta property=\"og:image\" content=\"https://cdn.example.com/acme-demo/site-banner.jpg\">",
+          "extracted_via": "og",
+          "role": "gallery",
+          "generic": true,
+          "url": "https://cdn.example.com/acme-demo/site-banner.jpg"
+        }
+      ]
+    },
+    "audiences": [
+      {
+        "origin": "owner",
+        "edited_by": "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b",
+        "edited_at": "2026-10-14T03:20:00Z",
+        "segment": "Người hay mang bình nước đi làm"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://shop.example.com/products/binh-giu-nhiet-acme-demo-500ml",
+      "page_type": "product",
+      "fetched_at": "2026-10-13T08:40:00+00:00",
+      "content_hash": "sha256:406edfe271d6f2412e7569444f1d5b0dc20a3d93d9f12378d1d078adc0049977",
+      "region": "VN",
+      "locale": "vi-VN",
+      "variant": "raw",
+      "markdown_path": "pages/src_01-product.md",
+      "image_paths": [],
+      "structured_path": "pages/src_01-product.structured.json"
+    }
+  ]
+}

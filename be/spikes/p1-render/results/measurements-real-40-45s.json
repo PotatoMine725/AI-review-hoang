@@ -1,0 +1,136 @@
+{
+  "machine": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.15",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": "14",
+    "threads": "20",
+    "ram_gb": "15.6",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU; Intel(R) Iris(R) Xe Graphics",
+    "ffmpeg": "ffmpeg version 8.0-full_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers"
+  },
+  "limits_s": {
+    "min": 40.0,
+    "max": 45.0
+  },
+  "scenes": 10,
+  "render_timeout_s": 300,
+  "runs": 3,
+  "rows": [
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 33.25,
+      "wall_s_all": [
+        33.26,
+        33.25,
+        32.71
+      ],
+      "cpu_s_median": 101.8,
+      "max_rss_mb": 1918.0,
+      "duration_s": 43.0,
+      "size_mb": 4.29,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-9x16-cpu.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 33.76,
+      "wall_s_all": [
+        33.37,
+        33.76,
+        34.15
+      ],
+      "cpu_s_median": 105.4,
+      "max_rss_mb": 1944.0,
+      "duration_s": 43.0,
+      "size_mb": 4.37,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-16x9-cpu.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 47.74,
+      "wall_s_all": [
+        47.44,
+        47.74,
+        48.0
+      ],
+      "cpu_s_median": 133.0,
+      "max_rss_mb": 1902.0,
+      "duration_s": 43.33,
+      "size_mb": 3.84,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-9x16-cpu.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 48.79,
+      "wall_s_all": [
+        49.42,
+        48.79,
+        48.7
+      ],
+      "cpu_s_median": 134.4,
+      "max_rss_mb": 1932.0,
+      "duration_s": 43.33,
+      "size_mb": 3.48,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-16x9-cpu.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 58.32,
+      "wall_s_all": [
+        58.32,
+        58.32,
+        58.32
+      ],
+      "cpu_s_median": 161.4,
+      "max_rss_mb": 1895.0,
+      "duration_s": 43.33,
+      "size_mb": 3.81,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-9x16-cpu.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 59.76,
+      "wall_s_all": [
+        60.13,
+        59.76,
+        58.88
+      ],
+      "cpu_s_median": 164.5,
+      "max_rss_mb": 1929.0,
+      "duration_s": 43.33,
+      "size_mb": 3.48,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-16x9-cpu.mp4"
+    }
+  ],
+  "failures": []
+}

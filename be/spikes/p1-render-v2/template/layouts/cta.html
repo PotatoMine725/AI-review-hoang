@@ -1,0 +1,55 @@
+<!--
+  Layout "cta": tên sản phẩm + URL + lời kêu gọi. Chữ CTA/URL được miễn fact_refs.
+  props: brand{text,icon}, url, chips[{text,icon}], button{text}
+  Lớp hiện dần: logo (0 s, slam) → URL (0,35, wipe) → chip (0,65 + i×0,25) → nút (1,3, vệt sáng 1,9)
+-->
+<div class="scene layout-cta" data-layout="cta">
+  <style>
+    .layout-cta .safe { display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; gap: 46px; }
+    .layout-cta .brand { flex-direction: column; gap: 34px; }
+    .layout-cta .icon-tile { --icon-tile: 190px; box-shadow: 0 0 0 18px var(--accent-soft), 0 30px 80px rgba(0,0,0,.5); }
+    .layout-cta .wordmark { font-size: calc(var(--fs-hero) * 1.15); }
+    .layout-cta .url-pill { display: inline-flex; align-items: center; gap: 18px; padding: 22px 40px;
+      border-radius: 999px; border: 2px solid var(--accent-2); background: var(--accent-2-soft);
+      font-size: var(--fs-body); font-weight: 800; color: var(--ink); }
+    .layout-cta .url-pill svg { width: 1em; height: 1em; color: var(--accent-2); }
+    .layout-cta .chips { justify-content: center; }
+    .layout-cta .button { display: inline-flex; align-items: center; gap: 18px; padding: 30px 60px;
+      border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 800;
+      font-size: calc(var(--fs-body) * 1.1); box-shadow: 0 24px 60px rgba(244, 183, 64, 0.35); }
+    .layout-cta .button svg { width: 1.1em; height: 1.1em; }
+  </style>
+
+  <div class="bg"></div>
+  <div class="bg-dots"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+  <svg class="waves" viewBox="0 0 1000 300" preserveAspectRatio="none">
+    <path d="M0 200 C 150 120 300 280 500 190 S 850 110 1000 180" />
+    <path d="M0 240 C 180 170 320 300 520 230 S 860 160 1000 220" />
+    <path d="M0 160 C 200 90 340 230 540 150 S 880 80 1000 140" />
+  </svg>
+
+  <div class="safe">
+    <div class="brand a-slam" style="--d: 0s">
+      <span class="icon-tile" data-icon="brand.icon"></span>
+      <span class="wordmark" data-text="brand"></span>
+    </div>
+    <div class="url-pill a-wipe" style="--d: 0.35s" data-if="url">
+      <span data-icon-name="link"></span><span data-text="url"></span>
+    </div>
+    <div class="chips" data-list="chips">
+        <span data-item class="chip a-pop" style="--d: calc(0.65s + var(--i) * var(--stagger))">
+          <span data-icon="icon"></span><span data-text="text"></span>
+        </span>
+    </div>
+    <div class="button a-pop shine" style="--d: 1.3s; --shine-d: 1.9s">
+      <span data-text="button"></span><span data-icon-name="arrow-right"></span>
+      <i class="shine-bar"></i>
+    </div>
+  </div>
+
+  <script>window.TPL.mount("cta");</script>
+</div>

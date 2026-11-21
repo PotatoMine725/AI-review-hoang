@@ -1,0 +1,25 @@
+{
+  "title": "Plan lỗi: too-short",
+  "preset": "co-dien",
+  "language": "vi",
+  "scenes": [
+    {
+      "role": "hook",
+      "kind": "text_card",
+      "caption": "Thẻ chữ thử độ dài",
+      "min_duration_s": 12
+    },
+    {
+      "role": "demo",
+      "kind": "text_card",
+      "caption": "Thẻ chữ thử độ dài",
+      "min_duration_s": 12
+    },
+    {
+      "role": "cta",
+      "kind": "text_card",
+      "caption": "Thẻ chữ thử độ dài",
+      "min_duration_s": 12
+    }
+  ]
+}

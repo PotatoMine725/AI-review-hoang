@@ -1,0 +1,60 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "product_kind": "physical",
+      "name": {
+        "value": "Balo Acme Demo City (dữ liệu mẫu)",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "<meta property=\"og:title\" content=\"Balo Acme Demo City (dữ liệu mẫu)\" />"
+      },
+      "website": "https://shop.example.com/products/balo-acme-demo-city",
+      "brand_name": {
+        "value": "Acme Demo",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"vendor\":\"Acme Demo\""
+      }
+    },
+    "variants": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"sku\":\"AD-BL-01\",\"variant_title\":\"Size M / Đỏ\"",
+        "extracted_via": "embedded",
+        "id": "v1",
+        "name": "Size M / Đỏ",
+        "sku": "AD-BL-01",
+        "selected": true
+      }
+    ],
+    "media": {
+      "images": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "<meta itemprop=\"image\" content=\"https://cdn.example.com/acme-demo/balo-city_grande.jpg\">",
+          "extracted_via": "microdata",
+          "role": "hero",
+          "url": "https://cdn.example.com/acme-demo/balo-city_grande.jpg"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://shop.example.com/products/balo-acme-demo-city",
+      "page_type": "product",
+      "fetched_at": "2026-10-13T08:41:00+00:00",
+      "content_hash": "sha256:6ce21447813b6f0e30433b7263011f3df073beda407df5d1baac6ac7c6804ce1",
+      "region": "VN",
+      "locale": "vi-VN",
+      "variant": "raw",
+      "markdown_path": "pages/src_01-product.md",
+      "image_paths": [],
+      "structured_path": "pages/src_01-product.structured.json"
+    }
+  ]
+}

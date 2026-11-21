@@ -1,0 +1,39 @@
+[project]
+name = "p1-render"
+version = "0.1.0"
+description = "Spike P1-02a: renderer FFmpeg (1 render plan → MP4 9:16 + 16:9, phụ đề tiếng Việt) — issue #67"
+readme = "README.md"
+requires-python = ">=3.12"
+# Chỉ pydantic + binary ffmpeg/ffprobe của hệ thống (đúng ràng buộc của prompt).
+dependencies = [
+    "pydantic>=2.12",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyright]
+include = ["*.py", "tests"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["ffmpeg: cần ffmpeg/ffprobe thật trong PATH"]

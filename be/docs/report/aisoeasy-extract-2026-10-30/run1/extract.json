@@ -1,0 +1,7 @@
+{
+  "status": "completed",
+  "model": "gemini-3.5-flash-lite",
+  "facts": 19,
+  "evidence_in_source": 1.0,
+  "warnings": []
+}

@@ -1,0 +1,376 @@
+%% Nguồn: @tranquangthong03, 2026-10-07 (file gốc: erd_v0.mermaid). Bản vẽ của erd.dbml (v1.3.3). Chờ @VV6505 duyệt.
+%%
+%% Bổ sung cho issue #23 (xem erd.dbml và data-dictionary.md — 2 file đó giữ chi tiết đầy đủ):
+%%   v1.3.4 (P1 pilot, PR #100): thêm script_revisions (chuyển tiếp, thay content_scripts cho P1), generation_jobs.pkb_version/script_revision/render_profile/n8n_execution_id, products.affiliate_url nullable.
+%%   generation_jobs: tokens_in, tokens_out, cost_usd, cost_breakdown (contract cost_breakdown v1).
+%%     Worker chỉ ghi cost_breakdown; DB tự tính 3 cột còn lại. Aggregation/validation/write
+%%     restriction là PLANNED, chưa implement trong task này.
+%%     COST NULLABILITY (resolved, #23): 3 cột tổng nullable theo thiết kế để phân biệt
+%%     '{}' -> NULL (chưa đo), payload v1 có item cost_usd=0 -> 0 (thật sự tốn 0), payload
+%%     v1 thường -> > 0. Không có schema change cho generation_jobs trong task này.
+%%   content_scripts: cost_breakdown (cùng contract cost_breakdown v1) + cost_usd numeric(12,6)
+%%     do DB suy ra. Script tạo qua sync API (D012), không có generation_jobs, nhưng vẫn tốn
+%%     LLM cost. tokens_in/tokens_out cố ý KHÔNG thêm ở MVP. PLANNED.
+%%     COST SCOPE NOTE (#23): 2 cột này đo chi phí sinh script của M2; RIÊNG BIỆT với ngân sách
+%%     NFR-02 của M1 (≤ $0.05/product) vốn chỉ tính crawl + extract. Pilot chỉ theo dõi để thấy,
+%%     KHÔNG cộng vào tổng ngân sách của product. Thiết kế cột và quy tắc suy dẫn không đổi.
+%%   videos: merchant_flagged_at, merchant_flag_reason. Enforcement là PLANNED, chưa implement.
+%%     Chỉ merchant sở hữu product của video được flag; cần timestamp + reason không rỗng;
+%%     server cấp merchant_flagged_at; flag không tự approve/reject/archive/remove video.
+%%     Không có report history. Hành vi ghi đè khi report lặp CHƯA chốt.
+%%   product_knowledge: trạng thái PKB: draft -> in_review -> approved | rejected.
+%%     in_review = merchant đã submit, chờ duyệt; approved cần merchant approve;
+%%     rejected có thể do admin set khi vi phạm policy. (Đổi theo Issue #23.)
+%%     Chỉ merchant sở hữu product được approve PKB; admin chỉ reject được khi
+%%     vi phạm policy và phải ghi reason; admin không sửa/approve nội dung PKB. PLANNED.
+%%     v1.3.3 (#23): approved_by/approved_at -> reviewed_by/reviewed_at (ghi cả approve và
+%%     reject); thêm reviewer_role (merchant|admin). KHÔNG có cột review_action — kết quả cuối
+%%     đã nằm ở status (approved hoặc rejected), tránh cặp cột dư phải đồng bộ.
+%%     review_note lưu reason của rejection / ghi chú approval (nullable, tối đa 1000 ký tự);
+%%     khi status = rejected thì review_note phải không rỗng; approve thì tùy chọn. Review
+%%     metadata này KHÔNG nằm trong payload data JSON (data theo PKB v0.2 additionalProperties:false).
+%%     GAP (rejection reason) và GAP (reject semantics) ĐÃ RESOLVED ở v1.3.3.
+%%     SQL REQUIRED (PKB review consistency) PLANNED: approved -> reviewed_by/at NOT NULL,
+%%     reviewer_role='merchant'; rejected -> reviewed_by/at NOT NULL, reviewer_role IN
+%%     (merchant,admin), review_note non-empty; draft/in_review -> reviewed_by/at, reviewer_role,
+%%     review_note đều NULL. Trigger hoặc app-level check, không dùng 1 CHECK.
+%%     CONFLICT: BRD §542, SRS FR-PI-03 (dòng 356), M1 spec FR-07 và qa-log #1 /
+%%     decision-log #11 nói Admin KHÔNG tham gia approve PKB trong MVP — chưa đồng bộ.
+%%     CONFLICT lịch sử (đã note, không bỏ qua): SRS và M1 spec liệt kê status chỉ
+%%     draft/in_review/approved; change này áp theo Issue #23 và cần cập nhật 2 spec đó.
+erDiagram
+    %% ============================================
+    %% AUTH
+    %% ============================================
+    auth_users ||--o| merchants : "1:1 (user_id UNIQUE)"
+    auth_users ||--o| creators : "1:1 (user_id UNIQUE)"
+    auth_users ||--o{ commissions : "records payment"
+
+    %% ============================================
+    %% SECTION 1 — IDENTITY & PROFILES
+    %% ============================================
+    creators ||--o{ creator_accounts : "owns N social accounts"
+    creators ||--o{ creator_campaigns : "enrolls in N campaigns"
+    merchants ||--o{ products : "owns N products"
+    merchants ||--o{ campaigns : "owns N campaigns"
+
+    %% ============================================
+    %% SECTION 2 — PRODUCT INTELLIGENCE
+    %% ============================================
+    products ||--o{ product_knowledge : "has N PKB versions"
+    products ||--o{ campaigns : "promoted by N campaigns"
+    products ||--o{ generation_jobs : "has N jobs"
+    products ||--o{ conversions : "receives N conversions"
+    products ||--o{ commission_eligibility : "has N eligibility gates"
+
+    %% ============================================
+    %% SECTION 3 — CAMPAIGN & ENROLLMENT
+    %% ============================================
+    campaigns ||--o{ creator_campaigns : "has N enrollments"
+    campaigns ||--o{ content_scripts : "generates N scripts"
+    campaigns ||--o{ videos : "produces N videos"
+    campaigns ||--o{ published_posts : "distributed via N posts"
+
+    creator_campaigns ||--o{ published_posts : "creator posts"
+    creator_campaigns ||--o{ commission_eligibility : "wins eligibility"
+    creator_campaigns ||--o{ commissions : "earns commissions"
+
+    %% ============================================
+    %% SECTION 4 — CONTENT & VIDEO
+    %% ============================================
+    script_revisions ||--o{ generation_jobs : "P1: video jobs use approved revision"
+    product_knowledge ||--o{ generation_jobs : "P1: jobs record pkb_version"
+    products ||--o{ script_revisions : "P1: has N script revisions"
+    product_knowledge ||--o{ script_revisions : "P1: revision built from approved PKB"
+    content_scripts ||--o{ videos : "rendered into N videos"
+
+    generation_jobs ||--|| videos : "produces 1 video"
+
+    videos ||--o{ videos : "parent variant lineage"
+
+    %% ============================================
+    %% SECTION 5 — DISTRIBUTION & TRACKING
+    %% ============================================
+    creator_accounts ||--o{ published_posts : "used for N posts"
+    videos ||--o{ published_posts : "posted as N posts"
+
+    published_posts ||--|| tracking_links : "has 1 link"
+    tracking_links ||--o{ tracking_events : "generates N clicks"
+
+    %% ============================================
+    %% SECTION 6 — CONVERSION & COMMISSION
+    %% ============================================
+    tracking_events ||--o{ conversions : "attributed to N conversions"
+
+    conversions ||--|| commission_eligibility : "first paid claims"
+    conversions ||--|| commissions : "wins 1 commission"
+    commission_eligibility ||--|| commissions : "gates 1 commission"
+
+    %% ============================================
+    %% TABLE DEFINITIONS
+    %% ============================================
+
+    auth_users {
+        uuid id PK
+        text email
+    }
+
+    merchants {
+        uuid id PK
+        uuid user_id FK "UNIQUE, default auth.uid()"
+        text company_name
+        text company_slug UK
+        text website
+        text logo_url
+        text description
+        text contact_email
+        text country
+        text status "pending|active|suspended"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    creators {
+        uuid id PK
+        uuid user_id FK "UNIQUE (FIX needed), default auth.uid()"
+        text display_name
+        text bio
+        text niche
+        text language
+        text country
+        text avatar_url
+        text status "pending|active|suspended"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    creator_accounts {
+        uuid id PK
+        uuid creator_id FK
+        text platform
+        text handle
+        text platform_handle UK "GENERATED platform:handle"
+        text url
+        bigint follower_count
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    products {
+        uuid id PK
+        uuid merchant_id FK
+        text website_url UK
+        text affiliate_url "NULL in P1 pilot (v1.3.4); http(s) URL when set"
+        text name "nullable until activation"
+        text description
+        text category
+        jsonb merchant_input
+        int current_knowledge_version FK
+        text status "draft|active|archived"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    product_knowledge {
+        uuid product_id PK "composite"
+        int version PK "composite"
+        text status "draft|in_review|approved|rejected"
+        jsonb data
+        jsonb sources
+        uuid reviewed_by FK "actor for BOTH approve and reject; renamed from approved_by"
+        timestamptz reviewed_at "set for BOTH approve and reject; renamed from approved_at"
+        text reviewer_role "merchant|admin; NULL"
+        text review_note "NULL; max 1000 chars; reason for reject (or approval note)"
+        timestamptz created_at
+    }
+
+    campaigns {
+        uuid id PK
+        uuid merchant_id FK
+        uuid product_id FK
+        text name
+        text slug UK
+        text description
+        timestamptz start_date
+        timestamptz end_date
+        text target_audience
+        text_array target_countries
+        text target_language
+        text content_brief
+        text_array approved_claims
+        text_array forbidden_claims
+        text cta
+        text commission_type "flat|percentage"
+        numeric commission_value
+        varchar currency "USD only"
+        timestamptz terms_locked_at "permanent marker"
+        text status "draft|active|paused|ended|archived"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    creator_campaigns {
+        uuid id PK
+        uuid creator_id FK
+        uuid campaign_id FK
+        text status "active|left|removed"
+        text commission_type_snapshot "flat|percentage"
+        numeric commission_value_snapshot
+        varchar currency_snapshot "USD"
+        timestamptz joined_at "immutable on rejoin"
+        timestamptz left_at
+        timestamptz updated_at
+    }
+
+    content_scripts {
+        uuid id PK
+        uuid campaign_id FK
+        uuid product_id FK
+        int knowledge_version FK
+        text idea
+        text hook
+        text intent "awareness|education|consideration|conversion"
+        text script_text
+        text platform
+        text language
+        jsonb cost_breakdown "DEFAULT {}; worker-written; cost_breakdown v1 contract"
+        numeric cost_usd "numeric(12,6); NULL; derived; same rules as generation_jobs"
+        timestamptz created_at
+    }
+
+    script_revisions {
+        uuid product_id PK,FK
+        int revision PK "allocated per product"
+        int knowledge_version FK "approved PKB only"
+        int parent_revision FK "NULL for first"
+        text status "draft|in_review|approved|rejected"
+        jsonb content "M2 script"
+        jsonb report "validator/critic/usage"
+        jsonb cost_breakdown "DEFAULT {}"
+        text idempotency_key "UK with product_id"
+        uuid reviewed_by FK
+        timestamptz reviewed_at
+        text review_note
+        timestamptz created_at
+    }
+    generation_jobs {
+        uuid id PK
+        uuid product_id FK
+        int pkb_version FK "(product_id,pkb_version); required for video"
+        int script_revision FK "(product_id,script_revision); video only; replaces content_script_id in P1"
+        text render_profile "NULL = default; free text, optional"
+        text n8n_execution_id "trace only; not source of truth"
+        text job_type "crawl|video"
+        text status "queued|running|completed|failed"
+        text idempotency_key "UK with product_id (v1.3.4)"
+        jsonb input_snapshot
+        jsonb result_manifest
+        text error
+        int attempts
+        int tokens_in "NULL by design; derived from cost_breakdown"
+        int tokens_out "NULL by design; derived from cost_breakdown"
+        numeric cost_usd "numeric(12,6); NULL by design; derived; 6 decimals"
+        jsonb cost_breakdown "DEFAULT {}; worker-written; v1 contract"
+        timestamptz created_at
+        timestamptz finished_at
+    }
+
+    videos {
+        uuid id PK
+        uuid campaign_id FK
+        uuid content_script_id FK
+        uuid generation_job_id FK "UNIQUE"
+        uuid parent_video_id FK "self-ref variant lineage"
+        text storage_path
+        text thumbnail_path
+        text caption
+        text_array hashtags
+        text cta
+        text posting_instructions
+        timestamptz first_approved_at "permanent freeze"
+        jsonb evidence
+        text review_notes "mutable after approval"
+        timestamptz merchant_flagged_at "NULL, no default; server-supplied"
+        text merchant_flag_reason "NULL, no default; non-empty when flagged"
+        text status "pending_review|approved|rejected|archived"
+        uuid reviewed_by FK
+        timestamptz reviewed_at
+        timestamptz created_at
+    }
+
+    published_posts {
+        uuid id PK
+        uuid creator_campaign_id FK "server-derived"
+        uuid creator_id FK "server-derived"
+        uuid campaign_id FK "server-derived"
+        uuid creator_account_id FK "client-provided"
+        uuid video_id FK "client-provided"
+        text status "selected|published|removed"
+        text post_url UK
+        timestamptz posted_at
+        bigint views
+        timestamptz views_updated_at
+        timestamptz created_at
+    }
+
+    tracking_links {
+        uuid id PK
+        uuid published_post_id FK "UNIQUE 1:1"
+        text slug UK
+        text destination_url "server-derived"
+        text status "active|disabled"
+        timestamptz created_at
+    }
+
+    tracking_events {
+        uuid id PK "IS the click_id sent to merchant"
+        uuid tracking_link_id FK
+        text event_type "click only"
+        text visitor_id
+        timestamptz occurred_at
+    }
+
+    conversions {
+        uuid id PK
+        uuid product_id FK
+        uuid attributed_click_id FK "NULL if unattributed"
+        text source "integration namespace"
+        text external_event_id
+        text external_user_id "customer key"
+        text external_order_id "paid only"
+        text event_type "signup|trial|paid"
+        numeric amount
+        varchar currency "USD"
+        text status "valid|voided"
+        text void_reason
+        text eligibility_status "not_applicable|pending|eligible|already_claimed|unattributed"
+        timestamptz eligibility_checked_at
+        jsonb attribution_snapshot
+        timestamptz occurred_at
+        timestamptz received_at
+    }
+
+    commission_eligibility {
+        uuid product_id PK "composite"
+        text source PK "composite"
+        text external_user_id PK "composite"
+        uuid first_paid_conversion_id FK "UNIQUE"
+        uuid first_creator_campaign_id FK "nullable if unattributed"
+        timestamptz claimed_at
+    }
+
+    commissions {
+        uuid id PK
+        uuid conversion_id FK "UNIQUE 1:1"
+        uuid creator_campaign_id FK
+        numeric basis_amount
+        numeric amount
+        varchar currency "USD"
+        jsonb calculation_snapshot
+        text status "pending|approved|paid|reversed"
+        timestamptz approved_at
+        timestamptz paid_at
+        text payment_reference
+        uuid payment_recorded_by FK
+        timestamptz created_at
+    }

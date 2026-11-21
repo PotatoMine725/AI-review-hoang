@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CostBreakdown",
+  "description": "cost_breakdown v1, dùng chung cho generation_jobs (crawl, video) và content_scripts. Worker chỉ ghi cột này; tokens_in, tokens_out, cost_usd do DB tự tính. Xem docs/specs/contracts/README.md và issue #23.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "currency",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "currency": {
+      "const": "USD"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Item"
+      }
+    }
+  },
+  "$defs": {
+    "Item": {
+      "description": "1 lần gọi có tốn tiền (hoặc 1 lần lấy từ cache nội bộ của worker). Retry = thêm item, attempt tăng dần.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "call_id",
+        "category",
+        "attempt",
+        "cache_hit",
+        "cost_usd",
+        "cost_status"
+      ],
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Id của 1 lần gọi provider, worker sinh (UUID). Duy nhất trong items. JSON Schema không kiểm được tính duy nhất; BE kiểm trong RPC để chống ghi trùng khi retry."
+        },
+        "category": {
+          "enum": [
+            "llm",
+            "tts",
+            "video_provider",
+            "other"
+          ]
+        },
+        "step": {
+          "type": "string",
+          "description": "Bước pipeline, vd. extract."
+        },
+        "provider": {
+          "type": "string",
+          "description": "vd. google."
+        },
+        "model": {
+          "type": "string",
+          "description": "vd. gemini-3.5-flash-lite."
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cache_hit": {
+          "type": "boolean",
+          "description": "true = lấy từ cache nội bộ (llm_cache của worker), không gọi provider. Cache phía provider thì để false."
+        },
+        "tokens_in": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Chỉ item llm. Gồm cả token cache phía provider (nếu có)."
+        },
+        "tokens_out": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Chỉ item llm. Gồm thinking."
+        },
+        "unit_price_in_per_1m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit_price_out_per_1m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "prices_checked_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "cost_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Worker làm tròn về 6 chữ số thập phân trước khi ghi (không dùng multipleOf vì lỗi số thực). DB ép numeric(12,6) khi tính tổng. Đã tính theo giá cache nếu có. 0 nếu cache_hit."
+        },
+        "tokens_in_cached": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Tuỳ chọn, chỉ item llm. Số token vào được tính theo giá cache của provider. Phải ≤ tokens_in; JSON Schema không kiểm được, BE kiểm trong RPC. MVP chưa dùng."
+        },
+        "unit_price_cached_in_per_1m": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Tuỳ chọn. Giá token cache của provider, USD / 1M token. MVP chưa dùng."
+        },
+        "cost_status": {
+          "enum": [
+            "exact",
+            "estimated"
+          ],
+          "description": "exact: token lấy từ usage provider trả về. estimated: provider không trả usage (vd. lỗi giữa chừng), token ước tính bằng count_tokens hoặc chặn trên max_output_tokens. Không có trạng thái 'không biết'."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "llm"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "required": [
+              "call_id",
+              "step",
+              "provider",
+              "model",
+              "attempt",
+              "cache_hit",
+              "tokens_in",
+              "tokens_out",
+              "unit_price_in_per_1m",
+              "unit_price_out_per_1m",
+              "prices_checked_at",
+              "cost_usd",
+              "cost_status"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "cache_hit": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "cost_usd": {
+                "const": 0
+              },
+              "tokens_in": {
+                "const": 0
+              },
+              "tokens_out": {
+                "const": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

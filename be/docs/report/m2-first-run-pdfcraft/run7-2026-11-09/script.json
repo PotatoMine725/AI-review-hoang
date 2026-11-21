@@ -1,0 +1,232 @@
+{
+  "schema_version": "p1-ac-03.v1-draft",
+  "product_id": "3b7e9c1a-2f4d-4a8b-9c6e-1d2f3a4b5c6d",
+  "pkb_schema_version": "0.3",
+  "knowledge_version": 1,
+  "language": "vi",
+  "platform": "tiktok",
+  "audience": "người xem phổ thông",
+  "context_defaults_applied": [
+    "platform",
+    "intent",
+    "audience",
+    "cta"
+  ],
+  "intent": "awareness",
+  "target_duration_s": 42,
+  "concept": {
+    "title": "Xử lý PDF trực tuyến với PDFCraft",
+    "angle": "demo"
+  },
+  "hook": {
+    "text": "Bạn cần một công cụ xử lý PDF miễn phí và mạnh mẽ ngay trong trình duyệt?",
+    "type": "curiosity",
+    "fact_refs": [
+      {
+        "source_id": "src_01",
+        "field_path": "identity.tagline.value"
+      },
+      {
+        "source_id": "src_01",
+        "field_path": "pricing.free_plan.value"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "narration_segments": [
+        {
+          "segment_id": "s01-u01",
+          "text": "Bạn cần một công cụ xử lý PDF miễn phí và mạnh mẽ ngay trong trình duyệt?"
+        },
+        {
+          "segment_id": "s01-u02",
+          "text": "Hôm nay cùng khám phá PDFCraft với các tính năng hữu ích."
+        }
+      ],
+      "subtitle_text": "Khám phá PDFCraft - Xử lý PDF miễn phí trong trình duyệt",
+      "visual_plan": {
+        "kind": "logo",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-merge",
+        "purpose": "Giới thiệu giao diện chính của PDFCraft"
+      },
+      "claims": [
+        {
+          "text": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+          "type": "identity",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "identity.tagline.value"
+            }
+          ],
+          "segment_ids": [
+            "s01-u01",
+            "s01-u02"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s02",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s02-u01",
+          "text": "Bạn có thể kết hợp nhiều tệp PDF thành một tài liệu bằng tính năng hợp nhất."
+        },
+        {
+          "segment_id": "s02-u02",
+          "text": "Công cụ cho phép gộp đến một trăm tệp cùng lúc với tổng dung lượng lên đến năm trăm mê-ga-byte."
+        }
+      ],
+      "subtitle_text": "Hợp nhất đến 100 tệp PDF, tổng dung lượng tới 500MB",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-merge",
+        "purpose": "Thao tác kết hợp nhiều tệp PDF thành một tài liệu"
+      },
+      "claims": [
+        {
+          "text": "Kết hợp nhiều tệp PDF thành một tài liệu",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[0].description"
+            }
+          ],
+          "segment_ids": [
+            "s02-u01"
+          ]
+        },
+        {
+          "text": "You can merge up to 100 files at once, with a total combined size of up to 500MB.",
+          "type": "limitation",
+          "fact_refs": [
+            {
+              "source_id": "src_10",
+              "field_path": "limitations[0].text"
+            }
+          ],
+          "segment_ids": [
+            "s02-u02"
+          ],
+          "stat_display": {
+            "value": "100",
+            "label": "số tệp tối đa",
+            "unit": "tệp",
+            "scope": "ghép tệp PDF cùng lúc"
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "narration_segments": [
+        {
+          "segment_id": "s03-u01",
+          "text": "Ngoài ra, bạn có thể thêm số trang vào tài liệu PDF và chỉnh sửa vị trí tùy ý."
+        },
+        {
+          "segment_id": "s03-u02",
+          "text": "Ứng dụng cũng hỗ trợ chuyển tài liệu PDF sang định dạng Word để chỉnh sửa."
+        }
+      ],
+      "subtitle_text": "Thêm số trang và chuyển đổi PDF sang Word",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-pagenum",
+        "purpose": "Demo tính năng đánh số trang và chuyển đổi sang Word"
+      },
+      "claims": [
+        {
+          "text": "Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_02",
+              "field_path": "features[3].description"
+            }
+          ],
+          "segment_ids": [
+            "s03-u01"
+          ]
+        },
+        {
+          "text": "Chuyển PDF sang tài liệu Word chỉnh sửa được.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_02",
+              "field_path": "features[4].description"
+            }
+          ],
+          "segment_ids": [
+            "s03-u02"
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "s04",
+      "role": "cta",
+      "narration_segments": [
+        {
+          "segment_id": "s04-u01",
+          "text": "Sử dụng hoàn toàn miễn phí, không cần đăng ký và mọi thao tác đều diễn ra trong trình duyệt."
+        },
+        {
+          "segment_id": "s04-u02",
+          "text": "Xem thêm thông tin."
+        }
+      ],
+      "subtitle_text": "Xem thêm thông tin",
+      "visual_plan": {
+        "kind": "screen_recording",
+        "source_type": "existing_asset",
+        "asset_id": "pdfcraft-word-result",
+        "purpose": "Hiển thị kết quả xử lý tài liệu"
+      },
+      "claims": [
+        {
+          "text": "Hoàn toàn Miễn phí",
+          "type": "pricing",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "pricing.free_plan.value"
+            }
+          ],
+          "segment_ids": [
+            "s04-u01"
+          ]
+        },
+        {
+          "text": "Dùng không cần đăng ký, không có chi phí ẩn.",
+          "type": "feature",
+          "fact_refs": [
+            {
+              "source_id": "src_01",
+              "field_path": "features[1].description"
+            }
+          ],
+          "segment_ids": [
+            "s04-u01"
+          ]
+        }
+      ]
+    }
+  ],
+  "cta": {
+    "text": "Xem thêm thông tin.",
+    "destination": null
+  },
+  "estimated_duration_s": 33.9
+}

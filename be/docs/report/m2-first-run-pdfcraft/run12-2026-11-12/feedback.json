@@ -1,0 +1,11 @@
+[
+  {
+    "source": "content_validator",
+    "message": "claim 'Xem thêm thông tin.' thiếu fact_refs"
+  },
+  {
+    "source": "syllable_advisory",
+    "message": "Lời đọc hiện có 100 âm tiết, ít hơn mốc khuyến nghị 150–170. Chỉ là khuyến nghị: bổ sung/rút gọn bằng nội dung có căn cứ trong fact, không thêm claim hay kéo dài câu chỉ để đủ số.",
+    "syllables": 100
+  }
+]

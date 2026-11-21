@@ -1,0 +1,124 @@
+{
+  "machine": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.15",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": "14",
+    "threads": "20",
+    "ram_gb": "15.6",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU; Intel(R) Iris(R) Xe Graphics",
+    "ffmpeg": "ffmpeg version 8.0-full_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers"
+  },
+  "limits_s": {
+    "min": 40.0,
+    "max": 45.0
+  },
+  "scenes": 10,
+  "render_timeout_s": 300,
+  "runs": 1,
+  "rows": [
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 33.06,
+      "wall_s_all": [
+        33.06
+      ],
+      "cpu_s_median": 105.4,
+      "max_rss_mb": 1937.0,
+      "duration_s": 43.0,
+      "size_mb": 4.55,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "fixture-hoat-hinh-do-hoa-9x16-cpu.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 33.34,
+      "wall_s_all": [
+        33.34
+      ],
+      "cpu_s_median": 102.0,
+      "max_rss_mb": 1966.0,
+      "duration_s": 43.0,
+      "size_mb": 3.75,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "fixture-hoat-hinh-do-hoa-16x9-cpu.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 45.59,
+      "wall_s_all": [
+        45.59
+      ],
+      "cpu_s_median": 135.0,
+      "max_rss_mb": 1960.0,
+      "duration_s": 43.33,
+      "size_mb": 4.37,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "fixture-dien-anh-toi-gian-9x16-cpu.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 45.47,
+      "wall_s_all": [
+        45.47
+      ],
+      "cpu_s_median": 138.0,
+      "max_rss_mb": 1973.0,
+      "duration_s": 43.33,
+      "size_mb": 4.0,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "fixture-dien-anh-toi-gian-16x9-cpu.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 58.21,
+      "wall_s_all": [
+        58.21
+      ],
+      "cpu_s_median": 151.3,
+      "max_rss_mb": 1919.0,
+      "duration_s": 43.33,
+      "size_mb": 3.66,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "fixture-co-dien-9x16-cpu.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 59.16,
+      "wall_s_all": [
+        59.16
+      ],
+      "cpu_s_median": 158.7,
+      "max_rss_mb": 1952.0,
+      "duration_s": 43.33,
+      "size_mb": 3.22,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "fixture-co-dien-16x9-cpu.mp4"
+    }
+  ],
+  "failures": []
+}

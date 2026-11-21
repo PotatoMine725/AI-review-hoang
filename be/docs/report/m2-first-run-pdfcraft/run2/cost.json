@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "currency": "USD",
+  "items": [
+    {
+      "call_id": "8ddf08d6-b471-4e60-a631-66f8026400c3",
+      "category": "llm",
+      "step": "generate_script",
+      "provider": "google",
+      "model": "gemini-3.5-flash-lite",
+      "attempt": 1,
+      "cache_hit": false,
+      "tokens_in": 3411,
+      "tokens_out": 1796,
+      "unit_price_in_per_1m": 0.3,
+      "unit_price_out_per_1m": 2.5,
+      "prices_checked_at": "2026-10-06",
+      "cost_usd": 0.005513,
+      "cost_status": "exact"
+    }
+  ]
+}

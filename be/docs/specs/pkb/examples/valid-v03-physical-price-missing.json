@@ -1,0 +1,60 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "product_kind": "physical",
+      "name": {
+        "value": "Ly giữ nhiệt Acme Demo 350ml (dữ liệu mẫu)",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"name\":\"Ly giữ nhiệt Acme Demo 350ml (dữ liệu mẫu)\""
+      },
+      "website": "https://shop.example.com/products/ly-giu-nhiet-acme-demo-350ml",
+      "brand_name": {
+        "value": "Acme Demo",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"brand\":{\"@type\":\"Brand\",\"name\":\"Acme Demo\"}"
+      }
+    },
+    "offers": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"availability\":\"https://schema.org/InStock\"",
+        "extracted_via": "jsonld",
+        "amount": null,
+        "currency": null,
+        "availability": "in_stock",
+        "platform": "shop.example.com"
+      }
+    ],
+    "media": {
+      "images": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "\"image\":[\"https://cdn.example.com/acme-demo/ly-350.jpg\"]",
+          "extracted_via": "jsonld",
+          "role": "hero",
+          "url": "https://cdn.example.com/acme-demo/ly-350.jpg"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://shop.example.com/products/ly-giu-nhiet-acme-demo-350ml",
+      "page_type": "product",
+      "fetched_at": "2026-10-13T08:42:00+00:00",
+      "content_hash": "sha256:2c1db665dd9ef07d585a9ffb7ea7669d41593d915ab0896b4481adb0e3edbc41",
+      "region": "VN",
+      "locale": "vi-VN",
+      "variant": "raw",
+      "markdown_path": "pages/src_01-product.md",
+      "image_paths": [],
+      "structured_path": "pages/src_01-product.structured.json"
+    }
+  ]
+}

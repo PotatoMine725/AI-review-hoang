@@ -1,0 +1,47 @@
+"""Contract M2 trong worker phải trùng byte với commit 5378a70 của dev (#83, #126, #129).
+
+So bằng git blob SHA-1 (`sha1(b"blob <len>\\0" + bytes)`), tính bằng Python thuần, nên chạy được
+trên CI clone nông. SHA lấy từ `git ls-tree -r 5378a70`.
+"""
+
+from __future__ import annotations
+
+import hashlib
+
+import pytest
+
+from worker.m2.validate import CONTRACT_DIR
+
+BLOB_SHA_5378A70 = {
+    "p1-ac-03-script-vi.prompt.md": "36813902e92ab775735168eab6eb893b864972dc",
+    "p1-ac-03-script-vi-repair.prompt.md": "0166168e011824ad00c7f06237e84a2fdd40a30e",
+    "p1-ac-03-script-vi.v1.schema.json": "955dd69ba37d5df34f416e03dc23845e0b3cd269",
+    "p1-ac-03-input.v1.schema.json": "0b567b22c53f3ab016ec2cc6b5d64414b7c573b9",
+    "examples/invalid-script-p1-ac-03-vi-missing-fact-ref.json": (
+        "5e58f0ccca0d4f550ba746c487dc5e8b055e1a0d"
+    ),
+    "examples/invalid-script-p1-ac-03-vi-unknown-asset.json": (
+        "a73ebd0f3b52d7bc085de3a74acd20e1989be15b"
+    ),
+    "examples/valid-script-p1-ac-03-vi.context.json": "cbb2d7bd8c5790f6a5869b2f5f7006e11ef57a20",
+    "examples/valid-script-p1-ac-03-vi.json": "01e8534530edd2efcb7ed30b8461da4aa4280f56",
+    # spikes/m1-crawl-extract/output/elevenlabs/pkb.gemini-3.5-flash-lite.json
+    "examples/elevenlabs-pkb.gemini-3.5-flash-lite.json": (
+        "fdfcb70f3cfa601125938b101d2ce8fca833e268"
+    ),
+}
+
+
+def git_blob_sha(data: bytes) -> str:
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+@pytest.mark.parametrize("name", sorted(BLOB_SHA_5378A70))
+def test_contract_file_matches_commit_5378a70(name: str) -> None:
+    assert git_blob_sha((CONTRACT_DIR / name).read_bytes()) == BLOB_SHA_5378A70[name]
+
+
+def test_no_untracked_contract_files() -> None:
+    """File mới trong contract/ phải được ghi nguồn và SHA ở đây (trừ SOURCE.md)."""
+    found = {p.relative_to(CONTRACT_DIR).as_posix() for p in CONTRACT_DIR.rglob("*") if p.is_file()}
+    assert found - {"SOURCE.md"} == set(BLOB_SHA_5378A70)

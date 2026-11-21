@@ -1,0 +1,277 @@
+{
+  "schema_version": "render-plan.v2-spike",
+  "product": "PDFCraft",
+  "written_by": "agent (Claude Code, viết tay theo bộ 9 fact, 20/10). Chưa phải LLM của pipeline M2 (#83).",
+  "preset": "dien-anh-toi-gian",
+  "ratios": ["16:9", "9:16"],
+  "fps": 30,
+  "lead_s": 0.1,
+  "gap_s": 0.12,
+  "tail_s": 0.6,
+  "source": "Facts F1–F9: _refs/notebooklm/pdfcraft-thong-tin-san-pham.md (trích nguyên văn, pdfcraft.devtoolcafe.com, 16–18/10). V1–V4: clip tự quay _refs/assets/pdfcraft/*.mp4. Voice: VieNeu (#73, synth_segments.py), xem tts_input.py.",
+  "facts": {
+    "F1": "Xử lý PDF miễn phí, riêng tư và mạnh mẽ ngay trong trình duyệt",
+    "F2": "Không đăng ký, không giới hạn, không chi phí ẩn.",
+    "F3": "Mọi xử lý diễn ra trong trình duyệt. Tệp của bạn không bao giờ rời khỏi thiết bị.",
+    "F4": "Add page numbers to PDF documents. Customize position, format, and starting number.",
+    "F5": "Convert PDF to editable Word (DOCX) documents.",
+    "F6": "Kết hợp nhiều tệp PDF thành một tài liệu. Công cụ hợp nhất PDF trực tuyến miễn phí với kéo và thả để sắp xếp lại.",
+    "F7": "All conversions and merging happen locally in your browser sandbox, ensuring complete privacy for your sensitive documents without uploading to remote servers.",
+    "F8": "You can merge up to 100 files at once, with a total combined size of up to 500MB.",
+    "F9": "Click the Merge button to automatically convert and combine all files into a single PDF, then download your result.",
+    "V1": "Clip pdfcraft-pagenum.mp4 giây 2–13: mở Page Numbers, chọn vị trí, Apply; hiện \"Applied Page Numbers\" và số \"1\" ở chân trang.",
+    "V2": "Clip pdfcraft-word-export.mp4 giây 2–5: menu Save & Export → \"Export as Word (.docx)\".",
+    "V3": "Clip pdfcraft-word-result.mp4 giây 0–7: file Word còn ảnh bìa, tóm tắt, số trang ở chân trang và biểu đồ cột.",
+    "V4": "Clip pdfcraft-merge.mp4 giây 10–17: mở Combine Files & Merge PDF, thêm tài liệu thứ hai đang mở, Append; bộ đếm trang đổi từ \"1 of 3\" sang \"1 of 6\"."
+  },
+  "scenes": [
+    {
+      "scene_id": "s01",
+      "role": "hook",
+      "layout": "hook",
+      "narration_segments": [
+        {
+          "segment_id": "s01-u01",
+          "text": "Cần xử lý PDF mà không muốn cài phần mềm?",
+          "voice": "local/voice-40-45/s01.wav",
+          "fact_refs": ["F1"]
+        }
+      ],
+      "image": { "path": "local/ai/paperwork-s1.jpg", "source": "Cloudflare FLUX.1 schnell (#71), prompt 'paperwork'" },
+      "props": {
+        "brand": { "text": "PDFCraft", "icon": "file-text", "fact_refs": ["F1"] },
+        "kicker": { "text": "Ngay trong trình duyệt", "icon": "globe", "fact_refs": ["F1"] },
+        "title": { "text": "Xử lý PDF miễn phí, ngay trong trình duyệt", "highlight": "miễn phí", "fact_refs": ["F1"] },
+        "chips": [
+          { "text": "Số trang", "icon": "hash", "fact_refs": ["F4"] },
+          { "text": "PDF → Word", "icon": "file-output", "fact_refs": ["F5"] },
+          { "text": "Ghép PDF", "icon": "files", "accent": true, "fact_refs": ["F6"] }
+        ],
+        "image": { "label": { "text": "Ảnh minh hoạ do AI tạo", "exempt": "disclosure" } }
+      }
+    },
+    {
+      "scene_id": "s02",
+      "role": "value",
+      "layout": "stat",
+      "narration_segments": [
+        {
+          "segment_id": "s02-u01",
+          "text": "PDFCraft miễn phí, chạy ngay trong trình duyệt.",
+          "voice": "local/voice-40-45/s02.wav",
+          "fact_refs": ["F1"]
+        },
+        {
+          "segment_id": "s02-u02",
+          "text": "Không đăng ký, không chi phí ẩn.",
+          "voice": "local/voice-40-45/s03.wav",
+          "fact_refs": ["F2"]
+        },
+        {
+          "segment_id": "s02-u03",
+          "text": "Tệp của bạn không bao giờ rời khỏi thiết bị.",
+          "voice": "local/voice-40-45/s04.wav",
+          "fact_refs": ["F3"]
+        }
+      ],
+      "props": {
+        "eyebrow": { "text": "Ngay trong trình duyệt", "fact_refs": ["F1"] },
+        "value": { "text": "Miễn phí", "fact_refs": ["F1"] },
+        "label": { "text": "Không đăng ký, không chi phí ẩn", "highlight": "không chi phí ẩn", "fact_refs": ["F2"] },
+        "visual": { "icon": "globe", "badge_icon": "check" },
+        "chips": [
+          { "text": "Tệp không rời khỏi thiết bị", "icon": "shield-check", "accent": true, "fact_refs": ["F3"] }
+        ]
+      }
+    },
+    {
+      "scene_id": "s03",
+      "role": "demo",
+      "layout": "feature_clip",
+      "narration_segments": [
+        {
+          "segment_id": "s03-u01",
+          "text": "Đầu tiên, đánh số trang.",
+          "voice": "local/voice-40-45/s05.wav",
+          "fact_refs": ["F4"]
+        },
+        {
+          "segment_id": "s03-u02",
+          "text": "Chọn vị trí, bấm áp dụng là có số trang.",
+          "voice": "local/voice-40-45/s06.wav",
+          "fact_refs": ["F4", "V1"]
+        },
+        {
+          "segment_id": "s03-u03",
+          "text": "Bạn còn chỉnh được định dạng và số bắt đầu.",
+          "voice": "local/voice-40-45/s07.wav",
+          "fact_refs": ["F4"]
+        }
+      ],
+      "clip": {
+        "parts": [
+          { "src": "local/clips/pdfcraft-pagenum.mp4", "start_s": 1.6, "end_s": 4.0 },
+          { "src": "local/clips/pdfcraft-pagenum.mp4", "start_s": 9.4, "end_s": 11.48 },
+          { "src": "local/clips/pdfcraft-pagenum.mp4", "start_s": 11.62, "end_s": 13.6 }
+        ],
+        "crop": [440, 0, 1480, 1080],
+        "focus": { "part": 2, "source_t": 11.9, "rect": [1240, 600, 660, 460] },
+        "clip_refs": ["V1"]
+      },
+      "props": {
+        "icon": "hash",
+        "eyebrow": { "text": "Công cụ Page Numbers", "fact_refs": ["F4", "V1"] },
+        "title": { "text": "Thêm số trang vào PDF", "highlight": "số trang", "fact_refs": ["F4"] },
+        "steps": [
+          { "text": "Chọn vị trí", "icon": "mouse-pointer-click", "fact_refs": ["F4", "V1"] },
+          { "text": "Bấm Apply", "icon": "check", "fact_refs": ["V1"] },
+          { "text": "Định dạng, số bắt đầu", "icon": "list-ordered", "fact_refs": ["F4"] }
+        ],
+        "url": "pdfcraft.devtoolcafe.com",
+        "callout": { "text": "Đã có số trang", "icon": "badge-check", "fact_refs": ["V1"] }
+      }
+    },
+    {
+      "scene_id": "s04",
+      "role": "demo",
+      "layout": "feature_clip",
+      "narration_segments": [
+        {
+          "segment_id": "s04-u01",
+          "text": "Tiếp theo, chuyển PDF sang Word.",
+          "voice": "local/voice-40-45/s08.wav",
+          "fact_refs": ["F5"]
+        },
+        {
+          "segment_id": "s04-u02",
+          "text": "Chọn xuất sang Word, định dạng DOCX.",
+          "voice": "local/voice-40-45/s09.wav",
+          "fact_refs": ["F5", "V2"]
+        },
+        {
+          "segment_id": "s04-u03",
+          "text": "Tệp Word sửa được.",
+          "voice": "local/voice-40-45/s10.wav",
+          "fact_refs": ["F5"]
+        }
+      ],
+      "clip": {
+        "parts": [
+          { "src": "local/clips/pdfcraft-word-export.mp4", "start_s": 1.4, "end_s": 3.6 },
+          { "src": "local/clips/pdfcraft-word-result.mp4", "start_s": 0.0, "end_s": 7.0, "crop": [220, 0, 1480, 1080] }
+        ],
+        "crop": [440, 0, 1480, 1080],
+        "focus": { "part": 1, "source_t": 4.0, "rect": [400, 90, 1040, 600] },
+        "clip_refs": ["V2", "V3"]
+      },
+      "props": {
+        "icon": "file-output",
+        "eyebrow": { "text": "Export as Word (.docx)", "fact_refs": ["F5", "V2"] },
+        "title": { "text": "Chuyển PDF sang Word", "highlight": "Word", "fact_refs": ["F5"] },
+        "steps": [
+          { "text": "Xuất DOCX", "icon": "file-output", "fact_refs": ["F5"] },
+          { "text": "Tệp Word", "icon": "file-text", "fact_refs": ["F5"] },
+          { "text": "Sửa được", "icon": "file-text", "fact_refs": ["F5"] }
+        ],
+        "url": "pdfcraft.devtoolcafe.com",
+        "callout": { "text": "DOCX sửa được", "icon": "file-check", "fact_refs": ["F5"] }
+      }
+    },
+    {
+      "scene_id": "s05",
+      "role": "demo",
+      "layout": "feature_clip",
+      "narration_segments": [
+        {
+          "segment_id": "s05-u01",
+          "text": "Cần gộp nhiều tệp? Dùng công cụ ghép PDF.",
+          "voice": "local/voice-40-45/s11.wav",
+          "fact_refs": ["F6"]
+        },
+        {
+          "segment_id": "s05-u02",
+          "text": "Thêm tài liệu thứ hai, hai tệp gộp thành một.",
+          "voice": "local/voice-40-45/s12.wav",
+          "fact_refs": ["F6", "V4"]
+        },
+        {
+          "segment_id": "s05-u03",
+          "text": "Việc ghép chạy cục bộ, không tải lên máy chủ.",
+          "voice": "local/voice-40-45/s13.wav",
+          "fact_refs": ["F7"]
+        }
+      ],
+      "clip": {
+        "parts": [
+          { "src": "local/clips/pdfcraft-merge.mp4", "start_s": 9.8, "end_s": 17.6 }
+        ],
+        "crop": [440, 0, 1480, 1080],
+        "focus": { "part": 0, "source_t": 16.0, "rect": [520, 110, 560, 330] },
+        "clip_refs": ["V4"]
+      },
+      "props": {
+        "icon": "files",
+        "eyebrow": { "text": "Combine Files & Merge PDF", "fact_refs": ["F6", "V4"] },
+        "title": { "text": "Ghép nhiều PDF thành một", "highlight": "thành một", "fact_refs": ["F6"] },
+        "steps": [
+          { "text": "Thêm tài liệu", "icon": "mouse-pointer-click", "fact_refs": ["V4"] },
+          { "text": "3 → 6 trang", "icon": "file-stack", "fact_refs": ["V4"] },
+          { "text": "Chạy cục bộ", "icon": "lock", "fact_refs": ["F7"] }
+        ],
+        "url": "pdfcraft.devtoolcafe.com",
+        "callout": { "text": "1 of 6", "icon": "badge-check", "fact_refs": ["V4"] }
+      }
+    },
+    {
+      "scene_id": "s06",
+      "role": "spec",
+      "layout": "stat",
+      "narration_segments": [
+        {
+          "segment_id": "s06-u01",
+          "text": "Mỗi lần ghép được tối đa 100 tệp,",
+          "voice": "local/voice-40-45/s14.wav",
+          "fact_refs": ["F8"]
+        },
+        {
+          "segment_id": "s06-u02",
+          "text": "tổng dung lượng đến 500MB.",
+          "voice": "local/voice-40-45/s15.wav",
+          "fact_refs": ["F8"]
+        }
+      ],
+      "props": {
+        "eyebrow": { "text": "Ghép một lần", "fact_refs": ["F8"] },
+        "value": { "text": "100 tệp", "fact_refs": ["F8"] },
+        "label": { "text": "Tổng dung lượng đến 500MB", "highlight": "500MB", "fact_refs": ["F8"] },
+        "visual": { "icon": "file-stack", "badge_icon": "files" },
+        "chips": [
+          { "text": "Kéo thả để sắp xếp", "icon": "list-ordered", "fact_refs": ["F6"] }
+        ]
+      }
+    },
+    {
+      "scene_id": "s07",
+      "role": "cta",
+      "layout": "cta",
+      "narration_segments": [
+        {
+          "segment_id": "s07-u01",
+          "text": "Vào pdfcraft chấm devtoolcafe chấm com.",
+          "subtitle_text": "Vào pdfcraft.devtoolcafe.com",
+          "voice": "local/voice-40-45/s16.wav",
+          "fact_refs": ["F1", "F2"]
+        }
+      ],
+      "props": {
+        "brand": { "text": "PDFCraft", "icon": "file-text", "fact_refs": ["F1"] },
+        "url": "pdfcraft.devtoolcafe.com",
+        "chips": [
+          { "text": "Miễn phí", "icon": "gift", "fact_refs": ["F1"] },
+          { "text": "Không cần đăng ký", "icon": "user-x", "fact_refs": ["F2"] }
+        ],
+        "button": { "text": "Dùng thử ngay", "exempt": "cta" }
+      }
+    }
+  ]
+}

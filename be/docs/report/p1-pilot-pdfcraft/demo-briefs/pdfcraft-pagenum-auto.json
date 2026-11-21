@@ -1,0 +1,9 @@
+{
+  "asset_id": "pdfcraft-pagenum-auto",
+  "url": "https://pdfcraft.devtoolcafe.com/en/tools/add-page-numbers",
+  "goal": "Show adding page numbers to a PDF on PDFCraft: the page ready, add the multi-page PDF, leave default position/format (or pick one option such as position), press the button that adds the page numbers, and finish with the result and its download button visible. Mark the result/download element with focus. If this URL is not the page-number tool, start from the tools list and open the tool whose title mentions page numbers.",
+  "facts": [
+    "Đánh số trang: Thêm số trang vào PDF, chỉnh được vị trí, định dạng và số bắt đầu (f8)."
+  ],
+  "fixtures": ["mau-nhieu-trang.pdf"]
+}

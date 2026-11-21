@@ -1,0 +1,71 @@
+{
+  "data": {
+    "schema_version": "0.3",
+    "identity": {
+      "product_kind": "physical",
+      "name": {
+        "origin": "owner",
+        "edited_at": "2026-10-14T03:20:00Z",
+        "value": "Hộp cơm Acme Demo 800ml",
+        "previous": {
+          "value": "Hộp cơm Acme Demo 800ml (dữ liệu mẫu)",
+          "source_id": "src_01",
+          "evidence": "\"name\":\"Hộp cơm Acme Demo 800ml (dữ liệu mẫu)\""
+        }
+      },
+      "website": "https://shop.example.com/products/hop-com-acme-demo-800ml",
+      "brand_name": {
+        "value": "Acme Demo",
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"brand\":{\"@type\":\"Brand\",\"name\":\"Acme Demo\"}"
+      },
+      "description": {
+        "origin": "owner",
+        "edited_by": "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b",
+        "edited_at": "2026-10-14T03:20:00Z",
+        "value": "Hộp cơm giữ nhiệt, dùng được trong lò vi sóng"
+      }
+    },
+    "offers": [
+      {
+        "origin": "crawled",
+        "source_id": "src_01",
+        "evidence": "\"availability\":\"https://schema.org/OutOfStock\"",
+        "extracted_via": "jsonld",
+        "price_text": "280000",
+        "amount": 280000,
+        "currency": "VND",
+        "availability": "out_of_stock",
+        "platform": "shop.example.com"
+      }
+    ],
+    "media": {
+      "images": [
+        {
+          "origin": "crawled",
+          "source_id": "src_01",
+          "evidence": "\"image\":\"https://cdn.example.com/acme-demo/hop-com-800.jpg\"",
+          "extracted_via": "jsonld",
+          "role": "hero",
+          "url": "https://cdn.example.com/acme-demo/hop-com-800.jpg"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "src_01",
+      "url": "https://shop.example.com/products/hop-com-acme-demo-800ml",
+      "page_type": "product",
+      "fetched_at": "2026-10-13T08:43:00+00:00",
+      "content_hash": "sha256:49798b23153019b2741cb3a1613bd85d3322a51150c4c5393dfb406abf8b9f5d",
+      "region": "VN",
+      "locale": "vi-VN",
+      "variant": "raw",
+      "markdown_path": "pages/src_01-product.md",
+      "image_paths": [],
+      "structured_path": "pages/src_01-product.structured.json"
+    }
+  ]
+}

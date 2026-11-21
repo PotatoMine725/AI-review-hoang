@@ -1,0 +1,1598 @@
+{
+  "product": "elevenlabs",
+  "name": "ElevenLabs",
+  "root_url": "https://elevenlabs.io",
+  "allowed_hosts": [
+    "elevenlabs.io"
+  ],
+  "user_agent": "AIReviewContentFactory-Spike/0.1 (+https://github.com/PotatoMine725/AI-review-BE; M1 research spike)",
+  "limits": {
+    "max_pages": 30,
+    "max_extra_host_pages": 5,
+    "min_interval_s": 1.0
+  },
+  "started_at": "2026-10-08T01:47:00.949+00:00",
+  "blocked": null,
+  "sitemaps": [
+    {
+      "url": "https://elevenlabs.io/sitemap.xml",
+      "status": 200,
+      "urls": 0,
+      "children": 300,
+      "error": ""
+    },
+    {
+      "url": "https://help.elevenlabs.io/hc/sitemap.xml",
+      "status": 200,
+      "urls": 404,
+      "children": 0,
+      "error": ""
+    },
+    {
+      "url": "https://elevenlabs.io/docs/sitemap.xml",
+      "status": 200,
+      "urls": 0,
+      "children": 10,
+      "error": ""
+    },
+    {
+      "url": "https://showcase.elevenlabs.io/sitemap.xml",
+      "status": 429,
+      "urls": 0,
+      "children": 0,
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/static.xml",
+      "status": 200,
+      "urls": 2,
+      "children": 0,
+      "error": ""
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/jobs__en.xml",
+      "status": 200,
+      "urls": 141,
+      "children": 0,
+      "error": ""
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/pagesv2__en.xml",
+      "status": 200,
+      "urls": 232,
+      "children": 0,
+      "error": ""
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/languages__en.xml",
+      "status": 200,
+      "urls": 109,
+      "children": 0,
+      "error": ""
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/insights__en.xml",
+      "status": 200,
+      "urls": 5,
+      "children": 0,
+      "error": ""
+    }
+  ],
+  "finished_at": "2026-10-08T01:50:39.359+00:00",
+  "crawl_seconds": 218.41,
+  "robots": {
+    "elevenlabs.io": {
+      "host": "elevenlabs.io",
+      "url": "https://elevenlabs.io/robots.txt",
+      "status": 200,
+      "policy": "parsed",
+      "sitemaps": [
+        "https://elevenlabs.io/sitemap.xml",
+        "https://help.elevenlabs.io/hc/sitemap.xml",
+        "https://elevenlabs.io/docs/sitemap.xml",
+        "https://showcase.elevenlabs.io/sitemap.xml"
+      ],
+      "fetched_at": "2026-10-08T01:47:00.949+00:00",
+      "error": "",
+      "group": "*",
+      "rules": [
+        [
+          "allow",
+          "/"
+        ],
+        [
+          "allow",
+          "/share/"
+        ],
+        [
+          "allow",
+          "/embed/"
+        ],
+        [
+          "allow",
+          "/app/sign-in"
+        ],
+        [
+          "allow",
+          "/app/sign-up"
+        ],
+        [
+          "allow",
+          "/docs/api/fern-docs/og"
+        ],
+        [
+          "disallow",
+          "/admin"
+        ],
+        [
+          "disallow",
+          "/app/redirect-external/"
+        ],
+        [
+          "disallow",
+          "/legal/"
+        ],
+        [
+          "disallow",
+          "/hog/"
+        ],
+        [
+          "disallow",
+          "/dachshund/"
+        ],
+        [
+          "disallow",
+          "/feature-flags/"
+        ],
+        [
+          "disallow",
+          "/app/sign-in?"
+        ],
+        [
+          "disallow",
+          "/app/sign-up?"
+        ],
+        [
+          "disallow",
+          "*/abtest/"
+        ],
+        [
+          "disallow",
+          "*/p/"
+        ],
+        [
+          "disallow",
+          "*/ab/"
+        ],
+        [
+          "disallow",
+          "/sentry-monitoring"
+        ],
+        [
+          "disallow",
+          "/next/"
+        ],
+        [
+          "disallow",
+          "/v1/"
+        ],
+        [
+          "disallow",
+          "/nl$"
+        ],
+        [
+          "disallow",
+          "/nl/"
+        ],
+        [
+          "disallow",
+          "/docs/api/"
+        ],
+        [
+          "disallow",
+          "/app/"
+        ]
+      ],
+      "crawl_delay": null
+    }
+  },
+  "requests": [
+    {
+      "url": "https://elevenlabs.io/robots.txt",
+      "kind": "robots",
+      "host": "elevenlabs.io",
+      "t": 2405.593,
+      "fetched_at": "2026-10-08T01:47:00.949+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2406.609,
+      "fetched_at": "2026-10-08T01:47:01.963+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://help.elevenlabs.io/hc/sitemap.xml",
+      "kind": "sitemap",
+      "host": "help.elevenlabs.io",
+      "t": 2406.796,
+      "fetched_at": "2026-10-08T01:47:02.148+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/docs/sitemap.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2407.718,
+      "fetched_at": "2026-10-08T01:47:03.071+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://showcase.elevenlabs.io/sitemap.xml",
+      "kind": "sitemap",
+      "host": "showcase.elevenlabs.io",
+      "t": 2408.312,
+      "fetched_at": "2026-10-08T01:47:03.673+00:00",
+      "status": 429
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/static.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2408.734,
+      "fetched_at": "2026-10-08T01:47:04.087+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/jobs__en.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2409.75,
+      "fetched_at": "2026-10-08T01:47:05.113+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/pagesv2__en.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2410.765,
+      "fetched_at": "2026-10-08T01:47:06.132+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/languages__en.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2411.765,
+      "fetched_at": "2026-10-08T01:47:07.130+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/sitemap/insights__en.xml",
+      "kind": "sitemap",
+      "host": "elevenlabs.io",
+      "t": 2412.765,
+      "fetched_at": "2026-10-08T01:47:08.130+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2413.781,
+      "fetched_at": "2026-10-08T01:47:09.146+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/pricing",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2420.921,
+      "fetched_at": "2026-10-08T01:47:16.286+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/pricing/api",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2427.656,
+      "fetched_at": "2026-10-08T01:47:23.021+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/pricing/agents",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2434.5,
+      "fetched_at": "2026-10-08T01:47:29.852+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/app",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2441.031,
+      "fetched_at": "2026-10-08T01:47:36.383+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/use-cases",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2445.14,
+      "fetched_at": "2026-10-08T01:47:40.507+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/productions",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2452.937,
+      "fetched_at": "2026-10-08T01:47:48.294+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-bark",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2459.843,
+      "fetched_at": "2026-10-08T01:47:55.200+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2465.281,
+      "fetched_at": "2026-10-08T01:48:00.638+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/caption-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2473.187,
+      "fetched_at": "2026-10-08T01:48:08.554+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/subtitle-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2480.0,
+      "fetched_at": "2026-10-08T01:48:15.355+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/ai-voice-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2486.859,
+      "fetched_at": "2026-10-08T01:48:22.221+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/download-mobile-app",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2493.937,
+      "fetched_at": "2026-10-08T01:48:29.301+00:00",
+      "status": 307
+    },
+    {
+      "url": "https://elevenlabs.io/zoom-transcript-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2500.468,
+      "fetched_at": "2026-10-08T01:48:35.834+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/tiktok-transcript-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2509.968,
+      "fetched_at": "2026-10-08T01:48:45.323+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/api",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2516.921,
+      "fetched_at": "2026-10-08T01:48:52.281+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/dubbing-api",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2523.796,
+      "fetched_at": "2026-10-08T01:48:59.159+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/eleven-music-api",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2530.89,
+      "fetched_at": "2026-10-08T01:49:06.258+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/affiliate-partner-guide",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2537.828,
+      "fetched_at": "2026-10-08T01:49:13.181+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/agents/ai-customer-support",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2544.89,
+      "fetched_at": "2026-10-08T01:49:20.258+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/agents/elevenagents-for-support",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2551.687,
+      "fetched_at": "2026-10-08T01:49:27.050+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/customer-stories/api",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2559.031,
+      "fetched_at": "2026-10-08T01:49:34.398+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/speech-to-text-api",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2564.828,
+      "fetched_at": "2026-10-08T01:49:40.181+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/youtube-transcript-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2571.843,
+      "fetched_at": "2026-10-08T01:49:47.211+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/podcast-transcript-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2579.546,
+      "fetched_at": "2026-10-08T01:49:54.904+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/instagram-transcript-generator",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2587.078,
+      "fetched_at": "2026-10-08T01:50:02.440+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/use-cases/vr",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2594.578,
+      "fetched_at": "2026-10-08T01:50:09.935+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/use-cases/unity",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2602.218,
+      "fetched_at": "2026-10-08T01:50:17.585+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/use-cases/videos",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2609.765,
+      "fetched_at": "2026-10-08T01:50:25.124+00:00",
+      "status": 200
+    },
+    {
+      "url": "https://elevenlabs.io/use-cases/tiktok",
+      "kind": "page",
+      "host": "elevenlabs.io",
+      "t": 2616.515,
+      "fetched_at": "2026-10-08T01:50:31.881+00:00",
+      "status": 200
+    }
+  ],
+  "min_observed_interval_s": {
+    "elevenlabs.io": 1.0,
+    "help.elevenlabs.io": null,
+    "showcase.elevenlabs.io": null
+  },
+  "pages_found": 1041,
+  "pages_used": 29,
+  "skipped_counts": {
+    "out_of_scope": 406,
+    "excluded_path": 264,
+    "low_score": 180,
+    "over_limit": 152,
+    "robots_disallow": 9,
+    "blocked": 1
+  },
+  "skipped": [
+    {
+      "url": "https://elevenlabs.io/app/subscription",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "pricing",
+      "score": 85,
+      "found_via": "link:https://elevenlabs.io/pricing"
+    },
+    {
+      "url": "https://elevenlabs.io/app",
+      "reason": "blocked: login_redirect: https://elevenlabs.io/app/sign-in?redirect=%2Fapp",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "link:https://elevenlabs.io/"
+    },
+    {
+      "url": "https://elevenlabs.io/app/subscription/agents",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "pricing",
+      "score": 70,
+      "found_via": "link:https://elevenlabs.io/pricing/agents"
+    },
+    {
+      "url": "https://elevenlabs.io/app/subscription/creative",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "pricing",
+      "score": 70,
+      "found_via": "link:https://elevenlabs.io/pricing"
+    },
+    {
+      "url": "https://elevenlabs.io/app/agents",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/"
+    },
+    {
+      "url": "https://elevenlabs.io/app/developers",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/pricing/api"
+    },
+    {
+      "url": "https://elevenlabs.io/app/dubbing",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/pricing/api"
+    },
+    {
+      "url": "https://elevenlabs.io/app/music",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/pricing/api"
+    },
+    {
+      "url": "https://elevenlabs.io/app/productions",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/productions"
+    },
+    {
+      "url": "https://elevenlabs.io/app/studio",
+      "reason": "robots_disallow (disallow: /app/)",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/ai-voice-generator"
+    },
+    {
+      "url": "https://elevenlabs.io/agents/integrations",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/app/speech-to-text",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/pricing/api"
+    },
+    {
+      "url": "https://elevenlabs.io/app/voice-isolator",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/pricing/api"
+    },
+    {
+      "url": "https://elevenlabs.io/app/voice-library",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/african-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/afrikaans",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/american-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/arabic",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/argentine-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/armenian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/assamese",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/australian-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/azerbaijani",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/belarusian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/bengali",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/bosnian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/british-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/bulgarian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/californian-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/canadian-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/catalan",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/cebuano",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/chichewa",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/chinese",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/cockney-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/country-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/croatian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/czech",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/czech-moravian-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/danish",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/desi",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/dutch",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/english",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/estonian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/filipino",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/filipino-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/finnish",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/french",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/french-swiss-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/galician",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/georgian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/german",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/german-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/german-bavarian-accent",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/greek",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/gujarati",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/hausa",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/hebrew",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/hindi",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    },
+    {
+      "url": "https://elevenlabs.io/text-to-speech/hungarian",
+      "reason": "over_limit",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "sitemap"
+    }
+  ],
+  "pages": [
+    {
+      "id": "src_01",
+      "url": "https://elevenlabs.io/",
+      "final_url": "https://elevenlabs.io/",
+      "page_type": "other",
+      "score": 1000,
+      "found_via": "home",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:09.146+00:00",
+      "render_seconds": 7.14,
+      "raw_chars": 26981,
+      "fit_chars": 8001,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:5c7443169e9ddf52e4eace8796dd8b9b2d5e9cd764caa705d3b86a9242719e5a",
+      "fit_hash": "sha256:7b3a034123880feb7cf3f8721b85d798a8403d13511ffac026c8f804a9cadbaa",
+      "file": "pages/src_01-other-home.md",
+      "raw_file": "pages/src_01-other-home.raw.md"
+    },
+    {
+      "id": "src_02",
+      "url": "https://elevenlabs.io/pricing",
+      "final_url": "https://elevenlabs.io/pricing",
+      "page_type": "pricing",
+      "score": 100,
+      "found_via": "sitemap",
+      "anchor_text": "Pricing",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:16.286+00:00",
+      "render_seconds": 6.74,
+      "raw_chars": 19477,
+      "fit_chars": 6242,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:5bc77d90e1b064a2264722b5fb3869c23090967a57a44d67e09b3db516896748",
+      "fit_hash": "sha256:e80d22c515df774ccc8751550035f21e0b38d292da8f461d07f468b1cce3bd2a",
+      "file": "pages/src_02-pricing-pricing.md",
+      "raw_file": "pages/src_02-pricing-pricing.raw.md"
+    },
+    {
+      "id": "src_03",
+      "url": "https://elevenlabs.io/pricing/api",
+      "final_url": "https://elevenlabs.io/pricing/api",
+      "page_type": "pricing",
+      "score": 85,
+      "found_via": "sitemap",
+      "anchor_text": "ElevenAPIAPI",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:23.021+00:00",
+      "render_seconds": 6.83,
+      "raw_chars": 25240,
+      "fit_chars": 8387,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:cbfe022c52622a89440e69e118dd90fae090be75822bc110ea0558ac86c98021",
+      "fit_hash": "sha256:21c6fa7f2dcc13ade3a2c1df1b1d8a51588bfb33999805f39411544636789700",
+      "file": "pages/src_03-pricing-pricing-api.md",
+      "raw_file": "pages/src_03-pricing-pricing-api.raw.md"
+    },
+    {
+      "id": "src_04",
+      "url": "https://elevenlabs.io/pricing/agents",
+      "final_url": "https://elevenlabs.io/pricing/agents",
+      "page_type": "pricing",
+      "score": 85,
+      "found_via": "sitemap",
+      "anchor_text": "ElevenAgentsAgents",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:29.852+00:00",
+      "render_seconds": 6.51,
+      "raw_chars": 17885,
+      "fit_chars": 5818,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:996daf68da73df97352287fb4ea26297e0d9edc080ef8857ef1d9d6d7b8e226d",
+      "fit_hash": "sha256:37d29e006f4944e28806b08d01a2fd0bb894b8ca820fb5e75120ce819dfa6046",
+      "file": "pages/src_04-pricing-pricing-agents.md",
+      "raw_file": "pages/src_04-pricing-pricing-agents.raw.md"
+    },
+    {
+      "id": "src_05",
+      "url": "https://elevenlabs.io/use-cases",
+      "final_url": "https://elevenlabs.io/use-cases",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:40.507+00:00",
+      "render_seconds": 7.78,
+      "raw_chars": 15992,
+      "fit_chars": 4739,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:af7a05394fa6c80fedf8c1aefa33fdfb40f6c1a57fc6f48357aaf5845fc800d3",
+      "fit_hash": "sha256:cd9eda5e5e373c58f20b00c3764195309042880ea56d49fedd57c1fe6b2574aa",
+      "file": "pages/src_05-features-use-cases.md",
+      "raw_file": "pages/src_05-features-use-cases.raw.md"
+    },
+    {
+      "id": "src_06",
+      "url": "https://elevenlabs.io/productions",
+      "final_url": "https://elevenlabs.io/productions",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:48.294+00:00",
+      "render_seconds": 6.89,
+      "raw_chars": 17948,
+      "fit_chars": 5124,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:f6e56fde7074bb2c155007ac20301740dcae0ad48becc00fe533a06c05475787",
+      "fit_hash": "sha256:172e55839f22aaf883ab5f517bbd9f4951eb29a24f79514fea6a5ca181e03665",
+      "file": "pages/src_06-features-productions.md",
+      "raw_file": "pages/src_06-features-productions.raw.md"
+    },
+    {
+      "id": "src_07",
+      "url": "https://elevenlabs.io/text-to-bark",
+      "final_url": "https://elevenlabs.io/text-to-bark",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:47:55.200+00:00",
+      "render_seconds": 5.42,
+      "raw_chars": 7858,
+      "fit_chars": 793,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:3e12483818a56c1c4f10b6f43d72562fbd5fd7bdda9e89e83b0f0f9b1eff4ed6",
+      "fit_hash": "sha256:67837ee3dbbd663b3d236fb730f15372f5fcd4a17734ff0018b251e5cb5d3e3e",
+      "file": "pages/src_07-features-text-to-bark.md",
+      "raw_file": "pages/src_07-features-text-to-bark.raw.md"
+    },
+    {
+      "id": "src_08",
+      "url": "https://elevenlabs.io/text-to-speech",
+      "final_url": "https://elevenlabs.io/text-to-speech",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Ultra-realistic speech",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:00.638+00:00",
+      "render_seconds": 7.91,
+      "raw_chars": 66254,
+      "fit_chars": 30045,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:fd97ae37bf040b3320a3e18acc0f1ddaf0940eda5a74fc801bb21339f91dc8eb",
+      "fit_hash": "sha256:76251671a1c272119c997ae7a1d02db716ff8ca9cefa89ac18bbbc9e743ed753",
+      "file": "pages/src_08-features-text-to-speech.md",
+      "raw_file": "pages/src_08-features-text-to-speech.raw.md"
+    },
+    {
+      "id": "src_09",
+      "url": "https://elevenlabs.io/caption-generator",
+      "final_url": "https://elevenlabs.io/caption-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:08.554+00:00",
+      "render_seconds": 6.8,
+      "raw_chars": 16589,
+      "fit_chars": 6221,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:37093f254697ffe74156464f12e1a9500695a91cfb76b3c69ed43a450b7b390c",
+      "fit_hash": "sha256:cfcf99731672b47653b71c9d777f0bcb753cbbcba78e45ae2b23f3cc9f963ad7",
+      "file": "pages/src_09-features-caption-generator.md",
+      "raw_file": "pages/src_09-features-caption-generator.raw.md"
+    },
+    {
+      "id": "src_10",
+      "url": "https://elevenlabs.io/subtitle-generator",
+      "final_url": "https://elevenlabs.io/subtitle-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "SUBTITLE GENERATOR",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:15.355+00:00",
+      "render_seconds": 6.86,
+      "raw_chars": 15935,
+      "fit_chars": 5097,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:0115689d1a6624f47f7e5aa4959ea3064a1389c91c332ea1b2cacbcb8c880171",
+      "fit_hash": "sha256:7e5376335e47e459d14e09fb1a1f6ad4b3b0d862857edd862a2c4d0a5ad7b6db",
+      "file": "pages/src_10-features-subtitle-generator.md",
+      "raw_file": "pages/src_10-features-subtitle-generator.raw.md"
+    },
+    {
+      "id": "src_11",
+      "url": "https://elevenlabs.io/ai-voice-generator",
+      "final_url": "https://elevenlabs.io/ai-voice-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "AI Voice Generator",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:22.221+00:00",
+      "render_seconds": 7.08,
+      "raw_chars": 30382,
+      "fit_chars": 9816,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:6116c4fb4ce94e30dd429a65a6fd153256f884858924b4ca0934c4a5aa81fbfd",
+      "fit_hash": "sha256:fc8f94ee7740460a184150d12872a3e3f5bb1cdc97d001741bdc0a97651d57cf",
+      "file": "pages/src_11-features-ai-voice-generator.md",
+      "raw_file": "pages/src_11-features-ai-voice-generator.raw.md"
+    },
+    {
+      "id": "src_12",
+      "url": "https://elevenlabs.io/download-mobile-app",
+      "final_url": "https://elevenlabs.io/mobile",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "link:https://elevenlabs.io/text-to-speech",
+      "anchor_text": "Get the app",
+      "status": 307,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:29.301+00:00",
+      "render_seconds": 6.53,
+      "raw_chars": 13334,
+      "fit_chars": 1557,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:9e80e7cbc353589981ea012bcf75aac5ea1c0f750b1718f053b6e1e506d12dd1",
+      "fit_hash": "sha256:72d6b23e2ba1e561c1181ff00d96d2976db7132377089c9f2d7f05f5167c616e",
+      "file": "pages/src_12-features-download-mobile-app.md",
+      "raw_file": "pages/src_12-features-download-mobile-app.raw.md"
+    },
+    {
+      "id": "src_13",
+      "url": "https://elevenlabs.io/zoom-transcript-generator",
+      "final_url": "https://elevenlabs.io/zoom-transcript-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:35.834+00:00",
+      "render_seconds": 9.49,
+      "raw_chars": 21160,
+      "fit_chars": 6515,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:29aea77e056cc36d7a5053a667863761fb58210bec1cae05ee6957876ffb20d5",
+      "fit_hash": "sha256:3de8cec6505a672c5965a025caa210685106f03152116d9bc3635d5d7fc67ab9",
+      "file": "pages/src_13-features-zoom-transcript-generator.md",
+      "raw_file": "pages/src_13-features-zoom-transcript-generator.raw.md"
+    },
+    {
+      "id": "src_14",
+      "url": "https://elevenlabs.io/tiktok-transcript-generator",
+      "final_url": "https://elevenlabs.io/tiktok-transcript-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "TIKTOK TRANSCRIPT GENERATOR",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:45.323+00:00",
+      "render_seconds": 6.95,
+      "raw_chars": 21119,
+      "fit_chars": 6291,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:052ec362d7cd94ffdee879d1e4b0f10aeaf87d75cb8c592e9bf2ad07dcee8f51",
+      "fit_hash": "sha256:f8facb79754a6c3830561e03f9f059f5e3b2633f759ec68eca36de7637beaa28",
+      "file": "pages/src_14-features-tiktok-transcript-generator.md",
+      "raw_file": "pages/src_14-features-tiktok-transcript-generator.raw.md"
+    },
+    {
+      "id": "src_15",
+      "url": "https://elevenlabs.io/api",
+      "final_url": "https://elevenlabs.io/api",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "ElevenAPI",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:52.281+00:00",
+      "render_seconds": 6.88,
+      "raw_chars": 23254,
+      "fit_chars": 9431,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:bbdc4931e0a5dd1f0e27e48df091c52885eb5dc7300cb976c01f21b0bc6dd4bc",
+      "fit_hash": "sha256:aceffa000a177914ee39e47e1768cd6339e9fe03dbd492ad767498cb72a1b690",
+      "file": "pages/src_15-docs-api.md",
+      "raw_file": "pages/src_15-docs-api.raw.md"
+    },
+    {
+      "id": "src_16",
+      "url": "https://elevenlabs.io/dubbing-api",
+      "final_url": "https://elevenlabs.io/dubbing-api",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:48:59.159+00:00",
+      "render_seconds": 7.09,
+      "raw_chars": 14533,
+      "fit_chars": 4378,
+      "raw_has_price": true,
+      "fit_has_price": true,
+      "raw_hash": "sha256:a5badcae95c28eb84e2d2939b983bbeb7077a55fe61118b3656e20e69e2b3df3",
+      "fit_hash": "sha256:c5b9314bc77ae5f54835c20a2f6fa092e469e96b61f9139e066f92cce10e846a",
+      "file": "pages/src_16-docs-dubbing-api.md",
+      "raw_file": "pages/src_16-docs-dubbing-api.raw.md"
+    },
+    {
+      "id": "src_17",
+      "url": "https://elevenlabs.io/eleven-music-api",
+      "final_url": "https://elevenlabs.io/eleven-music-api",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "Music API",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:06.258+00:00",
+      "render_seconds": 6.92,
+      "raw_chars": 18212,
+      "fit_chars": 7734,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:45b6b08b6d7f13a21fd74552664a461fce874e0c7afa0c332b5cfaf53f037dc7",
+      "fit_hash": "sha256:9d43a4a6cd9d19778aac4c62a2f27d17b549770536f49c26da3b621bc1564e89",
+      "file": "pages/src_17-docs-eleven-music-api.md",
+      "raw_file": "pages/src_17-docs-eleven-music-api.raw.md"
+    },
+    {
+      "id": "src_18",
+      "url": "https://elevenlabs.io/affiliate-partner-guide",
+      "final_url": "https://elevenlabs.io/affiliate-partner-guide",
+      "page_type": "docs",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:13.181+00:00",
+      "render_seconds": 7.06,
+      "raw_chars": 16625,
+      "fit_chars": 8527,
+      "raw_has_price": true,
+      "fit_has_price": false,
+      "raw_hash": "sha256:f139e98ca136dca64d2854ce0f31a955abc3c6e8099097090ea5801acb10edff",
+      "fit_hash": "sha256:3aa0d769671892e88b78a6c6ca58ada6a3c9f94b90386780058cfeffd3eab378",
+      "file": "pages/src_18-docs-affiliate-partner-guide.md",
+      "raw_file": "pages/src_18-docs-affiliate-partner-guide.raw.md"
+    },
+    {
+      "id": "src_19",
+      "url": "https://elevenlabs.io/agents/ai-customer-support",
+      "final_url": "https://elevenlabs.io/agents/ai-customer-support",
+      "page_type": "faq",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "Customer Support",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:20.258+00:00",
+      "render_seconds": 6.8,
+      "raw_chars": 23604,
+      "fit_chars": 9850,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:05be06b7b852f1f766e1dc061a33a3fcb36c2b283af03448953c43d2413a881e",
+      "fit_hash": "sha256:afd42136d793648bfc266d8706b77deb413be278b0a8b7c6b0fc3ca51e76ce4a",
+      "file": "pages/src_19-faq-agents-ai-customer-support.md",
+      "raw_file": "pages/src_19-faq-agents-ai-customer-support.raw.md"
+    },
+    {
+      "id": "src_20",
+      "url": "https://elevenlabs.io/agents/elevenagents-for-support",
+      "final_url": "https://elevenlabs.io/agents/elevenagents-for-support",
+      "page_type": "faq",
+      "score": 60,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:27.050+00:00",
+      "render_seconds": 7.34,
+      "raw_chars": 19038,
+      "fit_chars": 6078,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:4f415e8cc42af44205bc706721d99757b02ca274fe468c1df82ff279adf86074",
+      "fit_hash": "sha256:2b0c03b0a15f37ab438b3c6a4d9803e4aca536d27ce02995d6550c1332bbe6cb",
+      "file": "pages/src_20-faq-agents-elevenagents-for-support.md",
+      "raw_file": "pages/src_20-faq-agents-elevenagents-for-support.raw.md"
+    },
+    {
+      "id": "src_21",
+      "url": "https://elevenlabs.io/customer-stories/api",
+      "final_url": "https://elevenlabs.io/customer-stories/api",
+      "page_type": "docs",
+      "score": 45,
+      "found_via": "link:https://elevenlabs.io/api",
+      "anchor_text": "Customers",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:34.398+00:00",
+      "render_seconds": 5.78,
+      "raw_chars": 15899,
+      "fit_chars": 2304,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:32a0c2e02025d371982de51160471c2d6fa3a4a9794f95902ec3d08e502238e8",
+      "fit_hash": "sha256:b16cf62f6e3d880441bb2d22468494a07de4087c5dc9651f80627bbf62b13a3e",
+      "file": "pages/src_21-docs-customer-stories-api.md",
+      "raw_file": "pages/src_21-docs-customer-stories-api.raw.md"
+    },
+    {
+      "id": "src_22",
+      "url": "https://elevenlabs.io/speech-to-text-api",
+      "final_url": "https://elevenlabs.io/speech-to-text-api",
+      "page_type": "docs",
+      "score": 30,
+      "found_via": "sitemap",
+      "anchor_text": "Speech to Text API",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:40.181+00:00",
+      "render_seconds": 7.01,
+      "raw_chars": 22275,
+      "fit_chars": 9171,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:f0ad8bab7a04c671c164666c4cf5c0f90f91d8876df07fee82ab85df20ea7776",
+      "fit_hash": "sha256:4c1db241e30d446794159a2df245a48e5e82797c5a41a9d7b6cfd2266ba381b1",
+      "file": "pages/src_22-docs-speech-to-text-api.md",
+      "raw_file": "pages/src_22-docs-speech-to-text-api.raw.md"
+    },
+    {
+      "id": "src_23",
+      "url": "https://elevenlabs.io/youtube-transcript-generator",
+      "final_url": "https://elevenlabs.io/youtube-transcript-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "YOUTUBE TRANSCRIPT GENERATOR",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:47.211+00:00",
+      "render_seconds": 7.7,
+      "raw_chars": 21479,
+      "fit_chars": 6625,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:b0c029c22a3e5270f38730057d32d8a9bf2ad52d283bf12f0d8c93dad29d2b10",
+      "fit_hash": "sha256:1ce979bbd90ded17401398c2a3f445b99853e3d760f6d21dc378b329c8bf9a0c",
+      "file": "pages/src_23-features-youtube-transcript-generator.md",
+      "raw_file": "pages/src_23-features-youtube-transcript-generator.raw.md"
+    },
+    {
+      "id": "src_24",
+      "url": "https://elevenlabs.io/podcast-transcript-generator",
+      "final_url": "https://elevenlabs.io/podcast-transcript-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "Skip to content",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:49:54.904+00:00",
+      "render_seconds": 7.53,
+      "raw_chars": 21200,
+      "fit_chars": 6573,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:63fde0373c1c1e180f042c7f13b1eff07ec008d6012ec5ecb7e5b738b0ee02aa",
+      "fit_hash": "sha256:b3fdee3ef45a2edc7cbc5c9247c40d8838a5ce04c5d4780cffd7c1afc3bdd23d",
+      "file": "pages/src_24-features-podcast-transcript-generator.md",
+      "raw_file": "pages/src_24-features-podcast-transcript-generator.raw.md"
+    },
+    {
+      "id": "src_25",
+      "url": "https://elevenlabs.io/instagram-transcript-generator",
+      "final_url": "https://elevenlabs.io/instagram-transcript-generator",
+      "page_type": "features",
+      "score": 80,
+      "found_via": "sitemap",
+      "anchor_text": "INSTAGRAM TRANSCRIPT GENERATOR",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:50:02.440+00:00",
+      "render_seconds": 7.48,
+      "raw_chars": 21011,
+      "fit_chars": 6288,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:a45a8c9eb5972ca4c4fbda96cf6a86fb7393070ecc2df28a91e18661c35c85f5",
+      "fit_hash": "sha256:b0cb0cadf1165880f4d9afbdc45b61d99e0b4b5b3873f2eb0a0e540c1c588ef4",
+      "file": "pages/src_25-features-instagram-transcript-generator.md",
+      "raw_file": "pages/src_25-features-instagram-transcript-generator.raw.md"
+    },
+    {
+      "id": "src_26",
+      "url": "https://elevenlabs.io/use-cases/vr",
+      "final_url": "https://elevenlabs.io/use-cases/vr",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/use-cases",
+      "anchor_text": "Text to Speech for Virtual Reality",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:50:09.935+00:00",
+      "render_seconds": 7.64,
+      "raw_chars": 43631,
+      "fit_chars": 5572,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:7447acf693b60e28febad1ab2df4203adbd41ad854aeeb023263fe7539ace2c0",
+      "fit_hash": "sha256:5d3825a521c87f18c48ea62197574071e11dd657bf16ec1f9e9d8a0eb34b5669",
+      "file": "pages/src_26-features-use-cases-vr.md",
+      "raw_file": "pages/src_26-features-use-cases-vr.raw.md"
+    },
+    {
+      "id": "src_27",
+      "url": "https://elevenlabs.io/use-cases/unity",
+      "final_url": "https://elevenlabs.io/use-cases/unity",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/use-cases",
+      "anchor_text": "Text to Speech for Unity Game Engine",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:50:17.585+00:00",
+      "render_seconds": 7.53,
+      "raw_chars": 44145,
+      "fit_chars": 6120,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:8497936a957ac1b0a5a5c64132230c8d0d86d1480c08974be87df33c808d780f",
+      "fit_hash": "sha256:9774c4de2715d231aa2b678edf1ebb13e315d9aff4d4d623cf8b48864211db1b",
+      "file": "pages/src_27-features-use-cases-unity.md",
+      "raw_file": "pages/src_27-features-use-cases-unity.raw.md"
+    },
+    {
+      "id": "src_28",
+      "url": "https://elevenlabs.io/use-cases/videos",
+      "final_url": "https://elevenlabs.io/use-cases/videos",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/use-cases",
+      "anchor_text": "Text to Speech for Videos",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:50:25.124+00:00",
+      "render_seconds": 6.75,
+      "raw_chars": 45706,
+      "fit_chars": 6010,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:69008514aabea2af91218570ad20be4fc4d5bb16952b249c2f71a1170f8998a9",
+      "fit_hash": "sha256:4f14c372bb182f76c94554a18f56f8dd6dd102fb0b87b3e7ad475314d36163cc",
+      "file": "pages/src_28-features-use-cases-videos.md",
+      "raw_file": "pages/src_28-features-use-cases-videos.raw.md"
+    },
+    {
+      "id": "src_29",
+      "url": "https://elevenlabs.io/use-cases/tiktok",
+      "final_url": "https://elevenlabs.io/use-cases/tiktok",
+      "page_type": "features",
+      "score": 65,
+      "found_via": "link:https://elevenlabs.io/use-cases",
+      "anchor_text": "Text to Speech for TikTok",
+      "status": 200,
+      "robots_allowed": true,
+      "robots_rule": "allow: /",
+      "fetched_at": "2026-10-08T01:50:31.881+00:00",
+      "render_seconds": 7.36,
+      "raw_chars": 43129,
+      "fit_chars": 5708,
+      "raw_has_price": false,
+      "fit_has_price": false,
+      "raw_hash": "sha256:6d7295a132a20f809f26aa7edcee0aa55998aececd658c59132f725e5b79cf43",
+      "fit_hash": "sha256:f743c3b0320286af254d77d27bc1f2b49effd11720fc49034dc01301d16f9716",
+      "file": "pages/src_29-features-use-cases-tiktok.md",
+      "raw_file": "pages/src_29-features-use-cases-tiktok.raw.md"
+    }
+  ]
+}

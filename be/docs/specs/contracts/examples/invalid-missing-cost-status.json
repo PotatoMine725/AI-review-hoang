@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "currency": "USD",
+  "items": [
+    {
+      "call_id": "6f1c2a52-3d0e-4b1a-9a57-0c1d2e3f4a05",
+      "category": "tts",
+      "attempt": 1,
+      "cache_hit": false,
+      "cost_usd": 0.0123
+    }
+  ]
+}

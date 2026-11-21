@@ -1,0 +1,141 @@
+{
+  "schema_version": "0",
+  "product_id": "9f8a3c20-7b41-4e89-bc52-1d0e4f3a7a99",
+  "knowledge_version": 1,
+  "platform": "tiktok",
+  "language": "en",
+  "intent": "conversion",
+  "format": "screen_recording",
+  "target_duration_s": 30,
+  "aspect_ratio": "9:16",
+  "hook": {
+    "hook_id": "h02",
+    "type": "pain",
+    "text": "If you still record voiceovers manually, stop wasting your time.",
+    "angle": "problem"
+  },
+  "scenes": [
+    {
+      "index": 1,
+      "role": "hook",
+      "duration_s": 3.0,
+      "voiceover": "If you still record voiceovers manually, stop wasting your time.",
+      "on_screen_text": "Stop recording voiceovers manually",
+      "visual": {
+        "kind": "logo",
+        "ref": "pages/src_01-brand-logo.png"
+      },
+      "claims": [
+        {
+          "text": "ElevenLabs is an AI voice generator.",
+          "type": "identity",
+          "fact_ref": {
+            "source_id": "src_01",
+            "field_path": "identity.name"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "role": "problem",
+      "duration_s": 5.0,
+      "voiceover": "Hiring voice actors and retaking bad audio takes days and costs hundreds of dollars.",
+      "on_screen_text": "Hours wasted on editing bad audio",
+      "visual": {
+        "kind": "text_card",
+        "ref": "shot_problem_audio_editor_timeline"
+      },
+      "claims": []
+    },
+    {
+      "index": 3,
+      "role": "demo",
+      "duration_s": 12.0,
+      "voiceover": "ElevenLabs generates ultra-realistic speech with Eleven v4 and Eleven Multilingual v2 in seconds.",
+      "on_screen_text": "Eleven v4 & Multilingual v2: Instant voice generation",
+      "visual": {
+        "kind": "screen_recording",
+        "ref": "shot_screen_recording_generate_speech"
+      },
+      "claims": [
+        {
+          "text": "Eleven v4 is their most emotive model yet.",
+          "type": "feature",
+          "fact_ref": {
+            "source_id": "src_01",
+            "field_path": "identity.models[0]"
+          }
+        },
+        {
+          "text": "Supports Eleven Multilingual v2.",
+          "type": "feature",
+          "fact_ref": {
+            "source_id": "src_01",
+            "field_path": "identity.models[1]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "role": "result",
+      "duration_s": 4.0,
+      "voiceover": "You get multimodal generation for speech, sound effects, and video voiceovers on demand.",
+      "on_screen_text": "Studio-quality audio in seconds",
+      "visual": {
+        "kind": "screenshot",
+        "ref": "pages/src_05-features-use-cases.md"
+      },
+      "claims": [
+        {
+          "text": "Supports Multimodal Generation.",
+          "type": "feature",
+          "fact_ref": {
+            "source_id": "src_01",
+            "field_path": "features[0]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "role": "proof",
+      "duration_s": 3.0,
+      "voiceover": "Get started for only $1 in your first month with 30,000 credits on the Starter plan.",
+      "on_screen_text": "Starter Plan: $1 first month (30k credits)",
+      "visual": {
+        "kind": "screenshot",
+        "ref": "pages/src_04-pricing-pricing-agents.raw.md"
+      },
+      "claims": [
+        {
+          "text": "Starter plan is $1 for the first month with 30,000 credits.",
+          "type": "pricing",
+          "fact_ref": {
+            "source_id": "src_02",
+            "field_path": "pricing.plans[1]"
+          }
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "role": "cta",
+      "duration_s": 3.0,
+      "voiceover": "Click the link in bio to try ElevenLabs today.",
+      "on_screen_text": "Link in bio -> Try ElevenLabs",
+      "visual": {
+        "kind": "text_card",
+        "ref": "shot_cta_link_in_bio"
+      },
+      "claims": []
+    }
+  ],
+  "cta": {
+    "text": "Click the link in bio to try ElevenLabs today.",
+    "uses_tracking_link": true
+  },
+  "disclosure": null,
+  "experience_claims": null
+}

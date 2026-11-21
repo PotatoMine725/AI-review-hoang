@@ -1,0 +1,358 @@
+{
+  "machine": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.15",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+    "cores": "14",
+    "threads": "20",
+    "ram_gb": "15.6",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU; Intel(R) Iris(R) Xe Graphics",
+    "ffmpeg": "ffmpeg version 8.0-full_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers"
+  },
+  "runs": 3,
+  "rows": [
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 11.88,
+      "wall_s_all": [
+        11.68,
+        12.03,
+        11.88
+      ],
+      "cpu_s_median": 47.4,
+      "max_rss_mb": 1561.0,
+      "duration_s": 23.03,
+      "size_mb": 2.66,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-9x16-cpu.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "9:16",
+      "encoder": "nvenc",
+      "wall_s_median": 12.41,
+      "wall_s_all": [
+        12.41,
+        14.07,
+        12.11
+      ],
+      "cpu_s_median": 29.7,
+      "max_rss_mb": 1201.0,
+      "duration_s": 23.03,
+      "size_mb": 4.86,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-9x16-nvenc.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "9:16",
+      "encoder": "qsv",
+      "wall_s_median": 19.6,
+      "wall_s_all": [
+        20.1,
+        19.14,
+        19.6
+      ],
+      "cpu_s_median": 42.4,
+      "max_rss_mb": 858.0,
+      "duration_s": 23.03,
+      "size_mb": 2.93,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-9x16-qsv.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 11.57,
+      "wall_s_all": [
+        11.57,
+        11.17,
+        12.23
+      ],
+      "cpu_s_median": 49.1,
+      "max_rss_mb": 1505.0,
+      "duration_s": 23.03,
+      "size_mb": 2.85,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-16x9-cpu.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "16:9",
+      "encoder": "nvenc",
+      "wall_s_median": 12.1,
+      "wall_s_all": [
+        12.1,
+        11.41,
+        12.19
+      ],
+      "cpu_s_median": 29.2,
+      "max_rss_mb": 1065.0,
+      "duration_s": 23.03,
+      "size_mb": 4.78,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-16x9-nvenc.mp4"
+    },
+    {
+      "preset": "hoat-hinh-do-hoa",
+      "ratio": "16:9",
+      "encoder": "qsv",
+      "wall_s_median": 18.71,
+      "wall_s_all": [
+        18.79,
+        18.71,
+        18.67
+      ],
+      "cpu_s_median": 40.4,
+      "max_rss_mb": 796.0,
+      "duration_s": 23.03,
+      "size_mb": 2.79,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-hoat-hinh-do-hoa-16x9-qsv.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 19.93,
+      "wall_s_all": [
+        20.46,
+        19.64,
+        19.93
+      ],
+      "cpu_s_median": 63.0,
+      "max_rss_mb": 1553.0,
+      "duration_s": 23.2,
+      "size_mb": 1.98,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-9x16-cpu.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "9:16",
+      "encoder": "nvenc",
+      "wall_s_median": 20.12,
+      "wall_s_all": [
+        22.42,
+        19.78,
+        20.12
+      ],
+      "cpu_s_median": 45.4,
+      "max_rss_mb": 1167.0,
+      "duration_s": 23.2,
+      "size_mb": 4.13,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-9x16-nvenc.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "9:16",
+      "encoder": "qsv",
+      "wall_s_median": 25.81,
+      "wall_s_all": [
+        25.81,
+        26.19,
+        25.53
+      ],
+      "cpu_s_median": 52.7,
+      "max_rss_mb": 847.0,
+      "duration_s": 23.2,
+      "size_mb": 2.49,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-9x16-qsv.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 17.66,
+      "wall_s_all": [
+        17.49,
+        19.23,
+        17.66
+      ],
+      "cpu_s_median": 56.6,
+      "max_rss_mb": 1499.0,
+      "duration_s": 23.2,
+      "size_mb": 1.83,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-16x9-cpu.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "16:9",
+      "encoder": "nvenc",
+      "wall_s_median": 19.58,
+      "wall_s_all": [
+        19.58,
+        19.4,
+        19.81
+      ],
+      "cpu_s_median": 43.2,
+      "max_rss_mb": 1057.0,
+      "duration_s": 23.2,
+      "size_mb": 3.76,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-16x9-nvenc.mp4"
+    },
+    {
+      "preset": "dien-anh-toi-gian",
+      "ratio": "16:9",
+      "encoder": "qsv",
+      "wall_s_median": 25.73,
+      "wall_s_all": [
+        25.73,
+        26.19,
+        25.25
+      ],
+      "cpu_s_median": 53.0,
+      "max_rss_mb": 787.0,
+      "duration_s": 23.2,
+      "size_mb": 2.19,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-dien-anh-toi-gian-16x9-qsv.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "9:16",
+      "encoder": "cpu",
+      "wall_s_median": 24.04,
+      "wall_s_all": [
+        24.04,
+        21.65,
+        25.16
+      ],
+      "cpu_s_median": 70.5,
+      "max_rss_mb": 1545.0,
+      "duration_s": 23.2,
+      "size_mb": 1.92,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-9x16-cpu.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "9:16",
+      "encoder": "nvenc",
+      "wall_s_median": 26.0,
+      "wall_s_all": [
+        26.0,
+        26.43,
+        25.91
+      ],
+      "cpu_s_median": 55.7,
+      "max_rss_mb": 1160.0,
+      "duration_s": 23.2,
+      "size_mb": 4.0,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-9x16-nvenc.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "9:16",
+      "encoder": "qsv",
+      "wall_s_median": 32.09,
+      "wall_s_all": [
+        31.65,
+        32.51,
+        32.09
+      ],
+      "cpu_s_median": 64.8,
+      "max_rss_mb": 836.0,
+      "duration_s": 23.2,
+      "size_mb": 2.33,
+      "resolution": "1080x1920",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-9x16-qsv.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "16:9",
+      "encoder": "cpu",
+      "wall_s_median": 23.65,
+      "wall_s_all": [
+        23.65,
+        24.06,
+        22.99
+      ],
+      "cpu_s_median": 72.5,
+      "max_rss_mb": 1491.0,
+      "duration_s": 23.2,
+      "size_mb": 1.91,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-16x9-cpu.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "16:9",
+      "encoder": "nvenc",
+      "wall_s_median": 25.75,
+      "wall_s_all": [
+        25.85,
+        25.75,
+        25.48
+      ],
+      "cpu_s_median": 55.1,
+      "max_rss_mb": 1054.0,
+      "duration_s": 23.2,
+      "size_mb": 3.87,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-16x9-nvenc.mp4"
+    },
+    {
+      "preset": "co-dien",
+      "ratio": "16:9",
+      "encoder": "qsv",
+      "wall_s_median": 34.64,
+      "wall_s_all": [
+        34.64,
+        35.13,
+        30.39
+      ],
+      "cpu_s_median": 67.8,
+      "max_rss_mb": 779.0,
+      "duration_s": 23.2,
+      "size_mb": 2.23,
+      "resolution": "1920x1080",
+      "fps": 30.0,
+      "codec": "h264/aac",
+      "file": "real-co-dien-16x9-qsv.mp4"
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,2355 @@
+{
+  "identity": {
+    "name": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+      "value": "Claude"
+    },
+    "tagline": {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "@Claude reads threads, understands full context, and reacts in real time so your team moves forward together.",
+      "value": "Reads threads, understands full context, and reacts in real time"
+    },
+    "description": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.",
+      "value": "An artificial intelligence trained by Anthropic using Constitutional AI to be safe, accurate, and secure."
+    },
+    "category": {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Claude Code",
+      "value": "AI assistant"
+    },
+    "company": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Claude is an artificial intelligence, trained by Anthropic using Constitutional AI",
+      "value": "Anthropic"
+    },
+    "version": null,
+    "models": [
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Mythos"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Fable"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Opus"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Sonnet"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "Models\n  * Mythos\n  * Fable\n  * Opus\n  * Sonnet\n  * Haiku",
+        "name": "Haiku"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_10",
+        "evidence": "Claude Fable 5.1 is the most capable model we've run on CursorBench 3.2",
+        "name": "Claude Fable 5.1"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_10",
+        "evidence": "Claude Opus 5.5 used among the fewest tokens and steps we measured.",
+        "name": "Claude Opus 5.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_11",
+        "evidence": "Opus 5.5 on Terminal-Bench 4.0",
+        "name": "Opus 5.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_11",
+        "evidence": "Claude Code brings Fable 5.1 to your terminal",
+        "name": "Fable 5.1"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_27",
+        "evidence": "Working at the frontier: How Balyasny Asset Management evaluates and governs Claude Fable 5",
+        "name": "Claude Fable 5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_17",
+        "evidence": "Claude Sonnet 5.5",
+        "name": "Claude Sonnet 5.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_17",
+        "evidence": "Claude Haiku 4.5",
+        "name": "Claude Haiku 4.5"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_19",
+        "evidence": "High-performance model for coding and agents\n    $0.20 / MTok",
+        "name": "Sonnet 5.5"
+      }
+    ]
+  },
+  "pricing": {
+    "currency": {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "17 $",
+      "value": "USD"
+    },
+    "plans": [
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "0 $",
+        "name": "Free",
+        "price": 0.0,
+        "price_text": "0 $",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": "individuals"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "20 $ if billed monthly.",
+        "name": "Pro",
+        "price": 20.0,
+        "price_text": "20 $ if billed monthly.",
+        "billing_period": "month",
+        "currency": null,
+        "audience": "individuals"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "17 $ Per month with annual subscription discount",
+        "name": "Pro",
+        "price": 17.0,
+        "price_text": "17 $ Per month with annual subscription discount",
+        "billing_period": "year",
+        "currency": null,
+        "audience": "individuals"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "From 100 $ Per month",
+        "name": "Max",
+        "price": 100.0,
+        "price_text": "From 100 $ Per month",
+        "billing_period": "month",
+        "currency": null,
+        "audience": "individuals"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "20 $ Per seat / month if billed annually.",
+        "name": "Team Standard",
+        "price": 20.0,
+        "price_text": "20 $ Per seat / month if billed annually.",
+        "billing_period": "year",
+        "currency": null,
+        "audience": "teams"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "25 $ if billed monthly.",
+        "name": "Team Standard",
+        "price": 25.0,
+        "price_text": "25 $ if billed monthly.",
+        "billing_period": "month",
+        "currency": null,
+        "audience": "teams"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "100 $ Per seat / month if billed annually.",
+        "name": "Team Premium",
+        "price": 100.0,
+        "price_text": "100 $ Per seat / month if billed annually.",
+        "billing_period": "year",
+        "currency": null,
+        "audience": "teams"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "125 $ if billed monthly.",
+        "name": "Team Premium",
+        "price": 125.0,
+        "price_text": "125 $ if billed monthly.",
+        "billing_period": "month",
+        "currency": null,
+        "audience": "teams"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_02",
+        "evidence": "US$20/seat/month, billed annually.",
+        "name": "Enterprise",
+        "price": 20.0,
+        "price_text": "US$20/seat/month, billed annually.",
+        "billing_period": "year",
+        "currency": null,
+        "audience": "teams"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_06",
+        "evidence": "Claude Cowork and the Slack connector are included in your Team plan standard and premium seats.",
+        "name": "Team",
+        "price": null,
+        "price_text": "Per seat / month. For teams of 2 to 150.",
+        "billing_period": "month",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_07",
+        "evidence": "Claude Design is included in all paid plans.",
+        "name": "Paid plans",
+        "price": null,
+        "price_text": "Included in all paid plans",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_09",
+        "evidence": "Claude plans are available for personal, team, and enterprise use and all offer varying usage and cost.",
+        "name": "Personal",
+        "price": null,
+        "price_text": "Available for personal use",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": "individuals"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_12",
+        "evidence": "Claude Design, Claude Slides and Claude Docs are available in beta on paid plans.",
+        "name": "Paid plans",
+        "price": null,
+        "price_text": "Paid plans",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_26",
+        "evidence": "US K-12 educators and districts get free access to premium Claude features",
+        "name": "Claude for Teachers",
+        "price": 0.0,
+        "price_text": "free access",
+        "billing_period": "unknown",
+        "currency": null,
+        "audience": "US K-12 educators and districts"
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_18",
+        "evidence": "Pricing  | $10 / input MTok$50 / output MTok",
+        "name": "Claude Fable 5.1",
+        "price": null,
+        "price_text": "$10 / input MTok, $50 / output MTok",
+        "billing_period": "usage",
+        "currency": "USD",
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_18",
+        "evidence": "Pricing  | $4 / input MTok$20 / output MTok",
+        "name": "Claude Opus 5.5",
+        "price": null,
+        "price_text": "$4 / input MTok, $20 / output MTok",
+        "billing_period": "usage",
+        "currency": "USD",
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_18",
+        "evidence": "Pricing  | $2 / input MTok$10 / output MTok",
+        "name": "Claude Sonnet 5.5",
+        "price": null,
+        "price_text": "$2 / input MTok, $10 / output MTok",
+        "billing_period": "usage",
+        "currency": "USD",
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_18",
+        "evidence": "Pricing  | $1 / input MTok$5 / output MTok",
+        "name": "Claude Haiku 4.5",
+        "price": null,
+        "price_text": "$1 / input MTok, $5 / output MTok",
+        "billing_period": "usage",
+        "currency": "USD",
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_19",
+        "evidence": "Next generation intelligence for long-running agents\n    $0.25 / MTok",
+        "name": "Fable 5.1",
+        "price": 0.25,
+        "price_text": "$0.25 / MTok",
+        "billing_period": "usage",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_19",
+        "evidence": "Daily driver for agentic coding and enterprise work\n    $0.20 / MTok",
+        "name": "Opus 5.5",
+        "price": 0.2,
+        "price_text": "$0.20 / MTok",
+        "billing_period": "usage",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_19",
+        "evidence": "High-performance model for coding and agents\n    $0.20 / MTok",
+        "name": "Sonnet 5.5",
+        "price": 0.2,
+        "price_text": "$0.20 / MTok",
+        "billing_period": "usage",
+        "currency": null,
+        "audience": null
+      },
+      {
+        "origin": "crawled",
+        "source_id": "src_19",
+        "evidence": "Fastest, most cost-effective model\n    $0.10 / MTok",
+        "name": "Haiku",
+        "price": 0.1,
+        "price_text": "$0.10 / MTok",
+        "billing_period": "usage",
+        "currency": null,
+        "audience": null
+      }
+    ],
+    "free_plan": {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "The Free plan offers limited use with no payment required.",
+      "value": true
+    },
+    "trial_days": null
+  },
+  "features": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Generate code and visualize data",
+      "name": "Generate code and visualize data",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Write, edit, and create content",
+      "name": "Write, edit, and create content",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Ability to search the web",
+      "name": "Search the web",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Memory across conversations",
+      "name": "Memory across conversations",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Create files and execute code",
+      "name": "Create files and execute code",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Connect Slack and Google Workspace services",
+      "name": "Connect Slack and Google Workspace services",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Extended thinking for complex work",
+      "name": "Extended thinking",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Includes Claude Code",
+      "name": "Claude Code",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Includes Claude Cowork",
+      "name": "Claude Cowork",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Includes Claude Design",
+      "name": "Claude Design",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Includes Claude Science",
+      "name": "Claude Science",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Claude in Chrome",
+      "name": "Claude in Chrome",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Claude for Microsoft 365",
+      "name": "Claude for Microsoft 365",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Create Artifacts",
+      "name": "Artifacts",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Projects",
+      "name": "Projects",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Memory",
+      "name": "Memory",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Voice mode",
+      "name": "Voice mode",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Web search",
+      "name": "Web search",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Collaborate with Claude on shared workspaces and long-running tasks.",
+      "name": "Shared workspaces",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Use Claude in your terminal to write, review, and ship code.",
+      "name": "Terminal integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Install and use the Claude desktop app on macOS and Windows.",
+      "name": "Desktop app",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Claude Mobile apps\nTake Claude with you on iOS and Android.",
+      "name": "Mobile apps",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Claude API and Console\nBuild with the Claude API and manage keys, usage, and billing in the Console.",
+      "name": "Claude API",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Identity management (SSO, JIT, SCIM)\nConfigure single sign-on, provisioning, and directory sync for your team.",
+      "name": "Identity management",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Tag Claude into any thread in Slack, no matter how long or messy. It reacts to context, decisions, or open questions to help busy teams get more done.",
+      "name": "Slack integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Give @Claude standing instructions and it works without a mention now or in the future.",
+      "name": "Standing instructions",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Context can draw on previous conversations and memory. What happened in Monday's standup is still there on Thursday, without anyone repeating it.",
+      "name": "Memory across threads",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Configure any tool with an API using Agent Identity. Claude can query, act, and report back in the thread where the work is happening.",
+      "name": "Agent Identity for tool integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Claude surfaces what matters to the whole channel, not just the person who asked. Everyone sees the work, and anyone can build on it",
+      "name": "Shared channel resource",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Hand Claude a complex task and it works while you move on to other projects. It follows up, asks for input, or comes back when it's done.",
+      "name": "Long-running task execution",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Decide which tools Claude can reach and read. Confine sensitive connectors to a single private channel or enable broader access for specific tools and resources.",
+      "name": "Granular governance",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Works directly in folders and tools you choose, and runs your task to deliver work for review.",
+      "name": "Direct file and tool integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Schedule a report once and get it daily, weekly, or monthly.",
+      "name": "Recurring task scheduling",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "When a task requires opening a site, reading a page, or filling a form, Claude opens a browser in the Cowork side panel",
+      "name": "Built-in browser",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Claude Cowork runs on web, desktop, and mobile and is the same Claude, wherever you work.",
+      "name": "Multi-platform support",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Big projects are split into chunks that run together. While it drafts, it researches and organizes at the same time.",
+      "name": "Parallel task processing",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Plugins bundle your tools, knowledge, and workflows into a single install",
+      "name": "Plugin support",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Computer use lets Claude interact directly with your screen to open apps, navigate your browser, or run tools.",
+      "name": "Computer use (screen interaction)",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Describe a visual and Claude builds a first version, on brand.",
+      "name": "Idea to visual generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Import from GitHub, design files, or your local codebase so Claude can build with your real components.",
+      "name": "Design system integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Comment on any element, edit text directly, or use the adjustment sliders Claude creates to tune spacing and color.",
+      "name": "On-canvas editing",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Export reliably to PDF and PowerPoint or send your work to the apps you already use—the list of connectors now includes Adobe, Canva and more.",
+      "name": "Export and third-party connectors",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Admins can lock a team to a single approved design system, so every design stays on brand no matter who's building it.",
+      "name": "Admin design system controls",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Pull in your design system from Claude Code using /design-sync or work directly in Claude Code with /design.",
+      "name": "Claude Code integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Claude returns account briefs, proposal decks in your template, and Friday forecasts ready for review with citations linked to sources.",
+      "name": "Account briefs and proposal generation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Claude connects to tools like Salesforce, HubSpot, Gong, Fireflies, Clay, ZoomInfo, Apollo, Outreach, Docusign, and your email and calendar",
+      "name": "Integration with revenue stack",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "/sales:call-summary turns the Gong or Fireflies transcript into the follow-up email, next steps, and structured CRM fields",
+      "name": "Automated call summaries and CRM updates",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "/sales:pipeline-review pulls the team's open opportunities, flags stalled deals, stage-age outliers, and missing next steps",
+      "name": "Pipeline review and forecasting",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "A scheduled Claude task reads your calendar, finds each external meeting, and sends a brief to Slack",
+      "name": "Daily meeting briefs",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Claude for PowerPoint builds the proposal in your template from the Gong transcript, the account brief, and your pricing.",
+      "name": "Claude for PowerPoint",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Claude for Word drafts the RFP response from your answer library with tracked changes for review.",
+      "name": "Claude for Word",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Embed Claude into your sales platform or product through the API and Agent SDK.",
+      "name": "API and Agent SDK",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Get editable, polished files, ready for your review.",
+      "name": "File generation",
+      "description": "Produces editable, polished files like documents, spreadsheets, and slides."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Connect the apps you already use, including interactive MCP apps.",
+      "name": "Connectors",
+      "description": "Connects with tools, databases, and applications."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Set up work Claude runs again on a schedule you choose.",
+      "name": "Scheduled tasks",
+      "description": "Runs tasks on a schedule chosen by the user."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Talk to Claude instead of typing.",
+      "name": "Voice interaction",
+      "description": "Allows talking to Claude instead of typing."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "See and use your screen (beta).",
+      "name": "Screen usage",
+      "description": "Can see and use the user's screen (beta)."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Teach Claude new skills, record them, and share with your team.",
+      "name": "Custom skills",
+      "description": "Users can teach, record, and share new skills with their team."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Test and refine prompts in the Workbench",
+      "name": "Workbench",
+      "description": "A tool to test and refine prompts."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Claude ranks highest on honesty, jailbreak resistance, and brand safety.",
+      "name": "Brand safety and honesty",
+      "description": "High performance on honesty, jailbreak resistance, and brand safety."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Write, test, and debug complex software with , analyze codebases with expert-level reasoning via GitHub integration",
+      "name": "Code analysis and debugging",
+      "description": "Analyze codebases with expert-level reasoning via GitHub integration"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "delegate development tasks through computer use",
+      "name": "Computer use",
+      "description": "Delegate development tasks through computer use"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Customize how Claude fits into your solution with our API",
+      "name": "API access",
+      "description": "Customize how Claude fits into your solution"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Claude Design, Claude Slides and Claude Docs are available in beta on paid plans.",
+      "name": "Claude Design, Slides, and Docs",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Download into common file types, including PowerPoint, PDF, or HTML.",
+      "name": "File export",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Give Claude your latest CRM data using the Salesforce connector and have it draft a deck for the QBR readout.",
+      "name": "Salesforce connector",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Catalog search and discovery",
+      "name": "Catalog search and discovery",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Planning and shopping lists",
+      "name": "Planning and shopping lists",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Cart actions and checkout",
+      "name": "Cart actions and checkout",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Personalization and memory",
+      "name": "Personalization and memory",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Sales analytics and insights",
+      "name": "Sales analytics and insights",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Catalog and inventory management",
+      "name": "Catalog and inventory management",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Claude draws on Learning Commons for state standards and materials from Illustrative Mathematics and OpenSciEd.",
+      "name": "Curriculum integration",
+      "description": "Connects to Learning Commons for state standards and materials from Illustrative Mathematics and OpenSciEd."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Training is off by default for every verified educator account.",
+      "name": "Data privacy",
+      "description": "No model training on user content by default."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Schools and district leaders can bring Claude for Teachers into one workspace with enterprise-level features like role-based access controls and SSO",
+      "name": "Enterprise-level management",
+      "description": "Includes role-based access controls and single sign-on (SSO) for schools and districts."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "New in Claude Managed Agents: self-hosted sandboxes and MCP tunnels",
+      "name": "Claude Managed Agents",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Claude Marketplace: one place to discover plugins, agents, and services from our partners",
+      "name": "Claude Marketplace",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Claude Tag now supports personal connectors in channels",
+      "name": "Claude Tag",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code maps and explains entire codebases in a few seconds.",
+      "name": "Codebase mapping and explanation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code works with GitHub, GitLab, and your command line tools to read issues, write code, run tests, and open pull requests.",
+      "name": "Issue to PR automation",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code follows imports across the repo, runs your tests, and keeps going when something breaks.",
+      "name": "Multi-hour refactors and migrations",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code runs locally in your terminal and talks directly to model APIs without requiring a backend server or remote code index.",
+      "name": "Local terminal execution",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Native extensions for VS Code (+ Cursor, Devin Desktop) and JetBrains IDEs.",
+      "name": "IDE integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Fast mode is a high-speed configuration for Opus 5.5, making the model 2.5x faster at a higher cost per token.",
+      "name": "Fast mode",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "Claude for Research Labs\nConnect Claude to the databases and files your research depends on. It holds context across a long conversation",
+      "name": "Claude for Research Labs",
+      "description": "Connects to databases and files, maintains context across long conversations, and helps draft sections grounded in evidence."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "The Claude Science app, an AI workbench for scientists, integrates the tools researchers commonly use, produces auditable artifacts, and provides flexible access to computing resources.",
+      "name": "Claude Science app",
+      "description": "An AI workbench for scientists that integrates research tools, produces auditable artifacts, and provides access to computing resources."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "Set up a recurring task once and Claude runs it on the schedule you choose: a weekly digest of papers in your field, summaries compiled from your notes",
+      "name": "Cowork",
+      "description": "Automates recurring tasks based on a user-defined schedule."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Give Claude access to your tools and data in Google Drive, GitHub, Slack, Microsoft 365, or any MCP server.",
+      "name": "Tool and data integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Teach Claude how to do something your way with reusable instructions, scripts, and resources it loads when relevant.",
+      "name": "Custom instructions and scripts",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Use Claude inside Word, Excel, PowerPoint, and Outlook, with answers based on your organization’s documents.",
+      "name": "Claude for M365",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Search, read, and upload files instantly",
+      "name": "File management",
+      "description": "Search, read, and upload files instantly"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Draft replies, summarize threads, & search your inbox",
+      "name": "Email integration",
+      "description": "Draft replies, summarize threads, & search your inbox"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Manage your schedule and coordinate meetings effortlessly",
+      "name": "Calendar management",
+      "description": "Manage your schedule and coordinate meetings effortlessly"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Search, create, autofill, and export Canva designs",
+      "name": "Canva integration",
+      "description": "Search, create, autofill, and export Canva designs"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Access your company's SharePoint, OneDrive, Outlook, and Teams directly in Claude",
+      "name": "Microsoft 365 integration",
+      "description": "Access your company's SharePoint, OneDrive, Outlook, and Teams directly in Claude"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Connect your Notion workspace to search, update, and power workflows across tools",
+      "name": "Notion integration",
+      "description": "Connect your Notion workspace to search, update, and power workflows across tools"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Generate diagrams and better code from Figma context",
+      "name": "Figma integration",
+      "description": "Generate diagrams and better code from Figma context"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "CRM context for every answer, insight, and action",
+      "name": "HubSpot integration",
+      "description": "CRM context for every answer, insight, and action"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Connect to Asana to coordinate tasks, projects, and goals",
+      "name": "Asana integration",
+      "description": "Connect to Asana to coordinate tasks, projects, and goals"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Manage issues, projects & team workflows in Linear",
+      "name": "Linear integration",
+      "description": "Manage issues, projects & team workflows in Linear"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "AI code review with specialized agents and confidence-based filtering for pull requests",
+      "name": "AI code review",
+      "description": "AI code review with specialized agents and confidence-based filtering for pull requests"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Browser automation and end-to-end testing MCP server by Microsoft.",
+      "name": "Browser automation",
+      "description": "Enables Claude to interact with web pages, take screenshots, fill forms, and automate testing workflows."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Prompt caching reduces costs and latency by reusing previously processed portions of your prompt across API calls.",
+      "name": "Prompt caching",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "The Batch API allows asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens.",
+      "name": "Batch API",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Web search is available on the Claude API for $10 per 1,000 searches",
+      "name": "Web search tool",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "The web fetch tool is available on the Claude API at no additional cost.",
+      "name": "Web fetch tool",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Code execution is free when used with web search or web fetch.",
+      "name": "Code execution tool",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "All current models support text and image input, text output, multilingual capabilities, vision, and tool use.",
+      "name": "Multimodal support",
+      "description": "Supports text and image input, text output, multilingual capabilities, vision, and tool use."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Top-tier results in reasoning, coding, multilingual tasks, long-context handling, honesty, and image processing.",
+      "name": "Reasoning and coding",
+      "description": "Top-tier results in reasoning, coding, multilingual tasks, long-context handling, honesty, and image processing."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Run Python code, create visualizations, and analyze data in API calls.",
+      "name": "Code execution and data analysis",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Allow Claude to interact with hundreds of external tools and APIs so it can perform a wider range of tasks.",
+      "name": "Tool and API integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Run more comprehensive and data-intensive use cases with up to 1 million tokens of context.",
+      "name": "1 million token context window",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Connect Claude to your tools and data through the open standard for AI integrations.",
+      "name": "Model Context Protocol (MCP)",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Claude reads and writes to memory stores, so every session gets progressively better.",
+      "name": "Memory stores",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Session tracing records what every agent did and why, with built-in analytics to improve agent performance.",
+      "name": "Session tracing",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Sales helps with prospecting, outreach, pipeline management, call preparation, and deal strategy.",
+      "name": "Sales assistance",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Write SQL, explore datasets, and generate insights. Build visualizations and dashboards from raw data.",
+      "name": "Data analysis and visualization",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Brings together Adobe Creative Cloud tools for images, vectors, design, and video.",
+      "name": "Adobe Creative Cloud integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "The Dropbox plugin for Claude connects your Dropbox files directly to Claude, so you can search, organize, save generated content, and create sharing links without switching tools.",
+      "name": "Dropbox integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Official Slack MCP server for interactive and collaborative workflows.",
+      "name": "Slack MCP server",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "Finance supports month-end close, journal entry preparation, account reconciliation, financial statement generation, variance analysis, and SOX audit workflows.",
+      "name": "Finance workflows support",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "Connect your ERP, data warehouse, and spreadsheet tools via MCP for direct data access",
+      "name": "MCP integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "ZoomInfo's verified B2B intelligence in Claude",
+      "name": "ZoomInfo integration",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "Brand Voice transforms scattered brand materials into enforceable AI guardrails — automatically.",
+      "name": "Brand Voice",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "ZoomInfo's verified B2B intelligence in Claude: find, research, and win the accounts that grow your business.",
+      "name": "ZoomInfo B2B intelligence",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "3 pre-built skills that chain multiple Apollo APIs into complete sales workflows",
+      "name": "Apollo API sales workflows",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "The Dropbox plugin for Claude connects your Dropbox files directly to Claude, so you can search, organize, save generated content, and create sharing links without switching tools.",
+      "name": "Dropbox plugin",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Claude can also check in on its own, like posting when a job finishes or tagging you when a thread stalls.",
+      "name": "Proactive check-ins",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Claude Tag remembers context to do its work, so channel and workspace memory is retained rather than discarded after each task.",
+      "name": "Contextual memory",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Click the Claude icon in Slack's AI assistant header to open a panel on the right side of your Slack window",
+      "name": "AI assistant panel",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Direct message with Claude : Start a private conversation with @Claude.",
+      "name": "Direct messaging",
+      "description": null
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "Chat and Cowork read plugins from your claude.ai account, and Claude Code reads them from the machine it runs on.",
+      "name": "Multi-surface plugin integration",
+      "description": null
+    }
+  ],
+  "use_cases": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "process large amounts of information",
+      "value": "Process large amounts of information"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "brainstorm ideas",
+      "value": "Brainstorm ideas"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "generate text and code",
+      "value": "Generate text and code"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "help you understand subjects",
+      "value": "Understand subjects"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "coach you through difficult situations",
+      "value": "Coach through difficult situations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "simplify your busywork",
+      "value": "Simplify busywork"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "AI Agents",
+      "value": "AI Agents"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Coding",
+      "value": "Coding"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Commerce",
+      "value": "Commerce"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Customer support",
+      "value": "Customer support"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Cybersecurity",
+      "value": "Cybersecurity"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Legal",
+      "value": "Legal"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Sales",
+      "value": "Sales"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Use Claude in your terminal to write, review, and ship code.",
+      "value": "Write, review, and ship code"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_04",
+      "evidence": "Claude for Education\nBring Claude to campus for students, faculty, and researchers.",
+      "value": "Education"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Ask @Claude to query your data and it posts results like metrics, benchmarks, and charts in the channel",
+      "value": "Data querying and reporting"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Turn a bug report into a draft PR from the context is in the thread without ever leaving Slack.",
+      "value": "Software development and bug fixing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Walk into every meeting with a full briefing. CRM notes, recent threads, and call history pulled together before you think to ask.",
+      "value": "Meeting preparation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Get everything you need from a long thread in seconds. @Claude can surface decisions, open questions, and stakeholders",
+      "value": "Thread summarization"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "@Claude can manage work in the channels your team never had bandwidth for: monitoring backlogs, triaging alerts",
+      "value": "Backlog monitoring and alert triaging"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Schedule recurring reports, ready for review",
+      "value": "Automated reporting"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Reconcile data in spreadsheets",
+      "value": "Spreadsheet reconciliation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Get a first-pass review of every contract at once",
+      "value": "Contract review"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Analyze every objection you’ve heard this quarter, in one place",
+      "value": "Sales objection analysis"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Turn a proposal into a one-pager",
+      "value": "Creating one-pagers from proposals"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Turn a rough idea into a clickable flow your team can react to, before anyone writes a spec.",
+      "value": "Mocking up design flows"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Run your next campaign to grow your business",
+      "value": "Marketing campaign planning and asset generation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Start from the Sales plugin's ready-made skills: account research, call prep, call summaries, pipeline review, and forecasting.",
+      "value": "Account research"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Start from the Sales plugin's ready-made skills: account research, call prep, call summaries, pipeline review, and forecasting.",
+      "value": "Call preparation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Start from the Sales plugin's ready-made skills: account research, call prep, call summaries, pipeline review, and forecasting.",
+      "value": "Call summaries"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Start from the Sales plugin's ready-made skills: account research, call prep, call summaries, pipeline review, and forecasting.",
+      "value": "Pipeline review"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Start from the Sales plugin's ready-made skills: account research, call prep, call summaries, pipeline review, and forecasting.",
+      "value": "Forecasting"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "handle routine work like updating metrics, consolidating feedback or data",
+      "value": "Updating metrics and consolidating feedback or data"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "large projects like audits",
+      "value": "Large projects like audits"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "first drafts and editing",
+      "value": "First drafts and editing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "creating briefs from meeting notes or account records",
+      "value": "Creating briefs from meeting notes or account records"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "reconciling disparate data from different sources and pulling it into a spreadsheet or dashboard",
+      "value": "Reconciling disparate data into spreadsheets or dashboards"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "pulling information into slides and presentations",
+      "value": "Creating slides and presentations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_10",
+      "evidence": "Classify all customer support tickets into the most relevant category.",
+      "value": "Classifying customer support tickets"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Write, test, and debug complex software",
+      "value": "Write, test, and debug complex software"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "Classify all customer support tickets into the most relevant category.",
+      "value": "Classify customer support tickets"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_11",
+      "evidence": "build a simple app and deploy it on Cloudflare",
+      "value": "Build and deploy applications"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Draft on-brand visuals, mockups, or assets.",
+      "value": "Drafting on-brand visuals, mockups, or assets"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Turn rough notes into polished decks in minutes.",
+      "value": "Creating polished slide decks"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Write and edit living documents with Claude and your coworkers.",
+      "value": "Collaborative document writing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Turn a rough idea into a clickable flow your team can react to, before anyone writes a spec.",
+      "value": "Prototyping flows"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Give Claude your latest CRM data using the Salesforce connector and have it draft a deck for the QBR readout.",
+      "value": "Generating QBR decks from CRM data"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "A shopper asks for a home office setup for under $800. Your agent searches the catalog, weighs the trade-offs, and builds the cart.",
+      "value": "Retail and marketplace shopping assistance"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Travelers answer a few prompts about their destination while your agent finds hotels and flights.",
+      "value": "Travel booking"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Customers ask if they’re due for an upgrade, what the early termination fee is, or whether bundling home internet would save money.",
+      "value": "Telecom plan comparison"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Fans can ask who’s playing this summer, what a Lower Bowl seat includes, or what to do when a show says it’s sold out.",
+      "value": "Entertainment ticket purchasing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Merchant agents watch sales, stock, and pricing across the storefront, flag the listings running low and the ones due for a markdown",
+      "value": "Store operations management"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Ask Claude for a lesson or quiz and it drafts in minutes.",
+      "value": "Drafting lesson plans and quizzes"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Give Claude context about your classroom — like de-identified reading levels — to produce differentiated materials",
+      "value": "Creating differentiated learning materials"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Claude can draft a classroom newsletter on the cadence and topics that you choose.",
+      "value": "Drafting classroom newsletters"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Tell Claude your learning objective to unpack the common misconceptions for that topic",
+      "value": "Identifying student misconceptions"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "How Anthropic's sales team rebuilt inbound with Claude Managed Agents",
+      "value": "Sales inbound management"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "Agents you can coach: how Asana builds human-agent teams with Claude",
+      "value": "Human-agent team collaboration"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_27",
+      "evidence": "How to prepare for AI-driven code modernization projects",
+      "value": "AI-driven code modernization"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code can handle routine work like bug fixes and testing, and larger jobs like refactors and new features that are long-running and asynchronous.",
+      "value": "Bug fixes"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code can handle routine work like bug fixes and testing, and larger jobs like refactors and new features that are long-running and asynchronous.",
+      "value": "Testing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code can handle routine work like bug fixes and testing, and larger jobs like refactors and new features that are long-running and asynchronous.",
+      "value": "Refactors"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Claude Code can handle routine work like bug fixes and testing, and larger jobs like refactors and new features that are long-running and asynchronous.",
+      "value": "New features"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "synthesizing sources for a literature review",
+      "value": "Synthesizing sources for literature reviews"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "Draft syllabi, design assignments that require original thinking",
+      "value": "Drafting syllabi and designing assignments"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "Write and debug research code directly in your terminal or IDE.",
+      "value": "Writing and debugging research code"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "From drafting policy and onboarding communications to reviewing transcripts and building budgets",
+      "value": "Administrative tasks including policy drafting and budget building"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Draft decks, emails, and docs",
+      "value": "Drafting decks, emails, and documents"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Analyze literature and data",
+      "value": "Analyzing literature and data"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Run literature reviews, data analyses, and computational workflows",
+      "value": "Running literature reviews and computational workflows"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Manage your schedule and coordinate meetings effortlessly",
+      "value": "Schedule management"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Draft replies, summarize threads, & search your inbox",
+      "value": "Email management"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Craft production-grade frontends with distinctive design.",
+      "value": "Frontend development"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Connect AI assistants to live crypto markets, prediction markets, your trading accounts",
+      "value": "Financial market analysis"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_15",
+      "evidence": "Search, recap, and act on your Zoom meetings",
+      "value": "Meeting management"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Code modernization",
+      "value": "Code modernization"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Financial services",
+      "value": "Financial services"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Government",
+      "value": "Government"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Higher education",
+      "value": "Higher education"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Life sciences",
+      "value": "Life sciences"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Multi-day autonomous projects",
+      "value": "Multi-day autonomous projects"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Long-horizon coding and large migrations",
+      "value": "Long-horizon coding and large migrations"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Customer-facing agents and multi-tool workflows at scale",
+      "value": "Customer-facing agents and multi-tool workflows at scale"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Real-time, latency-sensitive product experiences",
+      "value": "Real-time, latency-sensitive product experiences"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Use to process call notes or transcripts into structured summaries with action items and draft follow-ups.",
+      "value": "Processing call notes and transcripts"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "Use to generate weighted sales forecasts with best/likely/worst scenarios from a CSV or pipeline description",
+      "value": "Generating sales forecasts"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "analyze pipeline health, flag risks like stale deals, and get a weekly action plan.",
+      "value": "Analyzing pipeline health"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "Use to prepare accruals, fixed asset entries, prepaids, and payroll with proper debits/credits.",
+      "value": "Prepare accruals, fixed asset entries, prepaids, and payroll"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "Use to compare GL balances to subledger, bank, or third-party balances and identify reconciling items.",
+      "value": "Account reconciliation"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "Generate income statements with period-over-period comparison",
+      "value": "Generate income statements"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "create SOX compliance testing workpapers",
+      "value": "Create SOX compliance testing workpapers"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "Consistent AI-Generated Content Across Teams: A marketing or sales team is using Claude to generate emails, proposals, and posts",
+      "value": "Generating consistent emails, proposals, and posts across marketing and sales teams."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "New Hire Onboarding: A new sales or marketing hire needs to start producing content immediately.",
+      "value": "Onboarding new hires to produce on-brand content immediately."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "Getting Brand Guidelines Out of People's Heads: Brand knowledge lives with a few senior people and scattered documents",
+      "value": "Centralizing institutional brand knowledge into actionable guidelines."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Tag @Claude in any channel to hand it a task, and follow along as it works in the thread.",
+      "value": "Task delegation in Slack channels"
+    }
+  ],
+  "limitations": [
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "The Free plan offers limited use",
+      "value": "Free plan has limited use"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_01",
+      "evidence": "Usage limits apply.",
+      "value": "Usage limits apply to plans"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "Every plan has usage limits that reset on a rolling five-hour session window",
+      "value": "Usage limits reset on a rolling five-hour session window"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_02",
+      "evidence": "paid plans add weekly limits on top",
+      "value": "Paid plans have additional weekly usage limits"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_05",
+      "evidence": "Available in beta for Claude Enterprise and Team customers in Slack.",
+      "value": "Available only for Claude Enterprise and Team customers"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "Claude Cowork consumes limits faster than Chat.",
+      "value": "Consumes rate limits faster than standard chat"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_06",
+      "evidence": "The desktop app adds what web and mobile can't reach: the folders and applications on your own computer.",
+      "value": "Web and mobile versions cannot access local folders and applications"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Artifacts, including work made with Claude Design, Claude Slides and Claude Docs, count toward your plan's usage limits, like the rest of your work with Claude.",
+      "value": "Usage counts toward plan limits"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_07",
+      "evidence": "Larger requests, like a full deck or design, use more of your limit than a typical message.",
+      "value": "Larger requests consume more usage limits"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_08",
+      "evidence": "Claude works from a seller's book of business with 37 pre-built skills, covering everything from renewal prep to meeting follow-up. Every action lands back in Salesforce under the seller's existing",
+      "value": "Actions are restricted by the seller's existing permissions in Salesforce."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_09",
+      "evidence": "Claude works only in the folders and tools you allow",
+      "value": "Only works in folders and tools explicitly allowed by the user."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "Claude Design, Claude Slides and Claude Docs are available in beta on paid plans.",
+      "value": "Claude Design, Slides, and Docs are currently in beta and restricted to paid plans."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_12",
+      "evidence": "You need a Claude account to access an artifact that is shared with you.",
+      "value": "Users must have a Claude account to view or edit shared artifacts."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "It's an open reference implementation, not a supported product. You fork the repository and own what you build from it.",
+      "value": "The commerce agent blueprint is an open reference implementation, not a supported product with an SLA."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_13",
+      "evidence": "Cart and refund authority have hard limits, and anything past them escalates to a person.",
+      "value": "Cart and refund authority have hard limits requiring human escalation."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Sign up by June 30, 2027 for your full year of free access.",
+      "value": "Free access offer is time-limited."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Extra usage limits apply.",
+      "value": "Extra usage limits apply to the free access plan."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_26",
+      "evidence": "Serving verified teachers across US school systems",
+      "value": "Limited to verified teachers across US school systems."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "It also asks for permission before making changes to your files or running commands.",
+      "value": "Requires user permission for file changes or command execution"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_28",
+      "evidence": "Usage limits apply.",
+      "value": "Usage limits apply"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_29",
+      "evidence": "We only use data to improve our models when you give permission.",
+      "value": "Data is only used for model improvement when explicit permission is granted."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_14",
+      "evidence": "Free plans can also add one .",
+      "value": "Free plans are limited to adding one tool or integration."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "You cannot request more seats for a tier than the billing account has remaining in its pool after accounting for other organizations.",
+      "value": "Cannot request more seats for a tier than the billing account has remaining in its pool."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "You cannot reduce a tier’s seat count below the number of users currently seated on it in your organization.",
+      "value": "Cannot reduce a tier’s seat count below the number of users currently seated on it."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_16",
+      "evidence": "Each tier’s seat count can be at most 100,000.",
+      "value": "Each tier’s seat count can be at most 100,000."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Fast mode is not available with the Batch API.",
+      "value": "Fast mode is not available with the Batch API."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Fast mode is not available on Claude Opus 4.7 (requests with speed: \"fast\" return an error)",
+      "value": "Fast mode is not available on Claude Opus 4.7"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_17",
+      "evidence": "Earlier models do not support the inference_geo parameter and always use standard pricing; requests that include the parameter on these models return a 400 error.",
+      "value": "Earlier models do not support the inference_geo parameter"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Context window  | 1M tokens  | 1M tokens  | 1M tokens  | 200K tokens",
+      "value": "Context window limit of 1M tokens for Fable, Opus, Sonnet and 200K tokens for Haiku."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_18",
+      "evidence": "Max output  | 128K tokens  | 128K tokens  | 128K tokens  | 64K tokens",
+      "value": "Max output limit of 128K tokens for Fable, Opus, Sonnet and 64K tokens for Haiku."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "For workloads that need to run in the US, US-only inference is available at 1.1x pricing for input and output tokens.",
+      "value": "US-only inference incurs 1.1x pricing"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_19",
+      "evidence": "Prompt caching pricing reflects 5-minute TTL.",
+      "value": "Prompt caching has a 5-minute TTL"
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_20",
+      "evidence": "It respects your existing Dropbox permissions, and Claude only works with files you already have access to.",
+      "value": "Access is limited to files the user already has permission to access in Dropbox."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_21",
+      "evidence": "All outputs should be reviewed by qualified financial professionals before use in reporting or filings.",
+      "value": "Outputs require review by qualified financial professionals before use in reporting or filings."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_22",
+      "evidence": "It respects your existing Dropbox permissions, and Claude only works with files you already have access to.",
+      "value": "Claude only works with Dropbox files that the user already has access to."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Only a Primary Owner or Owner can set up Claude Tag's access and channels. The Admin role can't.",
+      "value": "Setup is restricted to Primary Owner or Owner roles only."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_23",
+      "evidence": "Work that would go over a limit is declined, never silently cut short.",
+      "value": "Work is declined if it exceeds defined spend limits."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "Each plugin can contain up to 5,000 files and 200 MB, and 200 MB is also the largest file that accepts.",
+      "value": "Each plugin can contain up to 5,000 files and 200 MB."
+    },
+    {
+      "origin": "crawled",
+      "source_id": "src_24",
+      "evidence": "Up to 25 marketplaces that you add yourself, counted for your account in each organization.",
+      "value": "Up to 25 marketplaces that you add yourself."
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "src_01",
+      "url": "https://claude.com/",
+      "page_type": "other",
+      "fetched_at": "2026-10-06T02:44:07.823+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:a33815648f82aea5d3fbf947c88f474826720ff3bdfa5108abe9dc7aa0b64ffb"
+    },
+    {
+      "source_id": "src_02",
+      "url": "https://claude.com/pricing",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:44:13.646+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:1978f7becac3f4eb19dad3e7ba421539183c494faf4b5500911b89a8f80e90bd"
+    },
+    {
+      "source_id": "src_03",
+      "url": "https://claude.com/code-with-claude",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:20.153+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:862354b8b3836bbbad5f69671947f54243087a0bcf917830021007da42998ee9"
+    },
+    {
+      "source_id": "src_04",
+      "url": "https://support.claude.com/en",
+      "page_type": "faq",
+      "fetched_at": "2026-10-06T02:44:26.721+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:82bcb3d4e02f775875d662db2766bb1310cb171321fb07a2a1f92d2f237c182b"
+    },
+    {
+      "source_id": "src_05",
+      "url": "https://claude.com/product/tag",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:32.438+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:b4ec1ee4728a0e372887cb8c9af2f81e77dc7d34979a61fd0258b187b80bf5fa"
+    },
+    {
+      "source_id": "src_06",
+      "url": "https://claude.com/product/cowork",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:39.118+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:69fd3d823cb7ea74b44356efd41e9f19b97cdd59bf88b1598c4e5f701c9fd82c"
+    },
+    {
+      "source_id": "src_07",
+      "url": "https://claude.com/product/design",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:46.397+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:dd12b7abd9cbf9c989aaa66ed470d97d0c74ef5cdafb6342c10a3714c31ff55b"
+    },
+    {
+      "source_id": "src_08",
+      "url": "https://claude.com/solutions/sales",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:52.996+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:ea644a8afb8a2f92bc9cc31bdf8dcf99d847e62635a96986d3d57b7620bd3d39"
+    },
+    {
+      "source_id": "src_09",
+      "url": "https://claude.com/product/overview",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:44:59.919+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:47e22ad196e0f2042a649980bc7df0555379769f0c854f09565395eab391d4e0"
+    },
+    {
+      "source_id": "src_10",
+      "url": "https://claude.com/solutions/agents",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:45:06.907+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:157ebf1369426e6de6d37a9d4bd1f3fcefa2d4edab0a431c12963f4e3e04343e"
+    },
+    {
+      "source_id": "src_11",
+      "url": "https://claude.com/solutions/coding",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:45:13.370+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:b6e5fa27dd8d79c5d41d15c221c3249095ed241b2af061475a86ad2cf0a79485"
+    },
+    {
+      "source_id": "src_12",
+      "url": "https://claude.com/features/artifacts",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:45:20.066+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:13d819fc23053a604fcb860f45ea355e32a7e0f28d716b83e1a708887f683d12"
+    },
+    {
+      "source_id": "src_13",
+      "url": "https://claude.com/solutions/commerce",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:45:26.918+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:8409a773d4ce597edba9eb3a727972c84d8c6a298f7b20e555e1394cdfd1a9cc"
+    },
+    {
+      "source_id": "src_26",
+      "url": "https://claude.com/solutions/teachers",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:46:55.905+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:a87f040ebb3f58beb6852096dd632cdb224dc058cd304157cd3a10df03b81078"
+    },
+    {
+      "source_id": "src_27",
+      "url": "https://claude.com/blog-usecases/sales",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:47:03.169+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:6b80c8f28903e6f394942923b66fb1677b88accf6f0ee86399a90fb29e717114"
+    },
+    {
+      "source_id": "src_28",
+      "url": "https://claude.com/product/claude-code",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:47:08.489+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:4c42a76fbcc2967596a7e17a34c2c4abca9e4b0bf051ee0c53bae17f33ab3cc5"
+    },
+    {
+      "source_id": "src_29",
+      "url": "https://claude.com/solutions/education",
+      "page_type": "features",
+      "fetched_at": "2026-10-06T02:47:14.972+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:f34100778a24fa9858b9e6653c2835ac6c6fdfa12333ce761d48ee4c34cf1383"
+    },
+    {
+      "source_id": "src_14",
+      "url": "https://claude.com/docs",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:45:33.662+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:098ad77021f5186fa4945ba9b2fc95b245f69d1f22a6b024c892fbe9ed934e20"
+    },
+    {
+      "source_id": "src_15",
+      "url": "https://claude.com/connectors",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:45:45.440+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:0c118018d7caa24607cab75c990ef04562aac2a27ceb79cd5ad456a227a9f495"
+    },
+    {
+      "source_id": "src_16",
+      "url": "https://claude.com/docs/government/org-admin/billing",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:45:52.203+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:91243d877de96751947e47d12e0e9cbd40226056aee0b47562c161f9c3380c71"
+    },
+    {
+      "source_id": "src_17",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:45:59.390+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:03e28d717c9218b970010001ccefef1c5a7da63657d66b6768fc1d2f3f900b69"
+    },
+    {
+      "source_id": "src_18",
+      "url": "https://platform.claude.com/docs/en/models/overview",
+      "page_type": "pricing",
+      "fetched_at": "2026-10-06T02:46:06.786+00:00",
+      "variant": "raw",
+      "content_hash": "sha256:b7bbc69b5150448ec32c62fb398c630adffb2cb6100b968dea86d1d53de5f848"
+    },
+    {
+      "source_id": "src_19",
+      "url": "https://claude.com/platform/api",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:46:12.621+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:3ab20f0956b5eb743fef65b6d4586d9925dcf174b31c9773ae5eab5acdec2623"
+    },
+    {
+      "source_id": "src_20",
+      "url": "https://claude.com/plugins/sales",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:46:19.604+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:5701327983510f3333ca2eb2ea6733e6f37ad737d6d86140d2aeb6578db2ce2c"
+    },
+    {
+      "source_id": "src_21",
+      "url": "https://claude.com/plugins/finance",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:46:24.945+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:ff3f788011e9d1a11fc62583d2f749baa3ccc26e635c9f824802afbea1c89651"
+    },
+    {
+      "source_id": "src_22",
+      "url": "https://claude.com/plugins/brand-voice",
+      "page_type": "docs",
+      "fetched_at": "2026-10-06T02:46:30.289+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:3fd9c9b00ed7ed13a0e41d54fbbd72c5142529f9975106288e6445e8c58bb309"
+    },
+    {
+      "source_id": "src_23",
+      "url": "https://support.claude.com/en/articles/15594475",
+      "page_type": "faq",
+      "fetched_at": "2026-10-06T02:46:35.847+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:6c27f1bf1c4d354729e103488a077c5bc44d05b535004c5c8e7acc936dec478f"
+    },
+    {
+      "source_id": "src_24",
+      "url": "https://claude.com/docs/plugins/platform-support",
+      "page_type": "faq",
+      "fetched_at": "2026-10-06T02:46:42.792+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:fbdf60c74bf9b3858cb17e5ba6b6e3f61291bb6827481aaf067a3cbcfc4cc408"
+    },
+    {
+      "source_id": "src_25",
+      "url": "https://claude.com/docs/connectors/building/directory-vs-custom",
+      "page_type": "compare",
+      "fetched_at": "2026-10-06T02:46:50.135+00:00",
+      "variant": "fit",
+      "content_hash": "sha256:b2160584f44f41ba66dc5a4d8ad4d7af850893449cfc6b78fce7e53bb81e0a4a"
+    }
+  ],
+  "meta": {
+    "product": "claude",
+    "model": "gemini-3.1-flash-lite",
+    "mode": "per_page",
+    "generated_at": "2026-10-06T03:14:13+00:00",
+    "llm_calls": 29,
+    "cache_hits": 29,
+    "input_tokens": 69855,
+    "output_tokens": 33321,
+    "cost_usd": 0.067445,
+    "evidence_in_source": 0.987,
+    "unknown_source_ids": []
+  }
+}
