@@ -1,0 +1,36 @@
+name: CI worker
+
+on:
+  pull_request:
+    paths:
+      - "be/services/worker/**"
+      - ".github/workflows/ci-worker.yml"
+  push:
+    branches: [main]
+    paths:
+      - "be/services/worker/**"
+      - ".github/workflows/ci-worker.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-typecheck:
+    name: ruff + pyright + pytest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: be/services/worker
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0 # setup-uv không có tag major, phải ghim bản đầy đủ
+        with:
+          working-directory: be/services/worker
+          enable-cache: true
+          cache-dependency-glob: be/services/worker/uv.lock
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+      - run: uv run pytest

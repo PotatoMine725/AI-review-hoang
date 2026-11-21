@@ -1,6 +1,6 @@
 # AI-review-BE
 
-Backend của **AI Review Content Factory**, là một nửa của split repo. Frontend nằm ở `PotatoMine725/AI-review-FE` (trên máy: `../AI-review-FE`).
+Backend của **AI Review Content Factory**, là một nửa của split repo. Frontend nằm ở `PotatoMine725/AI-review-FE` (trong monorepo này: `../fe`).
 
 Đọc trước khi làm: `docs/adr/0005-repo-structure-and-extensibility.md` (cấu trúc và cách mở rộng), `docs/specs/PRD.md` (§5–6, §50–52, §60–62),
 `docs/plan/week-1.md` (mục "Quy ước làm việc mặc định"), `docs/specs/m1-product-intelligence.md`.

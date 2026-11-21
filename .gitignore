@@ -1,0 +1,24 @@
+# Secrets / env (mỗi project con có .gitignore riêng, đây là lớp bảo hiểm ở root)
+.env
+.env.*
+!.env.example
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Claude Code / tooling local
+.claude/settings.local.json
+.claude/worktrees/
+.remember/
+.gitnexus/
+
+# Logs, build output
+*.log
+node_modules/
+__pycache__/
+.venv/
