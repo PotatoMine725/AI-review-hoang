@@ -5,6 +5,10 @@ Các file trong thư mục này là **bản chép nguyên byte** từ commit `e3
 muốn đổi thì đề xuất ở #83, rồi chép lại bản mới và cập nhật SHA trong
 `tests/m2/test_contract.py`.
 
+> **Ngoại lệ (24/11/2026, monorepo ai-review-hoang):** Hoang chốt fork tự do, không bám contract của Định.
+> `p1-ac-03-script-vi.prompt.md` đã sửa tại đây: thêm luật 13 (hook và nhịp kể), sửa mốc 40–45 s → 30–40 s
+> trong ghi chú tích hợp. Schema, input, ví dụ vẫn nguyên byte.
+
 | File ở đây | Đường dẫn ở commit e33827c |
 |---|---|
 | `p1-ac-03-script-vi.prompt.md` | `docs/specs/m2/p1-ac-03-script-vi.prompt.md` |
