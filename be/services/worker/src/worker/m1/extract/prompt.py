@@ -43,9 +43,10 @@ dùng (vd. "Employees"), `jtbd` null, evidence là heading của khối kèm tê
 "## Paths by team\\nSales"). Đúng nhóm nào trang nêu mới ghi.
 - usp: điểm mạnh / bằng chứng mà trang tự công bố (tối đa 12). Số liệu thành tích của sản phẩm \
 (lượt xem, người theo dõi, lượt tiếp cận, số thành viên, số người dùng, doanh thu…) ghi vào usp, \
-MỖI SỐ LIỆU LÀ 1 MỤC RIÊNG: `text` bắt đầu bằng "Theo <tên sản phẩm> công bố:" rồi đúng 1 số \
-kèm nhãn đứng NGAY SAU số đó trong nguồn, giữ nguyên chữ của nhãn (vd. "Theo Acme công bố: \
-2M+ downloads"). Số đứng trước nhãn của nó, kể cả khi xuống dòng; số ở cuối một dòng thuộc \
+MỖI SỐ LIỆU LÀ 1 MỤC RIÊNG: `text` chỉ gồm đúng 1 số kèm nhãn đứng NGAY SAU số đó trong nguồn, \
+giữ nguyên chữ của nhãn (vd. "2M+ downloads"). KHÔNG thêm tiền tố nguồn như "Theo <tên sản \
+phẩm> công bố:": hệ thống đã gắn cờ số liệu tự công bố, và bước viết kịch bản tự chọn cách nói \
+nguồn cho tự nhiên. Số đứng trước nhãn của nó, kể cả khi xuống dòng; số ở cuối một dòng thuộc \
 nhãn ở dòng kế, KHÔNG thuộc nhãn ở đầu dòng đó (nguồn \"5M+\\n views 30K+\\n followers\" là \
 "5M+ views" và "30K+ followers"). `evidence` là đoạn nguyên văn có số và nhãn của nó. Không \
 làm tròn, không cộng các số với nhau. Câu có nhiều số dùng chung 1 nhãn (nguồn \"1,200+\\nactive \

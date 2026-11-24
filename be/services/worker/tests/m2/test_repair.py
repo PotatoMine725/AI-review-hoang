@@ -82,11 +82,11 @@ def test_validator_still_rejects_unprepared_wrong_kind() -> None:
 
 
 def long_script() -> dict[str, Any]:
-    """Ví dụ của Định, lời đọc dài thêm cho vào mốc 150–170 âm tiết (không đổi hook/CTA)."""
+    """Ví dụ của Định, lời đọc dài thêm cho vào mốc 115–150 âm tiết (không đổi hook/CTA)."""
     doc = valid_script()
     seg = doc["scenes"][1]["narration_segments"][0]
-    seg["text"] = seg["text"] + " " + " ".join(["ý"] * (160 - narration_syllables(doc)))
-    assert 150 <= narration_syllables(doc) <= 170
+    seg["text"] = seg["text"] + " " + " ".join(["ý"] * (130 - narration_syllables(doc)))
+    assert 115 <= narration_syllables(doc) <= 150
     return doc
 
 
@@ -137,7 +137,7 @@ def test_syllable_advisory_triggers_single_repair_and_is_not_an_error() -> None:
     res, transport = run([ok(valid_script()), ok(long_script())], repair=True)
     assert res.status == "completed" and len(transport.calls) == 2
     assert res.stages["feedback"][0]["source"] == "syllable_advisory"
-    assert narration_syllables(valid_script()) < 150
+    assert narration_syllables(valid_script()) < 115
 
 
 def test_advisory_only_failed_repair_keeps_valid_candidate() -> None:
@@ -175,7 +175,7 @@ def test_repair_prompt_fills_all_variables() -> None:
 
 
 def test_syllable_feedback_range() -> None:
-    assert syllable_feedback(150) == [] and syllable_feedback(170) == []
-    assert syllable_feedback(149)[0]["source"] == "syllable_advisory"
-    assert syllable_feedback(171)[0]["syllables"] == 171
+    assert syllable_feedback(115) == [] and syllable_feedback(150) == []
+    assert syllable_feedback(114)[0]["source"] == "syllable_advisory"
+    assert syllable_feedback(151)[0]["syllables"] == 151
     assert schema_errors(SCRIPT_SCHEMA, long_script()) == []

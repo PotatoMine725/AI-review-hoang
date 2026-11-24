@@ -26,7 +26,7 @@ REPAIR_PLACEHOLDERS = (
     "feedback_json",
 )
 SOURCES = ("schema", "content_validator", "qa", "syllable_advisory")
-SYLLABLE_RANGE = (150, 170)  # khuyến nghị của prompt, không phải lỗi contract
+SYLLABLE_RANGE = (115, 150)  # khuyến nghị của prompt, không phải lỗi contract
 
 
 @cache

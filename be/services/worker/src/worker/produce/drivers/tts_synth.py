@@ -8,7 +8,7 @@
 `normalize`: chỉ chuẩn hoá lời + tính khoá model, KHÔNG nạp model (nhanh), để worker tra cache
 trước khi tốn 7–13 s nạp model. Request: {"voice": str, "segments": [{"segment_id", "text"}]}.
 `synth`: nạp model 1 lần, sinh từng câu. Request: {"voice": str,
-"segments": [{"segment_id", "spoken"}]}; ghi `<segment_id>.wav` vào --out-dir.
+"max_chars"?: int, "segments": [{"segment_id", "spoken"}]}; ghi `<segment_id>.wav` vào --out-dir.
 Cả hai in một dòng JSON cuối cùng ra stdout. Không sửa code của spike, chỉ import adapter của nó.
 """
 
@@ -94,7 +94,8 @@ def main() -> None:
     done = []
     for s in req["segments"]:
         t0 = time.perf_counter()
-        res = tts.synthesize(s["spoken"], req["voice"])
+        extra = {"max_chars": req["max_chars"]} if req.get("max_chars") else {}
+        res = tts.synthesize(s["spoken"], req["voice"], **extra)
         synth_s = time.perf_counter() - t0
         dst = out_dir / f"{s['segment_id']}.wav"
         Path(res.path).replace(dst)

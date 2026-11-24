@@ -1,4 +1,5 @@
-"""Contract M2 trong worker phải trùng byte với commit 5378a70 của dev (#83, #126, #129).
+"""Contract M2 trong worker trùng byte với commit 5378a70 của dev (#83, #126, #129), trừ
+`p1-ac-03-script-vi.prompt.md`: fork riêng của Hoang, thêm luật 13 (hook, nhịp kể), SHA ghim ở đây.
 
 So bằng git blob SHA-1 (`sha1(b"blob <len>\\0" + bytes)`), tính bằng Python thuần, nên chạy được
 trên CI clone nông. SHA lấy từ `git ls-tree -r 5378a70`.
@@ -13,7 +14,7 @@ import pytest
 from worker.m2.validate import CONTRACT_DIR
 
 BLOB_SHA_5378A70 = {
-    "p1-ac-03-script-vi.prompt.md": "36813902e92ab775735168eab6eb893b864972dc",
+    "p1-ac-03-script-vi.prompt.md": "0a722b9244a7b318f7cd2eb67160e1024f730665",
     "p1-ac-03-script-vi-repair.prompt.md": "0166168e011824ad00c7f06237e84a2fdd40a30e",
     "p1-ac-03-script-vi.v1.schema.json": "955dd69ba37d5df34f416e03dc23845e0b3cd269",
     "p1-ac-03-input.v1.schema.json": "0b567b22c53f3ab016ec2cc6b5d64414b7c573b9",

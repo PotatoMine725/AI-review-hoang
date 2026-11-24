@@ -26,8 +26,11 @@ class VieNeuTTS(TTSProvider):
         self.model = f"{VIENEU_REPO}@{REVISIONS[VIENEU_REPO][:8]}[{backend}/{device}]"
         self.sample_rate = int(self._tts.sample_rate)
 
-    def synthesize(self, text: str, voice: str, speed: float = 1.0) -> TTSResult:
-        audio = np.asarray(self._tts.infer(text, voice=voice), dtype=np.float32).reshape(-1)
+    def synthesize(
+        self, text: str, voice: str, speed: float = 1.0, **infer_kwargs: Any
+    ) -> TTSResult:
+        """`infer_kwargs` đi thẳng vào `Vieneu.infer` (vd. `max_chars=60`, `temperature`)."""
+        audio = np.asarray(self._tts.infer(text, voice=voice, **infer_kwargs), dtype=np.float32).reshape(-1)
         pcm = (np.clip(audio, -1.0, 1.0) * 32767.0).astype(np.int16)
         path = self._new_path()
         write_wav_pcm16(path, pcm.tobytes(), self.sample_rate)
