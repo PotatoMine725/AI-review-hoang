@@ -1,7 +1,7 @@
 """Điều phối: kịch bản M2 → TTS → timeline → plan #88 → MP4 (2 tỉ lệ) → kiểm → `render_report.json`.
 
 Trạng thái trong report:
-- `ok`            : mọi MP4 dựng xong và nằm trong mốc 40–45 s (đọc từ config chung #77)
+- `ok`            : mọi MP4 dựng xong và nằm trong mốc 30–40 s (`config.load_limits`)
 - `out_of_range`  : dựng xong nhưng ngoài mốc; MP4 vẫn giữ nguyên, không kéo dài/cắt
 - `failed`        : không ra MP4 (cảnh không hỗ trợ ở chế độ `fail`, thiếu công cụ, render lỗi)
 """
