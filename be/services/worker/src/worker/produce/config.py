@@ -173,6 +173,7 @@ def load_limits(cfg: ProduceConfig) -> Limits:
     sys.modules[name] = mod  # dataclass cần module có trong sys.modules
     spec.loader.exec_module(mod)
     env = {mod.ENV_MIN: f"{DEFAULT_MIN_TOTAL_S:g}", mod.ENV_MAX: f"{DEFAULT_MAX_TOTAL_S:g}"}
-    env.update({k: os.environ[k] for k in (mod.ENV_MIN, mod.ENV_MAX) if k in os.environ})
+    # Biến rỗng/toàn khoảng trắng bị bỏ qua, nếu không `_read` của #77 quay về mặc định 40–45 s
+    env.update({k: v for k in (mod.ENV_MIN, mod.ENV_MAX) if (v := os.environ.get(k, "").strip())})
     lim = mod.load_limits(env)
     return Limits(min_total_s=lim.min_total_s, max_total_s=lim.max_total_s)

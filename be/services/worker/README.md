@@ -127,7 +127,7 @@ uv run python -m worker.produce <script.json> --input <input.json> --assets <ass
 
 Kiểm kịch bản bằng validator M2, ánh xạ sang plan `render-plan.v2-spike` của #88, TTS VieNeu theo `segment_id`
 (cache theo hash), timeline từ audio đo thật, dựng 2 tỉ lệ song song (`--workers 3` mỗi bên), kiểm MP4 bằng ffprobe,
-ghi `render_report.json`. `preview` = `-q draft`, `final` = `-q looks`. Video ngoài 40–45 s (đọc từ config #77) chỉ bị báo,
+ghi `render_report.json`. `preview` = `-q draft`, `final` = `-q looks`. Video ngoài 30–40 s (mặc định của worker, đè bằng `P1_RENDER_MIN/MAX_TOTAL_S`) chỉ bị báo,
 không kéo dài/cắt. Cảnh M2 không có layout: mặc định dừng và báo đúng cảnh; `--on-unsupported skip` bỏ cảnh đó.
 `text_card` có claim mà không có `stat_display` dùng layout chỉ-chữ `claim` (cần template #88 `spike/p1-render-v2` từ commit `4e9f04f`,
 patch ở `docs/report/script-to-mp4-2026-11/patches/`); thiếu layout thì lỗi `layout_missing_in_template` ở đúng cảnh.

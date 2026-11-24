@@ -28,3 +28,10 @@ def test_env_still_overrides(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
     monkeypatch.setenv("P1_RENDER_MAX_TOTAL_S", "45")
     lim = load_limits(_cfg(tmp_path))
     assert (lim.min_total_s, lim.max_total_s) == (40.0, 45.0)
+
+
+def test_blank_env_keeps_worker_defaults(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("P1_RENDER_MIN_TOTAL_S", "")
+    monkeypatch.setenv("P1_RENDER_MAX_TOTAL_S", "  ")
+    lim = load_limits(_cfg(tmp_path))
+    assert (lim.min_total_s, lim.max_total_s) == (30.0, 40.0)
