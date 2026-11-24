@@ -179,3 +179,21 @@ def test_syllable_feedback_range() -> None:
     assert syllable_feedback(114)[0]["source"] == "syllable_advisory"
     assert syllable_feedback(151)[0]["syllables"] == 151
     assert schema_errors(SCRIPT_SCHEMA, long_script()) == []
+
+
+def test_user_prompt_lists_conflicted_facts() -> None:
+    from worker.m2.prompt import build_user_prompt, conflicted_paths
+
+    inp = example_input()
+    base = build_user_prompt(inp)
+    assert "xung đột" not in base or conflicted_paths(inp)
+    inp = deepcopy(inp)
+    inp["approved_pkb"]["data"]["quality"] = {
+        "conflicts": [
+            {"field": "usp[1]", "topic": "số công cụ"},
+            {"field_path": "pricing.list_price", "claims": []},
+        ]
+    }
+    assert conflicted_paths(inp) == ["pricing.list_price", "usp[1]"]
+    prompt = build_user_prompt(inp)
+    assert "usp[1]" in prompt and "pricing.list_price" in prompt and "TUYỆT ĐỐI" in prompt

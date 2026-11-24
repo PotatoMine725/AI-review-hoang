@@ -51,5 +51,25 @@ def build_system_prompt(inp: dict[str, Any]) -> str:
     return _PLACEHOLDER_RE.sub(lambda m: values[m.group(1)], out)
 
 
+def conflicted_paths(inp: dict[str, Any]) -> list[str]:
+    """Đường dẫn fact mà `quality.conflicts` của PKB ghi là đang xung đột (validator sẽ từ chối)."""
+    data = (inp.get("approved_pkb") or {}).get("data") or {}
+    found: set[str] = set()
+    for conflict in (data.get("quality") or {}).get("conflicts") or []:
+        if isinstance(conflict, dict):
+            found.update(
+                v for k in ("field_path", "field", "path") if isinstance(v := conflict.get(k), str)
+            )
+    return sorted(found)
+
+
 def build_user_prompt(inp: dict[str, Any]) -> str:
-    return "Tạo kịch bản theo các quy tắc trong system prompt. Chỉ trả JSON."
+    prompt = "Tạo kịch bản theo các quy tắc trong system prompt. Chỉ trả JSON."
+    if paths := conflicted_paths(inp):
+        prompt += (
+            " Các fact sau đang xung đột nên TUYỆT ĐỐI không dùng làm hook, lời đọc hay claim "
+            "(kể cả đường dẫn con): "
+            + ", ".join(paths)
+            + ". Chọn fact khác không nằm trong danh sách."
+        )
+    return prompt
