@@ -1,7 +1,7 @@
 """Kiểm MP4 cuối bằng ffprobe: tổng thời lượng so với mốc chung (#77 `config.py`).
 
 Ngoài khoảng thì BÁO (trạng thái `too_short`/`too_long`), không kéo dài, không tua chậm, không cắt
-câu. Mốc lấy từ `config.load_limits`, không chép số 40–45 vào đây.
+câu. Mốc lấy từ `config.load_limits`, không chép số mốc vào đây.
 """
 
 from __future__ import annotations

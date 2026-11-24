@@ -3,7 +3,7 @@
 Luồng (bàn giao 11/11 của #83, `8008cbf`): kiểm input (không gọi LLM nếu sai) → lời gọi sinh
 → **chuẩn bị `visual_plan.kind`** từ allowlist (chỉ `kind`, có audit; output thô giữ nguyên)
 → schema + content validator của Định (không nới luật)
-→ nếu còn lỗi validator, lỗi QA cụ thể hoặc khuyến nghị âm tiết ngoài 150–170: **đúng 1 lời
+→ nếu còn lỗi validator, lỗi QA cụ thể hoặc khuyến nghị âm tiết ngoài 115–150: **đúng 1 lời
   gọi sửa** theo template sửa; bản sửa cũng qua chuẩn bị kind + validator → thêm
   `estimated_duration_s`.
 Không có lượt sửa thứ hai. Lỗi trả trong `ScriptResult`, không raise. Mọi tầng (thô, sau chuẩn bị

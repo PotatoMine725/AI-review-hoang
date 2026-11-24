@@ -3,7 +3,8 @@
 Đường dẫn spike #73/#88/#77 chưa nằm trong nhánh này nên mặc định trỏ tới worktree anh em
 (`.claude/worktrees/<tên>/spikes/<tên>`), giống `spikes/p1-pipeline-bench`. Tên cũ của bench
 (`P1_TTS_VI`, `P1_RENDER_V2`, `P1_RENDER`) vẫn được nhận.
-Mốc 40–45 s KHÔNG chép vào đây: đọc từ `config.py` của #77 (cùng nguồn với renderer).
+Mốc thời lượng đọc qua `config.py` của #77 (cùng cơ chế với renderer), nhưng mặc định của worker là
+30–40 s (`DEFAULT_*_TOTAL_S`); đè bằng `P1_RENDER_MIN_TOTAL_S` / `P1_RENDER_MAX_TOTAL_S`.
 """
 
 from __future__ import annotations
@@ -22,6 +23,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from worker.produce.errors import ProduceError
 
 ENV_PREFIX = "PRODUCE_"
+DEFAULT_MIN_TOTAL_S = 30.0  # mục tiêu video 30–40 s (spike #77 mặc định 40–45 s đã cũ)
+DEFAULT_MAX_TOTAL_S = 40.0
 MAX_GAP_S = 0.15  # tiêu chí khoảng nghỉ giữa hai câu (#88 `gap_s <= 0.15`)
 
 _REPO_ROOT = Path(__file__).resolve().parents[5]
@@ -169,5 +172,7 @@ def load_limits(cfg: ProduceConfig) -> Limits:
     mod = importlib.util.module_from_spec(spec)
     sys.modules[name] = mod  # dataclass cần module có trong sys.modules
     spec.loader.exec_module(mod)
-    lim = mod.load_limits()
+    env = {mod.ENV_MIN: f"{DEFAULT_MIN_TOTAL_S:g}", mod.ENV_MAX: f"{DEFAULT_MAX_TOTAL_S:g}"}
+    env.update({k: os.environ[k] for k in (mod.ENV_MIN, mod.ENV_MAX) if k in os.environ})
+    lim = mod.load_limits(env)
     return Limits(min_total_s=lim.min_total_s, max_total_s=lim.max_total_s)
