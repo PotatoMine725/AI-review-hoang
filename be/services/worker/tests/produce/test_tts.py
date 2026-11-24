@@ -23,6 +23,12 @@ def test_cache_key_changes_with_every_part() -> None:
         assert cache_key(*changed) != k, base[i]
 
 
+def test_cache_key_depends_on_max_chars_but_zero_keeps_old_key() -> None:
+    base = ("m", "onnx", "Hải Đăng", "p1", "xin chào")
+    assert cache_key(*base, 0) == cache_key(*base)
+    assert cache_key(*base, 60) != cache_key(*base)
+
+
 def test_first_run_synthesizes_once_with_one_model_load(tmp_path: Path) -> None:
     cfg, fake = make_cfg(tmp_path), FakeRunner(speak_s=2.0)
     run = synthesize(SEGS, cfg, fake, tmp_path / "w")

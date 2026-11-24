@@ -71,8 +71,8 @@ class UspExtract(Fact):
     """Dạng gửi LLM của `usp[]` v0.3 (`Usp`). Số liệu tự công bố cũng vào đây."""
 
     text: str = Field(
-        description="Điểm mạnh như trang ghi. Số liệu thành tích bắt đầu bằng "
-        "'Theo <tên sản phẩm> công bố:'."
+        description="Điểm mạnh như trang ghi. Số liệu thành tích: đúng 1 số kèm nhãn "
+        "nguyên văn, không thêm tiền tố nguồn."
     )
 
 

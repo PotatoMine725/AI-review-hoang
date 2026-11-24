@@ -49,7 +49,7 @@ from worker.m2.validate import SCRIPT_SCHEMA, content_errors, schema_errors, val
 
 STEP = "generate_script"
 REPAIR_STEP = "generate_script_repair"
-TARGET_RANGE_S = (40, 45)  # mục tiêu MP4 của contract, chỉ dùng để cảnh báo estimate lệch
+TARGET_RANGE_S = (30, 40)  # mục tiêu MP4 của contract, chỉ dùng để cảnh báo estimate lệch
 _SYLLABLE_RE = re.compile(r"\w+")
 
 

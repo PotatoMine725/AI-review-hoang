@@ -57,8 +57,13 @@ class TtsRun:
         return {s.segment_id: s.wav for s in self.segments}
 
 
-def cache_key(model: str, backend: str, voice: str, pron_hash: str, spoken: str) -> str:
-    raw = json.dumps([model, backend, voice, pron_hash, spoken], ensure_ascii=False)
+def cache_key(
+    model: str, backend: str, voice: str, pron_hash: str, spoken: str, max_chars: int = 0
+) -> str:
+    parts: list[object] = [model, backend, voice, pron_hash, spoken]
+    if max_chars:  # 0 = mặc định SDK: giữ khoá cũ để không mất cache
+        parts.append(max_chars)
+    raw = json.dumps(parts, ensure_ascii=False)
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
@@ -113,7 +118,10 @@ def synthesize(
     spoken = {s["segment_id"]: s["spoken"] for s in norm["segments"]}
     originals = dict(segments)
 
-    keys = {i: cache_key(model, backend, cfg.voice, pron_hash, spoken[i]) for i, _ in segments}
+    keys = {
+        i: cache_key(model, backend, cfg.voice, pron_hash, spoken[i], cfg.tts_max_chars)
+        for i, _ in segments
+    }
     wav_of = {i: cfg.cache_dir / f"{k}.wav" for i, k in keys.items()}
     # Hai câu cùng lời đã chuẩn hoá chỉ sinh một lần
     todo: dict[str, str] = {}
@@ -131,6 +139,7 @@ def synthesize(
             json.dumps(
                 {
                     "voice": cfg.voice,
+                    "max_chars": cfg.tts_max_chars,
                     "segments": [{"segment_id": i, "spoken": s} for i, s in todo.items()],
                 },
                 ensure_ascii=False,

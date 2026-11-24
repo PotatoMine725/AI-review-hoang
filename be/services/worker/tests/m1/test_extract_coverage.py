@@ -358,8 +358,9 @@ def test_schema_gui_llm_co_audiences_va_usp_con_pkb_v03_khong_doi() -> None:
 
 
 def test_prompt_huong_dan_dung_truong_cua_v03() -> None:
-    for needle in ("use_cases: tối đa 12", "audiences", "usp:", "Theo <tên sản phẩm> công bố:"):
+    for needle in ("use_cases: tối đa 12", "audiences", "usp:"):
         assert needle in SYSTEM_PROMPT
+    assert "KHÔNG thêm tiền tố nguồn" in SYSTEM_PROMPT  # nguồn do M2 diễn đạt
     assert "KHÔNG ghi vào trường nào" in SYSTEM_PROMPT  # số liệu thị trường
     assert "0,00M+" in SYSTEM_PROMPT  # bộ đếm số chưa chạy (crawl AISoEasy 29/10)
 

@@ -47,7 +47,9 @@ class ProduceConfig(BaseModel):
     cache_dir: Path = Path.home() / ".cache" / "ai-review-produce"
     scratch_dir: Path = Path(tempfile.gettempdir()) / "ai-review-produce"
 
-    voice: str = "Mai Anh"
+    voice: str = "Hải Đăng"  # đổi bằng PRODUCE_VOICE; sau này cho người dùng chọn
+    # VieNeu `max_chars`: 60 = mỗi câu sinh riêng, ngữ điệu "reset" theo câu. 0 = mặc định của SDK.
+    tts_max_chars: int = Field(default=60, ge=0)
     tts_device: str = "cpu"  # cpu = ONNX; cuda = PyTorch; auto = cuda nếu torch thấy GPU
     tts_backend: str = "auto"
     # Mốc từng từ cho phụ đề: "whisper-1" (cần OPENAI_API_KEY) hoặc "" = tắt (chia theo ký tự).
@@ -130,6 +132,7 @@ class ProduceConfig(BaseModel):
             "cache_dir",
             "scratch_dir",
             "voice",
+            "tts_max_chars",
             "tts_device",
             "tts_backend",
             "stt_model",
