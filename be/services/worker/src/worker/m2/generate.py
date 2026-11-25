@@ -57,12 +57,18 @@ class M2Settings(BaseModel):
     # Tốc độ đọc giả định để ước tính thời lượng. 3.75 là mức khởi điểm của Định; VieNeu đo thử
     # 3,6–3,9 âm tiết/giây (#73). Hiệu chỉnh lại theo TTS thật.
     syllables_per_s: float = 3.75
+    # Số lượt sửa độ dài thêm (sau lượt sửa đầu) khi lời đọc vẫn ngoài mốc âm tiết. 0 = tắt.
+    max_length_repairs: int = 2
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> M2Settings:
         env = os.environ if env is None else env
-        raw = env.get("M2_SYLLABLES_PER_S")
-        return cls(syllables_per_s=float(raw)) if raw else cls()
+        kw: dict[str, Any] = {}
+        if raw := env.get("M2_SYLLABLES_PER_S"):
+            kw["syllables_per_s"] = float(raw)
+        if raw := env.get("M2_MAX_LENGTH_REPAIRS"):
+            kw["max_length_repairs"] = int(raw)
+        return cls(**kw)
 
 
 class M2ErrorCode(StrEnum):
@@ -172,6 +178,12 @@ def _evaluate(raw: dict[str, Any], inp: dict[str, Any]) -> _Attempt:
     return _Attempt(raw, prepared, audit, schema, content, warnings, syllables)
 
 
+def _gap(syllables: int) -> int:
+    """Khoảng cách tới mốc âm tiết khuyến nghị (0 = trong mốc)."""
+    low, high = SYLLABLE_RANGE
+    return max(low - syllables, syllables - high, 0)
+
+
 def _feedback(att: _Attempt, qa: list[dict[str, Any]]) -> list[dict[str, Any]]:
     fb = validator_feedback(att.schema_errors, att.content_errors)
     if att.syllables is not None:
@@ -264,6 +276,41 @@ async def generate_script(
             items, errors=first.errors, warnings=warnings, raw=first.raw, stages=stages,
         )  # fmt: skip
 
+    rounds = 0
+    while (
+        repair
+        and final is not first  # lượt sửa đầu thất bại/bị từ chối thì không gọi thêm
+        and rounds < settings.max_length_repairs
+        and final.valid
+        and final.syllables is not None
+        and syllable_feedback(final.syllables)
+    ):
+        rounds += 1
+        try:
+            more = await llm.generate_json(
+                step=REPAIR_STEP,
+                system=build_repair_prompt(inp, final.prepared, syllable_feedback(final.syllables)),
+                prompt=build_repair_user_prompt(),
+                response_schema=gemini_response_schema(),
+            )
+        except LLMError as e:
+            items += e.cost_items
+            warnings.append(f"length_repair_failed:{e.code}")
+            break
+        items += more.cost_items
+        cand = _evaluate(more.data, inp)
+        stages.setdefault("length_repairs", []).append(
+            {"raw": cand.raw, "prepared": cand.prepared, **cand.stage()}
+        )
+        if not cand.valid or cand.syllables is None:
+            warnings.append(f"length_repair_rejected:{len(cand.errors)} lỗi")
+            break
+        if _gap(cand.syllables) >= _gap(final.syllables):
+            warnings.append(f"length_repair_not_closer:{cand.syllables} âm tiết")
+            break
+        final = cand
+    stages["length_repair_rounds"] = rounds
+
     script = dict(final.prepared)
     syllables = narration_syllables(script)
     estimate = round(syllables / settings.syllables_per_s, 1)
@@ -284,7 +331,10 @@ async def generate_script(
             LLMErrorCode.INVALID_OUTPUT, "estimated_duration_s ngoài schema", items,
             errors=final_errors, warnings=warnings, raw=final.raw, stages=stages,
         )  # fmt: skip
-    stages["final"] = {"from": "repair" if final is not first else "initial"}
+    final_stage: dict[str, Any] = {"from": "repair" if final is not first else "initial"}
+    if rounds:
+        final_stage["length_repair_rounds"] = rounds
+    stages["final"] = final_stage
     return ScriptResult(
         status="completed",
         data=script,
