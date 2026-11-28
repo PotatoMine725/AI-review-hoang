@@ -110,7 +110,8 @@
   animation:
     swap-in 0.55s var(--ease-out) both,
     swap-out 0.3s var(--ease-io) forwards;
-  animation-delay: var(--beat, 0s), calc(var(--beat-next, 999s) - 0.3s);
+  /* Vào sớm 0,25 s: ý mới đè lên lúc ý cũ đang ra, không có khung trống giữa hai ý. */
+  animation-delay: calc(var(--beat, 0s) - 0.25s), calc(var(--beat-next, 999s) - 0.3s);
 }
 @keyframes swap-in {
   from {
