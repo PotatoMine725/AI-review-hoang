@@ -57,7 +57,7 @@
     },
     "pixel": {
       "name": "Pixel 8-bit",
-      "description": "Kiểu game cũ: font VT323, vạch quét CRT, khung hộp thoại góc khía, chuyển động theo bậc.",
+      "description": "Kiểu game cũ: font VT323, vạch quét CRT, khung hộp thoại góc khía.",
       "preset": "pixel-8bit",
       "layouts": {
         "claim": "punch"

@@ -1,7 +1,8 @@
 /*
  * Preset "pixel-8bit" (template "pixel"): dùng lại các layout gốc (hook, stat, feature_clip, punch,
  * cta), chỉ đổi giao diện: font VT323 (OFL, có dấu tiếng Việt), nền lưới pixel + vạch quét CRT,
- * khung hộp thoại 8-bit góc vuông khía, chuyển động theo bậc (steps) như game cũ.
+ * khung hộp thoại 8-bit góc vuông khía. Chuyển động mượt (steps làm video trông như tụt fps), chỉ
+ * con trỏ nhấp nháy giữ kiểu bật/tắt.
  *
  * Tương phản: chữ #f4f4e8 trên nền #14142b 16,6:1; vàng #ffcc00 trên nền 12,4:1; chữ #14142b trên
  * vàng 12,4:1; hồng #ff5fa2 trên nền 6,0:1 (đều ≥ 4,5:1).
@@ -39,9 +40,9 @@
     calc(-1 * var(--px)) 0 0 0 var(--ink), var(--px) 0 0 0 var(--ink),
     0 0 0 calc(2 * var(--px)) var(--bg-0), 12px 12px 0 calc(var(--px)) #000;
 
-  /* Chuyển động theo bậc */
-  --ease-out: steps(5, end);
-  --ease-io: steps(6, end);
+  /* Chuyển động mượt, dứt khoát (không dùng steps: nhìn như khựng) */
+  --ease-out: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
   --t-in: 0.5s;
   --stagger: 0.2s;
 }
@@ -93,7 +94,7 @@
   background-size: 48px 48px;
   -webkit-mask-image: none;
   mask-image: none;
-  animation: px-scroll var(--dur, 4s) steps(24, end) both;
+  animation: px-scroll var(--dur, 4s) linear both;
 }
 @keyframes px-scroll {
   from { background-position: 0 0; }
@@ -165,11 +166,10 @@
 @keyframes blink {
   50% { opacity: 0; }
 }
-/* Chữ từng từ: bật ra theo bậc, không trượt mượt */
+/* Chữ từng từ: bật lên nhanh, không mờ */
 .preset-pixel-8bit.words-on [data-words] .w {
   animation-name: px-word;
-  animation-timing-function: steps(2, end);
-  animation-duration: 0.2s;
+  animation-duration: 0.3s;
 }
 @keyframes px-word {
   from { opacity: 0; transform: translateY(0.3em); }

@@ -285,7 +285,7 @@ yên, các cảnh nối cứng. Bản này thêm:
   `count_clip`, `count_card`, `count_cta` (cùng props với layout gốc), cảnh nội dung đánh số đếm
   ngược, chuyển cảnh quét chéo `skew`, tiếng pop đầu mỗi câu.
 - **Template `pixel`**: preset `pixel-8bit` (font VT323 OFL có dấu, vạch quét CRT, khung góc khía
-  bằng box-shadow, chuyển động `steps()`), chuyển cảnh `pixel` (mở theo bậc từ giữa).
+  bằng box-shadow, chuyển động mượt: `steps()` làm video trông khựng), chuyển cảnh `pixel` (mở từ giữa).
 - **Template `hoat-hinh`**: preset `hoat-hinh` (nền kem, đốm màu viền đậm lắc lư, thẻ bo tròn
   viền đậm, easing lố đà), chuyển cảnh `bounce`. Hai template này dùng lại layout gốc, không blur.
 - **Âm thanh** (`render.audio_mix`): `plan.audio.music` = nhạc nền (lặp, nhỏ đi khi có giọng bằng
