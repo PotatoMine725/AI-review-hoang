@@ -8,8 +8,9 @@ Luồng (bàn giao 11/11 của #83, `8008cbf`): kiểm input (không gọi LLM n
   `estimated_duration_s`.
 Nếu bản sửa hợp lệ vẫn ngoài mốc âm tiết thì sửa độ dài thêm tối đa `M2_MAX_LENGTH_REPAIRS` lượt
 (mặc định 2, kèm `qa_feedback` nếu có), giữ bản gần mốc nhất.
-Lỗi trả trong `ScriptResult`, không raise. Mọi tầng (thô, sau chuẩn bị kind, feedback, bản sửa, kết quả kiểm) nằm trong `ScriptResult.stages`; chi phí từng lời gọi là
-một item riêng trong `cost_breakdown` (`generate_script`, `generate_script_repair`).
+Lỗi trả trong `ScriptResult`, không raise. Mọi tầng (thô, sau chuẩn bị kind, feedback, bản sửa,
+kết quả kiểm) nằm trong `ScriptResult.stages`; chi phí từng lời gọi là một item riêng trong
+`cost_breakdown` (`generate_script`, `generate_script_repair`).
 
 CLI chạy tay: `uv run python -m worker.m2.generate <input.json> --out <thư mục> [--no-repair]
 [--qa-feedback qa.json]`. Ghi `script.json` (kịch bản cuối, hoặc bản chuẩn bị/thô khi không hợp
@@ -68,12 +69,9 @@ class M2Settings(BaseModel):
         if raw := env.get("M2_SYLLABLES_PER_S"):
             kw["syllables_per_s"] = float(raw)
         if raw := env.get("M2_MAX_LENGTH_REPAIRS"):
-            try:
-                kw["max_length_repairs"] = int(raw)
-            except ValueError:
-                raise ValueError(
-                    f"M2_MAX_LENGTH_REPAIRS phải là số nguyên ≥ 0, nhận {raw!r}"
-                ) from None
+            if not raw.strip().isdecimal():
+                raise ValueError(f"M2_MAX_LENGTH_REPAIRS phải là số nguyên ≥ 0, nhận {raw!r}")
+            kw["max_length_repairs"] = int(raw)
         return cls(**kw)
 
 
