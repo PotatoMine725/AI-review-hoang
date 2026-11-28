@@ -1,0 +1,54 @@
+<!--
+  Layout "count_card" (template đếm ngược): số thứ hạng + thẻ chữ lớn. Nhận props của "claim"
+  (eyebrow, icon, claim, points) hoặc của "stat" (eyebrow, value, label, visual, chips), thêm `rank`.
+  Ý phụ (points/chips) hiện thành nhãn dán đúng lúc câu nói tới nó.
+-->
+<div class="scene layout-count-card" data-layout="count_card">
+  <style>
+    .layout-count-card .safe { display: flex; flex-direction: column; gap: 40px; }
+    .layout-count-card .top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .layout-count-card .rank-num { font-size: 300px; }
+    .layout-count-card .floaty { width: 190px; height: 190px; }
+    .layout-count-card .card { padding: 34px 44px; font-size: 104px; }
+    .layout-count-card.is-portrait .rank-num { font-size: 360px; }
+    .layout-count-card.is-landscape .safe { display: grid; grid-template-columns: 520px minmax(0, 1fr); align-items: center; gap: 70px; }
+    .layout-count-card.is-landscape .top { flex-direction: column; gap: 40px; }
+    .layout-count-card.is-landscape .card { font-size: 96px; }
+    .layout-count-card .big { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; line-height: 1.04;
+      margin: 10px 0 0; font-size: 1em; --wd: 0.5s; --w-step: 0.06s; --hl-d: 1.2s; }
+    .layout-count-card .sub { margin-top: 18px; font-size: 0.4em; font-weight: 700; line-height: 1.3; color: #333; }
+    .layout-count-card .sub mark { color: #111; background: #ffd60a; }
+    .layout-count-card .extras { position: relative; height: 120px; }
+    .layout-count-card .extras .sticker { position: absolute; left: 10px; top: 0; font-size: 44px; white-space: normal;
+      max-width: 95%; --beat: 999s; }
+  </style>
+
+  <div class="bg"></div>
+  <div class="bg-dots"></div>
+
+  <div class="safe">
+    <div class="top">
+      <div class="rank"><span class="rank-num" data-text="rank"></span><span class="rank-line"></span></div>
+      <div class="floaty a-pop" style="--d: 0.3s" data-if="icon" data-icon="icon"></div>
+      <div class="floaty a-pop" style="--d: 0.3s" data-if="visual" data-icon="visual.icon"></div>
+    </div>
+    <div class="col">
+      <div class="card bcard a-drop" style="--d: 0.25s">
+        <div class="kicker" data-text="eyebrow"></div>
+        <h2 class="big" data-if="claim" data-words data-text="claim"></h2>
+        <h2 class="big" data-if="value" data-words data-text="value"></h2>
+        <div class="sub a-rise" style="--d: 0.9s" data-if="label" data-text="label"></div>
+      </div>
+      <div class="extras">
+        <div data-list="points" data-beat-from="2">
+          <span data-item class="sticker beat-swap"><span data-icon="icon"></span><span data-text="text"></span></span>
+        </div>
+        <div data-list="chips" data-beat-from="2">
+          <span data-item class="sticker beat-swap"><span data-icon="icon"></span><span data-text="text"></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>window.TPL.mount("count_card");</script>
+</div>

@@ -34,6 +34,15 @@
 .scene.tr-in-flash {
   animation: tr-in-flash 0.4s ease-out both;
 }
+.scene.tr-in-skew {
+  animation: tr-in-skew 0.45s var(--ease-out) both;
+}
+.scene.tr-in-pixel {
+  animation: tr-in-pixel 0.45s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.scene.tr-in-bounce {
+  animation: tr-in-bounce 0.6s cubic-bezier(0.34, 1.7, 0.5, 1) both;
+}
 .scene.tr-in-fade {
   animation: tr-in-fade 0.4s ease-out both;
 }
@@ -71,6 +80,38 @@
   }
   to {
     filter: none;
+  }
+}
+/* Mảng màu cảnh mới quét chéo vào (kiểu mẫu đếm ngược của Thông). */
+@keyframes tr-in-skew {
+  from {
+    clip-path: polygon(100% 0, 130% 0, 100% 100%, 70% 100%);
+  }
+  to {
+    clip-path: polygon(-30% 0, 130% 0, 100% 100%, -60% 100%);
+  }
+}
+/* Mở khung chữ nhật từ giữa ra (kiểu chuyển màn game 8-bit). */
+@keyframes tr-in-pixel {
+  from {
+    clip-path: inset(50% 50% 50% 50%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+/* Nảy vào, hơi nghiêng (kiểu hoạt hình). */
+@keyframes tr-in-bounce {
+  from {
+    transform: scale(0.55) rotate(-6deg);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    opacity: 1;
   }
 }
 @keyframes tr-in-fade {

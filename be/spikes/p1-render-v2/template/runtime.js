@@ -17,7 +17,7 @@
  *   `at` thì lấy --b<n> với n = data-beat-from của danh sách + thứ tự mục. --beat-next = nhịp của
  *   mục sau (mục cuối: không có). Gốc layout nhận --first-<tên danh sách> = nhịp mục đầu.
  * Chữ động: phần tử có data-words được tách thành từng từ <span class="w" style="--w: i">.
- * Kiểu vào cảnh vars.transition → lớp tr-in-<kiểu> trên gốc layout.
+ * Kiểu vào cảnh vars.transition → lớp tr-in-<kiểu> trên gốc layout; vị trí cảnh vars.index → tone-<0..4>.
  * Gốc layout được gắn lớp is-portrait (9:16) hoặc is-landscape (16:9): CSS của layout viết
  * ".layout-hook.is-portrait …". Mọi cảnh nằm chung một trang, nên selector của layout luôn bắt đầu
  * bằng .layout-<tên> để không ảnh hưởng layout khác.
@@ -174,6 +174,8 @@
       });
       var portrait = document.querySelector("#root.r916") !== null;
       root.classList.add(portrait ? "is-portrait" : "is-landscape");
+      // Tông màu theo vị trí cảnh (preset có thể đổi màu nền mỗi cảnh: .tone-0 … .tone-4).
+      root.classList.add("tone-" + ((vars.index || 0) % 5));
       if (vars.transition && vars.transition !== "none") {
         root.classList.add("tr-in-" + vars.transition);
       }

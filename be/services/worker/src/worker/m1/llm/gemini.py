@@ -41,7 +41,7 @@ class GeminiTransport:
         model: str,
         system: str,
         prompt: str,
-        response_schema: dict[str, Any],
+        response_schema: dict[str, Any] | None,
         temperature: float,
         max_output_tokens: int,
     ) -> RawResponse:
@@ -50,7 +50,7 @@ class GeminiTransport:
             temperature=temperature,
             max_output_tokens=max_output_tokens,
             response_mime_type="application/json",
-            response_json_schema=response_schema,
+            response_json_schema=response_schema,  # None = chỉ ép JSON, không ép schema
         )
         try:
             resp = await self._client.aio.models.generate_content(

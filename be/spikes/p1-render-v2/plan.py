@@ -16,7 +16,13 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-Layout = Literal["hook", "stat", "feature_clip", "claim", "punch", "cta"]
+Layout = Literal[
+    "hook", "stat", "feature_clip", "claim", "punch", "cta",
+    "count_hook", "count_card", "count_clip", "count_cta",
+]  # fmt: skip
+Transition = Literal[
+    "zoom", "slide", "wipe", "flash", "fade", "skew", "pixel", "bounce", "none"
+]  # fmt: skip
 Ratio = Literal["9:16", "16:9"]
 
 # Khoá props được phép là chuỗi trần (không phải chữ hiển thị cần nguồn).
@@ -101,6 +107,15 @@ class Image(_Model):
     source: str  # ghi nguồn (vd "Cloudflare FLUX, #71")
 
 
+class Audio(_Model):
+    """Âm thanh thêm ngoài giọng đọc. Bỏ trống trường nào thì lấy theo template."""
+
+    music: str | None = None  # file nhạc nền (tuyệt đối, hoặc tương đối với thư mục spike)
+    music_db: float = Field(default=-22.0, le=0)  # mức nhạc so với gốc, trước khi nén theo giọng
+    sfx: Literal["pop", "none"] | None = None  # tiếng hiệu ứng ở đầu mỗi câu (trừ câu đầu)
+    sfx_db: float = Field(default=-10.0, le=0)
+
+
 class Scene(_Model):
     scene_id: str
     role: str
@@ -110,7 +125,11 @@ class Scene(_Model):
     clip: Clip | None = None
     image: Image | None = None
     # Kiểu vào cảnh; compose.apply_template điền theo template (giữ khi dựng từng cảnh riêng).
-    transition: Literal["zoom", "slide", "wipe", "flash", "fade", "none"] | None = None
+    transition: Transition | None = None
+    # Vị trí cảnh trong video (0 = đầu) và số thứ hạng của template đếm ngược ("3", "2", "1").
+    # compose.apply_template điền trên plan đầy đủ, giữ nguyên khi dựng từng cảnh riêng.
+    index: int | None = None
+    rank: str | None = None
 
 
 class RenderPlan(_Model):
@@ -121,6 +140,7 @@ class RenderPlan(_Model):
     preset: str
     # Template trong template/templates.json (cách ghép khối + chuyển cảnh); None = mặc định.
     template: str | None = None
+    audio: Audio | None = None
     ratios: list[Ratio]
     fps: int = 30
     lead_s: float = 0.1  # trước câu đầu tiên

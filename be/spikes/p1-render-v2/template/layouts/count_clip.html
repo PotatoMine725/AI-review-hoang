@@ -1,0 +1,66 @@
+<!--
+  Layout "count_clip" (template đếm ngược): số thứ hạng + clip thao tác trong khung viền đen + thẻ
+  tiêu đề. Cùng props với "feature_clip" (thêm `rank` do compose điền).
+  Ô clip: [data-slot="clip"]. css: --clip-aspect, --clip-ar, --fx-*, --focus-at, --b1…
+  props: rank, eyebrow{text}, icon, title{text,highlight}, steps[{text,icon,at}], url, clip{src}, callout{text,icon}
+-->
+<div class="scene layout-count-clip" data-layout="count_clip">
+  <style>
+    .layout-count-clip .safe { display: grid; gap: 34px; }
+    .layout-count-clip.is-portrait .safe { grid-template-rows: auto minmax(0, 1fr) auto; }
+    .layout-count-clip.is-landscape .safe { grid-template-columns: minmax(0, 1fr) 560px; grid-template-rows: auto minmax(0, 1fr);
+      column-gap: 60px; }
+    .layout-count-clip.is-landscape .top { grid-column: 2; grid-row: 1; }
+    .layout-count-clip.is-landscape .stage { grid-column: 1; grid-row: 1 / 3; }
+    .layout-count-clip.is-landscape .card { grid-column: 2; grid-row: 2; align-self: start; }
+    .layout-count-clip .top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .layout-count-clip .rank-num { font-size: 260px; }
+    .layout-count-clip.is-landscape .rank-num { font-size: 220px; }
+    .layout-count-clip .floaty { width: 150px; height: 150px; }
+    .layout-count-clip .stage { min-height: 0; height: 100%; container-type: size; display: grid; align-content: center; }
+    .layout-count-clip .device { position: relative; margin: 0 auto;
+      width: min(100cqw, calc((100cqh - 44px - 30px) * var(--clip-ar, 1.78))); }
+    .layout-count-clip .screen { aspect-ratio: var(--clip-aspect, 16 / 9); }
+    .layout-count-clip .card { padding: 26px 34px; font-size: 64px; }
+    .layout-count-clip .card .title { font-family: var(--font-display); font-weight: 400; text-transform: uppercase;
+      font-size: 1em; line-height: 1.05; margin: 8px 0 0; --wd: 0.55s; --hl-d: 1.2s; }
+    .layout-count-clip.is-landscape .card { font-size: 72px; }
+    .layout-count-clip .beat-tags { position: absolute; left: -18px; top: 70px; z-index: 3; }
+    .layout-count-clip .beat-tags .sticker { position: absolute; left: 0; top: 0; font-size: 38px; white-space: nowrap; --beat: 999s; }
+    .layout-count-clip .callout { position: absolute; right: -20px; bottom: -26px; z-index: 3; font-size: 40px; }
+  </style>
+
+  <div class="bg"></div>
+  <div class="bg-dots"></div>
+
+  <div class="safe">
+    <div class="top">
+      <div class="rank"><span class="rank-num" data-text="rank"></span><span class="rank-line"></span></div>
+      <div class="floaty a-pop" style="--d: 0.3s" data-icon="icon"></div>
+    </div>
+    <div class="stage">
+      <div class="device a-drop" style="--d: 0.1s">
+        <div class="bframe">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <div class="screen" data-slot="clip">
+            <div class="screen-inner zoom-focus">
+              <video data-src="clip.src" muted playsinline data-start="0"></video>
+            </div>
+          </div>
+        </div>
+        <div class="beat-tags" data-list="steps" data-beat-from="2">
+          <span data-item class="sticker beat-swap"><span data-icon="icon"></span><span data-text="text"></span></span>
+        </div>
+        <div class="callout sticker is-yellow a-pop" style="--d: calc(var(--focus-at, 99s) + 0.3s)" data-if="callout">
+          <span data-icon="callout.icon"></span><span data-text="callout"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card bcard a-drop" style="--d: 0.35s">
+      <div class="kicker" data-text="eyebrow"></div>
+      <h2 class="title" data-words data-text="title"></h2>
+    </div>
+  </div>
+
+  <script>window.TPL.mount("count_clip");</script>
+</div>

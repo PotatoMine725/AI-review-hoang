@@ -29,7 +29,8 @@ STEP_REQUIREMENTS: dict[str, tuple[str, ...]] = {
     "script": ("GEMINI_API_KEY",),
     "ai_scene": ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN"),
     "edit": ("OPENAI_API_KEY",),
-    "demo_script": ("OPENAI_API_KEY",),
+    "demo_script": ("OPENAI_API_KEY",),  # DEMO_LLM_MODEL=gpt-*
+    "demo_script_gemini": ("GEMINI_API_KEY",),  # DEMO_LLM_MODEL=gemini-*
 }
 
 

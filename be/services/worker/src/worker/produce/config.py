@@ -64,6 +64,10 @@ class ProduceConfig(BaseModel):
     preset: str = "dien-anh-toi-gian"
     # Template video (template/templates.json của spike render): "" = mặc định của thư viện.
     template: str = ""
+    # Nhạc nền: file, hoặc thư mục (chọn một bài theo tên sản phẩm, cố định); "" = không nhạc.
+    music: str = ""
+    music_db: float = Field(default=-22.0, le=0)
+    sfx: str = ""  # "pop" | "none"; "" = theo template
     fps: int = 30
     lead_s: float = 0.1  # trước câu đầu tiên
     gap_s: float = 0.12  # nghỉ giữa hai câu, 0,12–0,15 s
@@ -145,6 +149,9 @@ class ProduceConfig(BaseModel):
             "qa_model",
             "preset",
             "template",
+            "music",
+            "music_db",
+            "sfx",
             "gap_s",
             "workers",
             "render_mode",

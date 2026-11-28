@@ -12,3 +12,5 @@ renders/
 step0/
 # Clip/ảnh/voice thật lấy từ spike khác: không commit
 local/
+# Plan demo cục bộ (đường dẫn media trên máy): không commit
+plans/_demo-*.json
