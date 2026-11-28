@@ -143,7 +143,7 @@ def test_syllable_advisory_triggers_single_repair_and_is_not_an_error() -> None:
 def test_advisory_only_failed_repair_keeps_valid_candidate() -> None:
     broken = valid_script()
     del broken["hook"]
-    res, _ = run([ok(valid_script()), ok(broken)], repair=True)
+    res, _ = run([ok(_padded(100)), ok(broken)], repair=True)  # 100 âm tiết ≈ 26,7 s: qua cổng
     assert res.status == "completed" and res.stages["final"]["from"] == "initial"
     assert any(w.startswith("repair_rejected_keep_candidate") for w in res.warnings)
     assert res.stages["repair"]["valid"] is False
@@ -216,9 +216,9 @@ def test_length_repair_loops_until_in_range() -> None:
 
 
 def test_length_repair_stops_when_not_closer_and_keeps_best() -> None:
-    res, transport = run([ok(valid_script()), ok(_padded(80)), ok(_padded(70))], repair=True)
+    res, transport = run([ok(valid_script()), ok(_padded(100)), ok(_padded(95))], repair=True)
     assert res.status == "completed" and len(transport.calls) == 3
-    assert res.data is not None and narration_syllables(res.data) == 80
+    assert res.data is not None and narration_syllables(res.data) == 100
     assert any(w.startswith("length_repair_not_closer") for w in res.warnings)
     assert any(w.startswith("syllables_outside_advisory") for w in res.warnings)
 
@@ -274,3 +274,21 @@ def test_max_length_repairs_env_validation() -> None:
     for bad in ("abc", "-1"):
         with pytest.raises(ValueError, match="M2_MAX_LENGTH_REPAIRS"):
             M2Settings.from_env({"M2_MAX_LENGTH_REPAIRS": bad})
+
+    assert "Thừa khoảng" in syllable_feedback(170)[0]["message"]
+
+
+def test_script_far_too_short_after_repairs_is_rejected_clearly() -> None:
+    # 51 âm tiết ≈ 13,6 s: sinh + sửa + 2 lượt sửa độ dài đều quá ngắn → không lưu bản ngắn
+    short = [ok(valid_script()), ok(_padded(60)), ok(_padded(70)), ok(_padded(75))]
+    res, transport = run(short, repair=True)
+    assert res.status == "failed" and res.error_code == "m2_length_out_of_range"
+    assert len(transport.calls) == 4 and res.data is None
+    assert res.error_message is not None and "âm tiết" in res.error_message
+    assert res.stages["length_gate"]["rounds"] == 2
+
+
+def test_no_repair_mode_keeps_short_script_with_warning() -> None:
+    res, _ = run([ok(valid_script())], repair=False)  # CLI --no-repair: chỉ cảnh báo
+    assert res.status == "completed"
+    assert any(w.startswith("estimate_outside_target") for w in res.warnings)

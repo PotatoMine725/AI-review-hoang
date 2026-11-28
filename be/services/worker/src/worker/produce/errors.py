@@ -7,6 +7,10 @@ class ProduceError(Exception):
     """Lỗi chặn cả lần chạy (đầu vào sai, thiếu công cụ, subprocess hỏng)."""
 
 
+class ProduceAuthError(ProduceError):
+    """Dịch vụ ngoài từ chối khoá (401/403): thử tiếp các câu/khung khác cũng vô ích."""
+
+
 class SceneError(ProduceError):
     """Lỗi của một cảnh: không có layout tương ứng, thiếu asset, clip quá ngắn...
 

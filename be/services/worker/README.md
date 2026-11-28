@@ -107,7 +107,8 @@ schema / refs / asset / CTA: `llm_invalid_output` kèm `errors` và `raw_output`
 `kind` (điền theo allowlist) thì có **1 lời gọi sửa** (`generate_script_repair`) khi còn lỗi validator,
 lỗi QA cụ thể (`qa_feedback`) hoặc số âm tiết ngoài 115–150 (không phải lỗi contract). Sau lượt sửa còn lỗi
 validator thì dừng; nếu bản sửa hợp lệ nhưng vẫn ngoài mốc âm tiết thì sửa độ dài thêm tối đa
-`M2_MAX_LENGTH_REPAIRS` lượt (mặc định 2), giữ bản gần mốc nhất. Mọi tầng nằm trong `ScriptResult.stages` (thô → sau chuẩn bị kind → feedback → bản sửa → kết quả
+`M2_MAX_LENGTH_REPAIRS` lượt (mặc định 2), giữ bản gần mốc nhất; nếu ước tính vẫn ngoài 25–45 s thì
+**từ chối** (`m2_length_out_of_range`, API 422, không lưu revision), `--no-repair` chỉ cảnh báo. Mọi tầng nằm trong `ScriptResult.stages` (thô → sau chuẩn bị kind → feedback → bản sửa → kết quả
 kiểm); mỗi lời gọi một item trong `cost_breakdown`. `estimated_duration_s` do worker tính:
 tổng âm tiết lời thoại ÷ `M2_SYLLABLES_PER_S` (mặc định 3.75). Đây là **ước tính**, không phải duration TTS hay MP4.
 

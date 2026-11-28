@@ -51,6 +51,7 @@ from worker.m2.validate import SCRIPT_SCHEMA, content_errors, schema_errors, val
 
 STEP = "generate_script"
 REPAIR_STEP = "generate_script_repair"
+HARD_RANGE_S = (25, 45)  # ước tính ngoài khoảng này (sau các lượt sửa) thì từ chối, không lưu
 TARGET_RANGE_S = (30, 40)  # mục tiêu MP4 của contract, chỉ dùng để cảnh báo estimate lệch
 _SYLLABLE_RE = re.compile(r"\w+")
 
@@ -77,6 +78,7 @@ class M2Settings(BaseModel):
 
 class M2ErrorCode(StrEnum):
     INPUT_INVALID = "m2_input_invalid"  # input/PKB sai: không gọi LLM, không retry
+    LENGTH_OUT_OF_RANGE = "m2_length_out_of_range"  # sau các lượt sửa vẫn quá ngắn/dài
 
 
 @dataclass
@@ -336,6 +338,15 @@ async def generate_script(
         f"estimated_duration_s_is_estimate:{syllables} âm tiết / {settings.syllables_per_s} "
         "âm tiết/s; không phải duration TTS hay MP4"
     )
+    hard_low, hard_high = HARD_RANGE_S
+    if repair and not hard_low <= estimate <= hard_high:
+        stages["length_gate"] = {"estimate_s": estimate, "syllables": syllables, "rounds": rounds}
+        return _failed(
+            M2ErrorCode.LENGTH_OUT_OF_RANGE,
+            f"lời đọc ước tính {estimate} s ({syllables} âm tiết), ngoài {hard_low}–{hard_high} s "
+            f"sau {rounds} lượt sửa độ dài; hãy sinh lại hoặc bổ sung fact/clip cho PKB",
+            items, warnings=warnings, raw=final.raw, stages=stages,
+        )  # fmt: skip
     low, high = TARGET_RANGE_S
     if not low <= estimate <= high:
         warnings.append(f"estimate_outside_target:{estimate}s ngoài {low}–{high}s")

@@ -132,3 +132,20 @@ def test_transcribe_segments_collects_warnings(tmp_path: Path) -> None:
     assert list(words) == ["s1"]
     assert [w.split("[")[0] for w in warns] == ["stt_failed", "stt_empty"]
     json.dumps(words)
+
+
+def test_auth_error_stops_stt_after_first_segment() -> None:
+    from worker.produce.errors import ProduceAuthError
+
+    class Denied:
+        model = "whisper-1"
+        calls = 0
+
+        def transcribe(self, wav: Path):  # noqa: ANN202
+            Denied.calls += 1
+            raise ProduceAuthError("HTTP 401")
+
+    stt = Denied()
+    words, warns = transcribe_segments(stt, [(f"s{i}", Path(f"{i}.wav")) for i in range(4)])
+    assert words == {} and Denied.calls == 1
+    assert len(warns) == 1 and warns[0].startswith("stt_disabled_auth")

@@ -22,7 +22,7 @@ from typing import Protocol
 import httpx
 
 from worker.produce.cues import Word
-from worker.produce.errors import ProduceError
+from worker.produce.errors import ProduceAuthError, ProduceError
 
 log = logging.getLogger("worker.produce.stt")
 
@@ -98,6 +98,8 @@ class OpenAIWordStt:
                     self.calls += 1
                     return r.json()
                 err = f"HTTP {r.status_code}: {r.text[:200]}"
+                if r.status_code in (401, 403):
+                    raise ProduceAuthError(f"OpenAI STT từ chối khoá: {err}")
                 if r.status_code not in (429, 500, 502, 503, 504):
                     raise ProduceError(f"OpenAI STT từ chối: {err}")
             if attempt < len(self.retry_delays_s):
@@ -129,6 +131,11 @@ def transcribe_segments(
         try:
             if wav not in done:
                 done[wav] = stt.transcribe(wav)
+        except ProduceAuthError as ex:  # khoá sai: dừng, không gọi tiếp các câu còn lại
+            warnings.append(
+                f"stt_disabled_auth: {ex}. Bỏ PRODUCE_STT_MODEL hoặc đổi OPENAI_API_KEY"
+            )
+            break
         except ProduceError as ex:
             warnings.append(f"stt_failed[{sid}]: {ex}")
             continue

@@ -74,6 +74,11 @@ class GeminiScriptGenerator:
         raise ScriptGenerationError(
             message,
             retryable=res.retryable,
-            invalid=code in (M2ErrorCode.INPUT_INVALID.value, LLMErrorCode.INVALID_OUTPUT.value),
+            invalid=code
+            in (
+                M2ErrorCode.INPUT_INVALID.value,
+                M2ErrorCode.LENGTH_OUT_OF_RANGE.value,
+                LLMErrorCode.INVALID_OUTPUT.value,
+            ),
             cost_breakdown=res.cost_breakdown,
         )

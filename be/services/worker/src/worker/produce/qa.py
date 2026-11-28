@@ -20,7 +20,7 @@ from typing import Any, Protocol
 import httpx
 
 from worker.produce.config import ProduceConfig
-from worker.produce.errors import ProduceError
+from worker.produce.errors import ProduceAuthError, ProduceError
 from worker.produce.runner import Runner, require_ok
 from worker.produce.timeline import Timeline
 
@@ -115,6 +115,8 @@ class OpenAIVisionQA:
                 if r.status_code == 200:
                     return self._parse(r.json())
                 err = f"HTTP {r.status_code}: {r.text[:200]}"
+                if r.status_code in (401, 403):
+                    raise ProduceAuthError(f"OpenAI QA từ chối khoá: {err}")
                 if r.status_code not in (429, 500, 502, 503, 504):
                     raise ProduceError(f"OpenAI QA từ chối: {err}")
             if attempt < len(self.retry_delays_s):
@@ -183,15 +185,22 @@ def run_qa(
     work.mkdir(parents=True, exist_ok=True)
     verdicts: list[FrameVerdict] = []
     warnings: list[str] = []
+    disabled = False
     for ratio, jobs in jobs_by_ratio.items():
         mp4 = mp4_by_ratio.get(ratio)
-        if mp4 is None:
+        if mp4 is None or disabled:
             continue
         for job in jobs:
             tag = f"{ratio.replace(':', 'x')}-{job.scene_id}"
             try:
                 jpeg = extract_frame(mp4, job.t_s, work / f"{tag}.jpg", cfg, runner)
                 v = verdict_from(job, qa.review(jpeg, job))
+            except ProduceAuthError as ex:  # khoá sai: dừng QA, không gọi tiếp các khung còn lại
+                warnings.append(
+                    f"qa_disabled_auth: {ex}. Bỏ PRODUCE_QA_MODEL hoặc đổi OPENAI_API_KEY"
+                )
+                disabled = True
+                break
             except (ProduceError, OSError) as ex:
                 warnings.append(f"qa_failed[{ratio}/{job.scene_id}]: {ex}")
                 continue
