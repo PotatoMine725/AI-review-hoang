@@ -55,7 +55,8 @@ class ProduceConfig(BaseModel):
     tts_max_chars: int = Field(default=60, ge=0)
     tts_device: str = "cpu"  # cpu = ONNX; cuda = PyTorch; auto = cuda nếu torch thấy GPU
     tts_backend: str = "auto"
-    # Mốc từng từ cho phụ đề: "whisper-1" (cần OPENAI_API_KEY) hoặc "" = tắt (chia theo ký tự).
+    # Mốc từng từ cho phụ đề: "whisper-1" (cần OPENAI_API_KEY), "local:small" (faster-whisper,
+    # không cần khoá) hoặc "" = tắt (chia theo ký tự).
     stt_model: str = ""
     # QA khung hình bằng mô hình thị giác OpenAI (vd. "gpt-5.4-mini", cần OPENAI_API_KEY); "" = tắt.
     qa_model: str = ""

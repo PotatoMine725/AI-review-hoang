@@ -1,4 +1,8 @@
-"""Mốc thời gian từng từ của lời thoại (OpenAI whisper-1) để chia phụ đề đúng nhịp đọc.
+"""Mốc thời gian từng từ của lời thoại để chia phụ đề đúng nhịp đọc.
+
+Hai backend, chọn bằng `PRODUCE_STT_MODEL`: `whisper-1` (OpenAI, cần khoá) hoặc `local:<cỡ>`
+(faster-whisper chạy trên máy, không cần khoá, vd. `local:small`; cài bằng
+`uv sync --extra stt-local`).
 
 Adapter mỏng (ADR-0005): đổi provider chỉ sửa file này. TTS VieNeu chỉ cho độ dài cả câu, nên
 sau khi có wav ta chép lại bằng STT để lấy mốc từng từ. Chỉ `whisper-1` hỗ trợ
@@ -11,13 +15,14 @@ Lỗi STT KHÔNG làm hỏng video: pipeline ghi cảnh báo và rơi về chia 
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 import logging
 import time
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 import httpx
 
@@ -29,10 +34,12 @@ log = logging.getLogger("worker.produce.stt")
 OPENAI_STT_URL = "https://api.openai.com/v1/audio/transcriptions"
 WORD_MODEL = "whisper-1"
 PRICE_PER_MIN_USD = 0.006  # whisper-1
+LOCAL_PREFIX = "local:"
 
 
 class WordStt(Protocol):
-    model: str
+    @property
+    def model(self) -> str: ...
 
     def transcribe(self, wav: Path) -> list[Word]: ...
 
@@ -107,6 +114,86 @@ class OpenAIWordStt:
         raise ProduceError(f"OpenAI STT lỗi sau {len(self.retry_delays_s) + 1} lần: {err}")
 
 
+@dataclass
+class LocalWordStt:
+    """faster-whisper trên máy (CPU int8): miễn phí, không khoá. Thư viện nạp lười, thiếu thì báo
+    `ProduceError` để pipeline chỉ cảnh báo và rơi về chia theo ký tự."""
+
+    size: str = "small"
+    language: str = "vi"
+    device: str = "cpu"
+    compute_type: str = "int8"
+    cache_dir: Path | None = None
+    calls: int = 0  # số lần chạy mô hình thật (không tính cache)
+    cached: int = 0
+    _model: Any = None
+
+    @property
+    def model(self) -> str:
+        return f"{LOCAL_PREFIX}{self.size}"
+
+    def _load(self) -> Any:
+        if self._model is None:
+            try:
+                fw = importlib.import_module("faster_whisper")
+            except ImportError as ex:
+                raise ProduceError(
+                    "chưa cài faster-whisper: chạy `uv sync --extra stt-local` "
+                    "hoặc bỏ PRODUCE_STT_MODEL"
+                ) from ex
+            try:
+                self._model = fw.WhisperModel(
+                    self.size, device=self.device, compute_type=self.compute_type
+                )
+            except Exception as ex:  # tải/khởi tạo mô hình lỗi (mạng, RAM, tên cỡ sai)
+                raise ProduceError(f"không nạp được faster-whisper {self.size!r}: {ex}") from ex
+        return self._model
+
+    def _cache_file(self, wav: Path) -> Path | None:
+        if self.cache_dir is None:
+            return None
+        digest = hashlib.sha256(wav.read_bytes()).hexdigest()
+        tag = hashlib.sha256(f"{self.model}|{self.language}|{digest}".encode()).hexdigest()
+        return self.cache_dir / f"{tag}.json"
+
+    def transcribe(self, wav: Path) -> list[Word]:
+        cache = self._cache_file(wav)
+        if cache is not None and cache.is_file():
+            self.cached += 1
+            return parse_words(json.loads(cache.read_text(encoding="utf-8")))
+        model = self._load()
+        try:
+            segments, _info = model.transcribe(
+                str(wav), language=self.language, word_timestamps=True
+            )
+            data = {
+                "words": [
+                    {"word": w.word, "start": w.start, "end": w.end}
+                    for seg in segments
+                    for w in (seg.words or [])
+                ]
+            }
+        except Exception as ex:
+            raise ProduceError(f"faster-whisper lỗi khi chép {wav.name}: {ex}") from ex
+        self.calls += 1
+        if cache is not None:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        return parse_words(data)
+
+
+def make_stt(model: str, *, api_key: str = "", cache_dir: Path | None = None) -> WordStt:
+    """`local:<cỡ>` → faster-whisper; còn lại → OpenAI (cần `api_key`)."""
+    if model.startswith(LOCAL_PREFIX):
+        size = model[len(LOCAL_PREFIX) :].strip()
+        if not size:
+            raise ProduceError("PRODUCE_STT_MODEL=local: thiếu cỡ mô hình (vd. local:small)")
+        return LocalWordStt(size, cache_dir=cache_dir)
+    if not api_key:
+        raise ProduceError(f"PRODUCE_STT_MODEL={model} cần OPENAI_API_KEY (hoặc dùng local:small)")
+    return OpenAIWordStt(api_key, model, cache_dir=cache_dir)
+
+
 def parse_words(data: dict) -> list[Word]:
     """`words` của verbose_json → [(từ, bắt đầu, kết thúc)]; bỏ mục hỏng."""
     out: list[Word] = []
@@ -146,7 +233,9 @@ def transcribe_segments(
     return words, warnings
 
 
-def stt_cost_usd(seconds: float) -> float:
+def stt_cost_usd(seconds: float, model: str = WORD_MODEL) -> float:
+    if model.startswith(LOCAL_PREFIX):
+        return 0.0
     return round(seconds / 60 * PRICE_PER_MIN_USD, 5)
 
 
