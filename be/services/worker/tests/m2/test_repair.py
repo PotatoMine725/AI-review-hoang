@@ -197,3 +197,33 @@ def test_user_prompt_lists_conflicted_facts() -> None:
     assert conflicted_paths(inp) == ["pricing.list_price", "usp[1]"]
     prompt = build_user_prompt(inp)
     assert "usp[1]" in prompt and "pricing.list_price" in prompt and "TUYỆT ĐỐI" in prompt
+
+
+def _padded(n: int) -> dict[str, Any]:
+    doc = valid_script()
+    seg = doc["scenes"][1]["narration_segments"][0]
+    seg["text"] += " " + " ".join(["ý"] * (n - narration_syllables(doc)))
+    return doc
+
+
+def test_length_repair_loops_until_in_range() -> None:
+    # sinh 51 → sửa 80 (vẫn thiếu) → sửa thêm 130 (đạt): 3 lời gọi
+    res, transport = run([ok(valid_script()), ok(_padded(80)), ok(_padded(130))], repair=True)
+    assert res.status == "completed", res.errors
+    assert len(transport.calls) == 3
+    assert res.stages["length_repair_rounds"] == 1
+    assert res.data is not None and narration_syllables(res.data) == 130
+
+
+def test_length_repair_stops_when_not_closer_and_keeps_best() -> None:
+    res, transport = run([ok(valid_script()), ok(_padded(80)), ok(_padded(70))], repair=True)
+    assert res.status == "completed" and len(transport.calls) == 3
+    assert res.data is not None and narration_syllables(res.data) == 80
+    assert any(w.startswith("length_repair_not_closer") for w in res.warnings)
+    assert any(w.startswith("syllables_outside_advisory") for w in res.warnings)
+
+
+def test_syllable_feedback_names_the_deficit() -> None:
+    msg = syllable_feedback(68)[0]["message"]
+    assert "thiếu khoảng 64" in msg and "30 giây" in msg
+    assert "Thừa khoảng" in syllable_feedback(170)[0]["message"]

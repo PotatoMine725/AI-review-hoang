@@ -89,14 +89,23 @@ def syllable_feedback(syllables: int) -> list[dict[str, Any]]:
     low, high = SYLLABLE_RANGE
     if low <= syllables <= high:
         return []
-    side = "ít hơn" if syllables < low else "nhiều hơn"
+    mid = (low + high) // 2
+    if syllables < low:
+        need = (
+            f"Còn thiếu khoảng {mid - syllables} âm tiết (ước tính video quá ngắn, dưới 30 giây). "
+            "Thêm 2–4 câu ngắn có căn cứ (cách dùng cụ thể, giới hạn, kết quả thấy trong clip) "
+            "hoặc một cảnh demo nữa; giữ nguyên hook và CTA."
+        )
+        side = "ít hơn"
+    else:
+        need = f"Thừa khoảng {syllables - mid} âm tiết (quá 40 giây). Rút gọn câu, bỏ ý phụ."
+        side = "nhiều hơn"
     return [
         {
             "source": "syllable_advisory",
             "message": (
-                f"Lời đọc hiện có {syllables} âm tiết, {side} mốc khuyến nghị {low}–{high}. "
-                "Chỉ là khuyến nghị: bổ sung/rút gọn bằng nội dung có căn cứ trong fact, không "
-                "thêm claim hay kéo dài câu chỉ để đủ số."
+                f"Lời đọc hiện có {syllables} âm tiết, {side} mốc {low}–{high} (mục tiêu video "
+                f"30–40 giây). {need} Không thêm claim thiếu căn cứ hay kéo dài câu chỉ để đủ số."
             ),
             "syllables": syllables,
         }
