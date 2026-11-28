@@ -1,0 +1,67 @@
+<!--
+  Layout "punch" (khối chữ nổi bật): mỗi câu thoại một ý chiếm trọn khung, chữ hiện từng từ, ý sau
+  đẩy ý trước ra. Cùng props với "claim" nên template đổi claim → punch không cần đổi dữ liệu.
+  props: eyebrow{text}, icon, claim{text,highlight}, points[{text,icon,at}]
+  Nhịp: claim (0,2 s) → points[i] ở mốc câu `at` (không có `at`: --b<i+2>, tức câu thứ i+2).
+  Chạy được không cần nhịp: thiếu mốc thì mọi ý dồn về cuối (999 s) nên chỉ thấy claim.
+-->
+<div class="scene layout-punch" data-layout="punch">
+  <style>
+    .layout-punch .safe { display: grid; grid-template-rows: auto 1fr auto; gap: 40px; }
+    .layout-punch .top { display: flex; align-items: center; gap: 22px; }
+    .layout-punch .stage { position: relative; min-height: 0; }
+    .layout-punch [data-list="points"] > .line { --beat: 999s; }  /* chưa có mốc: không hiện */
+    .layout-punch .line { position: absolute; inset: 0; display: flex; flex-direction: column;
+      justify-content: center; gap: 34px; }
+    .layout-punch.is-portrait .line { align-items: center; text-align: center; }
+    .layout-punch .big { margin: 0; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em;
+      text-wrap: balance; --wd: calc(var(--beat, 0s) - 0.2s); --w-step: 0.05s; --hl-d: calc(var(--beat, 0s) + 0.7s); }
+    .layout-punch.is-landscape .big { font-size: 100px; max-width: 1500px; }
+    .layout-punch.is-portrait .big { font-size: 96px; }
+    .layout-punch .big mark { color: inherit;
+      background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 60% / 0% 88%;
+      border-radius: 0.12em; padding: 0 0.08em; white-space: nowrap;
+      animation: hl-sweep 0.5s var(--ease-out) both, hl-ink 0.25s linear both;
+      animation-delay: var(--hl-d), calc(var(--hl-d) + 0.15s); }
+    .layout-punch .line .icon-tile { --icon-tile: 128px; }
+    /* Gạch chân màu nhấn chạy ngang dưới mỗi ý */
+    .layout-punch .rule { height: 10px; width: 260px; border-radius: 999px; background: var(--accent);
+      transform-origin: 0 50%; animation: rule-in 0.6s var(--ease-out) both;
+      animation-delay: calc(var(--beat, 0s) + 0.35s); }
+    .layout-punch.is-portrait .rule { transform-origin: 50% 50%; }
+    @keyframes rule-in { from { transform: scaleX(0); } to { transform: none; } }
+    /* Biểu tượng mờ cỡ lớn phía sau, xoay chậm */
+    .layout-punch .ghost { position: absolute; right: -8%; top: 8%; width: 70%; aspect-ratio: 1;
+      color: var(--accent-2); opacity: 0.07; animation: ring-spin 40s linear both; }
+    .layout-punch.is-portrait .ghost { right: -30%; top: 20%; width: 120%; }
+    .layout-punch .ghost svg { width: 100%; height: 100%; stroke-width: 0.6; }
+  </style>
+
+  <div class="bg"></div>
+  <div class="bg-dots"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-c"></div>
+  <div class="ghost" data-icon="icon"></div>
+
+  <div class="safe">
+    <div class="top a-rise" style="--d: 0.1s">
+      <span class="icon-tile is-soft" data-icon="icon"></span>
+      <span class="eyebrow" data-text="eyebrow"></span>
+    </div>
+    <div class="stage">
+      <div class="line beat-swap" style="--beat: 0.15s; --beat-next: var(--first-points, 999s)">
+        <h2 class="big" data-words data-text="claim"></h2>
+        <div class="rule"></div>
+      </div>
+      <div data-list="points" data-beat-from="2">
+        <div data-item class="line beat-swap">
+          <span class="icon-tile" data-icon="icon"></span>
+          <h2 class="big" data-words data-text="text"></h2>
+        </div>
+      </div>
+    </div>
+    <div></div>
+  </div>
+
+  <script>window.TPL.mount("punch");</script>
+</div>

@@ -262,6 +262,26 @@ So với spike này: v2 có **clip thao tác thật + zoom** (NotebookLM không 
 NotebookLM hơn ở chỗ **minh hoạ theo nghĩa vẽ riêng cho từng ý** và ít chữ hơn, còn v2 dùng icon Lucide thay minh hoạ.
 Muốn tiến gần NotebookLM hơn thì cần bộ minh hoạ SVG theo chủ đề, hoặc ảnh AI cho từng ý (#71). Phụ đề từng chữ cần TTS có timing.
 
+## Thư viện template: khối cảnh, chuyển cảnh, nhịp theo câu (28/11/2026)
+
+Video cũ ít "cảnh" vì mỗi cảnh là một bố cục tĩnh ~7 s: mọi lớp hiện trong ~1,5 s đầu rồi đứng
+yên, các cảnh nối cứng. Bản này thêm:
+
+- **Template** (`template/templates.json`): mỗi template = cách ghép khối + kiểu chuyển cảnh +
+  chuyển động. Plan chọn bằng `"template": "<id>"` (worker: `PRODUCE_TEMPLATE`), trống = `default`.
+  Có `nhip-nhanh` (mặc định) và `toi-gian` (gần bản cũ). Thêm template = thêm một mục JSON.
+- **Chuyển cảnh** (`template/motion.css`): vào cảnh 0,45 s (`zoom | slide | wipe | flash | fade`,
+  xoay vòng từ cảnh 2) + ra cảnh 0,3 s (phóng + mờ). Nằm trong cảnh nên dựng song song theo cảnh
+  và cache vẫn đúng; `compose.apply_template` điền `transition` trên plan đầy đủ trước khi tách.
+- **Nhịp theo câu**: compose truyền `--b1…` (mốc câu từ đầu cảnh) và `seg_at`. Mục danh sách có
+  `at: "<segment_id>"` (hoặc `data-beat-from` trên danh sách) hiện đúng lúc câu đó bắt đầu, nên
+  một cảnh 3 câu thành 3 nhịp hình.
+- **Khối `punch`** (chữ nổi bật): cùng props với `claim`; mỗi câu một ý chiếm trọn khung, chữ hiện
+  từng từ, ý sau đẩy ý trước. Template `nhip-nhanh` đổi `claim → punch`.
+- **Chữ động** (`data-words`), **camera đẩy chậm** suốt cảnh, nút CTA nhịp đập.
+
+Chi phí: dựng chậm hơn (~145 s → ~230 s một tỉ lệ trong sandbox, do hiệu ứng mờ khi chuyển cảnh).
+
 ## Hướng dẫn FE: thêm bố cục hoặc preset
 
 Mọi thứ FE sửa nằm trong `template/`. Python không cần đổi, trừ khi thêm loại dữ liệu mới vào plan.

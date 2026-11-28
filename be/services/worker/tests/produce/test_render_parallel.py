@@ -38,7 +38,7 @@ from worker.produce.render import (
     render_ratios,
 )
 from worker.produce.runner import CANCELLED_RC, RunResult, kill_tree, run_process
-from worker.produce.timeline import TimedScene, Timeline
+from worker.produce.timeline import TimedScene, TimedSegment, Timeline
 
 DRIVER = Path(render.__file__).parent / "drivers" / "hf_render.py"
 RATIOS = ["16:9", "9:16"]
@@ -296,6 +296,16 @@ def test_moving_a_scene_on_the_timeline_does_not_change_its_slice() -> None:
     b = drv.slice_scene(after.scenes[1], after, Timeline)
     assert before.scenes[1].start_f != after.scenes[1].start_f
     assert a.scenes[0] == b.scenes[0] and a.total_s == b.total_s
+
+
+def test_slice_moves_segment_starts_to_scene_origin() -> None:
+    """Nhịp theo câu (--b1…) của template tính từ đầu cảnh: cảnh con phải có mốc câu tương đối."""
+    drv = load_driver()
+    seg = TimedSegment("s02-u01", 4.0, 1.5)
+    tl = Timeline((TimedScene("s01", 0, 105, (), 30), TimedScene("s02", 105, 300, (seg,), 30)), 30)
+    sub = drv.slice_scene(tl.scenes[1], tl, Timeline)
+    assert sub.scenes[0].segments[0].start_s == 0.5
+    assert sub.scenes[0].segments[0].duration_s == 1.5
 
 
 @pytest.mark.parametrize("frames", range(1, 700))

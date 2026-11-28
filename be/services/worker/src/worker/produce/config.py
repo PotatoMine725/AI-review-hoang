@@ -62,6 +62,8 @@ class ProduceConfig(BaseModel):
     qa_model: str = ""
 
     preset: str = "dien-anh-toi-gian"
+    # Template video (template/templates.json của spike render): "" = mặc định của thư viện.
+    template: str = ""
     fps: int = 30
     lead_s: float = 0.1  # trước câu đầu tiên
     gap_s: float = 0.12  # nghỉ giữa hai câu, 0,12–0,15 s
@@ -142,6 +144,7 @@ class ProduceConfig(BaseModel):
             "stt_model",
             "qa_model",
             "preset",
+            "template",
             "gap_s",
             "workers",
             "render_mode",

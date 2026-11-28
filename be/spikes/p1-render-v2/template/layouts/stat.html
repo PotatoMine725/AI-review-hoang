@@ -33,6 +33,7 @@
       background-clip: text; color: transparent; padding-bottom: 0.06em; }
     .layout-stat .stat-label { font-size: var(--fs-body); font-weight: 700; color: var(--ink); line-height: 1.3; --hl-d: 1.1s; }
     .layout-stat.is-portrait .chips { justify-content: center; }
+    .layout-stat .chips .chip { white-space: normal; line-height: 1.25; }
   </style>
 
   <div class="bg"></div>
@@ -53,10 +54,10 @@
     </div>
     <div class="copy">
       <div class="eyebrow a-rise" style="--d: 0.25s" data-text="eyebrow"></div>
-      <div class="value a-slam" style="--d: 0.45s" data-text="value"></div>
-      <div class="stat-label a-rise" style="--d: 0.7s" data-text="label"></div>
-      <div class="chips" data-list="chips">
-          <span data-item class="chip a-pop" style="--d: calc(0.95s + var(--i) * var(--stagger))">
+      <div class="beat-bump" style="--beat: var(--b2, 999s)"><div class="value a-slam" style="--d: 0.45s" data-text="value"></div></div>
+      <div class="stat-label a-rise" style="--d: 0.7s; --wd: 0.7s" data-words data-text="label"></div>
+      <div class="chips" data-list="chips" data-beat-from="2">
+          <span data-item class="chip a-pop" style="--d: var(--beat, calc(0.95s + var(--i) * var(--stagger)))">
             <span data-icon="icon"></span><span data-text="text"></span>
           </span>
       </div>
