@@ -231,6 +231,12 @@ class JobRunner:
             or len(set(ratios)) != len(ratios)
         ):
             raise StepError(f"options.ratios phải là tập con không trùng của {VIDEO_RATIOS}")
+        choice: dict[str, str | None] = {}
+        for key in ("template", "voice"):  # None = mặc định của máy render (PRODUCE_*)
+            val = options.get(key)
+            if val is not None and (not isinstance(val, str) or not val.strip()):
+                raise StepError(f"options.{key} phải là chuỗi không rỗng")
+            choice[key] = val.strip() if isinstance(val, str) else None
 
         script = self._one(
             "script_revisions",
@@ -276,6 +282,8 @@ class JobRunner:
                 out_dir=out_dir,
                 mode=mode,
                 ratios=tuple(ratios),
+                template=choice["template"],
+                voice=choice["voice"],
             )
         )
         self._db.update(

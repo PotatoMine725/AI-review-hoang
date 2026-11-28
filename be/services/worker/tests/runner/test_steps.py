@@ -154,3 +154,45 @@ def test_failed_produce_raises_step_error_with_code_and_report_path(
     assert (
         "unsupported_scene: cảnh s05" in e.value.message and "render_report.json" in e.value.message
     )
+
+
+def _templates(root: Path) -> Path:
+    (root / "template").mkdir(parents=True)
+    (root / "template" / "templates.json").write_text(
+        '{"default": "nhip-nhanh", "templates": {"nhip-nhanh": {"name": "Nhịp nhanh"},'
+        ' "pixel": {"name": "Pixel 8-bit", "description": "d"}}}',
+        encoding="utf-8",
+    )
+    return root
+
+
+def test_produce_video_step_overrides_template_and_voice(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seen: dict[str, object] = {}
+
+    def fake_produce(script, input_, assets, out, **kw):  # type: ignore[no-untyped-def]
+        seen.update(kw)
+        return ProduceResult(_report(), out / "render_report.json")
+
+    monkeypatch.setattr(steps, "produce", fake_produce)
+    base = steps.ProduceConfig(render_v2=_templates(tmp_path / "rv2"), voice="Hải Đăng")
+    req = _video_request(tmp_path)
+    req.template, req.voice = "pixel", "Mai Anh"
+    asyncio.run(steps.ProduceVideoStep(base)(req))
+    cfg = seen["cfg"]
+    assert isinstance(cfg, steps.ProduceConfig)
+    assert (cfg.template, cfg.voice) == ("pixel", "Mai Anh") and base.voice == "Hải Đăng"
+
+
+@pytest.mark.parametrize(("template", "voice"), [("khong-co", None), (None, "Giọng lạ")])
+def test_produce_video_step_rejects_unknown_choice(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, template: str | None, voice: str | None
+) -> None:
+    monkeypatch.setattr(steps, "produce", lambda *a, **k: pytest.fail("không được dựng"))
+    base = steps.ProduceConfig(render_v2=_templates(tmp_path / "rv2"))
+    req = _video_request(tmp_path)
+    req.template, req.voice = template, voice
+    with pytest.raises(StepError) as e:
+        asyncio.run(steps.ProduceVideoStep(base)(req))
+    assert e.value.retryable is False and "options." in e.value.message

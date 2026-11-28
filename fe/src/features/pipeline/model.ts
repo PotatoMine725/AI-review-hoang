@@ -50,16 +50,32 @@ export function parseAssets(raw: string): Json[] {
   return value as Json[];
 }
 
-export function videoOptions({ assetsPath, mode, ratios }: { assetsPath: string; mode: "preview" | "final"; ratios: string[] }): Json {
+export type VideoChoice = { template?: string; voice?: string };
+
+export function videoOptions({ assetsPath, mode, ratios, template, voice }: { assetsPath: string; mode: "preview" | "final"; ratios: string[] } & VideoChoice): Json {
   if (!assetsPath.trim()) throw new Error("Cần assets_path (đường dẫn assets.json trên máy render).");
   if (!ratios.length) throw new Error("Chọn ít nhất một tỉ lệ khung hình.");
-  return { assets_path: assetsPath.trim(), mode, ratios };
+  return { assets_path: assetsPath.trim(), mode, ratios, ...(template ? { template } : {}), ...(voice ? { voice } : {}) };
 }
 
-/** DB chỉ cho 1 video chưa lỗi cho mỗi (revision, render_profile), nên đặt profile theo chế độ + tỉ lệ để dựng lại bản khác cùng kịch bản. */
-export function renderProfile(mode: "preview" | "final", ratios: string[]): string {
-  return `${mode}-${[...ratios].sort().map(ratio => ratio.replace(":", "x")).join("+")}`;
+/** "Hải Đăng" → "hai-dang": dùng trong render_profile (ASCII, ngắn). */
+export function slug(value: string): string {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
+
+/** DB chỉ cho 1 video chưa lỗi cho mỗi (revision, render_profile), nên profile gồm chế độ + tỉ lệ + template + giọng để dựng lại bản khác cùng kịch bản. */
+export function renderProfile(mode: "preview" | "final", ratios: string[], { template, voice }: VideoChoice = {}): string {
+  const parts = [mode, [...ratios].sort().map(ratio => ratio.replace(":", "x")).join("+")];
+  if (template || voice) parts.push(template ? slug(template) : "mac-dinh");
+  if (voice) parts.push(slug(voice));
+  return parts.join("-").slice(0, 100);
+}
+
+/** Clip mẫu 3 s (9:16, không tiếng) trong `public/templates/<id>.mp4|.jpg`; template chưa có clip thì chỉ hiện chữ. */
+export const TEMPLATE_PREVIEWS = new Set(["nhip-nhanh", "toi-gian", "dem-nguoc", "pixel", "hoat-hinh"]);
+
+export const voiceLabel = (voice: { id: string; gender: string; region: string; style: string }) =>
+  `${voice.id} · ${voice.gender === "female" ? "Nữ" : "Nam"} · ${voice.region} · ${voice.style}`;
 
 export const jobLabels: Record<string, string> = { queued: "Đang chờ", running: "Đang chạy", completed: "Hoàn tất", failed: "Lỗi" };
 export const reviewLabels: Record<string, string> = { draft: "Bản nháp", in_review: "Chờ duyệt", approved: "Đã duyệt", rejected: "Bị từ chối" };

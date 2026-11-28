@@ -140,3 +140,28 @@ def test_runner_only_claims_enabled_job_types(tmp_path: Path) -> None:
     assert db.by_id("v1")["status"] == "completed"
     assert db.by_id("c1")["status"] == "queued"  # job crawl không bị runner video nhận
     assert run(video_only) is False
+
+
+def test_video_job_passes_template_and_voice(tmp_path: Path) -> None:
+    db, _ = setup(tmp_path, template=" pixel ", voice="Mai Anh")
+    video = FakeVideo()
+    assert run(make(tmp_path, db, video)) is True
+    (req,) = video.requests
+    assert (req.template, req.voice) == ("pixel", "Mai Anh")
+
+
+def test_video_job_without_choice_uses_render_defaults(tmp_path: Path) -> None:
+    db, _ = setup(tmp_path)
+    video = FakeVideo()
+    run(make(tmp_path, db, video))
+    (req,) = video.requests
+    assert req.template is None and req.voice is None
+
+
+@pytest.mark.parametrize("over", [{"template": 3}, {"voice": " "}])
+def test_video_job_bad_choice_type_fails(tmp_path: Path, over: dict) -> None:
+    db, _ = setup(tmp_path, **over)
+    video = FakeVideo()
+    run(make(tmp_path, db, video))
+    j = db.by_id("v1")
+    assert j["status"] == "failed" and "options." in j["error"] and not video.requests

@@ -21,6 +21,10 @@ export type VideoRequest = {
   render_profile?: string; options?: Record<string, unknown>;
 };
 
+export type RenderTemplate = { id: string; name: string; description: string };
+export type RenderVoice = { id: string; gender: "male" | "female"; region: string; style: string; featured: boolean };
+export type RenderCatalog = { templates: RenderTemplate[]; default_template: string; voices: RenderVoice[]; default_voice: string };
+
 export class WorkerApiError extends Error {
   readonly status: number;
   readonly detail: string;
@@ -83,6 +87,7 @@ export function createWorkerClient(config: WorkerConfig) {
       request<{ revision: number }>("POST", `${base(productId)}/scripts/generate`, { body, timeoutMs: GENERATE_TIMEOUT_MS, signal }),
     reviewScript: (productId: string, revision: number, body: { decision: ReviewDecision; note?: string }) =>
       request<{ status: string }>("POST", `${base(productId)}/scripts/${revision}/review`, { body }),
+    getRenderCatalog: (signal?: AbortSignal) => request<RenderCatalog>("GET", "/render/catalog", { signal }),
     createVideoJob: (productId: string, body: VideoRequest) =>
       request<{ job_id: string }>("POST", `${base(productId)}/videos`, { body }),
 

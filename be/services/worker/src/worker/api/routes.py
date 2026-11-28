@@ -24,6 +24,7 @@ from worker.api.deps import (
     Service,
     current_owner,
     get_db,
+    get_produce_config,
     get_script_generator,
     get_settings,
     owner_or_service,
@@ -48,6 +49,8 @@ from worker.api.schemas import (
     VideoRequest,
 )
 from worker.m1.url import InvalidUrlError, normalize_product_url
+from worker.produce.catalog import CatalogError, catalog, check_choice
+from worker.produce.config import ProduceConfig
 from worker.settings import Settings
 
 router = APIRouter()
@@ -55,6 +58,7 @@ router = APIRouter()
 Db = Annotated[Database, Depends(get_db)]
 OwnerDep = Annotated[Owner, Depends(current_owner)]
 ServiceDep = Annotated[Service, Depends(require_service)]
+ProduceCfg = Annotated[ProduceConfig, Depends(get_produce_config)]
 AnyoneDep = Annotated[Owner | Service, Depends(owner_or_service)]
 
 
@@ -123,8 +127,20 @@ def create_crawl_job(product_id: UUID, body: CrawlRequest, who: AnyoneDep, db: D
     return {"job_id": job_id}
 
 
+@router.get("/render/catalog")
+def render_catalog(_: AnyoneDep, cfg: ProduceCfg) -> Any:
+    """Template + giọng chọn được cho job video (FE hiện bộ chọn từ đây)."""
+    return catalog(cfg)
+
+
 @router.post("/products/{product_id}/videos", response_model=JobCreated, status_code=202)
-def create_video_job(product_id: UUID, body: VideoRequest, who: AnyoneDep, db: Db) -> Any:
+def create_video_job(
+    product_id: UUID, body: VideoRequest, who: AnyoneDep, db: Db, cfg: ProduceCfg
+) -> Any:
+    try:
+        check_choice(cfg, body.options.get("template"), body.options.get("voice"))
+    except CatalogError as e:
+        raise ApiError(422, str(e)) from e
     if isinstance(who, Owner):
         _product(db, who, product_id)  # owner chỉ tạo job cho product của mình (RLS)
     job_id = _db_call(
