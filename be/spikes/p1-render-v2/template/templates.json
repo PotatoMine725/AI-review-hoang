@@ -54,6 +54,36 @@
       "words": true,
       "exit": false,
       "sfx": "pop"
+    },
+    "pixel": {
+      "name": "Pixel 8-bit",
+      "description": "Kiểu game cũ: font VT323, vạch quét CRT, khung hộp thoại góc khía, chuyển động theo bậc.",
+      "preset": "pixel-8bit",
+      "layouts": {
+        "claim": "punch"
+      },
+      "transitions": [
+        "pixel"
+      ],
+      "camera": false,
+      "words": true,
+      "exit": false,
+      "sfx": "pop"
+    },
+    "hoat-hinh": {
+      "name": "Hoạt hình",
+      "description": "Nền kem, đốm màu viền đậm lắc lư, thẻ bo tròn, mọi thứ nảy vào.",
+      "preset": "hoat-hinh",
+      "layouts": {
+        "claim": "punch"
+      },
+      "transitions": [
+        "bounce"
+      ],
+      "camera": true,
+      "words": true,
+      "exit": false,
+      "sfx": "pop"
     }
   }
 }

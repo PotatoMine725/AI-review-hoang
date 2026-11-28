@@ -34,7 +34,7 @@ TEMPLATE_DIR = ROOT / "template"
 FONTS_DIR = ROOT / "fonts"
 RATIO_CLASS = {"9:16": "r916", "16:9": "r169"}
 TEMPLATES_FILE = TEMPLATE_DIR / "templates.json"
-TRANSITIONS = {"zoom", "slide", "wipe", "flash", "fade", "skew", "none"}
+TRANSITIONS = {"zoom", "slide", "wipe", "flash", "fade", "skew", "pixel", "bounce", "none"}
 
 
 def load_template(name: str | None, path: Path = TEMPLATES_FILE) -> dict:

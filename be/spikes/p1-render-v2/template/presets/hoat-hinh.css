@@ -1,0 +1,145 @@
+/*
+ * Preset "hoat-hinh" (template "hoat-hinh"): dùng lại các layout gốc, đổi sang kiểu hoạt hình:
+ * nền màu kem, đốm màu đặc trôi lắc lư (thay vầng sáng mờ), thẻ bo tròn to viền đậm, chuyển động
+ * nảy (lố đà rồi về). Không blur nên dựng nhanh.
+ *
+ * Tương phản: chữ #2b2140 trên kem #fff4e0 14,2:1; trên thẻ trắng 15,4:1; chữ #2b2140 trên cam
+ * #ff9f43 7,0:1; tím #6c4bd8 trên kem 6,3:1 (đều ≥ 4,5:1).
+ */
+.preset-hoat-hinh {
+  --bg-0: #fff4e0;
+  --bg-1: #ffe9c7;
+  --bg-2: #ffe0b0;
+  --surface: #ffffff;
+  --surface-line: #2b2140;
+  --ink: #2b2140;
+  --ink-muted: #4a3f63;
+  --accent: #ff9f43;
+  --accent-soft: rgba(255, 159, 67, 0.22);
+  --on-accent: #2b2140;
+  --accent-2: #6c4bd8;
+  --accent-2-soft: rgba(108, 75, 216, 0.14);
+  --glow-a: #7ad3ff;
+  --glow-b: #ff8fb8;
+  --glow-c: #9be88a;
+
+  --font: "Be Vietnam Pro", system-ui, sans-serif;
+  --radius-card: 48px;
+  --radius-chip: 999px;
+  --outline: 5px solid #2b2140;
+  --shadow-card: 0 12px 0 #2b2140;
+
+  /* Nảy: lố đà rồi về */
+  --ease-out: cubic-bezier(0.34, 1.8, 0.5, 1);
+  --ease-io: cubic-bezier(0.68, -0.4, 0.32, 1.4);
+  --t-in: 0.6s;
+  --stagger: 0.18s;
+}
+
+.preset-hoat-hinh .bg {
+  background: var(--bg-0);
+}
+.preset-hoat-hinh .bg-dots {
+  background-image: radial-gradient(circle, rgba(43, 33, 64, 0.1) 3px, transparent 3.6px);
+  background-size: 56px 56px;
+}
+/* Đốm màu đặc, viền đậm, lắc lư (thay vầng sáng mờ) */
+.preset-hoat-hinh .orb {
+  border: 6px solid #2b2140;
+  animation: blob var(--dur, 4s) var(--ease-io) both;
+}
+.preset-hoat-hinh .orb-a {
+  width: 380px;
+  height: 380px;
+  left: -120px;
+  top: -90px;
+  background: var(--glow-a);
+  border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+}
+.preset-hoat-hinh .orb-b {
+  width: 300px;
+  height: 300px;
+  right: -90px;
+  bottom: 10%;
+  background: var(--glow-b);
+  border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+}
+.preset-hoat-hinh .orb-c {
+  width: 200px;
+  height: 200px;
+  right: 8%;
+  top: 6%;
+  background: var(--glow-c);
+  border-radius: 50%;
+}
+@keyframes blob {
+  0% { transform: rotate(0) scale(1); }
+  50% { transform: rotate(12deg) scale(1.08) translateY(20px); }
+  100% { transform: rotate(-6deg) scale(1); }
+}
+.preset-hoat-hinh .waves path {
+  stroke-width: 6;
+}
+.preset-hoat-hinh .ghost {
+  opacity: 0.12;
+  color: var(--accent-2);
+}
+
+/* Thẻ, chip, khung: bo tròn to, viền đậm, bóng khối phía dưới */
+.preset-hoat-hinh .card,
+.preset-hoat-hinh .point,
+.preset-hoat-hinh .browser,
+.preset-hoat-hinh .frame,
+.preset-hoat-hinh .url-pill,
+.preset-hoat-hinh .button {
+  border: var(--outline) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+.preset-hoat-hinh .chip {
+  border: 4px solid #2b2140;
+  background: #fff;
+  box-shadow: 0 6px 0 #2b2140;
+}
+.preset-hoat-hinh .chip.is-accent,
+.preset-hoat-hinh .chip.is-cool {
+  background: var(--accent);
+  border-color: #2b2140;
+}
+.preset-hoat-hinh .point {
+  background: #fff;
+}
+.preset-hoat-hinh .icon-tile {
+  border: 5px solid #2b2140;
+  box-shadow: 0 8px 0 #2b2140;
+  animation: wobble 1.6s var(--ease-io) infinite alternate;
+}
+@keyframes wobble {
+  from { transform: rotate(-7deg); }
+  to { transform: rotate(7deg); }
+}
+.preset-hoat-hinh .browser .bar {
+  background: var(--accent-2);
+  border-bottom: 5px solid #2b2140;
+}
+.preset-hoat-hinh .browser .url {
+  background: #fff;
+  color: #2b2140;
+}
+.preset-hoat-hinh .value {
+  background: none !important;
+  color: var(--accent-2) !important;
+  -webkit-text-stroke: 4px #2b2140;
+  paint-order: stroke fill;
+}
+.preset-hoat-hinh .rule {
+  height: 16px;
+  border: 4px solid #2b2140;
+}
+/* Chữ từng từ: nảy lên */
+.preset-hoat-hinh.words-on [data-words] .w {
+  animation-name: toon-word;
+}
+@keyframes toon-word {
+  0% { opacity: 0; transform: translateY(0.6em) scale(0.6) rotate(-8deg); }
+  100% { opacity: 1; transform: none; }
+}

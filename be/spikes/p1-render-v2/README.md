@@ -284,6 +284,10 @@ yên, các cảnh nối cứng. Bản này thêm:
   cảnh, thẻ trắng viền đen, chữ Anton OFL có dấu tiếng Việt), bộ layout `count_hook`,
   `count_clip`, `count_card`, `count_cta` (cùng props với layout gốc), cảnh nội dung đánh số đếm
   ngược, chuyển cảnh quét chéo `skew`, tiếng pop đầu mỗi câu.
+- **Template `pixel`**: preset `pixel-8bit` (font VT323 OFL có dấu, vạch quét CRT, khung góc khía
+  bằng box-shadow, chuyển động `steps()`), chuyển cảnh `pixel` (mở theo bậc từ giữa).
+- **Template `hoat-hinh`**: preset `hoat-hinh` (nền kem, đốm màu viền đậm lắc lư, thẻ bo tròn
+  viền đậm, easing lố đà), chuyển cảnh `bounce`. Hai template này dùng lại layout gốc, không blur.
 - **Âm thanh** (`render.audio_mix`): `plan.audio.music` = nhạc nền (lặp, nhỏ đi khi có giọng bằng
   sidechaincompress, mờ vào/ra), `sfx: pop` = tiếng pop tự tổng hợp (aevalsrc, không bản quyền)
   ở đầu mỗi câu trừ câu đầu. Worker: `PRODUCE_MUSIC` (file hoặc thư mục), `PRODUCE_MUSIC_DB`,

@@ -1,0 +1,177 @@
+/*
+ * Preset "pixel-8bit" (template "pixel"): dùng lại các layout gốc (hook, stat, feature_clip, punch,
+ * cta), chỉ đổi giao diện: font VT323 (OFL, có dấu tiếng Việt), nền lưới pixel + vạch quét CRT,
+ * khung hộp thoại 8-bit góc vuông khía, chuyển động theo bậc (steps) như game cũ.
+ *
+ * Tương phản: chữ #f4f4e8 trên nền #14142b 16,6:1; vàng #ffcc00 trên nền 12,4:1; chữ #14142b trên
+ * vàng 12,4:1; hồng #ff5fa2 trên nền 6,0:1 (đều ≥ 4,5:1).
+ */
+@font-face {
+  font-family: "VT323";
+  font-weight: 400;
+  src: url("../fonts/VT323-Regular.ttf") format("truetype");
+}
+
+.preset-pixel-8bit {
+  --bg-0: #14142b;
+  --bg-1: #1d1d3f;
+  --bg-2: #2a2a5c;
+  --surface: #1d1d3f;
+  --surface-line: #f4f4e8;
+  --ink: #f4f4e8;
+  --ink-muted: #c9c9e6;
+  --accent: #ffcc00;
+  --accent-soft: rgba(255, 204, 0, 0.18);
+  --on-accent: #14142b;
+  --accent-2: #3de7ff;
+  --accent-2-soft: rgba(61, 231, 255, 0.15);
+  --glow-a: transparent;
+  --glow-b: transparent;
+  --glow-c: transparent;
+
+  --font: "VT323", "Be Vietnam Pro", monospace;
+  --radius-card: 0px;
+  --radius-chip: 0px;
+  /* Viền pixel: 4 bóng cứng tạo góc khía của hộp thoại 8-bit */
+  --px: 6px;
+  --shadow-card:
+    0 calc(-1 * var(--px)) 0 0 var(--ink), 0 var(--px) 0 0 var(--ink),
+    calc(-1 * var(--px)) 0 0 0 var(--ink), var(--px) 0 0 0 var(--ink),
+    0 0 0 calc(2 * var(--px)) var(--bg-0), 12px 12px 0 calc(var(--px)) #000;
+
+  /* Chuyển động theo bậc */
+  --ease-out: steps(5, end);
+  --ease-io: steps(6, end);
+  --t-in: 0.5s;
+  --stagger: 0.2s;
+}
+
+/* VT323 nhỏ hơn Be Vietnam Pro ở cùng cỡ: phóng to toàn bộ thang chữ */
+.preset-pixel-8bit.r916 {
+  --fs-hero: 170px;
+  --fs-title: 120px;
+  --fs-body: 62px;
+  --fs-chip: 52px;
+  --fs-stat: 260px;
+}
+.preset-pixel-8bit.r169 {
+  --fs-hero: 150px;
+  --fs-title: 104px;
+  --fs-body: 52px;
+  --fs-chip: 44px;
+  --fs-stat: 230px;
+}
+.preset-pixel-8bit .title,
+.preset-pixel-8bit .wordmark,
+.preset-pixel-8bit .value,
+.preset-pixel-8bit .big {
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 0.95 !important;
+}
+.preset-pixel-8bit .layout-punch .big,
+.preset-pixel-8bit .layout-feature-clip .title {
+  font-size: calc(var(--fs-title) * 1.05) !important;
+}
+.preset-pixel-8bit .value {
+  background: none !important;
+  color: var(--accent) !important;
+  text-shadow: 8px 8px 0 #000;
+}
+
+/* Nền: lưới pixel + vạch quét CRT; tắt vầng sáng, sóng */
+.preset-pixel-8bit .bg {
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 3px, transparent 3px 6px),
+    var(--bg-0);
+}
+.preset-pixel-8bit .bg-dots {
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 2px, transparent 2px);
+  background-size: 48px 48px;
+  -webkit-mask-image: none;
+  mask-image: none;
+  animation: px-scroll var(--dur, 4s) steps(24, end) both;
+}
+@keyframes px-scroll {
+  from { background-position: 0 0; }
+  to { background-position: 0 192px; }
+}
+.preset-pixel-8bit .orb,
+.preset-pixel-8bit .waves,
+.preset-pixel-8bit .ghost,
+.preset-pixel-8bit .rings {
+  display: none;
+}
+
+/* Hộp thoại, chip, nút, khung trình duyệt: góc vuông, viền pixel */
+.preset-pixel-8bit .card,
+.preset-pixel-8bit .chip,
+.preset-pixel-8bit .point,
+.preset-pixel-8bit .browser,
+.preset-pixel-8bit .url-pill,
+.preset-pixel-8bit .button,
+.preset-pixel-8bit .frame {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: var(--shadow-card) !important;
+}
+.preset-pixel-8bit .chip,
+.preset-pixel-8bit .point {
+  background: var(--bg-1);
+  font-weight: 400;
+  padding: 8px 22px;
+}
+.preset-pixel-8bit .chip.is-accent,
+.preset-pixel-8bit .button {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.preset-pixel-8bit .icon-tile {
+  border-radius: 0;
+  box-shadow: 6px 6px 0 #000;
+}
+.preset-pixel-8bit .browser .bar {
+  background: var(--accent-2);
+  border-bottom: 6px solid var(--ink);
+}
+.preset-pixel-8bit .browser .bar i {
+  border-radius: 0;
+}
+.preset-pixel-8bit .browser .url {
+  border-radius: 0;
+  background: var(--bg-0);
+  color: var(--ink);
+  font-size: 34px;
+}
+.preset-pixel-8bit .screen video,
+.preset-pixel-8bit .screen img,
+.preset-pixel-8bit .frame img {
+  image-rendering: pixelated;
+}
+.preset-pixel-8bit .title mark,
+.preset-pixel-8bit .stat-label mark,
+.preset-pixel-8bit .big mark {
+  border-radius: 0;
+}
+/* Gạch chân + con trỏ nhấp nháy kiểu terminal sau tiêu đề */
+.preset-pixel-8bit .rule {
+  height: 14px;
+  border-radius: 0;
+  animation: blink 0.9s steps(1, end) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+/* Chữ từng từ: bật ra theo bậc, không trượt mượt */
+.preset-pixel-8bit.words-on [data-words] .w {
+  animation-name: px-word;
+  animation-timing-function: steps(2, end);
+  animation-duration: 0.2s;
+}
+@keyframes px-word {
+  from { opacity: 0; transform: translateY(0.3em); }
+  to { opacity: 1; transform: none; }
+}

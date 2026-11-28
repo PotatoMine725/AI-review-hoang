@@ -20,7 +20,9 @@ Layout = Literal[
     "hook", "stat", "feature_clip", "claim", "punch", "cta",
     "count_hook", "count_card", "count_clip", "count_cta",
 ]  # fmt: skip
-Transition = Literal["zoom", "slide", "wipe", "flash", "fade", "skew", "none"]
+Transition = Literal[
+    "zoom", "slide", "wipe", "flash", "fade", "skew", "pixel", "bounce", "none"
+]  # fmt: skip
 Ratio = Literal["9:16", "16:9"]
 
 # Khoá props được phép là chuỗi trần (không phải chữ hiển thị cần nguồn).
