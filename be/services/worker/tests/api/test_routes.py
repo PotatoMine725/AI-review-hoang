@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
 from tests.api.conftest import OWNER, SERVICE
 from tests.api.fakes import JOB_ID, OWNER_ID, OWNER_JWT, PRODUCT_ID, FakeDb
-from worker.api.deps import get_db, get_settings
+from worker.api.deps import get_db, get_produce_config, get_settings
 from worker.api.errors import DatabaseError
 from worker.main import app
+from worker.produce.config import ProduceConfig
 from worker.settings import Settings
 
 PRODUCT = {"id": PRODUCT_ID, "website_url": "https://pdfcraft.devtoolcafe.com", "status": "draft"}
@@ -350,3 +353,56 @@ def test_anh_xa_loi_database(
         f"/products/{PRODUCT_ID}/pkb", json={"data": {}, "sources": []}, headers=SERVICE
     )
     assert r.status_code == expected
+
+
+def _rv2(root: Path) -> ProduceConfig:
+    (root / "template").mkdir(parents=True)
+    (root / "template" / "templates.json").write_text(
+        '{"default": "nhip-nhanh", "templates": {"nhip-nhanh": {"name": "Nhịp nhanh",'
+        ' "description": "nhanh"}, "pixel": {"name": "Pixel 8-bit"}}}',
+        encoding="utf-8",
+    )
+    return ProduceConfig(render_v2=root, voice="Hải Đăng")
+
+
+def test_render_catalog_lists_templates_and_voices(client: TestClient, tmp_path: Path) -> None:
+    app.dependency_overrides[get_produce_config] = lambda: _rv2(tmp_path)
+    r = client.get("/render/catalog", headers=OWNER)
+    assert r.status_code == 200
+    body = r.json()
+    assert [t["id"] for t in body["templates"]] == ["nhip-nhanh", "pixel"]
+    assert body["templates"][0] == {
+        "id": "nhip-nhanh",
+        "name": "Nhịp nhanh",
+        "description": "nhanh",
+    }
+    assert body["default_template"] == "nhip-nhanh" and body["default_voice"] == "Hải Đăng"
+    assert len(body["voices"]) == 25 and sum(v["featured"] for v in body["voices"]) == 10
+
+
+def test_render_catalog_can_thieu_dang_nhap(client: TestClient) -> None:
+    assert client.get("/render/catalog").status_code == 401
+
+
+@pytest.mark.parametrize(
+    ("options", "status"),
+    [
+        ({"template": "pixel", "voice": "Mai Anh"}, 202),
+        ({"template": "khong-co"}, 422),
+        ({"voice": "Giọng lạ"}, 422),
+    ],
+)
+def test_video_job_kiem_template_va_giong(
+    client: TestClient, db: FakeDb, tmp_path: Path, options: dict, status: int
+) -> None:
+    app.dependency_overrides[get_produce_config] = lambda: _rv2(tmp_path)
+    db.rpc_results["create_generation_job"] = JOB_ID
+    r = client.post(
+        f"/products/{PRODUCT_ID}/videos",
+        json={"pkb_version": 1, "script_revision": 2, "idempotency_key": "k", "options": options},
+        headers=SERVICE,
+    )
+    assert r.status_code == status, r.text
+    if status == 202:
+        snap = db.last("rpc:create_generation_job")["p_input_snapshot"]
+        assert snap["options"] == options

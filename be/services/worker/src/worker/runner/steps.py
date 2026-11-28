@@ -19,6 +19,7 @@ from worker.m1.crawl.store import LocalPageStore
 from worker.m1.extract.service import ExtractError, extract_product
 from worker.m1.llm import make_llm
 from worker.m1.models import CrawlResult
+from worker.produce.catalog import CatalogError, check_choice
 from worker.produce.config import ProduceConfig
 from worker.produce.pipeline import produce
 
@@ -102,6 +103,8 @@ class VideoRequest:
     out_dir: Path
     mode: str = "preview"  # preview = `-q draft`, final = `-q looks`
     ratios: tuple[str, ...] = ("16:9", "9:16")
+    template: str | None = None  # id trong templates.json; None = PRODUCE_TEMPLATE / mặc định
+    voice: str | None = None  # giọng VieNeu; None = PRODUCE_VOICE
 
 
 @dataclass
@@ -144,7 +147,20 @@ class ProduceVideoStep:
     def __init__(self, cfg: ProduceConfig | None = None) -> None:
         self._cfg = cfg
 
+    def _job_cfg(self, req: VideoRequest) -> ProduceConfig | None:
+        """Cấu hình riêng của job: template/giọng FE chọn đè lên `PRODUCE_*` của máy render."""
+        over = {k: v for k, v in (("template", req.template), ("voice", req.voice)) if v}
+        if not over:
+            return self._cfg
+        base = self._cfg or ProduceConfig.from_env()
+        try:
+            check_choice(base, req.template, req.voice)
+        except CatalogError as e:
+            raise StepError(str(e)) from e
+        return base.model_copy(update=over)
+
     async def __call__(self, req: VideoRequest) -> VideoOutcome:
+        cfg = self._job_cfg(req)
         inputs = req.out_dir / "inputs"
         inputs.mkdir(parents=True, exist_ok=True)
         script_path, input_path = inputs / "script.json", inputs / "input.json"
@@ -158,7 +174,7 @@ class ProduceVideoStep:
             req.out_dir,
             mode=req.mode,
             ratios=req.ratios,
-            cfg=self._cfg,
+            cfg=cfg,
         )
         if not res.ok:
             err = res.report.get("error") or {}

@@ -21,12 +21,18 @@ from fastapi import Depends, Header
 from worker.api.db import Database, PostgrestDatabase
 from worker.api.errors import ApiError
 from worker.api.generator import GeminiScriptGenerator, ScriptGenerator
+from worker.produce.config import ProduceConfig
 from worker.settings import MissingConfigError, Settings
 
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings.from_env()
+
+
+def get_produce_config() -> ProduceConfig:
+    """Cấu hình dựng video (`PRODUCE_*`): API chỉ đọc để biết template/giọng chọn được."""
+    return ProduceConfig.from_env()
 
 
 def get_db(settings: Annotated[Settings, Depends(get_settings)]) -> Database:

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderProfile, summarizePkb, summarizeScript, parseAssets, videoOptions, isActiveJob } from '../src/features/pipeline/model.ts';
+import { renderProfile, slug, summarizePkb, summarizeScript, parseAssets, videoOptions, isActiveJob, voiceLabel } from '../src/features/pipeline/model.ts';
 
 test('summarizePkb reads PKB v0.3 fields and tolerates missing ones', () => {
   const summary = summarizePkb({ identity: { name: 'PDFCraft', tagline: 'Công cụ PDF', description: 'd' }, usp: [{ text: 'Chạy trên trình duyệt' }, { nope: 1 }], features: [{ name: 'Gộp PDF' }] });
@@ -32,4 +32,18 @@ test('renderProfile is stable and distinguishes mode and ratios', () => {
   assert.equal(renderProfile('preview', ['9:16']), 'preview-9x16');
   assert.equal(renderProfile('final', ['9:16', '16:9']), 'final-16x9+9x16');
   assert.equal(renderProfile('final', ['16:9', '9:16']), renderProfile('final', ['9:16', '16:9']));
+});
+
+test('videoOptions adds template and voice only when chosen', () => {
+  assert.deepEqual(videoOptions({ assetsPath: 'a', mode: 'preview', ratios: ['9:16'], template: 'pixel', voice: 'Mai Anh' }),
+    { assets_path: 'a', mode: 'preview', ratios: ['9:16'], template: 'pixel', voice: 'Mai Anh' });
+  assert.deepEqual(Object.keys(videoOptions({ assetsPath: 'a', mode: 'preview', ratios: ['9:16'], template: '' })), ['assets_path', 'mode', 'ratios']);
+});
+
+test('renderProfile keeps old shape and adds template + voice slug', () => {
+  assert.equal(renderProfile('preview', ['9:16', '16:9']), 'preview-16x9+9x16');
+  assert.equal(renderProfile('final', ['9:16'], { template: 'dem-nguoc', voice: 'Hải Đăng' }), 'final-9x16-dem-nguoc-hai-dang');
+  assert.equal(renderProfile('final', ['9:16'], { voice: 'Thiền Tâm Đức' }), 'final-9x16-mac-dinh-thien-tam-duc');
+  assert.equal(slug('Adam bựa'), 'adam-bua');
+  assert.equal(voiceLabel({ id: 'Mai Anh', gender: 'female', region: 'Bắc', style: 'Tin tức' }), 'Mai Anh · Nữ · Bắc · Tin tức');
 });

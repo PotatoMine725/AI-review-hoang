@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { useAuth } from "@/features/auth/provider";
 import { worker } from "@/lib/api/worker-client";
-import { WorkerApiError, type Job, type ReviewDecision } from "@/lib/api/worker";
+import { WorkerApiError, type Job, type RenderCatalog, type ReviewDecision } from "@/lib/api/worker";
 import { ensureMerchant, listJobs, listPkbVersions, listProducts, listScripts, type PkbRow, type ProductRow, type ReviewStatus, type ScriptRow } from "@/lib/api/pipeline-data";
-import { isActiveJob, jobLabels, newKey, parseAssets, renderProfile, reviewLabels, summarizePkb, summarizeScript, videoOptions } from "./model";
+import { isActiveJob, jobLabels, newKey, parseAssets, renderProfile, reviewLabels, summarizePkb, summarizeScript, TEMPLATE_PREVIEWS, videoOptions, voiceLabel, type VideoChoice } from "./model";
 import "./pipeline.css";
 
 const TECH_KEY = "reviewlab.pipeline.tech.v1";
+const CHOICE_KEY = "reviewlab.pipeline.choice.v1";
 const RATIOS = ["16:9", "9:16"];
 
 function messageOf(error: unknown) {
@@ -76,6 +77,7 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
   const [tech, setTech] = useState({ assetsPath: "", assets: "" });
   const [mode, setMode] = useState<"preview" | "final">("preview");
   const [ratios, setRatios] = useState<string[]>(RATIOS);
+  const [choice, setChoice] = useState<VideoChoice>({});
 
   const load = useCallback(async () => {
     try {
@@ -87,6 +89,10 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
   useEffect(() => {
     try { const raw = localStorage.getItem(TECH_KEY); if (raw) Promise.resolve().then(() => setTech(JSON.parse(raw))); } catch {}
   }, []);
+  useEffect(() => {
+    try { const raw = localStorage.getItem(CHOICE_KEY); if (raw) Promise.resolve().then(() => setChoice(JSON.parse(raw))); } catch {}
+  }, []);
+  function saveChoice(next: VideoChoice) { setChoice(next); try { localStorage.setItem(CHOICE_KEY, JSON.stringify(next)); } catch {} }
   function saveTech(next: typeof tech) { setTech(next); try { localStorage.setItem(TECH_KEY, JSON.stringify(next)); } catch {} }
 
   // Job đang chạy: poll tới khi xong rồi nạp lại dữ liệu (PKB mới sau crawl, MP4 sau video).
@@ -107,7 +113,7 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
     try { await action(); await load(); onChanged(); }
     catch (cause) {
       const conflict = where === "video" && cause instanceof WorkerApiError && cause.status === 409;
-      const message = conflict ? "Kịch bản này đã có video với cấu hình (chế độ + tỉ lệ) này. Đổi chế độ hoặc tỉ lệ, hoặc sinh bản kịch bản mới." : messageOf(cause);
+      const message = conflict ? "Kịch bản này đã có video với cấu hình (chế độ, tỉ lệ, template, giọng) này. Đổi một trong số đó, hoặc sinh bản kịch bản mới." : messageOf(cause);
       if (where === "video" && /assets_path|permitted_assets/.test(message)) setTechOpen(true);
       setNotice({ where, message });
       await load();
@@ -170,18 +176,57 @@ function ProductPanel({ product, onChanged }: { product: ProductRow; onChanged: 
           <label className="pl-field">permitted_assets (JSON, dùng khi sinh kịch bản; product_id tự điền)<textarea value={tech.assets} onChange={event => saveTech({ ...tech, assets: event.target.value })} placeholder='[{"asset_id":"pdfcraft-merge","kind":"screen_recording","source_id":null,"allowed_use":["internal_demo"],"rights_basis":"..."}]' /></label>
         </div>
       </details>
+      <RenderPicker choice={choice} onChange={saveChoice} disabled={!!busy} />
       <div className="pl-row">
         <label className="pl-field">Chế độ<select value={mode} onChange={event => setMode(event.target.value as "preview" | "final")}><option value="preview">preview</option><option value="final">final</option></select></label>
         {RATIOS.map(ratio => <label key={ratio} className="pl-row"><input type="checkbox" checked={ratios.includes(ratio)} onChange={event => setRatios(event.target.checked ? [...ratios, ratio] : ratios.filter(item => item !== ratio))} />{ratio}</label>)}
         <button className="primary-button" type="button" disabled={!approvedScript || !approvedPkb || !!busy || videos.some(isActiveJob)} onClick={() => run("video", "video", async () => {
           if (!approvedScript || !approvedPkb) return;
-          await worker.createVideoJob(product.id, { pkb_version: approvedScript.knowledge_version, script_revision: approvedScript.revision, idempotency_key: newKey("video"), render_profile: renderProfile(mode, ratios), options: videoOptions({ assetsPath: tech.assetsPath, mode, ratios }) });
+          await worker.createVideoJob(product.id, { pkb_version: approvedScript.knowledge_version, script_revision: approvedScript.revision, idempotency_key: newKey("video"), render_profile: renderProfile(mode, ratios, choice), options: videoOptions({ assetsPath: tech.assetsPath, mode, ratios, ...choice }) });
         })}>Dựng video</button>
       </div>
       <NoticeAt notice={notice} where="video" />
       {videos.map(job => <VideoJob key={job.id} job={job} />)}
     </section>
   </>;
+}
+
+/** Chọn template (thẻ có clip mẫu lặp 3 s) và giọng VieNeu cho job video. Bỏ trống = mặc định của máy render. */
+function RenderPicker({ choice, onChange, disabled }: { choice: VideoChoice; onChange: (next: VideoChoice) => void; disabled: boolean }) {
+  const [catalog, setCatalog] = useState<RenderCatalog | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    const controller = new AbortController();
+    worker.getRenderCatalog(controller.signal).then(setCatalog).catch(cause => { if (!controller.signal.aborted) setError(messageOf(cause)); });
+    return () => controller.abort();
+  }, []);
+  if (error) return <p className="pl-muted">Không tải được danh sách template/giọng ({error}). Video dùng mặc định của máy render.</p>;
+  if (!catalog) return <p className="pl-muted">Đang tải template và giọng…</p>;
+
+  const template = choice.template && catalog.templates.some(item => item.id === choice.template) ? choice.template : catalog.default_template;
+  const voice = choice.voice && catalog.voices.some(item => item.id === choice.voice) ? choice.voice : catalog.default_voice;
+  const featured = catalog.voices.filter(item => item.featured);
+  const others = catalog.voices.filter(item => !item.featured);
+  return <div className="pl-picker">
+    {catalog.templates.length === 0
+      ? <p className="pl-muted">Máy chạy API không thấy templates.json (PRODUCE_RENDER_V2), video dùng template mặc định.</p>
+      : <div role="radiogroup" aria-label="Template video" className="pl-templates">
+        {catalog.templates.map(item => <button key={item.id} type="button" role="radio" aria-checked={item.id === template} disabled={disabled}
+          className={`pl-template${item.id === template ? " active" : ""}`} onClick={() => onChange({ ...choice, template: item.id })}>
+          {TEMPLATE_PREVIEWS.has(item.id)
+            ? <video src={`/templates/${item.id}.mp4`} poster={`/templates/${item.id}.jpg`} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+            : <span className="pl-template-empty" aria-hidden="true">Chưa có mẫu</span>}
+          <strong>{item.name}{item.id === catalog.default_template && <small> · mặc định</small>}</strong>
+          <small>{item.description}</small>
+        </button>)}
+      </div>}
+    <label className="pl-field">Giọng đọc (VieNeu)
+      <select value={voice} disabled={disabled} onChange={event => onChange({ ...choice, voice: event.target.value })}>
+        <optgroup label="Gợi ý">{featured.map(item => <option key={item.id} value={item.id}>{voiceLabel(item)}{item.id === catalog.default_voice ? " (mặc định)" : ""}</option>)}</optgroup>
+        <optgroup label="Giọng khác">{others.map(item => <option key={item.id} value={item.id}>{voiceLabel(item)}{item.id === catalog.default_voice ? " (mặc định)" : ""}</option>)}</optgroup>
+      </select>
+    </label>
+  </div>;
 }
 
 function NoticeAt({ notice, where }: { notice: { where: Where; message: string } | null; where: Where }) {
