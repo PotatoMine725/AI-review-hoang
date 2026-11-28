@@ -226,4 +226,51 @@ def test_length_repair_stops_when_not_closer_and_keeps_best() -> None:
 def test_syllable_feedback_names_the_deficit() -> None:
     msg = syllable_feedback(68)[0]["message"]
     assert "thiếu khoảng 64" in msg and "30 giây" in msg
-    assert "Thừa khoảng" in syllable_feedback(170)[0]["message"]
+    assert "Thừa khoảng 38" in syllable_feedback(170)[0]["message"]
+
+
+def test_two_length_rounds_when_first_extra_still_out_of_range() -> None:
+    # sinh 51 → sửa 70 → sửa độ dài 90 (vẫn thiếu) → sửa độ dài 130 (đạt): 4 lời gọi
+    res, transport = run(
+        [ok(valid_script()), ok(_padded(70)), ok(_padded(90)), ok(_padded(130))], repair=True
+    )
+    assert res.status == "completed", res.errors
+    assert len(transport.calls) == 4 and res.stages["length_repair_rounds"] == 2
+    assert res.data is not None and narration_syllables(res.data) == 130
+
+
+def test_first_repair_farther_than_initial_keeps_initial() -> None:
+    initial = _padded(100)  # hợp lệ, thiếu 15
+    res, transport = run([ok(initial), ok(valid_script())], repair=True)  # sửa còn 51: xa hơn
+    assert res.status == "completed" and len(transport.calls) == 2
+    assert res.data is not None and narration_syllables(res.data) == 100
+    assert res.stages["final"]["from"] == "initial"
+    assert any(w.startswith("repair_not_closer_keep_candidate") for w in res.warnings)
+
+
+def test_length_repairs_keep_qa_feedback() -> None:
+    qa = [{"message": "claims[].text phải bằng tiếng Việt", "scene_id": "s02"}]
+    res, transport = run(
+        [ok(_padded(100)), ok(_padded(80)), ok(_padded(130))], repair=True, qa_feedback=qa
+    )
+    assert res.status == "completed", res.errors
+    assert len(transport.calls) == 3
+    assert "claims[].text phải bằng tiếng Việt" in transport.calls[2]["system"]
+
+
+def test_length_repair_warnings_are_propagated() -> None:
+    more = _padded(130)
+    more["estimated_duration_s"] = 12.0  # trường của worker, model tự điền
+    res, _ = run([ok(valid_script()), ok(_padded(80)), ok(more)], repair=True)
+    assert "length_repair:llm_filled_worker_field:estimated_duration_s" in res.warnings
+
+
+def test_max_length_repairs_env_validation() -> None:
+    import pytest
+
+    from worker.m2.generate import M2Settings
+
+    assert M2Settings.from_env({"M2_MAX_LENGTH_REPAIRS": "0"}).max_length_repairs == 0
+    for bad in ("abc", "-1"):
+        with pytest.raises(ValueError, match="M2_MAX_LENGTH_REPAIRS"):
+            M2Settings.from_env({"M2_MAX_LENGTH_REPAIRS": bad})
