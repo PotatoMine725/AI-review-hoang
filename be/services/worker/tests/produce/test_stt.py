@@ -10,7 +10,14 @@ import pytest
 
 from worker.produce.cues import Cue, time_cues, time_cues_words
 from worker.produce.errors import ProduceError
-from worker.produce.stt import OpenAIWordStt, parse_words, transcribe_segments
+from worker.produce.stt import (
+    LocalWordStt,
+    OpenAIWordStt,
+    make_stt,
+    parse_words,
+    stt_cost_usd,
+    transcribe_segments,
+)
 
 TEXTS = ["Xử lý PDF miễn phí", "ngay trong trình duyệt"]
 # 9 từ; câu dài 3,6 s, nhưng nửa sau đọc chậm hơn nhiều so với tỉ lệ ký tự
@@ -132,3 +139,83 @@ def test_transcribe_segments_collects_warnings(tmp_path: Path) -> None:
     assert list(words) == ["s1"]
     assert [w.split("[")[0] for w in warns] == ["stt_failed", "stt_empty"]
     json.dumps(words)
+
+
+def test_auth_error_stops_stt_after_first_segment() -> None:
+    from worker.produce.errors import ProduceAuthError
+
+    class Denied:
+        model = "whisper-1"
+        calls = 0
+
+        def transcribe(self, wav: Path):  # noqa: ANN202
+            Denied.calls += 1
+            raise ProduceAuthError("HTTP 401")
+
+    stt = Denied()
+    words, warns = transcribe_segments(stt, [(f"s{i}", Path(f"{i}.wav")) for i in range(4)])
+    assert words == {} and Denied.calls == 1
+    assert len(warns) == 1 and warns[0].startswith("stt_disabled_auth")
+
+
+# ---------------------------------------------------------------- STT local (faster-whisper giả)
+
+
+class _FakeWord:
+    def __init__(self, word: str, start: float, end: float) -> None:
+        self.word, self.start, self.end = word, start, end
+
+
+class _FakeSeg:
+    def __init__(self, words: list[_FakeWord]) -> None:
+        self.words = words
+
+
+class _FakeModel:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def transcribe(self, path: str, **kw: object):
+        self.calls += 1
+        assert kw["language"] == "vi" and kw["word_timestamps"] is True
+        return iter([_FakeSeg([_FakeWord(" Xử", 0.0, 0.2), _FakeWord(" lý", 0.2, 0.5)])]), None
+
+
+def test_local_stt_parses_words_and_caches(tmp_path: Path) -> None:
+    wav = tmp_path / "a.wav"
+    wav.write_bytes(b"RIFFxxxx")
+    model = _FakeModel()
+    stt = LocalWordStt("small", cache_dir=tmp_path / "c", _model=model)
+    assert stt.model == "local:small"
+    assert stt.transcribe(wav) == [("Xử", 0.0, 0.2), ("lý", 0.2, 0.5)]
+    assert stt.transcribe(wav) == [("Xử", 0.0, 0.2), ("lý", 0.2, 0.5)]
+    assert (model.calls, stt.calls, stt.cached) == (1, 1, 1)
+
+
+def test_local_stt_missing_library_is_produce_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import importlib
+
+    def boom(name: str):
+        raise ImportError(name)
+
+    monkeypatch.setattr(importlib, "import_module", boom)
+    wav = tmp_path / "a.wav"
+    wav.write_bytes(b"x")
+    with pytest.raises(ProduceError, match="stt-local"):
+        LocalWordStt("small").transcribe(wav)
+
+
+def test_make_stt_dispatch() -> None:
+    assert isinstance(make_stt("local:small"), LocalWordStt)
+    assert isinstance(make_stt("whisper-1", api_key="k"), OpenAIWordStt)
+    with pytest.raises(ProduceError):
+        make_stt("whisper-1")  # thiếu khoá
+    with pytest.raises(ProduceError):
+        make_stt("local:")
+
+
+def test_local_stt_is_free() -> None:
+    assert stt_cost_usd(60, "local:small") == 0.0
+    assert stt_cost_usd(60) == 0.006

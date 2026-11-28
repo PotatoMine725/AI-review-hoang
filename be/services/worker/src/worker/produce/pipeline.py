@@ -25,7 +25,14 @@ from worker.produce.mapping import Mapper, SceneSpec
 from worker.produce.qa import OpenAIVisionQA, VisionQA, frame_jobs, run_qa
 from worker.produce.render import RatioRender, render_ratios
 from worker.produce.runner import Runner, run_process
-from worker.produce.stt import OpenAIWordStt, WordStt, dump_words, stt_cost_usd, transcribe_segments
+from worker.produce.stt import (
+    LOCAL_PREFIX,
+    WordStt,
+    dump_words,
+    make_stt,
+    stt_cost_usd,
+    transcribe_segments,
+)
 from worker.produce.timeline import Timeline, build_timeline
 from worker.produce.tts import TtsRun, synthesize
 
@@ -163,14 +170,17 @@ def _stt_words(
     """Mốc từng từ → `<plan>.words.json` (driver render đọc để chia phụ đề). Lỗi chỉ cảnh báo."""
     plan_path.with_suffix(".words.json").unlink(missing_ok=True)
     if stt is None:
-        key = os.environ.get("OPENAI_API_KEY", "").strip()
         if not cfg.stt_model:
             return None
-        if not key:
-            warnings.append("stt_skipped: PRODUCE_STT_MODEL đặt nhưng thiếu OPENAI_API_KEY")
+        key = os.environ.get("OPENAI_API_KEY", "").strip()
+        if not key and not cfg.stt_model.startswith(LOCAL_PREFIX):
+            warnings.append(
+                "stt_skipped: PRODUCE_STT_MODEL đặt nhưng thiếu OPENAI_API_KEY "
+                "(không có khoá thì dùng PRODUCE_STT_MODEL=local:small)"
+            )
             return None
         try:
-            stt = OpenAIWordStt(key, cfg.stt_model, cache_dir=cfg.cache_dir / "stt")
+            stt = make_stt(cfg.stt_model, api_key=key, cache_dir=cfg.cache_dir / "stt")
         except ProduceError as ex:
             warnings.append(f"stt_skipped: {ex}")
             return None
@@ -189,7 +199,7 @@ def _stt_words(
         "sidecar": str(sidecar) if words else None,
         "api_calls": getattr(stt, "calls", None),
         "cache_hits": getattr(stt, "cached", None),
-        "cost_usd_upper": stt_cost_usd(total_s),
+        "cost_usd_upper": stt_cost_usd(total_s, stt.model),
     }
 
 

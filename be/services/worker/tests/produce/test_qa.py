@@ -79,3 +79,33 @@ def test_frame_jobs_pick_caption_playing_at_frame_time() -> None:
     assert len(jobs) == 1 and jobs[0].narration == "một hai"
     assert jobs[0].caption == "hai"  # 0,6 × thời lượng cảnh rơi vào câu thứ hai
     assert 0 < jobs[0].t_s < tl.total_s
+
+
+def test_auth_error_stops_qa_after_first_frame(monkeypatch: pytest.MonkeyPatch) -> None:
+    from pathlib import Path
+
+    from worker.produce import qa as qa_mod
+    from worker.produce.errors import ProduceAuthError
+
+    class Denied:
+        model = "x"
+        calls = 0
+
+        def review(self, jpeg: bytes, job: FrameJob) -> dict:  # type: ignore[type-arg]
+            Denied.calls += 1
+            raise ProduceAuthError("HTTP 401")
+
+    monkeypatch.setattr(qa_mod, "extract_frame", lambda *a, **k: b"jpeg")
+    jobs = {
+        r: [FrameJob(r, f"s{i}", 1.0 + i, "lời", "cap") for i in range(3)] for r in ("16:9", "9:16")
+    }
+    verdicts, warns = qa_mod.run_qa(
+        Denied(),  # type: ignore[arg-type]
+        {"16:9": Path("a.mp4"), "9:16": Path("b.mp4")},
+        jobs,
+        None,  # type: ignore[arg-type]
+        None,  # type: ignore[arg-type]
+        Path("."),
+    )
+    assert verdicts == [] and Denied.calls == 1
+    assert len(warns) == 1 and warns[0].startswith("qa_disabled_auth")

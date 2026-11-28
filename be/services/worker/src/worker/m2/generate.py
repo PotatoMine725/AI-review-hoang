@@ -3,12 +3,14 @@
 Luồng (bàn giao 11/11 của #83, `8008cbf`): kiểm input (không gọi LLM nếu sai) → lời gọi sinh
 → **chuẩn bị `visual_plan.kind`** từ allowlist (chỉ `kind`, có audit; output thô giữ nguyên)
 → schema + content validator của Định (không nới luật)
-→ nếu còn lỗi validator, lỗi QA cụ thể hoặc khuyến nghị âm tiết ngoài 115–150: **đúng 1 lời
+→ nếu còn lỗi validator, lỗi QA cụ thể hoặc khuyến nghị âm tiết ngoài 115–150: **1 lời
   gọi sửa** theo template sửa; bản sửa cũng qua chuẩn bị kind + validator → thêm
   `estimated_duration_s`.
-Không có lượt sửa thứ hai. Lỗi trả trong `ScriptResult`, không raise. Mọi tầng (thô, sau chuẩn bị
-kind, feedback, bản sửa, kết quả kiểm) nằm trong `ScriptResult.stages`; chi phí từng lời gọi là
-một item riêng trong `cost_breakdown` (`generate_script`, `generate_script_repair`).
+Nếu bản sửa hợp lệ vẫn ngoài mốc âm tiết thì sửa độ dài thêm tối đa `M2_MAX_LENGTH_REPAIRS` lượt
+(mặc định 2, kèm `qa_feedback` nếu có), giữ bản gần mốc nhất.
+Lỗi trả trong `ScriptResult`, không raise. Mọi tầng (thô, sau chuẩn bị kind, feedback, bản sửa,
+kết quả kiểm) nằm trong `ScriptResult.stages`; chi phí từng lời gọi là một item riêng trong
+`cost_breakdown` (`generate_script`, `generate_script_repair`).
 
 CLI chạy tay: `uv run python -m worker.m2.generate <input.json> --out <thư mục> [--no-repair]
 [--qa-feedback qa.json]`. Ghi `script.json` (kịch bản cuối, hoặc bản chuẩn bị/thô khi không hợp
@@ -32,7 +34,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from worker.m1.llm import LLM, CostBreakdown, CostItem, LLMError, LLMErrorCode, make_llm
 from worker.m2.kind import allowlist_errors, allowlist_revision, prepare_kinds
@@ -49,6 +51,7 @@ from worker.m2.validate import SCRIPT_SCHEMA, content_errors, schema_errors, val
 
 STEP = "generate_script"
 REPAIR_STEP = "generate_script_repair"
+HARD_RANGE_S = (25, 45)  # ước tính ngoài khoảng này (sau các lượt sửa) thì từ chối, không lưu
 TARGET_RANGE_S = (30, 40)  # mục tiêu MP4 của contract, chỉ dùng để cảnh báo estimate lệch
 _SYLLABLE_RE = re.compile(r"\w+")
 
@@ -58,7 +61,7 @@ class M2Settings(BaseModel):
     # 3,6–3,9 âm tiết/giây (#73). Hiệu chỉnh lại theo TTS thật.
     syllables_per_s: float = 3.75
     # Số lượt sửa độ dài thêm (sau lượt sửa đầu) khi lời đọc vẫn ngoài mốc âm tiết. 0 = tắt.
-    max_length_repairs: int = 2
+    max_length_repairs: int = Field(default=2, ge=0)
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> M2Settings:
@@ -67,12 +70,15 @@ class M2Settings(BaseModel):
         if raw := env.get("M2_SYLLABLES_PER_S"):
             kw["syllables_per_s"] = float(raw)
         if raw := env.get("M2_MAX_LENGTH_REPAIRS"):
+            if not raw.strip().isdecimal():
+                raise ValueError(f"M2_MAX_LENGTH_REPAIRS phải là số nguyên ≥ 0, nhận {raw!r}")
             kw["max_length_repairs"] = int(raw)
         return cls(**kw)
 
 
 class M2ErrorCode(StrEnum):
     INPUT_INVALID = "m2_input_invalid"  # input/PKB sai: không gọi LLM, không retry
+    LENGTH_OUT_OF_RANGE = "m2_length_out_of_range"  # sau các lượt sửa vẫn quá ngắn/dài
 
 
 @dataclass
@@ -205,7 +211,8 @@ async def generate_script(
 ) -> ScriptResult:
     """`inp` theo `p1-ac-03-input.v1`. BE cần `await`.
 
-    Tối đa 2 lời gọi: sinh + (nếu còn feedback) một lượt sửa. `qa_feedback` là lỗi QA do người/QA
+    Tối đa 1 + 1 + `max_length_repairs` lời gọi (mặc định 4): sinh, một lượt sửa nếu còn feedback,
+    rồi các lượt sửa độ dài nếu vẫn ngoài mốc âm tiết. `qa_feedback` là lỗi QA do người/QA
     cung cấp (`{"source": "qa", "message": ..., "scene_id"?...}`), không do worker tự sinh.
     """
     settings = settings or M2Settings.from_env()
@@ -260,7 +267,16 @@ async def generate_script(
             stages["repair"] = {"raw": second.raw, "prepared": second.prepared, **second.stage()}
             warnings += [f"repair:{w}" for w in second.warnings]
             if second.valid:
-                final = second
+                if (
+                    first.valid
+                    and not qa
+                    and first.syllables is not None
+                    and second.syllables is not None
+                    and _gap(second.syllables) > _gap(first.syllables)
+                ):  # bản sửa hợp lệ nhưng xa mốc hơn bản đầu: giữ bản đầu
+                    warnings.append(f"repair_not_closer_keep_candidate:{second.syllables} âm tiết")
+                else:
+                    final = second
             elif first.valid and not qa:  # bản sửa hỏng, bản đầu vẫn qua kiểm: không đổi
                 warnings.append(f"repair_rejected_keep_candidate:{len(second.errors)} lỗi")
             else:
@@ -289,7 +305,9 @@ async def generate_script(
         try:
             more = await llm.generate_json(
                 step=REPAIR_STEP,
-                system=build_repair_prompt(inp, final.prepared, syllable_feedback(final.syllables)),
+                system=build_repair_prompt(
+                    inp, final.prepared, syllable_feedback(final.syllables) + qa
+                ),
                 prompt=build_repair_user_prompt(),
                 response_schema=gemini_response_schema(),
             )
@@ -299,6 +317,7 @@ async def generate_script(
             break
         items += more.cost_items
         cand = _evaluate(more.data, inp)
+        warnings += [f"length_repair:{w}" for w in cand.warnings]
         stages.setdefault("length_repairs", []).append(
             {"raw": cand.raw, "prepared": cand.prepared, **cand.stage()}
         )
@@ -319,6 +338,15 @@ async def generate_script(
         f"estimated_duration_s_is_estimate:{syllables} âm tiết / {settings.syllables_per_s} "
         "âm tiết/s; không phải duration TTS hay MP4"
     )
+    hard_low, hard_high = HARD_RANGE_S
+    if repair and not hard_low <= estimate <= hard_high:
+        stages["length_gate"] = {"estimate_s": estimate, "syllables": syllables, "rounds": rounds}
+        return _failed(
+            M2ErrorCode.LENGTH_OUT_OF_RANGE,
+            f"lời đọc ước tính {estimate} s ({syllables} âm tiết), ngoài {hard_low}–{hard_high} s "
+            f"sau {rounds} lượt sửa độ dài; hãy sinh lại hoặc bổ sung fact/clip cho PKB",
+            items, warnings=warnings, raw=final.raw, stages=stages,
+        )  # fmt: skip
     low, high = TARGET_RANGE_S
     if not low <= estimate <= high:
         warnings.append(f"estimate_outside_target:{estimate}s ngoài {low}–{high}s")
