@@ -27,12 +27,64 @@ from media import prepare_clip
 from plan import Ratio, RenderPlan
 from slots import LayoutInfo, clip_css, clip_speed, load_layouts
 from subtitles import FRAME_SIZE
-from timeline import Timeline
+from timeline import TimedScene, Timeline
 
 ROOT = Path(__file__).resolve().parent
 TEMPLATE_DIR = ROOT / "template"
 FONTS_DIR = ROOT / "fonts"
 RATIO_CLASS = {"9:16": "r916", "16:9": "r169"}
+TEMPLATES_FILE = TEMPLATE_DIR / "templates.json"
+TRANSITIONS = {"zoom", "slide", "wipe", "flash", "fade", "none"}
+
+
+def load_template(name: str | None, path: Path = TEMPLATES_FILE) -> dict:
+    """Template (cách ghép khối + chuyển cảnh) theo tên; None = mặc định trong templates.json."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    key = name or data["default"]
+    tpl = data["templates"].get(key)
+    if tpl is None:
+        raise ValueError(f"không có template '{key}' (có: {', '.join(data['templates'])})")
+    bad = [t for t in tpl.get("transitions", []) if t not in TRANSITIONS]
+    if bad:
+        raise ValueError(f"template {key}: kiểu chuyển cảnh lạ {bad}")
+    return {"id": key, **tpl}
+
+
+def apply_template(plan: RenderPlan, tpl: dict) -> RenderPlan:
+    """Đổi layout theo `tpl.layouts` (khối thay thế dùng cùng props, vd claim → punch) và điền
+    kiểu vào cảnh theo vị trí cảnh. Gọi trên plan ĐẦY ĐỦ: cảnh đã có `transition` thì giữ, nên
+    dựng từng cảnh riêng (plan con một cảnh) vẫn ra đúng kiểu. Gọi lại nhiều lần không đổi gì."""
+    swap = tpl.get("layouts") or {}
+    scenes = [
+        s.model_copy(
+            update={
+                "layout": swap.get(s.layout, s.layout),
+                "transition": s.transition or transition_for(tpl, i),
+            }
+        )
+        for i, s in enumerate(plan.scenes)
+    ]
+    return plan.model_copy(update={"scenes": scenes})
+
+
+def transition_for(tpl: dict, index: int) -> str:
+    """Kiểu vào cảnh của cảnh thứ `index` (0 = cảnh đầu, không chuyển)."""
+    kinds = tpl.get("transitions") or []
+    if index == 0 or not kinds:
+        return "none"
+    return kinds[(index - 1) % len(kinds)]
+
+
+def beat_css(ts: TimedScene) -> tuple[dict[str, str], dict[str, float]]:
+    """Mốc bắt đầu từng câu tính từ đầu cảnh: biến CSS --b1… và map segment_id → giây.
+    (Timeline con của hf_render đã dời mốc câu về gốc cảnh, `start_s` = 0, nên công thức chung.)"""
+    css: dict[str, str] = {}
+    at: dict[str, float] = {}
+    for i, seg in enumerate(ts.segments, 1):
+        rel = round(max(0.0, seg.start_s - ts.start_s), 3)
+        css[f"--b{i}"] = f"{rel}s"
+        at[seg.segment_id] = rel
+    return css, at
 
 
 def icons_js(icon_dir: Path) -> str:
@@ -58,17 +110,21 @@ def check_layouts(plan: RenderPlan, layouts: dict[str, LayoutInfo]) -> None:
 
 
 def scene_variables(plan: RenderPlan, tl: Timeline, media_paths: dict[str, str]) -> list[dict]:
-    """Biến cho từng host: props (+ đường dẫn media) và biến CSS (thời lượng, zoom)."""
+    """Biến cho từng host: props (+ đường dẫn media), biến CSS (thời lượng, zoom, nhịp câu),
+    mốc từng câu (`seg_at`) và kiểu vào cảnh (`transition`)."""
     out = []
     for scene, ts in zip(plan.scenes, tl.scenes, strict=True):
         props = json.loads(json.dumps(scene.props))  # bản sao sâu
-        css: dict[str, str] = {"--dur": f"{ts.duration_s:.3f}s"}
+        beats, seg_at = beat_css(ts)
+        css: dict[str, str] = {"--dur": f"{ts.duration_s:.3f}s", **beats}
         if scene.clip:
             props.setdefault("clip", {})["src"] = media_paths[scene.scene_id]
             css.update(clip_css(scene.clip, ts.duration_s))
         if scene.image:
             props.setdefault("image", {})["src"] = media_paths[scene.scene_id]
-        out.append({"props": props, "css": css})
+        out.append(
+            {"props": props, "css": css, "seg_at": seg_at, "transition": scene.transition or "none"}
+        )
     return out
 
 
@@ -108,8 +164,15 @@ def instantiate(fragment: str, scene_id: str, start_s: float, duration_s: float,
     return _MEDIA_TAG.sub(repl, fragment)
 
 
-def build_index(plan: RenderPlan, tl: Timeline, ratio: Ratio, variables: list[dict]) -> str:
+def build_index(
+    plan: RenderPlan, tl: Timeline, ratio: Ratio, variables: list[dict], tpl: dict | None = None
+) -> str:
     w, h = FRAME_SIZE[ratio]
+    tpl = tpl or {}
+    flags = [f"tpl-{tpl['id']}"] if tpl.get("id") else []
+    flags += [c for c, on in (("cam-on", tpl.get("camera")), ("words-on", tpl.get("words"))) if on]
+    out_cls = " tr-out" if tpl.get("exit") else ""
+    root_cls = " ".join([RATIO_CLASS[ratio], f"preset-{plan.preset}", *flags])
     hosts = []
     for scene, ts, var in zip(plan.scenes, tl.scenes, variables, strict=True):
         fragment = (TEMPLATE_DIR / "layouts" / f"{scene.layout}.html").read_text(encoding="utf-8")
@@ -118,7 +181,9 @@ def build_index(plan: RenderPlan, tl: Timeline, ratio: Ratio, variables: list[di
         hosts.append(
             f'<div class="clip scene-host" data-scene="{scene.scene_id}" '
             f'data-start="{ts.start_s:.4f}" data-duration="{ts.duration_s:.4f}" '
-            f'data-vars="{attr}">\n{body}</div>'
+            f'data-vars="{attr}">\n'
+            f'<div class="tr-wrap{out_cls}" style="--dur: {ts.duration_s:.3f}s">\n'
+            f"{body}</div></div>"
         )
     host_lines = "\n".join(hosts)
     return f"""<!doctype html>
@@ -128,12 +193,13 @@ def build_index(plan: RenderPlan, tl: Timeline, ratio: Ratio, variables: list[di
 <meta name="viewport" content="width={w},height={h}">
 <!-- Sinh tự động bởi compose.py từ {plan.product} / preset {plan.preset}. Không sửa tay. -->
 <link rel="stylesheet" href="template/base.css">
+<link rel="stylesheet" href="template/motion.css">
 <link rel="stylesheet" href="template/presets/{plan.preset}.css">
 <script src="template/icons.js"></script>
 <script src="template/runtime.js"></script>
 </head>
 <body>
-<div id="root" class="{RATIO_CLASS[ratio]} preset-{plan.preset}" data-composition-id="root"
+<div id="root" class="{root_cls}" data-composition-id="root"
      data-width="{w}" data-height="{h}" data-start="0" data-duration="{tl.total_s:.4f}"
      data-no-timeline>
 {host_lines}
@@ -145,6 +211,8 @@ def build_index(plan: RenderPlan, tl: Timeline, ratio: Ratio, variables: list[di
 
 def compose(plan: RenderPlan, tl: Timeline, ratio: Ratio, work: Path, clip_cache: Path) -> Path:
     """Tạo project HyperFrames trong `work`; trả về đường dẫn index.html."""
+    tpl = load_template(plan.template)
+    plan = apply_template(plan, tpl)
     layouts = load_layouts(TEMPLATE_DIR / "layouts")
     check_layouts(plan, layouts)
     # Vùng cắt theo tỉ lệ: cả cắt clip (prepare_clip) lẫn zoom (clip_css) dùng cùng một crop.
@@ -180,5 +248,5 @@ def compose(plan: RenderPlan, tl: Timeline, ratio: Ratio, work: Path, clip_cache
 
     index = work / "index.html"
     variables = scene_variables(plan, tl, media_paths)
-    index.write_text(build_index(plan, tl, ratio, variables), encoding="utf-8")
+    index.write_text(build_index(plan, tl, ratio, variables, tpl), encoding="utf-8")
     return index

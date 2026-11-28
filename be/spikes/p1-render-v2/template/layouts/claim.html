@@ -43,8 +43,8 @@
     <div class="copy">
       <div class="eyebrow a-rise" style="--d: 0.25s" data-text="eyebrow"></div>
       <h2 class="title claim a-rise" style="--d: 0.5s" data-text="claim"></h2>
-      <div class="points" data-list="points">
-          <div data-item class="point a-pop" style="--d: calc(0.9s + var(--i) * 0.3s)">
+      <div class="points" data-list="points" data-beat-from="2">
+          <div data-item class="point a-pop" style="--d: var(--beat, calc(0.9s + var(--i) * 0.3s))">
             <span data-icon="icon"></span><span data-text="text"></span>
           </div>
       </div>

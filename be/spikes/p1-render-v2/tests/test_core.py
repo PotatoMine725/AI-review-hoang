@@ -80,9 +80,9 @@ def test_read_layout_hai_goc_bi_chan() -> None:
         read_layout('<div data-layout="a"></div><div data-layout="b"></div>')
 
 
-def test_template_that_co_du_5_layout_va_o_clip() -> None:
+def test_template_that_co_du_layout_va_o_clip() -> None:
     layouts = load_layouts(ROOT / "template" / "layouts")
-    assert set(layouts) == {"hook", "stat", "feature_clip", "claim", "cta"}
+    assert set(layouts) == {"hook", "stat", "feature_clip", "claim", "punch", "cta"}
     assert "clip" in layouts["feature_clip"].slots
     assert "clip" not in layouts["claim"].slots  # layout chỉ có chữ, không có ô clip
 
@@ -314,3 +314,53 @@ def test_tts_input_sai_ten_file_bi_chan() -> None:
     data["scenes"][0]["narration_segments"][0]["voice"] = "local/voice-40-45/s09.wav"
     with pytest.raises(PlanError, match="s01.wav"):
         segments_for_tts(RenderPlan.model_validate(data))
+
+
+# ---------- thư viện template: khối + chuyển cảnh + nhịp theo câu ----------
+
+
+def test_moi_template_hop_le_va_layout_thay_the_co_that() -> None:
+    from compose import TEMPLATES_FILE, load_template
+
+    data = json.loads(TEMPLATES_FILE.read_text(encoding="utf-8"))
+    layouts = load_layouts(ROOT / "template" / "layouts")
+    assert data["default"] in data["templates"]
+    for name in data["templates"]:
+        tpl = load_template(name)
+        for src, dst in tpl["layouts"].items():
+            assert src in layouts and dst in layouts
+    with pytest.raises(ValueError, match="không có template"):
+        load_template("khong-co")
+
+
+def test_apply_template_doi_layout_va_xoay_vong_chuyen_canh() -> None:
+    from compose import apply_template
+
+    plan = load_plan(PLAN)
+    tpl = {"layouts": {"claim": "punch"}, "transitions": ["zoom", "slide"]}
+    out = apply_template(plan, tpl)
+    assert [s.transition for s in out.scenes][:4] == ["none", "zoom", "slide", "zoom"]
+    assert all(s.layout != "claim" for s in out.scenes)
+    # Gọi lại (plan con một cảnh khi dựng song song) giữ nguyên kiểu đã điền
+    sub = out.model_copy(update={"scenes": [out.scenes[2]]})
+    assert apply_template(sub, tpl).scenes[0].transition == "slide"
+
+
+def test_nhip_cau_tinh_tu_dau_canh() -> None:
+    from compose import beat_css
+
+    plan = load_plan(PLAN)
+    voice = {g.segment_id: 2.0 for s in plan.scenes for g in s.narration_segments}
+    tl = build_timeline(plan, voice, load_limits({"P1_RENDER_MIN_TOTAL_S": "1"}))
+    ts = tl.scenes[1]
+    css, at = beat_css(ts)
+    first = ts.segments[0]
+    assert css["--b1"] == f"{round(first.start_s - ts.start_s, 3)}s"
+    assert at[ts.segments[1].segment_id] == round(ts.segments[1].start_s - ts.start_s, 3)
+    assert 0 < float(css["--b2"][:-1]) < ts.duration_s
+
+
+def test_props_at_la_khoa_tran() -> None:
+    data = json.loads(PLAN.read_text(encoding="utf-8"))
+    data["scenes"][2]["props"]["steps"][0]["at"] = "s03-u02"
+    RenderPlan.model_validate(data)  # không bị coi là chữ thiếu fact_refs

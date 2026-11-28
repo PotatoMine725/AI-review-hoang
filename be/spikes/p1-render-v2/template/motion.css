@@ -1,0 +1,188 @@
+/*
+ * motion.css — khối chuyển động dùng chung cho mọi layout (thư viện template, 28/11/2026).
+ *
+ * 1. Chuyển cảnh: các cảnh được dựng riêng rồi nối cứng (FFmpeg concat), nên chuyển cảnh nằm
+ *    TRONG cảnh: vào cảnh (0,45 s đầu, lớp tr-in-<kiểu> trên .scene) + ra cảnh (0,3 s cuối, trên
+ *    .tr-wrap do compose.py bọc). Ra cảnh trước + vào cảnh sau = một cú chuyển liền.
+ * 2. Camera: .safe đẩy vào rất chậm suốt cảnh (lớp cam-on trên #root), khung không bao giờ đứng yên.
+ * 3. Nhịp theo câu thoại: compose.py truyền --b1, --b2… = mốc bắt đầu câu thứ n (tính từ đầu cảnh);
+ *    runtime.js gán --beat / --beat-next cho phần tử danh sách. Layout dùng var(--beat, …).
+ * 4. Chữ động: phần tử có data-words được tách thành từng từ (.w, --w = thứ tự) và hiện lần lượt.
+ *
+ * Mọi chuyển động là CSS animation (HyperFrames tua theo khung, tất định). Không dùng ::before/::after.
+ */
+
+/* ---------- 1. Chuyển cảnh ---------- */
+.tr-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.tr-out {
+  animation: tr-out 0.3s var(--ease-io) both;
+  animation-delay: calc(var(--dur, 4s) - 0.3s);
+}
+.scene.tr-in-zoom {
+  animation: tr-in-zoom 0.45s var(--ease-out) both;
+}
+.scene.tr-in-slide {
+  animation: tr-in-slide 0.45s var(--ease-out) both;
+}
+.scene.tr-in-wipe {
+  animation: tr-in-wipe 0.5s var(--ease-io) both;
+}
+.scene.tr-in-flash {
+  animation: tr-in-flash 0.4s ease-out both;
+}
+.scene.tr-in-fade {
+  animation: tr-in-fade 0.4s ease-out both;
+}
+@keyframes tr-in-zoom {
+  from {
+    transform: scale(1.14);
+    filter: blur(14px);
+  }
+  to {
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes tr-in-slide {
+  from {
+    transform: translateX(9%);
+    filter: blur(8px);
+  }
+  to {
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes tr-in-wipe {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(75% at 50% 50%);
+  }
+}
+@keyframes tr-in-flash {
+  from {
+    filter: brightness(2.6) saturate(0.4);
+  }
+  to {
+    filter: none;
+  }
+}
+@keyframes tr-in-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes tr-out {
+  from {
+    transform: none;
+    filter: none;
+  }
+  to {
+    transform: scale(1.07);
+    filter: blur(10px) brightness(1.25);
+  }
+}
+
+/* ---------- 2. Camera đẩy chậm ---------- */
+.cam-on .safe {
+  animation: cam-push var(--dur, 4s) linear both;
+}
+@keyframes cam-push {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.045);
+  }
+}
+
+/* ---------- 3. Nhịp: hiện ở --beat, nhường chỗ ở --beat-next ---------- */
+.beat-swap {
+  animation:
+    swap-in 0.55s var(--ease-out) both,
+    swap-out 0.3s var(--ease-io) forwards;
+  animation-delay: var(--beat, 0s), calc(var(--beat-next, 999s) - 0.3s);
+}
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(70px) scale(0.96);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes swap-out {
+  from {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.98);
+    filter: blur(8px);
+  }
+}
+/* Nảy nhẹ khi tới câu mới (đánh dấu "đang nói tới ý này"). */
+.beat-bump {
+  animation: bump 0.5s var(--ease-out) both;
+  animation-delay: var(--beat, 999s);
+}
+@keyframes bump {
+  0% {
+    transform: none;
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* ---------- 4. Chữ động từng từ ---------- */
+.words-on [data-words] .w {
+  display: inline-block;
+  animation: word-in 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--wd, 0s) + var(--w, 0) * var(--w-step, 0.07s));
+}
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.55em) rotate(3deg);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ---------- Nhịp nút CTA ---------- */
+.pulse {
+  animation: pulse 1.2s var(--ease-io) infinite;
+  animation-delay: var(--pulse-d, 1.8s);
+}
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--accent-soft), 0 24px 60px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 26px rgba(244, 183, 64, 0), 0 24px 60px rgba(0, 0, 0, 0.4);
+  }
+}

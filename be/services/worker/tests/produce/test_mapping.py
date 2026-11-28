@@ -118,7 +118,11 @@ def test_stat_display_selects_stat_layout(tmp_path: Path) -> None:
     assert props["value"]["text"] == "0 đ" and props["label"]["text"] == "Chi phí dùng"
     assert props["eyebrow"]["text"] == "Gói miễn phí"
     assert props["value"]["fact_refs"] and set(props["value"]["fact_refs"]) <= set(plan["facts"])
-    assert any("claims_not_shown" in w for w in by_id(specs)["s05"].warnings)
+    # Claim khác của cảnh thành chip, kèm `at` = câu nói tới nó (nhịp theo câu của template)
+    others = [c for c in script["scenes"][4]["claims"][1:]]
+    assert [c["text"] for c in props["chips"]] == [c["text"] for c in others]
+    seg_ids = {g["segment_id"] for g in script["scenes"][4]["narration_segments"]}
+    assert all(c.get("at") in seg_ids for c in props["chips"] if "at" in c)
 
 
 def test_stat_value_includes_unit(tmp_path: Path) -> None:

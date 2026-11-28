@@ -215,7 +215,8 @@ def _floor4(x: float) -> float:
 def slice_scene(ts: Any, tl: Any, timeline_cls: type) -> Any:
     """Timeline con của MỘT cảnh: `start_f = 0`, giữ nguyên số khung.
 
-    Mọi thứ `compose` của #88 đọc từ timeline đều là thời lượng/mốc của cảnh, nên mốc tuyệt đối
+    Mọi thứ `compose` của #88 đọc từ timeline đều là thời lượng/mốc của cảnh (mốc câu cũng dời về
+    gốc cảnh), nên mốc tuyệt đối
     (cảnh đứng thứ mấy trong video) không lọt vào index.html và không vào khoá cache.
 
     Thời lượng bị làm tròn XUỐNG 4 chữ số: `N/fps` thường là số thập phân vô hạn (335/30 =
@@ -223,7 +224,10 @@ def slice_scene(ts: Any, tl: Any, timeline_cls: type) -> Any:
     khung. Làm tròn xuống thì không bao giờ vượt N (lệch < 0,0001 s, nhỏ hơn 0,01 khung)."""
     scene_cls, tl_cls = _shaved_types(type(ts), timeline_cls)
     fields = {f.name: getattr(ts, f.name) for f in dataclasses.fields(ts)}
-    sub = scene_cls(**{**fields, "start_f": 0, "end_f": ts.end_f - ts.start_f})
+    # Mốc câu dời về gốc cảnh (nhịp --b1… của template tính từ đầu cảnh, không phụ thuộc vị trí).
+    origin = ts.start_f / ts.fps
+    segs = tuple(dataclasses.replace(g, start_s=round(g.start_s - origin, 4)) for g in ts.segments)
+    sub = scene_cls(**{**fields, "start_f": 0, "end_f": ts.end_f - ts.start_f, "segments": segs})
     return tl_cls((sub,), tl.fps)
 
 
@@ -371,6 +375,9 @@ def load_context(args: argparse.Namespace) -> SimpleNamespace:
     render_mod.build_ass = build_ass_split  # render.py import tên này trực tiếp
 
     plan = load_plan(args.plan)
+    if hasattr(compose_mod, "apply_template"):  # template (chuyển cảnh theo vị trí cảnh) trên plan
+        # đầy đủ, trước khi tách plan con một cảnh
+        plan = compose_mod.apply_template(plan, compose_mod.load_template(plan.template))
     tl = build_timeline(plan, render_mod.voice_durations(plan))
     return SimpleNamespace(
         spike=spike, compose=compose_mod, media=media, render=render_mod, plan=plan, tl=tl,

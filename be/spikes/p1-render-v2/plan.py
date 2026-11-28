@@ -16,11 +16,12 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-Layout = Literal["hook", "stat", "feature_clip", "claim", "cta"]
+Layout = Literal["hook", "stat", "feature_clip", "claim", "punch", "cta"]
 Ratio = Literal["9:16", "16:9"]
 
 # Khoá props được phép là chuỗi trần (không phải chữ hiển thị cần nguồn).
-PLAIN_KEYS = {"url", "src", "icon", "badge_icon"}
+# `at`: segment_id của câu thoại mà mục này hiện cùng (nhịp theo câu, xem motion.css).
+PLAIN_KEYS = {"url", "src", "icon", "badge_icon", "at"}
 # Lý do miễn fact_refs hợp lệ cho một mục chữ.
 EXEMPT_REASONS = {"cta", "url", "disclosure"}
 
@@ -108,6 +109,8 @@ class Scene(_Model):
     props: dict[str, Any]
     clip: Clip | None = None
     image: Image | None = None
+    # Kiểu vào cảnh; compose.apply_template điền theo template (giữ khi dựng từng cảnh riêng).
+    transition: Literal["zoom", "slide", "wipe", "flash", "fade", "none"] | None = None
 
 
 class RenderPlan(_Model):
@@ -116,6 +119,8 @@ class RenderPlan(_Model):
     # Ai viết lời đọc: "viết tay", "agent"... Chưa phải LLM của pipeline M2 (#83).
     written_by: str = Field(min_length=1)
     preset: str
+    # Template trong template/templates.json (cách ghép khối + chuyển cảnh); None = mặc định.
+    template: str | None = None
     ratios: list[Ratio]
     fps: int = 30
     lead_s: float = 0.1  # trước câu đầu tiên

@@ -43,6 +43,12 @@
     .layout-feature-clip .callout { position: absolute; z-index: 3; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
     .layout-feature-clip.is-portrait .callout { right: 24px; bottom: -36px; }
     .layout-feature-clip.is-landscape .callout { right: -30px; bottom: -34px; }
+    /* Ý đang nói tới: 16:9 bước tương ứng sáng lên; 9:16 (không có cột bước) hiện chip nổi trên clip. */
+    .layout-feature-clip .beat-chips { display: none; }
+    .layout-feature-clip.is-portrait .beat-chips { display: block; position: absolute; left: 24px; top: 88px; z-index: 3; }
+    .layout-feature-clip.is-portrait .beat-chips .chip { position: absolute; left: 0; top: 0; font-size: 40px;
+      white-space: normal; width: max-content; max-width: 900px; box-shadow: 0 18px 50px rgba(0,0,0,.55); }
+    .layout-feature-clip.is-portrait .beat-chips .chip { --beat: 999s; }
   </style>
 
   <div class="bg"></div>
@@ -56,9 +62,9 @@
         <span class="icon-tile is-soft" data-icon="icon"></span>
         <span class="eyebrow" data-text="eyebrow"></span>
       </div>
-      <h2 class="title a-rise" style="--d: 0.5s" data-text="title"></h2>
-      <div class="steps" data-list="steps">
-          <span data-item class="chip a-pop" style="--d: calc(0.8s + var(--i) * 0.3s)">
+      <h2 class="title a-rise" style="--d: 0.5s; --wd: 0.5s" data-words data-text="title"></h2>
+      <div class="steps" data-list="steps" data-beat-from="2">
+          <span data-item class="chip a-pop step" style="--d: var(--beat, calc(0.8s + var(--i) * 0.3s))">
             <span data-icon="icon"></span><span data-text="text"></span>
           </span>
       </div>
@@ -74,6 +80,9 @@
             <video data-src="clip.src" muted playsinline data-start="0"></video>
           </div>
         </div>
+      </div>
+      <div class="beat-chips" data-list="steps" data-beat-from="2">
+        <span data-item class="chip is-accent beat-swap"><span data-icon="icon"></span><span data-text="text"></span></span>
       </div>
       <div class="callout chip is-accent a-pop" style="--d: calc(var(--focus-at, 99s) + 0.35s)" data-if="callout">
         <span data-icon="callout.icon"></span><span data-text="callout"></span>

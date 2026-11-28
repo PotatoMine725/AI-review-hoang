@@ -353,6 +353,7 @@ class Mapper:
             "product": self.brand,
             "written_by": f"worker.produce từ kịch bản M2 {self.script['schema_version']}",
             "preset": cfg.preset,
+            **({"template": cfg.template} if cfg.template else {}),
             "ratios": ratios,
             "fps": cfg.fps,
             "lead_s": cfg.lead_s,
@@ -365,6 +366,16 @@ class Mapper:
 
     def _text(self, text: str, refs: list[str], **extra: Any) -> dict[str, Any]:
         return {"text": text, "fact_refs": refs, **extra}
+
+    @staticmethod
+    def _at(spec: SceneSpec, claim: dict[str, Any]) -> dict[str, str]:
+        """`at` = câu đầu tiên của cảnh nói tới claim này: template cho ý đó hiện đúng lúc câu
+        bắt đầu (nhịp theo câu). Rỗng nếu claim không trỏ câu nào của cảnh."""
+        ids = set(claim.get("segment_ids") or [])
+        for g in spec.scene["narration_segments"]:
+            if g["segment_id"] in ids:
+                return {"at": g["segment_id"]}
+        return {}
 
     def _clip_title(self, spec: SceneSpec) -> tuple[str, list[str]]:
         """Tiêu đề cảnh clip = claim đầu; nếu gần như trùng lời/phụ đề cùng cảnh thì thay bằng
@@ -468,14 +479,18 @@ class Mapper:
         sd = spec.claims[idx]["stat_display"]
         refs = spec.claim_refs[idx]
         value = f"{sd['value']} {sd['unit']}" if sd.get("unit") else sd["value"]
-        if len(spec.claims) > 1:
-            spec.warnings.append(f"claims_not_shown: {len(spec.claims) - 1} claim khác của cảnh")
+        # Claim khác của cảnh thành chip, hiện đúng lúc câu nói tới nó (nguyên văn, có fact_refs).
+        chips = [
+            self._text(c["text"], r, icon=self.cfg.check_icon, **self._at(spec, c))
+            for i, (c, r) in enumerate(zip(spec.claims, spec.claim_refs, strict=True))
+            if i != idx
+        ]
         out["props"] = {
             "eyebrow": self._text(sd["scope"], refs),
             "value": self._text(value, refs),
             "label": self._text(sd["label"], refs),
             "visual": {"icon": self.cfg.default_icon, "badge_icon": self.cfg.check_icon},
-            "chips": [],
+            "chips": chips,
         }
 
     def _claim(self, spec: SceneSpec, out: dict[str, Any], ts: TimedScene) -> None:
@@ -485,7 +500,7 @@ class Mapper:
             "icon": self.cfg.default_icon,
             "claim": self._text(spec.claims[0]["text"], spec.claim_refs[0]),
             "points": [
-                self._text(c["text"], refs, icon=self.cfg.check_icon)
+                self._text(c["text"], refs, icon=self.cfg.check_icon, **self._at(spec, c))
                 for c, refs in zip(spec.claims[1:], spec.claim_refs[1:], strict=True)
             ],
         }
@@ -535,7 +550,7 @@ class Mapper:
             "icon": asset.icon or self.cfg.default_icon,
             "title": self._text(title, title_refs),
             "steps": [
-                self._text(c["text"], refs, icon=self.cfg.check_icon)
+                self._text(c["text"], refs, icon=self.cfg.check_icon, **self._at(spec, c))
                 for c, refs in zip(spec.claims[1:], spec.claim_refs[1:], strict=True)
             ],
             **({"url": self.website} if self.website else {}),
