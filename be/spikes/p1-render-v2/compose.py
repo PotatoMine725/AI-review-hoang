@@ -34,7 +34,7 @@ TEMPLATE_DIR = ROOT / "template"
 FONTS_DIR = ROOT / "fonts"
 RATIO_CLASS = {"9:16": "r916", "16:9": "r169"}
 TEMPLATES_FILE = TEMPLATE_DIR / "templates.json"
-TRANSITIONS = {"zoom", "slide", "wipe", "flash", "fade", "none"}
+TRANSITIONS = {"zoom", "slide", "wipe", "flash", "fade", "skew", "none"}
 
 
 def load_template(name: str | None, path: Path = TEMPLATES_FILE) -> dict:
@@ -55,15 +55,26 @@ def apply_template(plan: RenderPlan, tpl: dict) -> RenderPlan:
     kiểu vào cảnh theo vị trí cảnh. Gọi trên plan ĐẦY ĐỦ: cảnh đã có `transition` thì giữ, nên
     dựng từng cảnh riêng (plan con một cảnh) vẫn ra đúng kiểu. Gọi lại nhiều lần không đổi gì."""
     swap = tpl.get("layouts") or {}
-    scenes = [
-        s.model_copy(
-            update={
-                "layout": swap.get(s.layout, s.layout),
-                "transition": s.transition or transition_for(tpl, i),
-            }
+    layouts = [swap.get(s.layout, s.layout) for s in plan.scenes]
+    # Template đếm ngược: các cảnh thuộc `ranked` được đánh số giảm dần (3, 2, 1).
+    ranked = set(tpl.get("ranked") or [])
+    n_ranked = sum(1 for lay in layouts if lay in ranked)
+    scenes, k = [], 0
+    for i, (s, lay) in enumerate(zip(plan.scenes, layouts, strict=True)):
+        rank = s.rank
+        if rank is None and lay in ranked:
+            rank = str(n_ranked - k)
+            k += 1
+        scenes.append(
+            s.model_copy(
+                update={
+                    "layout": lay,
+                    "transition": s.transition or transition_for(tpl, i),
+                    "index": i if s.index is None else s.index,
+                    "rank": rank,
+                }
+            )
         )
-        for i, s in enumerate(plan.scenes)
-    ]
     return plan.model_copy(update={"scenes": scenes})
 
 
@@ -122,8 +133,16 @@ def scene_variables(plan: RenderPlan, tl: Timeline, media_paths: dict[str, str])
             css.update(clip_css(scene.clip, ts.duration_s))
         if scene.image:
             props.setdefault("image", {})["src"] = media_paths[scene.scene_id]
+        if scene.rank is not None:
+            props["rank"] = scene.rank
         out.append(
-            {"props": props, "css": css, "seg_at": seg_at, "transition": scene.transition or "none"}
+            {
+                "props": props,
+                "css": css,
+                "seg_at": seg_at,
+                "transition": scene.transition or "none",
+                "index": scene.index or 0,
+            }
         )
     return out
 
@@ -172,7 +191,8 @@ def build_index(
     flags = [f"tpl-{tpl['id']}"] if tpl.get("id") else []
     flags += [c for c, on in (("cam-on", tpl.get("camera")), ("words-on", tpl.get("words"))) if on]
     out_cls = " tr-out" if tpl.get("exit") else ""
-    root_cls = " ".join([RATIO_CLASS[ratio], f"preset-{plan.preset}", *flags])
+    preset = tpl.get("preset") or plan.preset  # template có thể kèm bộ màu/font riêng
+    root_cls = " ".join([RATIO_CLASS[ratio], f"preset-{preset}", *flags])
     hosts = []
     for scene, ts, var in zip(plan.scenes, tl.scenes, variables, strict=True):
         fragment = (TEMPLATE_DIR / "layouts" / f"{scene.layout}.html").read_text(encoding="utf-8")
@@ -191,10 +211,10 @@ def build_index(
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width={w},height={h}">
-<!-- Sinh tự động bởi compose.py từ {plan.product} / preset {plan.preset}. Không sửa tay. -->
+<!-- Sinh tự động bởi compose.py từ {plan.product} / preset {preset}. Không sửa tay. -->
 <link rel="stylesheet" href="template/base.css">
 <link rel="stylesheet" href="template/motion.css">
-<link rel="stylesheet" href="template/presets/{plan.preset}.css">
+<link rel="stylesheet" href="template/presets/{preset}.css">
 <script src="template/icons.js"></script>
 <script src="template/runtime.js"></script>
 </head>

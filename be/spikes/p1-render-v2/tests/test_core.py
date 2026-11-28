@@ -82,7 +82,8 @@ def test_read_layout_hai_goc_bi_chan() -> None:
 
 def test_template_that_co_du_layout_va_o_clip() -> None:
     layouts = load_layouts(ROOT / "template" / "layouts")
-    assert set(layouts) == {"hook", "stat", "feature_clip", "claim", "punch", "cta"}
+    assert {"hook", "stat", "feature_clip", "claim", "punch", "cta"} <= set(layouts)
+    assert "clip" in layouts["count_clip"].slots
     assert "clip" in layouts["feature_clip"].slots
     assert "clip" not in layouts["claim"].slots  # layout chỉ có chữ, không có ô clip
 
@@ -364,3 +365,48 @@ def test_props_at_la_khoa_tran() -> None:
     data = json.loads(PLAN.read_text(encoding="utf-8"))
     data["scenes"][2]["props"]["steps"][0]["at"] = "s03-u02"
     RenderPlan.model_validate(data)  # không bị coi là chữ thiếu fact_refs
+
+
+def test_dem_nguoc_danh_so_giam_dan_va_doi_layout() -> None:
+    from compose import apply_template, load_template
+
+    plan = load_plan(PLAN)
+    out = apply_template(plan, load_template("dem-nguoc"))
+    lays = [s.layout for s in out.scenes]
+    assert lays[0] == "count_hook" and lays[-1] == "count_cta"
+    ranks = [s.rank for s in out.scenes if s.rank is not None]
+    assert ranks == [str(n) for n in range(len(ranks), 0, -1)]
+    assert [s.index for s in out.scenes] == list(range(len(out.scenes)))
+    assert all(s.transition == "skew" for s in out.scenes[1:])
+
+
+def _timeline_for(plan: RenderPlan):  # noqa: ANN202
+    voice = {g.segment_id: 2.0 for s in plan.scenes for g in s.narration_segments}
+    return build_timeline(plan, voice, load_limits({"P1_RENDER_MIN_TOTAL_S": "1"}))
+
+
+def test_audio_mix_chi_voice_khi_khong_bat_gi() -> None:
+    from render import audio_mix
+
+    plan = load_plan(PLAN)
+    mix = audio_mix(plan, _timeline_for(plan), {})
+    assert not mix.sfx and mix.music is None
+    assert mix.filters[-1].startswith("[voice]amix=inputs=1")
+
+
+def test_audio_mix_pop_dau_moi_cau_va_nhac_nho_dan_theo_giong(tmp_path: Path) -> None:
+    from plan import Audio
+    from render import audio_mix
+
+    plan = load_plan(PLAN)
+    music = tmp_path / "nhac.mp3"
+    plan = plan.model_copy(update={"audio": Audio(music=str(music))})
+    tl = _timeline_for(plan)
+    mix = audio_mix(plan, tl, {"sfx": "pop"})
+    n = len(tl.segments)
+    assert mix.sfx and mix.music == music
+    assert len(mix.pops_s) == n - 1  # trừ câu đầu
+    graph = ";".join(mix.filters)
+    assert f"[{n + 1}:a]" in graph and f"[{n + 2}:a]" in graph  # pop rồi nhạc
+    assert "sidechaincompress" in graph and "[voice][vkey]" in graph
+    assert mix.filters[-1].startswith("[voice][sfx][duck]amix=inputs=3")

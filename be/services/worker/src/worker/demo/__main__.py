@@ -40,7 +40,7 @@ def cmd_samples(a: argparse.Namespace) -> int:
 
 def cmd_generate(a: argparse.Namespace) -> int:
     from worker.demo.generate import generate
-    from worker.demo.llm import OpenAIScriptLLM
+    from worker.demo.llm import GeminiScriptLLM, OpenAIScriptLLM, ScriptLLM, is_gemini
     from worker.demo.schema import Brief
 
     brief = Brief.model_validate_json(a.brief.read_text(encoding="utf-8"))
@@ -49,11 +49,16 @@ def cmd_generate(a: argparse.Namespace) -> int:
         print(f"đã có {target} (dùng --regen để sinh lại)")
         return 0
     settings = Settings.from_env()
-    settings.require("demo_script")
     model = os.environ.get("DEMO_LLM_MODEL", "").strip()
     if not model:
         raise MissingConfigError(["DEMO_LLM_MODEL"])
-    llm = OpenAIScriptLLM(settings.openai_api_key.get_secret_value(), model)
+    llm: ScriptLLM
+    if is_gemini(model):  # mặc định nên dùng Gemini (khoá OpenAI không còn dùng được)
+        settings.require("demo_script_gemini")
+        llm = GeminiScriptLLM(settings.gemini_api_key.get_secret_value(), model)
+    else:
+        settings.require("demo_script")
+        llm = OpenAIScriptLLM(settings.openai_api_key.get_secret_value(), model)
     chromium, headless = _env_opts()
     script = generate(
         brief, llm, fixtures_dir=a.fixtures, chromium_path=chromium, headless=headless

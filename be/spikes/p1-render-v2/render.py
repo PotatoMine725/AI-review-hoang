@@ -26,7 +26,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import cast
 
-from compose import ROOT, compose
+from compose import ROOT, compose, load_template
 from limits import load_limits
 from measure import PeakRam
 from media import MediaError, VideoInfo, probe_duration, probe_video, run, tool
@@ -120,25 +120,94 @@ def run_hyperframes(work: Path, out: Path, fps: int, workers: str, browser_gpu: 
     return wall, phases, mode, ram.peak_mb
 
 
+POP_SRC = "aevalsrc=0.7*sin(2*PI*(380+2600*t)*t)*exp(-28*t):d=0.16:s=48000"
+
+
+def write_pop(path: Path) -> None:
+    """Tiếng "pop" ngắn tự tổng hợp (không vướng bản quyền), dùng làm hiệu ứng đầu câu."""
+    run([tool("ffmpeg"), "-y", "-v", "error", "-f", "lavfi", "-i", POP_SRC, "-ac", "2",
+         str(path)])  # fmt: skip
+
+
+@dataclass(frozen=True)
+class AudioMix:
+    filters: list[str]  # filter_complex, ra nhãn [aout]
+    sfx: bool  # có input pop.wav (ngay sau các voice)
+    music: Path | None  # có input nhạc (sau pop nếu có)
+    pops_s: list[float]
+
+
+def audio_mix(plan: RenderPlan, tl: Timeline, tpl: dict) -> AudioMix:
+    """Đồ thị audio: voice đặt đúng mốc (+ pop đầu mỗi câu trừ câu đầu, + nhạc nền nhỏ dần khi có
+    giọng). Input: 0 = hình, 1..n = voice theo thứ tự câu, rồi pop.wav, rồi nhạc. Hàm thuần."""
+    audio = plan.audio
+    sfx = (audio.sfx if audio and audio.sfx else tpl.get("sfx")) or "none"
+    music = None
+    if audio and audio.music:
+        music = Path(audio.music)
+        music = music if music.is_absolute() else (ROOT / music).resolve()
+    n = len(tl.segments)
+    f: list[str] = []
+    labels = ""
+    for i, seg in enumerate(tl.segments, start=1):
+        ms = round(seg.start_s * 1000)
+        f.append(f"[{i}:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay={ms}|{ms}[a{i}]")
+        labels += f"[a{i}]"
+    f.append(f"{labels}amix=inputs={n}:normalize=0:duration=longest[voice]")
+    parts = ["[voice]"]
+    nxt = n + 1
+    pops: list[float] = []
+    if sfx == "pop":
+        pops = [round(max(0.0, g.start_s - 0.05), 3) for g in tl.segments[1:]]
+        if pops:
+            db = audio.sfx_db if audio else -10.0
+            split = "".join(f"[p{k}]" for k in range(len(pops)))
+            f.append(f"[{nxt}:a]aformat=sample_rates=48000:channel_layouts=stereo,"
+                     f"asplit={len(pops)}{split}")  # fmt: skip
+            outs = ""
+            for k, t in enumerate(pops):
+                ms = round(t * 1000)
+                f.append(f"[p{k}]adelay={ms}|{ms}[q{k}]")
+                outs += f"[q{k}]"
+            f.append(f"{outs}amix=inputs={len(pops)}:normalize=0,volume={db}dB[sfx]")
+            parts.append("[sfx]")
+            nxt += 1
+    if music is not None:
+        db = audio.music_db if audio else -22.0
+        total = tl.total_s
+        f[f.index(f"{labels}amix=inputs={n}:normalize=0:duration=longest[voice]")] = (
+            f"{labels}amix=inputs={n}:normalize=0:duration=longest,asplit=2[voice][vkey]"
+        )
+        f.append(
+            f"[{nxt}:a]aformat=sample_rates=48000:channel_layouts=stereo,volume={db}dB,"
+            f"atrim=0:{total:.3f},afade=t=in:d=0.6,afade=t=out:st={max(0.0, total - 1.5):.3f}:d=1.5"
+            "[mus]"
+        )
+        # Nhạc tự nhỏ đi khi có giọng (ducking), lên lại ở khoảng nghỉ.
+        f.append("[mus][vkey]sidechaincompress=threshold=0.02:ratio=8:attack=15:release=350[duck]")
+        parts.append("[duck]")
+    f.append(
+        f"{''.join(parts)}amix=inputs={len(parts)}:normalize=0:duration=first,"
+        "loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000,apad[aout]"
+    )
+    return AudioMix(f, sfx == "pop" and bool(pops), music, pops)
+
+
 def finalize(plan: RenderPlan, tl: Timeline, ratio: Ratio, work: Path, video: Path, out: Path
              ) -> tuple[float, float | None]:  # fmt: skip
     """Đốt phụ đề + trộn voice đúng mốc → MP4 cuối. Trả (thời gian, RAM đỉnh ffmpeg)."""
     (work / "subs.ass").write_text(build_ass(plan, tl, ratio), encoding="utf-8")
     args = [tool("ffmpeg"), "-y", "-v", "error", "-i", str(video)]
-    filters = []
-    labels = ""
     voices = {g.segment_id: g.voice for s in plan.scenes for g in s.narration_segments}
-    for i, seg in enumerate(tl.segments, start=1):
+    for seg in tl.segments:
         args += ["-i", str((ROOT / voices[seg.segment_id]).resolve())]
-        ms = round(seg.start_s * 1000)
-        filters.append(
-            f"[{i}:a]aformat=sample_rates=48000:channel_layouts=stereo,adelay={ms}|{ms}[a{i}]"
-        )
-        labels += f"[a{i}]"
-    filters.append(
-        f"{labels}amix=inputs={len(tl.segments)}:normalize=0:duration=longest,"
-        "loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000,apad[aout]"
-    )
+    mix = audio_mix(plan, tl, load_template(plan.template))
+    if mix.sfx:
+        write_pop(work / "pop.wav")
+        args += ["-i", "pop.wav"]
+    if mix.music:
+        args += ["-stream_loop", "-1", "-i", str(mix.music)]
+    filters = list(mix.filters)
     # Đường dẫn tương đối (chạy trong work/) để tránh lỗi escape ổ đĩa "D:" trong filter.
     filters.append("[0:v]subtitles=subs.ass:fontsdir=template/fonts[vout]")
     args += [

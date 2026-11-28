@@ -1,24 +1,59 @@
 {
-  "_doc": "Thư viện template video: mỗi template = cách ghép các khối cảnh (layout) + chuyển cảnh + chuyển động. Plan chọn bằng trường `template` (bỏ trống = default). layouts: đổi layout của plan sang khối khác cùng props (vd claim → punch). transitions: kiểu vào cảnh, xoay vòng từ cảnh thứ 2 (zoom | slide | wipe | flash | fade | none). camera: đẩy chậm suốt cảnh. words: chữ tiêu đề hiện từng từ. exit: hiệu ứng ra cảnh.",
+  "_doc": "Thư viện template video: mỗi template = cách ghép các khối cảnh (layout) + chuyển cảnh + chuyển động. Plan chọn bằng trường `template` (bỏ trống = default). layouts: đổi layout của plan sang khối khác cùng props (vd claim → punch). transitions: kiểu vào cảnh, xoay vòng từ cảnh thứ 2 (zoom | slide | wipe | flash | fade | none). camera: đẩy chậm suốt cảnh. words: chữ tiêu đề hiện từng từ. exit: hiệu ứng ra cảnh. preset: bộ màu/font riêng (đè preset của plan). ranked: layout được đánh số đếm ngược (3, 2, 1). sfx: tiếng hiệu ứng ở đầu mỗi câu (pop | none).",
   "default": "nhip-nhanh",
   "templates": {
     "nhip-nhanh": {
       "name": "Nhịp nhanh",
       "description": "Chuyển cảnh mạnh, chữ hiện từng từ, mỗi câu thoại một nhịp hình.",
-      "layouts": { "claim": "punch" },
-      "transitions": ["zoom", "slide", "flash", "wipe"],
+      "layouts": {
+        "claim": "punch"
+      },
+      "transitions": [
+        "zoom",
+        "slide",
+        "flash",
+        "wipe"
+      ],
       "camera": true,
       "words": true,
-      "exit": true
+      "exit": true,
+      "sfx": "none"
     },
     "toi-gian": {
       "name": "Tối giản",
       "description": "Nhịp êm như bản cũ, chỉ thêm mờ dần giữa các cảnh.",
       "layouts": {},
-      "transitions": ["fade"],
+      "transitions": [
+        "fade"
+      ],
       "camera": false,
       "words": false,
-      "exit": false
+      "exit": false,
+      "sfx": "none"
+    },
+    "dem-nguoc": {
+      "name": "Đếm ngược",
+      "description": "Top 3 → 1 kiểu mẫu của Thông: nền màu phẳng mỗi cảnh, thẻ viền đen, chữ Anton, tiếng pop.",
+      "preset": "brutal-pop",
+      "layouts": {
+        "hook": "count_hook",
+        "feature_clip": "count_clip",
+        "stat": "count_card",
+        "claim": "count_card",
+        "punch": "count_card",
+        "cta": "count_cta"
+      },
+      "ranked": [
+        "count_clip",
+        "count_card"
+      ],
+      "transitions": [
+        "skew"
+      ],
+      "camera": false,
+      "words": true,
+      "exit": false,
+      "sfx": "pop"
     }
   }
 }

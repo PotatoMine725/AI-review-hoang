@@ -34,6 +34,9 @@
 .scene.tr-in-flash {
   animation: tr-in-flash 0.4s ease-out both;
 }
+.scene.tr-in-skew {
+  animation: tr-in-skew 0.45s var(--ease-out) both;
+}
 .scene.tr-in-fade {
   animation: tr-in-fade 0.4s ease-out both;
 }
@@ -71,6 +74,15 @@
   }
   to {
     filter: none;
+  }
+}
+/* Mảng màu cảnh mới quét chéo vào (kiểu mẫu đếm ngược của Thông). */
+@keyframes tr-in-skew {
+  from {
+    clip-path: polygon(100% 0, 130% 0, 100% 100%, 70% 100%);
+  }
+  to {
+    clip-path: polygon(-30% 0, 130% 0, 100% 100%, -60% 100%);
   }
 }
 @keyframes tr-in-fade {

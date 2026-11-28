@@ -21,6 +21,7 @@ Chữ trên hình chỉ lấy từ trường M2 có `fact_refs`: `hook.text`, `c
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -354,6 +355,7 @@ class Mapper:
             "written_by": f"worker.produce từ kịch bản M2 {self.script['schema_version']}",
             "preset": cfg.preset,
             **({"template": cfg.template} if cfg.template else {}),
+            **({"audio": audio} if (audio := self._audio()) else {}),
             "ratios": ratios,
             "fps": cfg.fps,
             "lead_s": cfg.lead_s,
@@ -363,6 +365,31 @@ class Mapper:
             "facts": dict(self.facts.facts),
             "scenes": scenes,
         }
+
+    def _audio(self) -> dict[str, Any] | None:
+        """Nhạc nền + hiệu ứng theo config. Thư mục nhạc: chọn bài theo hash tên sản phẩm (cố
+        định giữa các lần chạy, khác nhau giữa các sản phẩm)."""
+        cfg = self.cfg
+        out: dict[str, Any] = {}
+        if cfg.music:
+            path = Path(cfg.music)
+            if path.is_dir():
+                tracks = sorted(
+                    p
+                    for p in path.iterdir()
+                    if p.suffix.lower() in {".mp3", ".wav", ".m4a", ".ogg"}
+                )
+                if not tracks:
+                    raise ValueError(f"PRODUCE_MUSIC={cfg.music}: thư mục không có file nhạc")
+                digest = hashlib.sha256(self.brand.encode()).digest()
+                path = tracks[digest[0] % len(tracks)]
+            elif not path.is_file():
+                raise ValueError(f"PRODUCE_MUSIC={cfg.music}: không có file/thư mục này")
+            out["music"] = str(path.resolve())
+            out["music_db"] = cfg.music_db
+        if cfg.sfx:
+            out["sfx"] = cfg.sfx
+        return out or None
 
     def _text(self, text: str, refs: list[str], **extra: Any) -> dict[str, Any]:
         return {"text": text, "fact_refs": refs, **extra}

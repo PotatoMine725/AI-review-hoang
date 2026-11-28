@@ -581,3 +581,22 @@ def test_hook_without_fact_refs_and_no_matching_segment_is_rejected(tmp_path: Pa
     script["hook"]["text"] = "Một câu hook không ai đọc."
     s01 = by_id(mapper(tmp_path, script, inp).plan_scenes())["s01"]
     assert s01.error is not None and "hook_without_fact" in str(s01.error)
+
+
+def test_audio_from_config_picks_track_by_product(tmp_path: Path) -> None:
+    script, inp = load_run4()
+    music = tmp_path / "nhac"
+    music.mkdir()
+    for name in ("a.mp3", "b.mp3", "c.wav", "note.txt"):
+        (music / name).write_bytes(b"x")
+    m = mapper(tmp_path, script, inp)
+    m.cfg = m.cfg.model_copy(update={"music": str(music), "sfx": "pop", "music_db": -20.0})
+    audio = m._audio()  # noqa: SLF001
+    assert audio is not None and Path(audio["music"]).suffix in {".mp3", ".wav"}
+    assert audio["sfx"] == "pop" and audio["music_db"] == -20.0
+    assert m._audio() == audio  # cùng sản phẩm → cùng bài  # noqa: SLF001
+
+
+def test_no_audio_by_default(tmp_path: Path) -> None:
+    script, inp = load_run4()
+    assert mapper(tmp_path, script, inp)._audio() is None  # noqa: SLF001

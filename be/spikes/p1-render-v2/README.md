@@ -280,6 +280,15 @@ yên, các cảnh nối cứng. Bản này thêm:
   từng từ, ý sau đẩy ý trước. Template `nhip-nhanh` đổi `claim → punch`.
 - **Chữ động** (`data-words`), **camera đẩy chậm** suốt cảnh, nút CTA nhịp đập.
 
+- **Template `dem-nguoc`** (28/11, theo mẫu của Thông): preset `brutal-pop` (nền phẳng đổi màu mỗi
+  cảnh, thẻ trắng viền đen, chữ Anton OFL có dấu tiếng Việt), bộ layout `count_hook`,
+  `count_clip`, `count_card`, `count_cta` (cùng props với layout gốc), cảnh nội dung đánh số đếm
+  ngược, chuyển cảnh quét chéo `skew`, tiếng pop đầu mỗi câu.
+- **Âm thanh** (`render.audio_mix`): `plan.audio.music` = nhạc nền (lặp, nhỏ đi khi có giọng bằng
+  sidechaincompress, mờ vào/ra), `sfx: pop` = tiếng pop tự tổng hợp (aevalsrc, không bản quyền)
+  ở đầu mỗi câu trừ câu đầu. Worker: `PRODUCE_MUSIC` (file hoặc thư mục), `PRODUCE_MUSIC_DB`,
+  `PRODUCE_SFX`.
+
 Chi phí: dựng chậm hơn (~145 s → ~230 s một tỉ lệ trong sandbox, do hiệu ứng mờ khi chuyển cảnh).
 
 ## Hướng dẫn FE: thêm bố cục hoặc preset

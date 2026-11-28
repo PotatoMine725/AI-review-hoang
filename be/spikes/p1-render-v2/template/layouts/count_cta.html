@@ -1,0 +1,33 @@
+<!--
+  Layout "count_cta" (template đếm ngược): tên sản phẩm chữ to trong ngoặc kép, URL, nút dạng nhãn
+  dán nhịp đập. Cùng props với "cta". Chữ CTA/URL được miễn fact_refs.
+  props: brand{text,icon}, url, chips[{text,icon}], button{text}
+-->
+<div class="scene layout-count-cta" data-layout="count_cta">
+  <style>
+    .layout-count-cta .safe { display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; gap: 44px; }
+    .layout-count-cta .floaty { width: 170px; height: 170px; }
+    .layout-count-cta .name { font-family: var(--font-display); text-transform: uppercase; line-height: 1; color: var(--accent);
+      font-size: 190px; }
+    .layout-count-cta .url { display: inline-flex; align-items: center; gap: 14px; padding: 14px 30px; font-size: var(--fs-body);
+      font-weight: 800; background: #fff; color: #111; border: 5px solid #111; border-radius: 14px; box-shadow: 8px 8px 0 #111; }
+    .layout-count-cta .url svg { width: 1em; height: 1em; }
+    .layout-count-cta .btn { font-size: 64px; padding: 18px 44px; }
+    .layout-count-cta .btn svg { width: 0.9em; height: 0.9em; }
+  </style>
+
+  <div class="bg"></div>
+  <div class="bg-dots"></div>
+
+  <div class="safe">
+    <div class="floaty a-pop" style="--d: 0s" data-icon="brand.icon"></div>
+    <div class="name a-slam" style="--d: 0.15s">“<span data-text="brand"></span>”</div>
+    <div class="url a-drop" style="--d: 0.5s" data-if="url"><span data-icon-name="link"></span><span data-text="url"></span></div>
+    <div class="pulse" style="--pulse-d: 1.4s; border-radius: 12px">
+      <div class="btn sticker a-pop" style="--d: 0.9s"><span data-text="button"></span><span data-icon-name="arrow-right"></span></div>
+    </div>
+  </div>
+
+  <script>window.TPL.mount("count_cta");</script>
+</div>
